@@ -12,7 +12,7 @@
 ##############################################################################
 from __future__ import nested_scopes
 
-__version__='$Revision: 1.12 $'[11:-2]
+__version__='$Revision: 1.13 $'[11:-2]
 
 import exceptions
 import new
@@ -22,7 +22,8 @@ for name in ('None', 'abs', 'chr', 'divmod', 'float', 'hash', 'hex', 'int',
              'len', 'max', 'min', 'oct', 'ord', 'round', 'str', 'pow',
              'apply', 'callable', 'cmp', 'complex', 'isinstance',
              'issubclass', 'long', 'repr', 'range', 'list', 'tuple',
-             'unichr', 'unicode', 'True', 'False', 'bool',):
+             'unichr', 'unicode', 'True', 'False', 'bool',
+             'dict', 'sum', 'enumerate',):
     safe_builtins[name] = __builtins__[name]
 
 for name in dir(exceptions):
