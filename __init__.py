@@ -12,7 +12,7 @@
 ##############################################################################
 '''
 RestrictedPython package.
-$Id: __init__.py,v 1.5 2002/08/14 21:44:31 mj Exp $
+$Id$
 '''
 
 from SelectCompiler import *

@@ -12,7 +12,7 @@
 ##############################################################################
 __doc__='''Read-only Mapping class based on MultiMapping
 
-$Id: SafeMapping.py,v 1.3 2002/08/14 21:44:31 mj Exp $'''
+$Id$'''
 __version__='$Revision: 1.3 $'[11:-2]
 
 from MultiMapping import MultiMapping

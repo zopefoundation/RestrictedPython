@@ -23,7 +23,7 @@ checkBeforeAndAfter() unit tests, which verifies that the restricted compiler
 actually produces the same output as would be output by the normal compiler
 for the after function.
 
-$Id: before_and_after.py,v 1.2 2004/01/15 23:09:11 tseaver Exp $
+$Id$
 """
 
 # getattr

@@ -12,7 +12,7 @@
 ##############################################################################
 """Compiler selector.
 
-$Id: SelectCompiler.py,v 1.6 2004/01/15 23:09:09 tseaver Exp $
+$Id$
 """
 
 # Use the compiler from the standard library.
