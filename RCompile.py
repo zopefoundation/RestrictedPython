@@ -220,12 +220,13 @@ class RFunction(RModule):
         # Stitch the body code into the function.
         f.code.nodes = body_code.node.nodes
         f.name = self.name
-        # Look for a docstring.
-        stmt1 = f.code.nodes[0]
-        if (isinstance(stmt1, ast.Discard) and
-            isinstance(stmt1.expr, ast.Const) and
-            isinstance(stmt1.expr.value, str)):
-            f.doc = stmt1.expr.value
+        # Look for a docstring, if there are any nodes at all
+        if len(f.code.nodes) > 0:
+            stmt1 = f.code.nodes[0]
+            if (isinstance(stmt1, ast.Discard) and
+                isinstance(stmt1.expr, ast.Const) and
+                isinstance(stmt1.expr.value, str)):
+                f.doc = stmt1.expr.value
         # The caller may specify that certain variables are globals
         # so that they can be referenced before a local assignment.
         # The only known example is the variables context, container,

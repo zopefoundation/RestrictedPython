@@ -13,7 +13,7 @@ import unittest
 from RestrictedPython import compile_restricted, PrintCollector
 from RestrictedPython.Eval import RestrictionCapableEval
 from RestrictedPython.tests import before_and_after, restricted_module, verify
-from RestrictedPython.RCompile import RModule
+from RestrictedPython.RCompile import RModule, RFunction
 
 try:
     __file__
@@ -436,6 +436,12 @@ class RestrictionTests(unittest.TestCase):
     def checkLambda(self):
         co = self._compile_file("lambda.py")
         exec co in {}, {}
+
+    def checkEmpty(self):
+        rf = RFunction("", "", "issue945", "empty.py", {})
+        rf.parse()
+        rf2 = RFunction("", "# still empty\n\n# by", "issue945", "empty.py", {})
+        rf2.parse()
 
     def checkSyntaxError(self):
         err = ("def f(x, y):\n"
