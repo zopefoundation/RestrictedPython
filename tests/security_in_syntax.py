@@ -30,3 +30,13 @@ def bad_attr():
 
 def no_exec():
     exec 'q = 1'
+
+def no_yield():
+    yield 42
+
+def check_getattr_in_lambda(arg=lambda _getattr=(lambda ob, name: name):
+                                       _getattr):
+    42
+
+def import_as_bad_name():
+    import os as _leading_underscore
