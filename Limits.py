@@ -11,7 +11,7 @@
 #
 ##############################################################################
 
-__version__='$Revision: 1.4 $'[11:-2]
+__version__='$Revision: 1.5 $'[11:-2]
 
 limited_builtins = {}
 
@@ -34,13 +34,13 @@ def limited_range(iFirst, *args):
 limited_builtins['range'] = limited_range
 
 def limited_list(seq):
-    if type(seq) is type(''):
+    if isinstance(seq, str):
         raise TypeError, 'cannot convert string to list'
     return list(seq)
 limited_builtins['list'] = limited_list
 
 def limited_tuple(seq):
-    if type(seq) is type(''):
+    if isinstance(seq, str):
         raise TypeError, 'cannot convert string to tuple'
     return tuple(seq)
 limited_builtins['tuple'] = limited_tuple

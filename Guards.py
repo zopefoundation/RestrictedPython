@@ -10,55 +10,80 @@
 # FOR A PARTICULAR PURPOSE
 #
 ##############################################################################
-from __future__ import nested_scopes
-
-__version__='$Revision: 1.13 $'[11:-2]
+__version__ = '$Revision: 1.14 $'[11:-2]
 
 import exceptions
-import new
+
+# This tiny set of safe builtins is extended by users of the module.
+# AccessControl.ZopeGuards contains a large set of wrappers for builtins.
+# DocumentTemplate.DT_UTil contains a few.
 
 safe_builtins = {}
-for name in ('None', 'abs', 'chr', 'divmod', 'float', 'hash', 'hex', 'int',
-             'len', 'max', 'min', 'oct', 'ord', 'round', 'str', 'pow',
-             'apply', 'callable', 'cmp', 'complex', 'isinstance',
-             'issubclass', 'long', 'repr', 'range', 'list', 'tuple',
-             'unichr', 'unicode', 'True', 'False', 'bool',
-             'dict', 'sum', 'enumerate',):
+
+for name in ['False', 'None', 'True', 'abs', 'basestring', 'bool', 'callable',
+             'chr', 'cmp', 'complex', 'divmod', 'float', 'hash',
+             'hex', 'id', 'int', 'isinstance', 'issubclass', 'len',
+             'long', 'oct', 'ord', 'pow', 'range', 'repr', 'round',
+             'str', 'tuple', 'unichr', 'unicode', 'xrange', 'zip']:
+
     safe_builtins[name] = __builtins__[name]
+
+# Wrappers provided by this module:
+# delattr
+# setattr
+
+# Wrappers provided by ZopeGuards:
+# __import__
+# apply
+# dict
+# enumerate
+# filter
+# getattr
+# hasattr
+# iter
+# list
+# map
+# max
+# min
+# sum
+
+# Builtins that are intentionally disabled
+# compile   - don't let them produce new code
+# dir       - a general purpose introspector, probably hard to wrap
+# execfile  - no direct I/O
+# file      - no direct I/O
+# globals   - uncontrolled namespace access
+# input     - no direct I/O
+# locals    - uncontrolled namespace access
+# open      - no direct I/O
+# raw_input - no direct I/O
+# vars      - uncontrolled namespace access
+
+# There are several strings that describe Python.  I think there's no
+# point to including these, although they are obviously safe:
+# copyright, credits, exit, help, license, quit
+
+# Not provided anywhere.  Do something about these?  Several are
+# related to new-style classes, which we are too scared of to support
+# <0.3 wink>.  coerce, buffer, and reload are esoteric enough that no
+# one should care.
+
+# buffer
+# classmethod
+# coerce
+# eval
+# intern
+# object
+# property
+# reload
+# slice
+# staticmethod
+# super
+# type
 
 for name in dir(exceptions):
     if name[0] != "_":
         safe_builtins[name] = getattr(exceptions, name)
-
-
-def _full_read_guard(g_attr, g_item):
-    # Nested scope abuse!
-    # The arguments are used by class Wrapper
-    # safetype variable is used by guard()
-    safetype = {type(()): 1, type([]): 1, type({}): 1, type(''): 1}.has_key
-    def guard(ob, write=None, safetype=safetype):
-        # Don't bother wrapping simple types, or objects that claim to
-        # handle their own read security.
-        if safetype(type(ob)) or getattr(ob, '_guarded_reads', 0):
-            return ob
-        # ob is shared by class Wrapper, so the class instance wraps it.
-        class Wrapper:
-            def __len__(self):
-                # Required for slices with negative bounds
-                return len(ob)
-            def __getattr__(self, name):
-                return g_attr(ob, name)
-            def __getitem__(self, i):
-                # Must handle both item and slice access.
-                return g_item(ob, i)
-            # Optional, for combined read/write guard
-            def __setitem__(self, index, val):
-                write(ob)[index] = val
-            def __setattr__(self, attr, val):
-                setattr(write(ob), attr, val)
-        return Wrapper()
-    return guard
-
 
 def _write_wrapper():
     # Construct the write wrapper class
@@ -90,9 +115,9 @@ def _write_wrapper():
 def _full_write_guard():
     # Nested scope abuse!
     # safetype and Wrapper variables are used by guard()
-    safetype = {type([]): 1, type({}): 1}.has_key
+    safetype = {dict: True, list: True}.has_key
     Wrapper = _write_wrapper()
-    def guard(ob, safetype=safetype, Wrapper=Wrapper):
+    def guard(ob):
         # Don't bother wrapping simple types, or objects that claim to
         # handle their own write security.
         if safetype(type(ob)) or hasattr(ob, '_guarded_writes'):

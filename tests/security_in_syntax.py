@@ -50,3 +50,7 @@ def except_using_bad_name():
         # The name of choice (say, _write) is now assigned to an exception
         # object.  Hard to exploit, but conceivable.
         pass
+
+def keyword_arg_with_bad_name():
+    def f(okname=1, __badname=2):
+        pass

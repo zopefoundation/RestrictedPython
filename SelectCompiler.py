@@ -10,12 +10,10 @@
 # FOR A PARTICULAR PURPOSE
 #
 ##############################################################################
-'''
-Compiler selector.
-$Id: SelectCompiler.py,v 1.5 2003/11/06 17:11:49 shane Exp $
-'''
+"""Compiler selector.
 
-import sys
+$Id: SelectCompiler.py,v 1.6 2004/01/15 23:09:09 tseaver Exp $
+"""
 
 # Use the compiler from the standard library.
 import compiler

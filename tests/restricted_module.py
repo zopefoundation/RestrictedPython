@@ -1,4 +1,5 @@
 from __future__ import nested_scopes
+import sys
 
 def print0():
     print 'Hello, world!',
@@ -25,6 +26,18 @@ def printLines():
         for m in r:
             print m + n * len(r),
         print
+    return printed
+
+def try_map():
+    inc = lambda i: i+1
+    x = [1, 2, 3]
+    print map(inc, x),
+    return printed
+
+def try_apply():
+    def f(x, y, z):
+        return x + y + z
+    print f(*(300, 20), **{'z': 1}),
     return printed
 
 def primes():
@@ -57,6 +70,9 @@ def allowed_simple():
     s = 'a'
     s = s[:100] + 'b'
     s += 'c'
+    if sys.version_info >= (2, 3):
+        t = ['l', 'm', 'n', 'o', 'p', 'q']
+        t[1:5:2] = ['n', 'p']
     _ = q
 
     return q['x'] + q['y'] + q['z'] + r[0] + r[1] + r[2] + s
@@ -154,3 +170,7 @@ def nested_scopes_1():
     def f2():
         return a
     return f1() + f2()
+
+class Classic:
+    pass
+

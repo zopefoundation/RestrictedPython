@@ -11,13 +11,16 @@
 #
 ##############################################################################
 """Restricted Python Expressions
+
+$Id: Eval.py,v 1.6 2004/01/15 23:09:09 tseaver Exp $
 """
-__rcs_id__='$Id: Eval.py,v 1.5 2002/08/14 21:44:31 mj Exp $'
-__version__='$Revision: 1.5 $'[11:-2]
+
+__version__='$Revision: 1.6 $'[11:-2]
+
+from RestrictedPython import compile_restricted_eval
 
 from string import translate, strip
 import string
-compile_restricted_eval = None
 
 nltosp = string.maketrans('\r\n','  ')
 
@@ -30,8 +33,8 @@ def default_guarded_getitem(ob, index):
 PROFILE = 0
 
 class RestrictionCapableEval:
-    """A base class for restricted code.
-    """
+    """A base class for restricted code."""
+    
     globals = {'__builtins__': None}
     rcode = None  # restricted
     ucode = None  # unrestricted
@@ -52,12 +55,6 @@ class RestrictionCapableEval:
 
     def prepRestrictedCode(self):
         if self.rcode is None:
-            global compile_restricted_eval
-            if compile_restricted_eval is None:
-                # Late binding because this will import the whole
-                # compiler suite.
-                from RestrictedPython import compile_restricted_eval
-
             if PROFILE:
                 from time import clock
                 start = clock()
