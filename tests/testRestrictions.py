@@ -57,7 +57,7 @@ def create_rmodule():
     compile(source, fn, 'exec')
     # Now compile it for real
     code = compile_restricted(source, fn, 'exec')
-    rmodule = {'__builtins__':None}
+    rmodule = {'__builtins__':{'__import__':__import__, 'None':None}}
     builtins = getattr(__builtins__, '__dict__', __builtins__)
     for name in ('map', 'reduce', 'int', 'pow', 'range', 'filter',
                  'len', 'chr', 'ord',
@@ -249,6 +249,10 @@ class RestrictionTests(unittest.TestCase):
     def checkRot13(self):
         res = self.execFunc('rot13', 'Zope is k00l')
         assert (res == 'Mbcr vf x00y'), res
+
+    def checkNestedScopes1(self):
+        res = self.execFunc('nested_scopes_1')
+        assert (res == 2), res
 
     def checkUnrestrictedEval(self):
         expr = RestrictionCapableEval("{'a':[m.pop()]}['a'] + [m[0]]")

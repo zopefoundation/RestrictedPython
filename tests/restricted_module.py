@@ -1,3 +1,4 @@
+from __future__ import nested_scopes
 
 def print0():
     print 'Hello, world!',
@@ -136,4 +137,12 @@ def rot13(ss):
         res = res + mapping.get(c, c)
     return res
 
+def nested_scopes_1():
+    # Fails if 'a' is consumed by the first function.
+    a = 1
+    def f1():
+        return a
+    def f2():
+        return a
+    return f1() + f2()
 
