@@ -87,7 +87,7 @@ RestrictionMutator modifies a tree produced by
 compiler.transformer.Transformer, restricting and enhancing the
 code in various ways before sending it to pycodegen.
 '''
-__version__='$Revision: 1.6 $'[11:-2]
+__version__='$Revision: 1.7 $'[11:-2]
 
 from compiler import ast
 from compiler.transformer import parse
@@ -206,10 +206,11 @@ class RestrictionMutator:
         self.checkName(node, node.name)
         for argname in node.argnames:
             self.checkName(node, argname)
+        walker.visitSequence(node.defaults)
 
         former_funcinfo = self.funcinfo
         self.funcinfo = FuncInfo()
-        node = walker.defaultVisitNode(node)
+        node = walker.defaultVisitNode(node, exclude=('defaults',))
         self.prepBody(node.code.nodes)
         self.funcinfo = former_funcinfo
         return node

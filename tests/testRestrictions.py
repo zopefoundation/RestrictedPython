@@ -204,6 +204,9 @@ class RestrictionTests(unittest.TestCase):
     def checkAllowedWrite(self):
         self.execFunc('allowed_write', RestrictedObject())
 
+    def checkAllowedArgs(self):
+        self.execFunc('allowed_default_args', RestrictedObject())
+
     def checkDenied(self):
         for k in rmodule.keys():
             if k[:6] == 'denied':

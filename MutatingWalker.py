@@ -83,7 +83,7 @@
 # 
 ##############################################################################
 
-__version__='$Revision: 1.2 $'[11:-2]
+__version__='$Revision: 1.3 $'[11:-2]
 
 from compiler import ast
 
@@ -97,8 +97,10 @@ class MutatingWalker:
         self.visitor = visitor
         self._cache = {}
 
-    def defaultVisitNode(self, node, walker=None):
+    def defaultVisitNode(self, node, walker=None, exclude=None):
         for name, child in node.__dict__.items():
+            if exclude is not None and name in exclude:
+                continue
             v = self.dispatchObject(child)
             if v is not child:
                 # Replace the node.

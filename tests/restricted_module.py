@@ -42,6 +42,11 @@ def allowed_read(ob):
     print len(ob)
     return printed
 
+def allowed_default_args(ob):
+    def f(a=ob.allowed, s=ob.s):
+        return a, s
+
+
 def allowed_simple():
     q = {'x':'a'}
     q['y'] = 'b'
@@ -71,6 +76,10 @@ def denied_getattr(ob):
     #ob.disallowed += 1
     ob.disallowed = 1
     return ob.disallowed
+
+def denied_default_args(ob):
+    def f(d=ob.disallowed):
+        return d
 
 def denied_setattr(ob):
     ob.allowed = -1
