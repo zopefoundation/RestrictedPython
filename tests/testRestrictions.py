@@ -52,8 +52,7 @@ def find_source(fn, func):
 
 def get_source(func):
     """Less silly interface to find_source""" # Sheesh
-    code = func.func_code
-    return find_source(code.co_filename, code)[1]
+    return find_source(func.func_globals['__file__'], func.func_code)[1]
 
 def create_rmodule():
     global rmodule
