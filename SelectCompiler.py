@@ -12,12 +12,12 @@
 ##############################################################################
 '''
 Compiler selector.
-$Id: SelectCompiler.py,v 1.2 2001/12/21 19:34:47 shane Exp $
+$Id: SelectCompiler.py,v 1.3 2001/12/22 16:39:05 Brian Exp $
 '''
 
-try:
-    import compiler  # Should only be found if Python >= 2.2.
-except ImportError:
+import sys
+
+if sys.version_info[1] < 2:
     # Use the compiler_2_1 package.
     from compiler_2_1 import ast
     from compiler_2_1.transformer import parse
@@ -30,6 +30,7 @@ except ImportError:
          compile_restricted_eval
 else:
     # Use the compiler from the standard library.
+    import compiler
     from compiler import ast
     from compiler.transformer import parse
     from compiler.consts import OP_ASSIGN, OP_DELETE, OP_APPLY
