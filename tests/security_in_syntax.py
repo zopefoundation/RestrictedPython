@@ -50,4 +50,3 @@ def except_using_bad_name():
         # The name of choice (say, _write) is now assigned to an exception
         # object.  Hard to exploit, but conceivable.
         pass
-
