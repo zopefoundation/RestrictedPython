@@ -8,7 +8,7 @@ if __name__=='__main__':
 import unittest
 from RestrictedPython import compile_restricted, PrintCollector
 from RestrictedPython.Eval import RestrictionCapableEval
-from RestrictedPython.tests import security_in_syntax
+from RestrictedPython.tests import restricted_module, security_in_syntax
 from types import FunctionType
 
 if __name__=='__main__':
@@ -267,6 +267,16 @@ class RestrictionTests(unittest.TestCase):
         v = [12, 34]
         res = expr(m=v)
         assert res == expect
+
+    def checkStackSize(self):
+        for k, rfunc in rmodule.items():
+            if not k.startswith('_') and hasattr(rfunc, 'func_code'):
+                rss = rfunc.func_code.co_stacksize
+                ss = getattr(restricted_module, k).func_code.co_stacksize
+                self.failUnless(
+                    rss >= ss, 'The stack size estimate for %s() '
+                    'should have been at least %d, but was only %d'
+                    % (k, ss, rss))
 
 def test_suite():
     return unittest.makeSuite(RestrictionTests, 'check')
