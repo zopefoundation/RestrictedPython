@@ -84,7 +84,7 @@
 ##############################################################################
 from __future__ import nested_scopes
 
-__version__='$Revision: 1.3 $'[11:-2]
+__version__='$Revision: 1.4 $'[11:-2]
 
 import new
 
@@ -149,16 +149,14 @@ def _write_wrapper():
             return len(self.ob)
         def __init__(self, ob):
             self.__dict__['ob'] = ob
-    # Generate class methods
-    d = Wrapper.__dict__
-    for name, error_msg in (
-        ('setitem', 'object does not support item or slice assignment'),
-        ('delitem', 'object does not support item or slice deletion'),
-        ('setattr', 'attribute-less object (assign or del)'),
-        ('delattr', 'attribute-less object (assign or del)'),
-        ):
-        fname = '__%s__' % name
-        d[fname] = _handler('__guarded_%s__' % name, error_msg)
+        __setitem__ = _handler('__guarded_setitem__',
+          'object does not support item or slice assignment')
+        __delitem__ = _handler('__guarded_delitem__',
+          'object does not support item or slice assignment')
+        __setattr__ = _handler('__guarded_setattr__',
+          'attribute-less object (assign or del)')
+        __delattr__ = _handler('__guarded_delattr__',
+          'attribute-less object (assign or del)')
     return Wrapper
 
 def _full_write_guard():
