@@ -15,11 +15,9 @@ RestrictionMutator modifies a tree produced by
 compiler.transformer.Transformer, restricting and enhancing the
 code in various ways before sending it to pycodegen.
 '''
-__version__='$Revision: 1.8 $'[11:-2]
+__version__='$Revision: 1.9 $'[11:-2]
 
-from compiler import ast
-from compiler.transformer import parse
-from compiler.consts import OP_ASSIGN, OP_DELETE, OP_APPLY
+from SelectCompiler import ast, parse, OP_ASSIGN, OP_DELETE, OP_APPLY
 
 # These utility functions allow us to generate AST subtrees without
 # line number attributes.  These trees can then be inserted into other
@@ -50,7 +48,9 @@ def exprNode(txt):
 # local, and therefore efficient to access, in function scopes.
 _print_target_name = ast.Name('_print')
 _getattr_name = ast.Name('_getattr')
+_getattr_name_expr = ast.Name('_getattr_')
 _getitem_name = ast.Name('_getitem')
+_getitem_name_expr = ast.Name('_getitem_')
 _write_guard_name = ast.Name('_write')
 
 # Constants.
@@ -78,9 +78,11 @@ class FuncInfo:
     _getattr_used = 0
     _getitem_used = 0
     _write_used = 0
+    _is_suite = 0  # True for modules and functions, false for expressions
 
 
 class RestrictionMutator:
+
     def __init__(self):
         self.funcinfo = FuncInfo()
         self.warnings = []
@@ -113,6 +115,8 @@ class RestrictionMutator:
                        'because it starts with "_".' % name)
 
     def prepBody(self, body):
+        """Appends prep code to the beginning of a code suite.
+        """
         info = self.funcinfo
         if info._print_used or info._printed_used:
             # Add code at top for creating _print_target
@@ -138,6 +142,7 @@ class RestrictionMutator:
 
         former_funcinfo = self.funcinfo
         self.funcinfo = FuncInfo()
+        self.funcinfo._is_suite = 1
         node = walker.defaultVisitNode(node, exclude=('defaults',))
         self.prepBody(node.code.nodes)
         self.funcinfo = former_funcinfo
@@ -189,8 +194,11 @@ class RestrictionMutator:
             #expr.append(_write_guard_name)
             #self.funcinfo._write_used = 1
         self.funcinfo._getattr_used = 1
-        return ast.CallFunc(_getattr_name,
-                            [node.expr, ast.Const(node.attrname)])
+        if self.funcinfo._is_suite:
+            ga = _getattr_name
+        else:
+            ga = _getattr_name_expr
+        return ast.CallFunc(ga, [node.expr, ast.Const(node.attrname)])
 
     def visitSubscript(self, node, walker):
         node = walker.defaultVisitNode(node)
@@ -223,7 +231,11 @@ class RestrictionMutator:
                 if upper is None:
                     upper = _None_const
                 subs = ast.Sliceobj([lower, upper])
-            return ast.CallFunc(_getitem_name, [node.expr, subs])
+            if self.funcinfo._is_suite:
+                gi = _getitem_name
+            else:
+                gi = _getitem_name_expr
+            return ast.CallFunc(gi, [node.expr, subs])
         elif node.flags in (OP_DELETE, OP_ASSIGN):
             # set or remove subscript or slice
             node.expr = ast.CallFunc(_write_guard_name, [node.expr])
@@ -251,6 +263,7 @@ class RestrictionMutator:
         return walker.defaultVisitNode(node)
 
     def visitModule(self, node, walker):
+        self.funcinfo._is_suite = 1
         node = walker.defaultVisitNode(node)
         self.prepBody(node.node.nodes)
         return node

@@ -11,9 +11,9 @@
 # 
 ##############################################################################
 
-__version__='$Revision: 1.4 $'[11:-2]
+__version__='$Revision: 1.5 $'[11:-2]
 
-from compiler import ast
+from SelectCompiler import ast
 
 ListType = type([])
 TupleType = type(())

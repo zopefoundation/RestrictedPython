@@ -12,14 +12,9 @@
 ##############################################################################
 '''
 RestrictedPython package.
-$Id: __init__.py,v 1.3 2001/11/28 15:51:11 matt Exp $
+$Id: __init__.py,v 1.4 2001/12/21 19:34:47 shane Exp $
 '''
 
-from Compilers import \
-     compile_restricted, \
-     compile_restricted_function, \
-     compile_restricted_exec, \
-     compile_restricted_eval
-
+from SelectCompiler import *
 from PrintCollector import PrintCollector
 

@@ -11,7 +11,7 @@
 # 
 ##############################################################################
 
-__version__='$Revision: 1.3 $'[11:-2]
+__version__='$Revision: 1.2 $'[11:-2]
 
 import sys
 from traceback import format_exception_only
@@ -27,7 +27,7 @@ def getSyntaxError(source, mode):
     return None, err, [], {}
 
 from parser import ParserError
-from compiler.transformer import Transformer
+from compiler_2_1.transformer import Transformer
 
 def tryParsing(source, mode):
     if mode == 'eval':
@@ -41,7 +41,7 @@ def tryParsing(source, mode):
 
 import MutatingWalker
 from RestrictionMutator import RestrictionMutator
-from compiler import ast, visitor, pycodegen
+from compiler_2_1 import ast, visitor, pycodegen
 
 def compile_restricted_function(p, body, name, filename):
     '''Compile a restricted code object for a function.
