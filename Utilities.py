@@ -83,9 +83,10 @@
 # 
 ##############################################################################
 
-__version__='$Revision: 1.2 $'[11:-2]
+__version__='$Revision: 1.3 $'[11:-2]
 
 import string, math, random, whrandom
+import DocumentTemplate.sequence
 
 utility_builtins = {}
 
@@ -93,6 +94,7 @@ utility_builtins['string'] = string
 utility_builtins['math'] = math
 utility_builtins['random'] = random
 utility_builtins['whrandom'] = whrandom
+utility_builtins['sequence'] = DocumentTemplate.sequence
 
 try:
     import DateTime
