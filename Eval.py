@@ -84,8 +84,8 @@
 ##############################################################################
 """Restricted Python Expressions
 """
-__rcs_id__='$Id: Eval.py,v 1.2 2001/04/27 20:27:51 shane Exp $'
-__version__='$Revision: 1.2 $'[11:-2]
+__rcs_id__='$Id: Eval.py,v 1.3 2001/06/21 17:45:13 shane Exp $'
+__version__='$Revision: 1.3 $'[11:-2]
 
 from string import translate, strip
 import string
@@ -93,9 +93,11 @@ compile_restricted_eval = None
 
 nltosp = string.maketrans('\r\n','  ')
 
-def default_read_guard(ob):
+default_guarded_getattr = getattr # No restrictions.
+
+def default_guarded_getitem(ob, index):
     # No restrictions.
-    return ob
+    return ob[index]
 
 PROFILE = 0
 
@@ -172,7 +174,8 @@ class RestrictionCapableEval:
         # This is meant to be overridden.
         self.prepRestrictedCode()
         code = self.rcode
-        d = {'_read_': default_read_guard}
+        d = {'_getattr_': default_guarded_getattr,
+             '_getitem_': default_guarded_getitem}
         d.update(self.globals)
         has_key = d.has_key
         for name in self.used:

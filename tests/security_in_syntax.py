@@ -4,20 +4,20 @@
 # Each function in this module is compiled using compile_restricted().
 
 def overrideGuardWithFunction():
-    def _guard(o): return o
+    def _getattr(o): return o
 
 def overrideGuardWithLambda():
-    lambda o, _guard=None: o
+    lambda o, _getattr=None: o
 
 def overrideGuardWithClass():
-    class _guard:
+    class _getattr:
         pass
 
 def overrideGuardWithName():
-    _guard = None
+    _getattr = None
 
 def overrideGuardWithArgument():
-    def f(_guard=None):
+    def f(_getattr=None):
         pass
 
 def reserved_names():

@@ -106,34 +106,37 @@ class RestrictedObject:
     def __setslice__(self, lo, hi, value):
         raise AccessDenied
 
+    write = DisallowedObject
+
+
+def guarded_getattr(ob, name):
+    v = getattr(ob, name)
+    if v is DisallowedObject:
+        raise AccessDenied
+    return v
+
+SliceType = type(slice(0))
+def guarded_getitem(ob, index):
+    if type(index) is SliceType and index.step is None:
+        start = index.start
+        stop = index.stop
+        if start is None:
+            start = 0
+        if stop is None:
+            v = ob[start:]
+        else:
+            v = ob[start:stop]
+    else:
+        v = ob[index]
+    if v is DisallowedObject:
+        raise AccessDenied
+    return v
+
 
 class TestGuard:
     '''A guard class'''
     def __init__(self, _ob, write=None):
         self.__dict__['_ob'] = _ob
-
-    # Read guard methods
-    def __len__(self):
-        return len(self.__dict__['_ob'])
-
-    def __getattr__(self, name):
-        _ob = self.__dict__['_ob']
-        v = getattr(_ob, name)
-        if v is DisallowedObject:
-            raise AccessDenied
-        return v
-
-    def __getitem__(self, index):
-        # Can receive an Ellipsis or "slice" instance.
-        _ob = self.__dict__['_ob']
-        v = _ob[index]
-        if v is DisallowedObject:
-            raise AccessDenied
-        return v
-
-    def __getslice__(self, lo, hi):
-        _ob = self.__dict__['_ob']
-        return _ob[lo:hi]
 
     # Write guard methods
 
@@ -154,20 +157,30 @@ class TestGuard:
         _ob = self.__dict__['_ob']
         _ob[lo:hi] = value
 
-    attribute_of_anything = 98.6
+##    attribute_of_anything = 98.6
 
 class RestrictionTests(unittest.TestCase):
     def execFunc(self, name, *args, **kw):
         func = rmodule[name]
-        func.func_globals.update({'_read_': TestGuard,
+        func.func_globals.update({'_getattr_': guarded_getattr,
+                                  '_getitem_': guarded_getitem,
                                   '_write_': TestGuard,
                                   '_print_': PrintCollector})
         return func(*args, **kw)
 
     def checkPrint(self):
-        for i in range(3):
+        for i in range(2):
             res = self.execFunc('print%s' % i)
             assert res == 'Hello, world!', res
+
+    def checkPrintToNone(self):
+        try:
+            res = self.execFunc('printToNone')
+        except AttributeError:
+            # Passed.  "None" has no "write" attribute.
+            pass
+        else:
+            assert 0, res
 
     def checkPrintLines(self):
         res = self.execFunc('printLines')
@@ -221,9 +234,9 @@ class RestrictionTests(unittest.TestCase):
                 else:
                     raise AssertionError, '%s should not have compiled' % k
 
-    def checkStrangeAttribute(self):
-        res = self.execFunc('strange_attribute')
-        assert res == 98.6, res
+##    def checkStrangeAttribute(self):
+##        res = self.execFunc('strange_attribute')
+##        assert res == 98.6, res
 
     def checkOrderOfOperations(self):
         res = self.execFunc('order_of_operations')

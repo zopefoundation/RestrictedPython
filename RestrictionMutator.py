@@ -87,7 +87,7 @@ RestrictionMutator modifies a tree produced by
 compiler.transformer.Transformer, restricting and enhancing the
 code in various ways before sending it to pycodegen.
 '''
-__version__='$Revision: 1.4 $'[11:-2]
+__version__='$Revision: 1.5 $'[11:-2]
 
 from compiler import ast
 from compiler.transformer import parse
@@ -114,22 +114,27 @@ def exprNode(txt):
     '''Make a "clean" expression node'''
     return stmtNode(txt).expr
 
-# There should be three objects in the global namespace.
+# There should be up to four objects in the global namespace.
 # If a wrapper function or print target is needed in a particular
 # module or function, it is obtained from one of these objects.
 # It is stored in a variable with the same name as the global
 # object, but without a single trailing underscore.  This variable is
 # local, and therefore efficient to access, in function scopes.
 _print_target_name = ast.Name('_print')
-_read_guard_name = ast.Name('_read')
+_getattr_name = ast.Name('_getattr')
+_getitem_name = ast.Name('_getitem')
 _write_guard_name = ast.Name('_write')
+
+# Constants.
+_None_const = ast.Const(None)
+_write_const = ast.Const('write')
 
 # Example prep code:
 #
-# global _read_
-# _read = _read_
+# global _getattr_
+# _getattr = _getattr_
 _prep_code = {}
-for _n in ('read', 'write', 'print'):
+for _n in ('getattr', 'getitem', 'write', 'print'):
     _prep_code[_n] = [ast.Global(['_%s_' % _n]),
                       stmtNode('_%s = _%s_' % (_n, _n))]
 # Call the global _print instead of copying it.
@@ -142,7 +147,8 @@ _printed_expr = exprNode('_print()')
 class FuncInfo:
     _print_used = 0
     _printed_used = 0
-    _read_used = 0
+    _getattr_used = 0
+    _getitem_used = 0
     _write_used = 0
 
 
@@ -189,8 +195,10 @@ class RestrictionMutator:
             elif not info._print_used:
                 self.warnings.append(
                     "Doesn't print, but reads 'printed' variable.")
-        if info._read_used:
-            body[0:0] = _prep_code['read']
+        if info._getattr_used:
+            body[0:0] = _prep_code['getattr']
+        if info._getitem_used:
+            body[0:0] = _prep_code['getitem']
         if info._write_used:
             body[0:0] = _prep_code['write']
 
@@ -217,7 +225,13 @@ class RestrictionMutator:
         if node.dest is None:
             node.dest = _print_target_name
         else:
-            node.dest = ast.Or([node.dest, _print_target_name])
+            self.funcinfo._getattr_used = 1
+            # Pre-validate access to the "write" attribute.
+            # "print >> ob, x" becomes
+            # "print >> (_getattr(ob, 'write') and ob), x"
+            node.dest = ast.And([
+                ast.CallFunc(_getattr_name, [node.dest, _write_const]),
+                node.dest])
         return node
 
     visitPrintnl = visitPrint
@@ -238,26 +252,49 @@ class RestrictionMutator:
     def visitGetattr(self, node, walker):
         self.checkAttrName(node)
         node = walker.defaultVisitNode(node)
-        expr = [node.expr]
-        if getattr(node, 'use_dual_guard', 0):
+        if getattr(node, 'in_aug_assign', 0):
             # We're in an augmented assignment
-            expr.append(_write_guard_name)
-            self.funcinfo._write_used = 1
-        node.expr = ast.CallFunc(_read_guard_name, expr)
-        self.funcinfo._read_used = 1
-        return node
+            # We might support this later...
+            self.error(node, 'Augmented assignment of '
+                       'attributes is not allowed.')
+            #expr.append(_write_guard_name)
+            #self.funcinfo._write_used = 1
+        self.funcinfo._getattr_used = 1
+        return ast.CallFunc(_getattr_name,
+                            [node.expr, ast.Const(node.attrname)])
 
     def visitSubscript(self, node, walker):
         node = walker.defaultVisitNode(node)
         if node.flags == OP_APPLY:
             # get subscript or slice
-            expr = [node.expr]
-            if getattr(node, 'use_dual_guard', 0):
+            if getattr(node, 'in_aug_assign', 0):
                 # We're in an augmented assignment
-                expr.append(_write_guard_name)
-                self.funcinfo._write_used = 1
-            node.expr = ast.CallFunc(_read_guard_name, expr)
-            self.funcinfo._read_used = 1
+                # We might support this later...
+                self.error(node, 'Augmented assignment of '
+                           'object items and slices is not allowed.')
+                #expr.append(_write_guard_name)
+                #self.funcinfo._write_used = 1
+            self.funcinfo._getitem_used = 1
+            if hasattr(node, 'subs'):
+                # Subscript.
+                subs = node.subs
+                if len(subs) > 1:
+                    # example: ob[1,2]
+                    subs = ast.Tuple(subs)
+                else:
+                    # example: ob[1]
+                    subs = subs[0]
+            else:
+                # Slice.
+                # example: obj[0:2]
+                lower = node.lower
+                if lower is None:
+                    lower = _None_const
+                upper = node.upper
+                if upper is None:
+                    upper = _None_const
+                subs = ast.Sliceobj([lower, upper])
+            return ast.CallFunc(_getitem_name, [node.expr, subs])
         elif node.flags in (OP_DELETE, OP_ASSIGN):
             # set or remove subscript or slice
             node.expr = ast.CallFunc(_write_guard_name, [node.expr])
@@ -287,75 +324,6 @@ class RestrictionMutator:
         return node
 
     def visitAugAssign(self, node, walker):
-        node.node.use_dual_guard = 1
+        node.node.in_aug_assign = 1
         return walker.defaultVisitNode(node)
 
-
-if __name__ == '__main__':
-    # A minimal test.
-    from compiler import visitor, pycodegen
-
-    class Noisy:
-        '''Test guard class that babbles about accesses'''
-        def __init__(self, _ob):
-            self.__dict__['_ob'] = _ob
-        # Read guard methods
-        def __len__(self):
-            # This is called by the interpreter before __getslice__().
-            _ob = self.__dict__['_ob']
-            print '__len__', `_ob`
-            return len(_ob)
-        def __getattr__(self, name):
-            _ob = self.__dict__['_ob']
-            print '__getattr__', `_ob`, name
-            return getattr(_ob, name)
-        def __getitem__(self, index):
-            # Can receive an Ellipsis or "slice" instance.
-            _ob = self.__dict__['_ob']
-            print '__getitem__', `_ob`, index
-            return _ob[index]
-        def __getslice__(self, lo, hi):
-            _ob = self.__dict__['_ob']
-            print '__getslice__', `_ob`, lo, hi
-            return _ob[lo:hi]
-        # Write guard methods
-        def __setattr__(self, name, value):
-            _ob = self.__dict__['_ob']
-            print '__setattr__', `_ob`, name, value
-            setattr(_ob, name, value)
-        def __setitem__(self, index, value):
-            _ob = self.__dict__['_ob']
-            print '__setitem__', `_ob`, index, value
-            _ob[index] = value
-        def __setslice__(self, lo, hi, value):
-            _ob = self.__dict__['_ob']
-            print '__setslice__', `_ob`, lo, hi, value
-            _ob[lo:hi] = value
-
-    tree = parse('''
-def f():
- print "Hello",
- print "... wOrLd!".lower()
- x = {}
- x['p'] = printed[1:-1]
- x['p'] += (lambda ob: ob * 2)(printed)
- return x['p']
-''')
-
-    MutatingWalker.walk(tree, RestrictionMutator())
-    print tree
-    gen = pycodegen.NestedScopeModuleCodeGenerator('some_python_script')
-    visitor.walk(tree, gen, verbose=1)
-    code = gen.getCode()
-    dict = {'__builtins__': None}
-    exec code in dict
-    from PrintCollector import PrintCollector
-    f = dict['f']
-    f.func_globals.update({
-        '_print_target_class': PrintCollector,
-        '_read_guard_': Noisy,
-        '_write_guard_': Noisy,
-        })
-    print f()
-    #import dis
-    #dis.dis(f.func_code)

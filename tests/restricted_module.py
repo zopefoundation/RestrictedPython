@@ -8,7 +8,7 @@ def print1():
     print 'world!',
     return printed
 
-def print2():
+def printToNone():
     x = None
     print >>x, 'Hello, world!',
     return printed
@@ -53,21 +53,26 @@ def allowed_simple():
 
 def allowed_write(ob):
     ob.writeable = 1
-    ob.writeable += 1
+    #ob.writeable += 1
     [1 for ob.writeable in 1,2]
     ob['safe'] = 2
-    ob['safe'] += 2
+    #ob['safe'] += 2
     [1 for ob['safe'] in 1,2]
 
+def denied_print(ob):
+    print >> ob, 'Hello, world!',
+
 def denied_getattr(ob):
-    ob.disallowed += 1
+    #ob.disallowed += 1
+    ob.disallowed = 1
     return ob.disallowed
 
 def denied_setattr(ob):
     ob.allowed = -1
 
 def denied_setattr2(ob):
-    ob.allowed += -1
+    #ob.allowed += -1
+    ob.allowed = -1
 
 def denied_setattr3(ob):
     [1 for ob.allowed in 1,2]
@@ -76,13 +81,15 @@ def denied_getitem(ob):
     ob[1]
 
 def denied_getitem2(ob):
-    ob[1] += 1
+    #ob[1] += 1
+    ob[1]
     
 def denied_setitem(ob):
     ob['x'] = 2
 
 def denied_setitem2(ob):
-    ob[0] += 2
+    #ob[0] += 2
+    ob['x'] = 2
 
 def denied_setitem3(ob):
     [1 for ob['x'] in 1,2]
@@ -91,16 +98,17 @@ def denied_setslice(ob):
     ob[0:1] = 'a'
 
 def denied_setslice2(ob):
-    ob[0:1] += 'a'
+    #ob[0:1] += 'a'
+    ob[0:1] = 'a'
 
 def denied_setslice3(ob):
     [1 for ob[0:1] in 1,2]
 
-def strange_attribute():
-    # If a guard has attributes with names that don't start with an
-    # underscore, those attributes appear to be an attribute of
-    # anything.
-    return [].attribute_of_anything
+##def strange_attribute():
+##    # If a guard has attributes with names that don't start with an
+##    # underscore, those attributes appear to be an attribute of
+##    # anything.
+##    return [].attribute_of_anything
 
 def order_of_operations():
     return 3 * 4 * -2 + 2 * 12
