@@ -84,7 +84,7 @@
 ##############################################################################
 from __future__ import nested_scopes
 
-__version__='$Revision: 1.4 $'[11:-2]
+__version__='$Revision: 1.5 $'[11:-2]
 
 import new
 
@@ -93,6 +93,7 @@ for name in ('None', 'abs', 'chr', 'divmod', 'float', 'hash', 'hex', 'int',
              'len', 'max', 'min', 'oct', 'ord', 'round', 'str', 'pow',
              'apply', 'callable', 'cmp', 'complex', 'isinstance',
              'issubclass', 'long', 'repr', 'range', 'list', 'tuple',
+             'unichr', 'unicode',
              'Exception',
              'ArithmeticError', 'AssertionError', 'AttributeError',
              'EOFError', 'EnvironmentError', 'FloatingPointError',
