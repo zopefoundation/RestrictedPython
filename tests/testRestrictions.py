@@ -1,4 +1,3 @@
-
 from string import rfind
 import sys, os
 
@@ -283,7 +282,7 @@ def main():
     runner.run(alltests)
 
 def debug():
-   test_suite().debug()
+    test_suite().debug()
 
 def pdebug():
     import pdb

@@ -58,7 +58,7 @@ def allowed_simple():
     s = s[:100] + 'b'
     s += 'c'
     _ = q
-    
+
     return q['x'] + q['y'] + q['z'] + r[0] + r[1] + r[2] + s
 
 def allowed_write(ob):
@@ -97,7 +97,7 @@ def denied_getitem(ob):
 def denied_getitem2(ob):
     #ob[1] += 1
     ob[1]
-    
+
 def denied_setitem(ob):
     ob['x'] = 2
 
@@ -154,4 +154,3 @@ def nested_scopes_1():
     def f2():
         return a
     return f1() + f2()
-

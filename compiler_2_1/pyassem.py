@@ -657,7 +657,7 @@ def twobyte(val):
 
 class LineAddrTable:
     """lnotab
-    
+
     This class builds the lnotab, which is documented in compile.c.
     Here's a brief recap:
 

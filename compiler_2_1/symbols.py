@@ -130,7 +130,7 @@ class Scope:
         rather than free.
 
         Be careful to stop if a child does not think the name is
-        free. 
+        free.
         """
         self.globals[name] = 1
         if self.frees.has_key(name):
@@ -171,7 +171,7 @@ class Scope:
 
 class ModuleScope(Scope):
     __super_init = Scope.__init__
-    
+
     def __init__(self):
         self.__super_init("global", self)
 
@@ -182,7 +182,7 @@ class LambdaScope(FunctionScope):
     __super_init = Scope.__init__
 
     __counter = 1
-    
+
     def __init__(self, module, klass=None):
         i = self.__counter
         self.__counter += 1
@@ -198,7 +198,7 @@ class SymbolVisitor:
     def __init__(self):
         self.scopes = {}
         self.klass = None
-        
+
     # node that define new scopes
 
     def visitModule(self, node):
@@ -217,7 +217,7 @@ class SymbolVisitor:
         self.visit(node.code, scope)
         self.handle_free_vars(scope, parent)
         scope.DEBUG()
-        
+
     def visitLambda(self, node, parent):
         for n in node.defaults:
             self.visit(n, parent)
@@ -368,8 +368,8 @@ if __name__ == "__main__":
 
     def get_names(syms):
         return [s for s in [s.get_name() for s in syms.get_symbols()]
-                if not (s.startswith('_[') or s.startswith('.'))]        
-    
+                if not (s.startswith('_[') or s.startswith('.'))]
+
     for file in sys.argv[1:]:
         print file
         f = open(file)

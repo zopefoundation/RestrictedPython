@@ -496,7 +496,7 @@ class Function(Node):
             self.varargs = 1
         if flags & CO_VARKEYWORDS:
             self.kwargs = 1
-    
+
 
     def _getChildren(self):
         return self.name, self.argnames, self.defaults, self.flags, self.doc, self.code

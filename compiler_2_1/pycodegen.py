@@ -143,7 +143,7 @@ class CodeGenerator:
     NameFinder, FunctionGen, and ClassGen.  These attributes can be
     defined in the initClass() method, which is a hook for
     initializing these methods after all the classes have been
-    defined. 
+    defined.
     """
 
     optimized = 0 # is namespace access optimized?
@@ -245,7 +245,7 @@ class CodeGenerator:
             self.emit(prefix + '_NAME', name)
 
     def set_lineno(self, node, force=0):
-        """Emit SET_LINENO if node has lineno attribute and it is 
+        """Emit SET_LINENO if node has lineno attribute and it is
         different than the last lineno emitted.
 
         Returns true if SET_LINENO was emitted.
@@ -475,7 +475,7 @@ class CodeGenerator:
 
     # list comprehensions
     __list_count = 0
-    
+
     def visitListComp(self, node):
         self.set_lineno(node)
         # setup list
@@ -485,7 +485,7 @@ class CodeGenerator:
         self.emit('DUP_TOP')
         self.emit('LOAD_ATTR', 'append')
         self._implicitNameOp('STORE', append)
-        
+
         stack = []
         for i, for_ in zip(range(len(node.quals)), node.quals):
             start, anchor = self.visit(for_)
@@ -500,7 +500,7 @@ class CodeGenerator:
         self.visit(node.expr)
         self.emit('CALL_FUNCTION', 1)
         self.emit('POP_TOP')
-        
+
         for start, cont, anchor in stack:
             if cont:
                 skip_one = self.newBlock()
@@ -511,7 +511,7 @@ class CodeGenerator:
             self.emit('JUMP_ABSOLUTE', start)
             self.startBlock(anchor)
         self._implicitNameOp('DELETE', append)
-        
+
         self.__list_count = self.__list_count - 1
 
     def visitListCompFor(self, node):
@@ -592,7 +592,7 @@ class CodeGenerator:
         self.setups.pop()
         self.emit('JUMP_FORWARD', lElse)
         self.startBlock(handlers)
-        
+
         last = len(node.handlers) - 1
         for i in range(len(node.handlers)):
             expr, target, body = node.handlers[i]
@@ -623,7 +623,7 @@ class CodeGenerator:
             self.nextBlock(lElse)
             self.visit(node.else_)
         self.nextBlock(end)
-    
+
     def visitTryFinally(self, node):
         body = self.newBlock()
         final = self.newBlock()
@@ -662,7 +662,7 @@ class CodeGenerator:
     def visitName(self, node):
         self.set_lineno(node)
         self.loadName(node.name)
-        
+
     def visitPass(self, node):
         self.set_lineno(node)
 
@@ -1104,7 +1104,7 @@ class NestedScopeCodeGenerator(CodeGenerator):
         self.emit('CALL_FUNCTION', 0)
         self.emit('BUILD_CLASS')
         self.storeName(node.name)
-        
+
 
 class LGBScopeMixin:
     """Defines initClass() for Python 2.1-compatible scoping"""
@@ -1124,7 +1124,7 @@ class ModuleCodeGenerator(LGBScopeMixin, CodeGenerator):
     __super_init = CodeGenerator.__init__
 
     scopes = None
-    
+
     def __init__(self, filename):
         self.graph = pyassem.PyFlowGraph("<module>", filename)
         self.__super_init(filename)
@@ -1132,7 +1132,7 @@ class ModuleCodeGenerator(LGBScopeMixin, CodeGenerator):
 class NestedScopeModuleCodeGenerator(NestedScopeMixin,
                                      NestedScopeCodeGenerator):
     __super_init = CodeGenerator.__init__
-    
+
     def __init__(self, filename):
         self.graph = pyassem.PyFlowGraph("<module>", filename)
         self.__super_init(filename)
@@ -1153,8 +1153,8 @@ class AbstractFunctionCode:
         else:
             name = func.name
         args, hasTupleArg = generateArgList(func.argnames)
-        self.graph = pyassem.PyFlowGraph(name, filename, args, 
-                                         optimized=1) 
+        self.graph = pyassem.PyFlowGraph(name, filename, args,
+                                         optimized=1)
         self.isLambda = isLambda
         self.super_init(filename)
 
@@ -1183,7 +1183,7 @@ class AbstractFunctionCode:
             if type(arg) == types.TupleType:
                 self.emit('LOAD_FAST', '.%d' % (i * 2))
                 self.unpackSequence(arg)
-                        
+
     def unpackSequence(self, tup):
         if VERSION > 1:
             self.emit('UNPACK_SEQUENCE', len(tup))
@@ -1198,7 +1198,7 @@ class AbstractFunctionCode:
     unpackTuple = unpackSequence
 
 class FunctionCodeGenerator(LGBScopeMixin, AbstractFunctionCode,
-                            CodeGenerator): 
+                            CodeGenerator):
     super_init = CodeGenerator.__init__ # call be other init
     scopes = None
 

@@ -64,4 +64,3 @@ def mangle(name, klass):
         klass = klass[:MANGLE_LEN-tlen]
 
     return "_%s%s" % (klass, name)
-

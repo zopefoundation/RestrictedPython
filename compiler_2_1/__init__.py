@@ -21,4 +21,3 @@ compile(filename)
 from transformer import parse, parseFile
 from visitor import walk
 from pycodegen import compile
-

@@ -1,18 +1,18 @@
 ##############################################################################
 #
 # Copyright (c) 2001 Zope Corporation and Contributors. All Rights Reserved.
-# 
+#
 # This software is subject to the provisions of the Zope Public License,
 # Version 2.0 (ZPL).  A copy of the ZPL should accompany this distribution.
 # THIS SOFTWARE IS PROVIDED "AS IS" AND ANY AND ALL EXPRESS OR IMPLIED
 # WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
 # WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 # FOR A PARTICULAR PURPOSE
-# 
+#
 ##############################################################################
 from __future__ import nested_scopes
 
-__version__='$Revision: 1.7 $'[11:-2]
+__version__='$Revision: 1.8 $'[11:-2]
 
 import new
 
@@ -58,7 +58,7 @@ def _full_read_guard(g_attr, g_item):
             def __setattr__(self, attr, val):
                 setattr(write(ob), attr, val)
         return Wrapper()
-    return guard 
+    return guard
 
 
 def _write_wrapper():
@@ -100,7 +100,7 @@ def _full_write_guard():
             return ob
         # Hand the object to the Wrapper instance, then return the instance.
         return Wrapper(ob)
-    return guard 
+    return guard
 full_write_guard = _full_write_guard()
 
 def guarded_setattr(object, name, value):
@@ -110,7 +110,3 @@ safe_builtins['setattr'] = guarded_setattr
 def guarded_delattr(object, name):
     delattr(full_write_guard(object), name)
 safe_builtins['delattr'] = guarded_delattr
-
-
-
-

@@ -1,17 +1,17 @@
 ##############################################################################
 #
 # Copyright (c) 2001 Zope Corporation and Contributors. All Rights Reserved.
-# 
+#
 # This software is subject to the provisions of the Zope Public License,
 # Version 2.0 (ZPL).  A copy of the ZPL should accompany this distribution.
 # THIS SOFTWARE IS PROVIDED "AS IS" AND ANY AND ALL EXPRESS OR IMPLIED
 # WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
 # WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 # FOR A PARTICULAR PURPOSE
-# 
+#
 ##############################################################################
 
-__version__='$Revision: 1.2 $'[11:-2]
+__version__='$Revision: 1.3 $'[11:-2]
 
 import sys
 from traceback import format_exception_only
@@ -56,7 +56,7 @@ def compile_restricted_function(p, body, name, filename):
     if err:
         if len(err) > 1:
             # Drop the first line of the error and adjust the next two.
-            err[1].pop(0) 
+            err[1].pop(0)
             err[1][0] = 'parameters: %s\n' % err[1][0][10:-8]
             err[1][1] = '  ' + err[1][1]
         return err
@@ -94,38 +94,38 @@ def compile_restricted_exec(s, filename='<string>', nested_scopes=1):
     return gen.getCode(), (), rm.warnings, rm.used_names
 
 if 1:
-  def compile_restricted_eval(s, filename='<string>', nested_scopes=1):
-    '''Compile a restricted expression.'''
-    r = compile_restricted_exec('def f(): return \\\n' + s, filename,
-                                nested_scopes)
-    err = r[1]
-    if err:
-        if len(err) > 1:
-            err.pop(0) # Discard first line of error
-    else:
-        # Extract the code object representing the function body
-        r = (r[0].co_consts[1],) + r[1:]
-    return r
+    def compile_restricted_eval(s, filename='<string>', nested_scopes=1):
+        '''Compile a restricted expression.'''
+        r = compile_restricted_exec('def f(): return \\\n' + s, filename,
+                                    nested_scopes)
+        err = r[1]
+        if err:
+            if len(err) > 1:
+                err.pop(0) # Discard first line of error
+        else:
+            # Extract the code object representing the function body
+            r = (r[0].co_consts[1],) + r[1:]
+        return r
 
 else:
 
-  def compile_restricted_eval(s, filename='<string>'):
-    '''Compile a restricted expression.'''
-    rm = RestrictionMutator()
-    tree, err = tryParsing(s, 'eval')
-    if err:
-        err[1].pop(0) # Discard first line of error
-        return err
-    MutatingWalker.walk(tree, rm)
-    if rm.errors:
-        return None, rm.errors, rm.warnings, rm.used_names
-    # XXX No "EvalCodeGenerator" exists
-    # so here's a hack that gets around it.
-    gen = pycodegen.ModuleCodeGenerator(filename)
-    gen.emit('SET_LINENO', 0)
-    visitor.walk(tree, gen)
-    gen.emit('RETURN_VALUE')
-    return gen.getCode(), (), rm.warnings, rm.used_names
+    def compile_restricted_eval(s, filename='<string>'):
+        '''Compile a restricted expression.'''
+        rm = RestrictionMutator()
+        tree, err = tryParsing(s, 'eval')
+        if err:
+            err[1].pop(0) # Discard first line of error
+            return err
+        MutatingWalker.walk(tree, rm)
+        if rm.errors:
+            return None, rm.errors, rm.warnings, rm.used_names
+        # XXX No "EvalCodeGenerator" exists
+        # so here's a hack that gets around it.
+        gen = pycodegen.ModuleCodeGenerator(filename)
+        gen.emit('SET_LINENO', 0)
+        visitor.walk(tree, gen)
+        gen.emit('RETURN_VALUE')
+        return gen.getCode(), (), rm.warnings, rm.used_names
 
 DEBUG = 0
 def compile_restricted(source, filename, mode):
