@@ -12,7 +12,7 @@
 ##############################################################################
 from __future__ import nested_scopes
 
-__version__='$Revision: 1.8 $'[11:-2]
+__version__='$Revision: 1.9 $'[11:-2]
 
 import new
 
@@ -28,7 +28,7 @@ for name in ('None', 'abs', 'chr', 'divmod', 'float', 'hash', 'hex', 'int',
              'IOError', 'ImportError', 'IndexError', 'KeyError',
              'LookupError', 'NameError', 'OSError', 'OverflowError',
              'RuntimeError', 'StandardError', 'SyntaxError',
-             'TypeError', 'ValueError', 'ZeroDivisionError',):
+             'TypeError', 'UnicodeError', 'ValueError', 'ZeroDivisionError',):
     safe_builtins[name] = __builtins__[name]
 
 
