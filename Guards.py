@@ -12,8 +12,9 @@
 ##############################################################################
 from __future__ import nested_scopes
 
-__version__='$Revision: 1.10 $'[11:-2]
+__version__='$Revision: 1.11 $'[11:-2]
 
+import exceptions
 import new
 
 safe_builtins = {}
@@ -21,15 +22,12 @@ for name in ('None', 'abs', 'chr', 'divmod', 'float', 'hash', 'hex', 'int',
              'len', 'max', 'min', 'oct', 'ord', 'round', 'str', 'pow',
              'apply', 'callable', 'cmp', 'complex', 'isinstance',
              'issubclass', 'long', 'repr', 'range', 'list', 'tuple',
-             'unichr', 'unicode',
-             'Exception', 'True', 'False', 'bool',
-             'ArithmeticError', 'AssertionError', 'AttributeError',
-             'EOFError', 'EnvironmentError', 'FloatingPointError',
-             'IOError', 'ImportError', 'IndexError', 'KeyError',
-             'LookupError', 'NameError', 'OSError', 'OverflowError',
-             'RuntimeError', 'StandardError', 'SyntaxError',
-             'TypeError', 'UnicodeError', 'ValueError', 'ZeroDivisionError',):
+             'unichr', 'unicode', 'True', 'False', 'bool',):
     safe_builtins[name] = __builtins__[name]
+
+for name in dir(exceptions):
+    if name[0] != "_":
+        safe_builtins[name] = getattr(exceptions, name)
 
 
 def _full_read_guard(g_attr, g_item):
