@@ -14,7 +14,7 @@
 Python standard library.
 """
 
-__version__='$Revision: 1.3 $'[11:-2]
+__version__='$Revision: 1.4 $'[11:-2]
 
 
 from compiler import ast, parse, misc, syntax
@@ -79,10 +79,11 @@ class RFunction(RModule):
     """A restricted Python function built from parts.
     """
 
-    def __init__(self, p, body, name, filename):
+    def __init__(self, p, body, name, filename, globalize=None):
         self.params = p
         self.body = body
         self.name = name
+        self.globalize = globalize
         RModule.__init__(self, None, filename)
 
     def parse(self):
@@ -100,6 +101,8 @@ class RFunction(RModule):
             isinstance(stmt1.expr, ast.Const) and
             type(stmt1.expr.value) is type('')):
             f.doc = stmt1.expr.value
+        if self.globalize:
+            f.code.nodes.insert(0, ast.Global(map(str, self.globalize)))
         return tree
 
 
@@ -110,14 +113,14 @@ def compileAndTuplize(gen):
         return None, (str(v),), gen.rm.warnings, gen.rm.used_names
     return gen.getCode(), (), gen.rm.warnings, gen.rm.used_names
 
-def compile_restricted_function(p, body, name, filename):
+def compile_restricted_function(p, body, name, filename, globalize=None):
     """Compiles a restricted code object for a function.
 
     The function can be reconstituted using the 'new' module:
 
     new.function(<code>, <globals>)
     """
-    gen = RFunction(p, body, name, filename)
+    gen = RFunction(p, body, name, filename, globalize=globalize)
     return compileAndTuplize(gen)
 
 def compile_restricted_exec(s, filename='<string>'):

@@ -11,7 +11,7 @@
 #
 ##############################################################################
 
-__version__='$Revision: 1.3 $'[11:-2]
+__version__='$Revision: 1.4 $'[11:-2]
 
 import sys
 from traceback import format_exception_only
@@ -43,7 +43,7 @@ import MutatingWalker
 from RestrictionMutator import RestrictionMutator
 from compiler_2_1 import ast, visitor, pycodegen
 
-def compile_restricted_function(p, body, name, filename):
+def compile_restricted_function(p, body, name, filename, globalize=None):
     '''Compile a restricted code object for a function.
 
     The function can be reconstituted using the 'new' module:
@@ -63,6 +63,8 @@ def compile_restricted_function(p, body, name, filename):
     f = tree.node.nodes[0]
     btree, err = tryParsing(body, 'exec')
     if err: return err
+    if globalize is not None:
+        btree.node.nodes.insert(0, ast.Global(map(str, globalize)))
     f.code.nodes = btree.node.nodes
     f.name = name
     # Look for a docstring
