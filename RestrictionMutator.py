@@ -87,7 +87,7 @@ RestrictionMutator modifies a tree produced by
 compiler.transformer.Transformer, restricting and enhancing the
 code in various ways before sending it to pycodegen.
 '''
-__version__='$Revision: 1.5 $'[11:-2]
+__version__='$Revision: 1.6 $'[11:-2]
 
 from compiler import ast
 from compiler.transformer import parse
@@ -312,6 +312,9 @@ class RestrictionMutator:
 
     def visitExec(self, node, walker):
         self.error(node, 'Exec statements are not allowed.')
+
+    def visitYield(self, node, walker):
+        self.error(node, 'Yield statements are not allowed.')
 
     def visitClass(self, node, walker):
         # Should classes be allowed at all??
