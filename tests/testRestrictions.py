@@ -9,21 +9,15 @@ import unittest
 from RestrictedPython import compile_restricted, PrintCollector
 from RestrictedPython.Eval import RestrictionCapableEval
 import security_in_syntax
+from types import FunctionType
 
-def package_home(globals_dict):
-    __name__=globals_dict['__name__']
-    if __name__ == '__main__':
-        return os.getcwd()
-    m=sys.modules[__name__]
-    if hasattr(m,'__path__'):
-        r=m.__path__[0]
-    elif "." in __name__:
-        r=sys.modules[__name__[:rfind(__name__,'.')]].__path__[0]
-    else:
-        r=__name__
-    return os.path.join(os.getcwd(), r)
-
-FunctionType = type(package_home)
+if __name__=='__main__':
+    sys.path.append(os.path.join(os.pardir, os.pardir))
+    here = os.curdir
+else:
+    from App.Common import package_home
+    from RestrictedPython import tests
+    here = package_home(tests.__dict__)
 
 def _getindent(line):
     """Returns the indentation level of the given line."""
@@ -55,7 +49,7 @@ def find_source(fn, func):
 
 def create_rmodule():
     global rmodule
-    fn = os.path.join(package_home(globals()), 'restricted_module.py')
+    fn = os.path.join(here, 'restricted_module.py')
     f = open(fn, 'r')
     source = f.read()
     f.close()
@@ -64,10 +58,11 @@ def create_rmodule():
     # Now compile it for real
     code = compile_restricted(source, fn, 'exec')
     rmodule = {'__builtins__':None}
+    builtins = getattr(__builtins__, '__dict__', __builtins__)
     for name in ('map', 'reduce', 'int', 'pow', 'range', 'filter',
                  'len', 'chr', 'ord',
                  ):
-        rmodule[name] = getattr(__builtins__, name)
+        rmodule[name] = builtins[name]
     exec code in rmodule
 
 create_rmodule()
@@ -202,7 +197,7 @@ class RestrictionTests(unittest.TestCase):
     def checkSyntaxSecurity(self):
         # Ensures that each of the functions in security_in_syntax.py
         # throws a SyntaxError when using compile_restricted.
-        fn = os.path.join(package_home(globals()), 'security_in_syntax.py')
+        fn = os.path.join(here, 'security_in_syntax.py')
         f = open(fn, 'r')
         source = f.read()
         f.close()
