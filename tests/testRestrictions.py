@@ -127,6 +127,12 @@ def guarded_getitem(ob, index):
         raise AccessDenied
     return v
 
+def minimal_import(name, _globals, _locals, names):
+    if name != "__future__":
+        raise ValueError, "Only future imports are allowed"
+    import __future__
+    return __future__
+
 
 class TestGuard:
     '''A guard class'''
@@ -152,7 +158,6 @@ class TestGuard:
         _ob = self.__dict__['_ob']
         _ob[lo:hi] = value
 
-##    attribute_of_anything = 98.6
 
 class RestrictionTests(unittest.TestCase):
     def execFunc(self, name, *args, **kw):
@@ -222,11 +227,12 @@ class RestrictionTests(unittest.TestCase):
         f.close()
         # Unrestricted compile.
         code = compile(source, fn, 'exec')
-        m = {'__builtins__':None}
+        m = {'__builtins__': {'__import__':minimal_import}}
         exec code in m
         for k, v in m.items():
             if hasattr(v, 'func_code'):
                 filename, source = find_source(fn, v.func_code)
+                source = "from __future__ import generators\n\n" + source
                 # Now compile it with restrictions
                 try:
                     code = compile_restricted(source, filename, 'exec')
@@ -235,10 +241,6 @@ class RestrictionTests(unittest.TestCase):
                     pass
                 else:
                     raise AssertionError, '%s should not have compiled' % k
-
-##    def checkStrangeAttribute(self):
-##        res = self.execFunc('strange_attribute')
-##        assert res == 98.6, res
 
     def checkOrderOfOperations(self):
         res = self.execFunc('order_of_operations')

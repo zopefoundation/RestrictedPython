@@ -2,6 +2,8 @@
 # compile_restricted() but not when using compile().
 # Each function in this module is compiled using compile_restricted().
 
+from __future__ import generators
+
 def overrideGuardWithFunction():
     def _getattr(o): return o
 
@@ -40,3 +42,12 @@ def check_getattr_in_lambda(arg=lambda _getattr=(lambda ob, name: name):
 
 def import_as_bad_name():
     import os as _leading_underscore
+
+def except_using_bad_name():
+    try:
+        foo
+    except NameError, _leading_underscore:
+        # The name of choice (say, _write) is now assigned to an exception
+        # object.  Hard to exploit, but conceivable.
+        pass
+

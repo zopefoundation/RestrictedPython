@@ -12,7 +12,7 @@
 ##############################################################################
 from __future__ import nested_scopes
 
-__version__='$Revision: 1.11 $'[11:-2]
+__version__='$Revision: 1.12 $'[11:-2]
 
 import exceptions
 import new
