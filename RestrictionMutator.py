@@ -94,6 +94,9 @@ class RestrictionMutator:
             # Note: "_" *is* allowed.
             self.error(node, '"%s" is an invalid variable name because'
                        ' it starts with "_"' % name)
+        if name.endswith('__roles__'):
+            self.error(node, '"%s" is an invalid variable name because '
+                       'it ends with "__roles__".' % name)
         if name == "printed":
             self.error(node, '"printed" is a reserved name.')
 
@@ -109,6 +112,9 @@ class RestrictionMutator:
             # Note: "_" *is* allowed.
             self.error(node, '"%s" is an invalid attribute name '
                        'because it starts with "_".' % name)
+        if name.endswith('__roles__'):
+            self.error(node, '"%s" is an invalid attribute name '
+                       'because it ends with "__roles__".' % name)
 
     def prepBody(self, body):
         """Insert code for print at the beginning of the code suite."""
