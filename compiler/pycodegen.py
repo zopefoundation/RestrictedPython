@@ -795,7 +795,7 @@ class CodeGenerator:
         opcode = callfunc_opcode_info[have_star, have_dstar]
         self.emit(opcode, kw << 8 | pos)
 
-    def visitPrint(self, node):
+    def visitPrint(self, node, newline=0):
         self.set_lineno(node)
         if node.dest:
             self.visit(node.dest)
@@ -806,11 +806,13 @@ class CodeGenerator:
             if node.dest:
                 self.emit('ROT_TWO')
                 self.emit('PRINT_ITEM_TO')
+                if not newline:
+                    self.emit('POP_TOP')
             else:
                 self.emit('PRINT_ITEM')
 
     def visitPrintnl(self, node):
-        self.visitPrint(node)
+        self.visitPrint(node, 1)
         if node.dest:
             self.emit('PRINT_NEWLINE_TO')
         else:

@@ -169,6 +169,10 @@ class RestrictionTests(unittest.TestCase):
             res = self.execFunc('print%s' % i)
             assert res == 'Hello, world!', res
 
+    def checkPrintLines(self):
+        res = self.execFunc('printLines')
+        assert res == '0 1 2\n3 4 5\n6 7 8\n', res
+
     def checkPrimes(self):
         res = self.execFunc('primes')
         assert res == '[2, 3, 5, 7, 11, 13, 17, 19]', res

@@ -13,6 +13,15 @@ def print2():
     print >>x, 'Hello, world!',
     return printed
 
+def printLines():
+    # This failed before Zope 2.4.0a2
+    r = range(3)
+    for n in r:
+        for m in r:
+            print m + n * len(r),
+        print
+    return printed
+
 def primes():
     # Somewhat obfuscated code on purpose
     print filter(None,map(lambda y:y*reduce(lambda x,y:x*y!=0,
