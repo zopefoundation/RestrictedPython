@@ -40,8 +40,6 @@ class Node:
         return flatten(self._getChildren())
     def asList(self):
         return tuple(asList(self.getChildren()))
-    def getChildNodes(self):
-        return [n for n in self.getChildren() if isinstance(n, Node)]
 
 class EmptyNode(Node):
     def __init__(self):
@@ -190,7 +188,7 @@ class Sub(Node):
     def _getChildren(self):
         return self.left, self.right
     def __repr__(self):
-        return "Sub((%s, %s))" % (repr(self.left), repr(self.right))
+        return "Sub(%s, %s)" % (repr(self.left), repr(self.right))
 
 class ListCompIf(Node):
     nodes["listcompif"] = "ListCompIf"
@@ -209,7 +207,7 @@ class Div(Node):
     def _getChildren(self):
         return self.left, self.right
     def __repr__(self):
-        return "Div((%s, %s))" % (repr(self.left), repr(self.right))
+        return "Div(%s, %s)" % (repr(self.left), repr(self.right))
 
 class Discard(Node):
     nodes["discard"] = "Discard"
@@ -237,7 +235,7 @@ class RightShift(Node):
     def _getChildren(self):
         return self.left, self.right
     def __repr__(self):
-        return "RightShift((%s, %s))" % (repr(self.left), repr(self.right))
+        return "RightShift(%s, %s)" % (repr(self.left), repr(self.right))
 
 class Continue(Node):
     nodes["continue"] = "Continue"
@@ -277,7 +275,7 @@ class LeftShift(Node):
     def _getChildren(self):
         return self.left, self.right
     def __repr__(self):
-        return "LeftShift((%s, %s))" % (repr(self.left), repr(self.right))
+        return "LeftShift(%s, %s)" % (repr(self.left), repr(self.right))
 
 class Mul(Node):
     nodes["mul"] = "Mul"
@@ -287,16 +285,7 @@ class Mul(Node):
     def _getChildren(self):
         return self.left, self.right
     def __repr__(self):
-        return "Mul((%s, %s))" % (repr(self.left), repr(self.right))
-
-class Yield(Node):
-    nodes["yield"] = "Yield"
-    def __init__(self, value):
-        self.value = value
-    def _getChildren(self):
-        return self.value,
-    def __repr__(self):
-        return "Yield(%s)" % (repr(self.value),)
+        return "Mul(%s, %s)" % (repr(self.left), repr(self.right))
 
 class List(Node):
     nodes["list"] = "List"
@@ -365,7 +354,7 @@ class Mod(Node):
     def _getChildren(self):
         return self.left, self.right
     def __repr__(self):
-        return "Mod((%s, %s))" % (repr(self.left), repr(self.right))
+        return "Mod(%s, %s)" % (repr(self.left), repr(self.right))
 
 class Class(Node):
     nodes["class"] = "Class"
@@ -463,16 +452,16 @@ class Power(Node):
     def _getChildren(self):
         return self.left, self.right
     def __repr__(self):
-        return "Power((%s, %s))" % (repr(self.left), repr(self.right))
+        return "Power(%s, %s)" % (repr(self.left), repr(self.right))
 
-class Ellipsis(Node):
-    nodes["ellipsis"] = "Ellipsis"
-    def __init__(self, ):
-        pass
+class Import(Node):
+    nodes["import"] = "Import"
+    def __init__(self, names):
+        self.names = names
     def _getChildren(self):
-        return ()
+        return self.names,
     def __repr__(self):
-        return "Ellipsis()"
+        return "Import(%s)" % (repr(self.names),)
 
 class Return(Node):
     nodes["return"] = "Return"
@@ -491,7 +480,7 @@ class Add(Node):
     def _getChildren(self):
         return self.left, self.right
     def __repr__(self):
-        return "Add((%s, %s))" % (repr(self.left), repr(self.right))
+        return "Add(%s, %s)" % (repr(self.left), repr(self.right))
 
 class Function(Node):
     nodes["function"] = "Function"
@@ -536,14 +525,14 @@ class Subscript(Node):
     def __repr__(self):
         return "Subscript(%s, %s, %s)" % (repr(self.expr), repr(self.flags), repr(self.subs))
 
-class Import(Node):
-    nodes["import"] = "Import"
-    def __init__(self, names):
-        self.names = names
+class Ellipsis(Node):
+    nodes["ellipsis"] = "Ellipsis"
+    def __init__(self, ):
+        pass
     def _getChildren(self):
-        return self.names,
+        return ()
     def __repr__(self):
-        return "Import(%s)" % (repr(self.names),)
+        return "Ellipsis()"
 
 class Print(Node):
     nodes["print"] = "Print"

@@ -153,12 +153,8 @@ class Transformer:
 
     def file_input(self, nodelist):
         doc = self.get_docstring(nodelist, symbol.file_input)
-        if doc is not None:
-            i = 1
-        else:
-            i = 0
         stmts = []
-        for node in nodelist[i:]:
+        for node in nodelist:
             if node[0] != token.ENDMARKER and node[0] != token.NEWLINE:
                 self.com_append_stmt(stmts, node)
         return Module(doc, Stmt(stmts))
@@ -341,11 +337,6 @@ class Transformer:
             n.lineno = nodelist[0][2]
             return n
         n = Return(self.com_node(nodelist[1]))
-        n.lineno = nodelist[0][2]
-        return n
-
-    def yield_stmt(self, nodelist):
-        n = Yield(self.com_node(nodelist[1]))
         n.lineno = nodelist[0][2]
         return n
 
@@ -1254,7 +1245,6 @@ _legal_node_types = [
     symbol.continue_stmt,
     symbol.return_stmt,
     symbol.raise_stmt,
-    #symbol.yield_stmt,
     symbol.import_stmt,
     symbol.global_stmt,
     symbol.exec_stmt,
@@ -1280,9 +1270,6 @@ _legal_node_types = [
     symbol.power,
     symbol.atom,
     ]
-
-if hasattr(symbol, 'yield_stmt'):
-    _legal_node_types.append(symbol.yield_stmt)
 
 _assign_types = [
     symbol.test,

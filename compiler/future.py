@@ -16,14 +16,19 @@ def is_future(stmt):
 
 class FutureParser:
 
-    features = ("nested_scopes", "generators", "division")
+    features = ("nested_scopes",)
     
     def __init__(self):
         self.found = {} # set
 
     def visitModule(self, node):
+        if node.doc is None:
+            off = 0
+        else:
+            off = 1
+
         stmt = node.node
-        for s in stmt.nodes:
+        for s in stmt.nodes[off:]:
             if not self.check_stmt(s):
                 break
 
@@ -62,7 +67,7 @@ def find_futures(node):
 
 if __name__ == "__main__":
     import sys
-    from compiler import parseFile, walk
+    from transformer import parseFile
 
     for file in sys.argv[1:]:
         print file
