@@ -170,8 +170,9 @@ class RestrictionTests(unittest.TestCase):
         return func(*args, **kw)
 
     def checkPrint(self):
-        res = self.execFunc('print1')
-        assert res == 'Hello, world!', res
+        for i in range(3):
+            res = self.execFunc('print%s' % i)
+            assert res == 'Hello, world!', res
 
     def checkPrimes(self):
         res = self.execFunc('primes')

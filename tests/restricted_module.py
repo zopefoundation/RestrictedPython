@@ -1,6 +1,16 @@
 
-def print1():
+def print0():
     print 'Hello, world!',
+    return printed
+
+def print1():
+    print 'Hello,',
+    print 'world!',
+    return printed
+
+def print2():
+    x = None
+    print >>x, 'Hello, world!',
     return printed
 
 def primes():
