@@ -182,6 +182,10 @@ class RestrictionTests(unittest.TestCase):
         else:
             assert 0, res
 
+    def checkPrintStuff(self):
+        res = self.execFunc('printStuff')
+        assert res == 'a b c', res
+
     def checkPrintLines(self):
         res = self.execFunc('printLines')
         assert res == '0 1 2\n3 4 5\n6 7 8\n', res

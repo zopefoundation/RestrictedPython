@@ -8,6 +8,10 @@ def print1():
     print 'world!',
     return printed
 
+def printStuff():
+    print 'a', 'b', 'c',
+    return printed
+
 def printToNone():
     x = None
     print >>x, 'Hello, world!',
