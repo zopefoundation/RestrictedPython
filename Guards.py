@@ -12,7 +12,7 @@
 ##############################################################################
 from __future__ import nested_scopes
 
-__version__='$Revision: 1.9 $'[11:-2]
+__version__='$Revision: 1.10 $'[11:-2]
 
 import new
 
@@ -22,7 +22,7 @@ for name in ('None', 'abs', 'chr', 'divmod', 'float', 'hash', 'hex', 'int',
              'apply', 'callable', 'cmp', 'complex', 'isinstance',
              'issubclass', 'long', 'repr', 'range', 'list', 'tuple',
              'unichr', 'unicode',
-             'Exception',
+             'Exception', 'True', 'False', 'bool',
              'ArithmeticError', 'AssertionError', 'AttributeError',
              'EOFError', 'EnvironmentError', 'FloatingPointError',
              'IOError', 'ImportError', 'IndexError', 'KeyError',
