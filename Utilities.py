@@ -83,7 +83,7 @@
 # 
 ##############################################################################
 
-__version__='$Revision: 1.3 $'[11:-2]
+__version__='$Revision: 1.4 $'[11:-2]
 
 import string, math, random, whrandom
 import DocumentTemplate.sequence
@@ -97,8 +97,8 @@ utility_builtins['whrandom'] = whrandom
 utility_builtins['sequence'] = DocumentTemplate.sequence
 
 try:
-    import DateTime
-    utility_builtins['DateTime']=DateTime.DateTime
+    import DateTime.newDateTime
+    utility_builtins['DateTime']= DateTime.newDateTime
 except: pass
 
 def same_type(arg1, *args):
