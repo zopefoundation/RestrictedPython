@@ -2,9 +2,6 @@
 from string import rfind
 import sys, os
 
-if __name__=='__main__':
-    sys.path.append(os.path.join(os.pardir, os.pardir))
-
 import unittest
 from RestrictedPython import compile_restricted, PrintCollector
 from RestrictedPython.Eval import RestrictionCapableEval
@@ -12,12 +9,11 @@ from RestrictedPython.tests import restricted_module, security_in_syntax
 from types import FunctionType
 
 if __name__=='__main__':
-    sys.path.append(os.path.join(os.pardir, os.pardir))
-    here = os.curdir
+    here = os.getcwd()
 else:
-    from App.Common import package_home
-    from RestrictedPython import tests
-    here = package_home(tests.__dict__)
+    here = os.path.dirname(__file__)
+    if not here:
+        here = os.getcwd()
 
 def _getindent(line):
     """Returns the indentation level of the given line."""
