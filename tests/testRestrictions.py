@@ -8,7 +8,7 @@ if __name__=='__main__':
 import unittest
 from RestrictedPython import compile_restricted, PrintCollector
 from RestrictedPython.Eval import RestrictionCapableEval
-import security_in_syntax
+from RestrictedPython.tests import security_in_syntax
 from types import FunctionType
 
 if __name__=='__main__':
