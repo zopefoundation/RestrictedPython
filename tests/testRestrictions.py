@@ -89,7 +89,7 @@ class RestrictedObject:
     def __getitem__(self, idx):
         if idx == 'protected':
             raise AccessDenied
-        elif idx == 0:
+        elif idx == 0 or idx == 'safe':
             return 1
         elif idx == 1:
             return DisallowedObject
@@ -114,7 +114,7 @@ class RestrictedObject:
 
 class TestGuard:
     '''A guard class'''
-    def __init__(self, _ob):
+    def __init__(self, _ob, write=None):
         self.__dict__['_ob'] = _ob
 
     # Read guard methods

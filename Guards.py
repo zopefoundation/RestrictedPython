@@ -84,7 +84,7 @@
 ##############################################################################
 from __future__ import nested_scopes
 
-__version__='$Revision: 1.2 $'[11:-2]
+__version__='$Revision: 1.3 $'[11:-2]
 
 import new
 
@@ -105,10 +105,10 @@ for name in ('None', 'abs', 'chr', 'divmod', 'float', 'hash', 'hex', 'int',
 
 def _full_read_guard(g_attr, g_item):
     # Nested scope abuse!
-    # The two arguments are used by class Wrapper
+    # The arguments are used by class Wrapper
     # safetype variable is used by guard()
     safetype = {type(()): 1, type([]): 1, type({}): 1, type(''): 1}.has_key
-    def guard(ob):
+    def guard(ob, write=None):
         # Don't bother wrapping simple types, or objects that claim to
         # handle their own read security.
         if safetype(type(ob)) or getattr(ob, '_guarded_reads', 0):
@@ -122,7 +122,12 @@ def _full_read_guard(g_attr, g_item):
                 return g_attr(ob, name)
             def __getitem__(self, i):
                 # Must handle both item and slice access.
-                return g_item(ob, i)        
+                return g_item(ob, i)
+            # Optional, for combined read/write guard
+            def __setitem__(self, index, val):
+                write(ob)[index] = val
+            def __setattr__(self, attr, val):
+                setattr(write(ob), attr, val)
         return Wrapper()
     return guard 
 
@@ -143,7 +148,7 @@ def _write_wrapper():
             # Required for slices with negative bounds.
             return len(self.ob)
         def __init__(self, ob):
-            self.ob = ob
+            self.__dict__['ob'] = ob
     # Generate class methods
     d = Wrapper.__dict__
     for name, error_msg in (
@@ -178,4 +183,7 @@ safe_builtins['setattr'] = guarded_setattr
 def guarded_delattr(object, name):
     delattr(full_write_guard(object), name)
 safe_builtins['delattr'] = guarded_delattr
+
+
+
 

@@ -87,7 +87,7 @@ RestrictionMutator modifies a tree produced by
 compiler.transformer.Transformer, restricting and enhancing the
 code in various ways before sending it to pycodegen.
 '''
-__version__='$Revision: 1.2 $'[11:-2]
+__version__='$Revision: 1.3 $'[11:-2]
 
 from compiler import ast
 from compiler.transformer import parse
@@ -236,7 +236,12 @@ class RestrictionMutator:
     def visitGetattr(self, node, walker):
         self.checkAttrName(node)
         node = walker.defaultVisitNode(node)
-        node.expr = ast.CallFunc(_read_guard_name, [node.expr])
+        expr = [node.expr]
+        if getattr(node, 'use_dual_guard', 0):
+            # We're in an augmented assignment
+            expr.append(_write_guard_name)
+            self.funcinfo._write_used = 1
+        node.expr = ast.CallFunc(_read_guard_name, expr)
         self.funcinfo._read_used = 1
         return node
 
@@ -244,7 +249,12 @@ class RestrictionMutator:
         node = walker.defaultVisitNode(node)
         if node.flags == OP_APPLY:
             # get subscript or slice
-            node.expr = ast.CallFunc(_read_guard_name, [node.expr])
+            expr = [node.expr]
+            if getattr(node, 'use_dual_guard', 0):
+                # We're in an augmented assignment
+                expr.append(_write_guard_name)
+                self.funcinfo._write_used = 1
+            node.expr = ast.CallFunc(_read_guard_name, expr)
             self.funcinfo._read_used = 1
         elif node.flags in (OP_DELETE, OP_ASSIGN):
             # set or remove subscript or slice
@@ -273,6 +283,10 @@ class RestrictionMutator:
         node = walker.defaultVisitNode(node)
         self.prepBody(node.node.nodes)
         return node
+
+    def visitAugAssign(self, node, walker):
+        node.node.use_dual_guard = 1
+        return walker.defaultVisitNode(node)
 
 
 if __name__ == '__main__':
