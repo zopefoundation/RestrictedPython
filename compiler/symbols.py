@@ -298,6 +298,14 @@ class SymbolVisitor:
     def visitAssName(self, node, scope, assign=1):
         scope.add_def(node.name)
 
+    def visitAssAttr(self, node, scope, assign=0):
+        self.visit(node.expr, scope, 0)
+
+    def visitSubscript(self, node, scope, assign=0):
+        self.visit(node.expr, scope, 0)
+        for n in node.subs:
+            self.visit(n, scope, 0)
+
     def visitAugAssign(self, node, scope):
         # If the LHS is a name, then this counts as assignment.
         # Otherwise, it's just use.
