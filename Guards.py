@@ -84,7 +84,7 @@
 ##############################################################################
 from __future__ import nested_scopes
 
-__version__='$Revision: 1.5 $'[11:-2]
+__version__='$Revision: 1.6 $'[11:-2]
 
 import new
 
@@ -109,7 +109,7 @@ def _full_read_guard(g_attr, g_item):
     # The arguments are used by class Wrapper
     # safetype variable is used by guard()
     safetype = {type(()): 1, type([]): 1, type({}): 1, type(''): 1}.has_key
-    def guard(ob, write=None):
+    def guard(ob, write=None, safetype=safetype):
         # Don't bother wrapping simple types, or objects that claim to
         # handle their own read security.
         if safetype(type(ob)) or getattr(ob, '_guarded_reads', 0):
@@ -165,7 +165,7 @@ def _full_write_guard():
     # safetype and Wrapper variables are used by guard()
     safetype = {type([]): 1, type({}): 1}.has_key
     Wrapper = _write_wrapper()
-    def guard(ob):
+    def guard(ob, safetype=safetype, Wrapper=Wrapper):
         # Don't bother wrapping simple types, or objects that claim to
         # handle their own write security.
         if safetype(type(ob)) or hasattr(ob, '_guarded_writes'):
