@@ -806,10 +806,10 @@ class CodeGenerator:
             if node.dest:
                 self.emit('ROT_TWO')
                 self.emit('PRINT_ITEM_TO')
-                if not newline:
-                    self.emit('POP_TOP')
             else:
                 self.emit('PRINT_ITEM')
+        if node.dest and not newline:
+            self.emit('POP_TOP')
 
     def visitPrintnl(self, node):
         self.visitPrint(node, 1)
