@@ -23,11 +23,7 @@ utility_builtins['math'] = math
 utility_builtins['random'] = random
 utility_builtins['whrandom'] = whrandom
 utility_builtins['sequence'] = DocumentTemplate.sequence
-
-try:
-    import DateTime
-    utility_builtins['DateTime']= DateTime.DateTime
-except: pass
+utility_builtins['DateTime'] = DateTime.DateTime
 
 def same_type(arg1, *args):
     '''Compares the class or type of two or more objects.'''
