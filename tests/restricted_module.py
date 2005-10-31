@@ -40,6 +40,10 @@ def try_apply():
     print f(*(300, 20), **{'z': 1}),
     return printed
 
+def try_inplace():
+    x = 1
+    x += 3
+
 def primes():
     # Somewhat obfuscated code on purpose
     print filter(None,map(lambda y:y*reduce(lambda x,y:x*y!=0,

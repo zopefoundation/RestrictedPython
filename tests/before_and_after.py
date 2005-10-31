@@ -75,7 +75,7 @@ def nested_list_comprehension_before():
 def nested_list_comprehension_after():
     x = [x**2 + y**2 for x in _getiter_(whatever1) if x >= 0
                      for y in _getiter_(whatever2) if y >= x]
-
+    
 # print
 
 def simple_print_before():
@@ -244,3 +244,18 @@ def lambda_with_getattr_in_defaults_before():
 
 def lambda_with_getattr_in_defaults_after():
     f = lambda x=_getattr_(y, "z"): x
+
+
+# augmented operators
+# Note that we don't have to worry about item, attr, or slice assignment,
+# as they are disallowed. Yay!
+
+## def inplace_id_add_before():
+##     x += y+z
+
+## def inplace_id_add_after():
+##     x = _inplacevar_('+=', x, y+z)
+
+
+
+    

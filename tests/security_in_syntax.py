@@ -54,3 +54,16 @@ def except_using_bad_name():
 def keyword_arg_with_bad_name():
     def f(okname=1, __badname=2):
         pass
+
+def no_augmeneted_assignment_to_sub():
+    a[b] += c
+
+def no_augmeneted_assignment_to_attr():
+    a.b += c
+
+def no_augmeneted_assignment_to_slice():
+    a[x:y] += c
+
+def no_augmeneted_assignment_to_slice2():
+    a[x:y:z] += c
+

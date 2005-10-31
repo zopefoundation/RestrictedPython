@@ -47,6 +47,7 @@ _getitem_name = ast.Name("_getitem_")
 _getiter_name = ast.Name("_getiter_")
 _print_target_name = ast.Name("_print")
 _write_name = ast.Name("_write_")
+_inplacevar_name = ast.Name("_inplacevar_")
 
 # Constants.
 _None_const = ast.Const(None)
@@ -239,9 +240,9 @@ class RestrictionMutator:
         #   for x in expr:
         # to
         #   for x in _getiter(expr):
+        #        # Note that visitListCompFor is the same thing.
         #
-        # Note that visitListCompFor is the same thing.  Exactly the same
-        # transformation is needed to convert
+        # Also for list comprehensions:
         #   [... for x in expr ...]
         # to
         #   [... for x in _getiter(expr) ...]
@@ -250,6 +251,15 @@ class RestrictionMutator:
         return node
 
     visitListCompFor = visitFor
+
+    def visitGenExprFor(self, node, walker):
+        # convert
+        #   (... for x in expr ...)
+        # to
+        #   (... for x in _getiter(expr) ...)
+        node = walker.defaultVisitNode(node)
+        node.iter = ast.CallFunc(_getiter_name, [node.iter])
+        return node
 
     def visitGetattr(self, node, walker):
         """Converts attribute access to a function call.
@@ -365,8 +375,23 @@ class RestrictionMutator:
         This could be a problem if untrusted code got access to a
         mutable database object that supports augmented assignment.
         """
-        node.node.in_aug_assign = True
-        return walker.defaultVisitNode(node)
+        if node.node.__class__.__name__ == 'Name':
+            node = walker.defaultVisitNode(node)
+            newnode = ast.Assign(
+                [ast.AssName(node.node.name, OP_ASSIGN)],
+                ast.CallFunc(
+                    _inplacevar_name,
+                    [ast.Const(node.op),
+                     ast.Name(node.node.name),
+                     node.expr,
+                     ]
+                    ),
+                )
+            newnode.lineno = node.lineno
+            return newnode
+        else:
+            node.node.in_aug_assign = True
+            return walker.defaultVisitNode(node)
 
     def visitImport(self, node, walker):
         """Checks names imported using checkName()."""

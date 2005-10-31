@@ -12,7 +12,7 @@ import unittest
 
 from RestrictedPython import compile_restricted, PrintCollector
 from RestrictedPython.Eval import RestrictionCapableEval
-from RestrictedPython.tests import before_and_after, restricted_module, verify
+from RestrictedPython.tests import restricted_module, verify
 from RestrictedPython.RCompile import RModule, RFunction
 
 try:
@@ -51,8 +51,13 @@ def find_source(fn, func):
     return fn, msg
 
 def get_source(func):
-    """Less silly interface to find_source""" # Sheesh
-    return find_source(func.func_globals['__file__'], func.func_code)[1]
+    """Less silly interface to find_source"""
+    file = func.func_globals['__file__']
+    if file.endswith('.pyc'):
+        file = file[:-1]
+    source = find_source(file, func.func_code)[1]
+    assert source.strip(), "Source should not be empty!"
+    return source
 
 def create_rmodule():
     global rmodule
@@ -175,6 +180,14 @@ def apply_wrapper(func, *args, **kws):
     apply_wrapper_called.append('yes')
     return func(*args, **kws)
 
+inplacevar_wrapper_called = {}
+def inplacevar_wrapper(op, x, y):
+    inplacevar_wrapper_called[op] = x, y
+    # This is really lame.  But it's just a test. :)
+    globs = {'x': x, 'y': y}
+    exec 'x'+op+'y' in globs
+    return globs['x']
+
 class RestrictionTests(unittest.TestCase):
     def execFunc(self, name, *args, **kw):
         func = rmodule[name]
@@ -191,6 +204,7 @@ class RestrictionTests(unittest.TestCase):
         # work for everything.
                                   '_getiter_': list,
                                   '_apply_': apply_wrapper,
+                                  '_inplacevar_': inplacevar_wrapper,
                                   })
         return func(*args, **kw)
 
@@ -242,6 +256,11 @@ class RestrictionTests(unittest.TestCase):
         res = self.execFunc('try_apply')
         self.assertEqual(apply_wrapper_called, ["yes"])
         self.assertEqual(res, "321")
+
+    def checkInplace(self):
+        inplacevar_wrapper_called.clear()
+        res = self.execFunc('try_inplace')
+        self.assertEqual(inplacevar_wrapper_called['+='], (1, 3))
 
     def checkDenied(self):
         for k in rmodule.keys():
@@ -314,7 +333,7 @@ class RestrictionTests(unittest.TestCase):
 
     def checkBeforeAndAfter(self):
         from RestrictedPython.RCompile import RModule
-
+        from RestrictedPython.tests import before_and_after
         from compiler import parse
 
         defre = re.compile(r'def ([_A-Za-z0-9]+)_(after|before)\(')
@@ -339,6 +358,34 @@ class RestrictionTests(unittest.TestCase):
             rm.compile()
             verify.verify(rm.getCode())
 
+    if sys.version_info[:2] >= (2, 4):
+        def checkBeforeAndAfter24(self):
+            from RestrictedPython.RCompile import RModule
+            from RestrictedPython.tests import before_and_after24
+            from compiler import parse
+
+            defre = re.compile(r'def ([_A-Za-z0-9]+)_(after|before)\(')
+
+            beforel = [name for name in before_and_after24.__dict__
+                       if name.endswith("_before")]
+
+            for name in beforel:
+                before = getattr(before_and_after24, name)
+                before_src = get_source(before)
+                before_src = re.sub(defre, r'def \1(', before_src)
+                rm = RModule(before_src, '')
+                tree_before = rm._get_tree()
+
+                after = getattr(before_and_after24, name[:-6]+'after')
+                after_src = get_source(after)
+                after_src = re.sub(defre, r'def \1(', after_src)
+                tree_after = parse(after_src)
+
+                self.assertEqual(str(tree_before), str(tree_after))
+
+                rm.compile()
+                verify.verify(rm.getCode())
+
     def _compile_file(self, name):
         path = os.path.join(_HERE, name)
         f = open(path, "r")
@@ -355,7 +402,7 @@ class RestrictionTests(unittest.TestCase):
         def getiter(seq):
             calls.append(seq)
             return list(seq)
-        globals = {"_getiter_": getiter}
+        globals = {"_getiter_": getiter, '_inplacevar_': inplacevar_wrapper}
         exec co in globals, {}
         # The comparison here depends on the exact code that is
         # contained in unpack.py.
