@@ -24,8 +24,8 @@ except ImportError, e:
     from distutils.core import setup, Extension
 
 setup(name='RestrictedPython',
-      version='1.0',
-      url='http://svn.zope.org/RestrictedPython',
+      version='3.0.0',
+      url='http://svn.zope.org/RestrictedPython/tags/3.0.0',
       license='ZPL 2.1',
       description='Restricted Python executiion handlers',
       author='Zope Corporation and Contributors',
