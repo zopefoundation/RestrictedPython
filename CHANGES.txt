@@ -1,32 +1,27 @@
-zope.XXX Package Changelog
-==========================
+RestrictedPython Package Changelog
+==================================
 
-zope.XXX version 3.2.1 (2006/03/26)
------------------------------------
+RestrictedPython version 3.2.0 (2006/01/05)
+-------------------------------------------
 
-- Corresponds to the verison of the zope.XXX package shipped as part of
-  the Zope 3.2.1 release.
-
-zope.XXX version 3.2.0 (2006/01/05)
------------------------------------
-
-- Corresponds to the verison of the zope.XXX package shipped as part of
+- Corresponds to the verison of the RestrictedPython package shipped as part of
   the Zope 3.2.0 release.
 
-zope.XXX version 3.1.0 (2005/10/03)
------------------------------------
+- No changes from 3.1.0.
 
-- Corresponds to the verison of the zope.XXX package shipped as part of
+RestrictedPython version 3.1.0 (2005/10/03)
+-------------------------------------------
+
+- Corresponds to the verison of the RestrictedPython package shipped as part of
   the Zope 3.1.0 release.
 
-zope.XXX version 3.0.1 (2005/07/27)
------------------------------------
+- Removed unused fossil module, 'SafeMapping'.
 
-- Corresponds to the verison of the zope.XXX package shipped as part of
-  the Zope X3.0.1 release.
+- Replaced use of deprecated 'whrandom' module with 'random' (aliased to
+  'whrandom' for backward compatibility).
 
-zope.XXX version 3.0.0 (2004/11/07)
------------------------------------
+RestrictedPython version 3.0.0 (2004/11/07)
+-------------------------------------------
 
-- Corresponds to the verison of the zope.XXX package shipped as part of
+- Corresponds to the verison of the RestrictedPython package shipped as part of
   the Zope X3.0.0 release.

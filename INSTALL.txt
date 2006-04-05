@@ -26,9 +26,9 @@ Installing a Development Checkout
 
 Check out the package from subversion:
 
-  $ svn co svn+ssh://svn.zope.org/repos/main/zope.XXX/trunk \
-    src/zope.XXX
-  $ cd src/zope.XXX
+  $ svn co svn+ssh://svn.zope.org/repos/main/RestrictedPython/trunk \
+    src/RestrictedPython
+  $ cd src/RestrictedPython
 
 Install it as a "devlopment egg" (which also installs its "hard"
 dependencies):
@@ -67,8 +67,8 @@ Installing a Source Distribution
 
 You can also install it from a source distribution:
 
-  $ /path/to/easy_install --find-links="...." -eb src zope.XXX
-  $ cd src/zope.XXX
+  $ /path/to/easy_install --find-links="...." -eb src RestrictedPython
+  $ cd src/RestrictedPython
   $ /path/to/your/python setup.py devel
 
 
@@ -78,6 +78,6 @@ Installing a Binary Egg
 Install the package as a "binary egg" (which also installs its "hard"
 dependencies):
 
-  $ /path/to/easy_install --find-links="...." zope.XXX
+  $ /path/to/easy_install --find-links="...." RestrictedPython
 
 

@@ -1,3 +1,5 @@
+[development]
+depends = zope.testing
 
 [egg_info]
 tag_build = .dev

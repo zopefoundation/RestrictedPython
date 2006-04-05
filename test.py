@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 ##############################################################################
 #
-# Copyright (c) 2004 Zope Corporation and Contributors.
+# Copyright (c) 2006 Zope Corporation and Contributors.
 # All Rights Reserved.
 #
 # This software is subject to the provisions of the Zope Public License,
@@ -28,7 +28,7 @@ from zope.testing import testrunner
 
 defaults = [
     '--path', src,
-    '--package', 'zope.i18nmessageid',
+    '--package', 'RestrictedPython',
     '--tests-pattern', '^tests$',
     ]
 
