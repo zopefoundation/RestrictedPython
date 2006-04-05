@@ -1,0 +1,83 @@
+Installing This Package
+=======================
+
+Prerequisites
+-------------
+
+The installation steps below assume that you have the cool new 'setuptools'
+package installed in your Python.  Here is where to get it:
+
+  $ wget http://peak.telecommunity.com/dist/ez_setup.py
+  $ /path/to/your/python ez_setup.py # req. write access to 'site-packages'
+
+
+  - Docs for EasyInstall:
+    http://peak.telecommunity.com/DevCenter/EasyInstall
+
+  - Docs for setuptools:
+    http://peak.telecommunity.com/DevCenter/setuptools
+
+  - Docs for eggs:
+    http://peak.telecommunity.com/DevCenter/PythonEggs
+
+
+Installing a Development Checkout
+---------------------------------
+
+Check out the package from subversion:
+
+  $ svn co svn+ssh://svn.zope.org/repos/main/zope.XXX/trunk \
+    src/zope.XXX
+  $ cd src/zope.XXX
+
+Install it as a "devlopment egg" (which also installs its "hard"
+dependencies):
+
+  $ /path/to/your/python setup.py devel
+
+The installation of dependency eggs uses the 'setup.cfg' file in
+the checkout.  You can supply '--find-links' on the command line to
+point it at a non-standard package repository.
+
+
+Running the Tests
+-----------------
+
+To test the package, you will also need the 'zope.testing' package, which
+can't (yet) be automatically installed.  Eventually, you should be able to
+type:
+
+  $ /path/to/your/python setup.py test
+
+and have it install the "testing dependencies."  Today, the workaround
+is to install it manually:
+
+  $ /path/to/easy_install --find-links="...." zope.testing
+
+You can then run the tests (finally) from the checkout directory:
+
+  $ /path/to/your/python test.py
+    Running:
+      .............
+    Ran 13 tests with 0 failures and 0 errors in 0.094 seconds.
+
+
+Installing a Source Distribution
+--------------------------------
+
+You can also install it from a source distribution:
+
+  $ /path/to/easy_install --find-links="...." -eb src zope.XXX
+  $ cd src/zope.XXX
+  $ /path/to/your/python setup.py devel
+
+
+Installing a Binary Egg
+-----------------------
+
+Install the package as a "binary egg" (which also installs its "hard"
+dependencies):
+
+  $ /path/to/easy_install --find-links="...." zope.XXX
+
+
