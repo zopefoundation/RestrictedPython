@@ -499,6 +499,35 @@ class RestrictionTests(unittest.TestCase):
         self.assertRaises(SyntaxError,
                           compile_restricted, err, "<string>", "exec")
 
+    # these two tests check that source code with Windows line
+    # endings still works.
+
+    def checkLineEndingsRFunction(self):
+        from RestrictedPython.RCompile import RFunction
+        gen = RFunction(
+            p='',
+            body='# testing\r\nprint "testing"\r\nreturn printed\n',
+            name='test',
+            filename='<test>',
+            globals=(),
+            )
+        gen.mode = 'exec'
+        # if the source has any line ending other than \n by the time
+        # parse() is called, then you'll get a syntax error.
+        gen.parse()
+
+    def checkLineEndingsRestrictedCompileMode(self):
+        from RestrictedPython.RCompile import RestrictedCompileMode
+        gen = RestrictedCompileMode(
+            '# testing\r\nprint "testing"\r\nreturn printed\n',
+            '<testing>'
+            )
+        gen.mode='exec'
+        # if the source has any line ending other than \n by the time
+        # parse() is called, then you'll get a syntax error.
+        gen.parse()
+
+        
 create_rmodule()
 
 def test_suite():
