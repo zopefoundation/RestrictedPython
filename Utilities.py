@@ -16,7 +16,7 @@ __version__='$Revision: 1.7 $'[11:-2]
 import string, math, random
 import DocumentTemplate.sequence
 from DateTime.DateTime import DateTime
-from sets import Set
+import sets
 
 utility_builtins = {}
 
@@ -25,7 +25,7 @@ utility_builtins['math'] = math
 utility_builtins['random'] = random
 utility_builtins['sequence'] = DocumentTemplate.sequence
 utility_builtins['DateTime'] = DateTime
-utility_builtins['Set'] = Set
+utility_builtins['sets'] = sets
 
 
 def same_type(arg1, *args):
