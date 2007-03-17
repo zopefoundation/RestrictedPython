@@ -1,37 +1,36 @@
-RestrictedPython Package Readme
-===============================
-
-Overview
---------
+****************
+RestrictedPython
+****************
 
 Restricted execution enviromant, supporting untrusted code / templates.
 
-Changes
--------
+Releases
+********
 
-See CHANGES.txt.
+==================
+3.2.0 (2006/01/05)
+==================
 
-Installation
-------------
+- Corresponds to the verison of the RestrictedPython package shipped
+  as part of the Zope 3.2.0 release.
 
-See INSTALL.txt.
+- No changes from 3.1.0.
 
+==================
+3.1.0 (2005/10/03)
+==================
 
-Developer Resources
--------------------
+- Corresponds to the verison of the RestrictedPython package shipped
+  as part of the Zope 3.1.0 release.
 
-- Subversion browser:
+- Removed unused fossil module, 'SafeMapping'.
 
-  http://svn.zope.org/RestrictedPython/
+- Replaced use of deprecated 'whrandom' module with 'random' (aliased
+  to 'whrandom' for backward compatibility).
 
-- Read-only Subversion checkout:
+==================
+3.0.0 (2004/11/07)
+==================
 
-  $ svn co svn://svn.zope.org/repos/main/RestrictedPython/trunk
-
-- Writable Subversion checkout:
-
-  $ svn co svn://svn.zope.org/repos/main/RestrictedPython/trunk
-
-- Note that the 'src/RestrictedPython' package is acutally a 'svn:externals'
-  link to the corresponding package in the Zope3 trunk (or to a specific tag,
-  for released versions of the package).
+- Corresponds to the verison of the RestrictedPython package shipped
+  as part of the Zope X3.0.0 release.

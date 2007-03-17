@@ -18,25 +18,31 @@ $Id$
 
 import os
 
-try:
-    from setuptools import setup, Extension
-except ImportError, e:
-    from distutils.core import setup, Extension
+from setuptools import setup, Extension
 
-setup(name='RestrictedPython',
-      version='1.0',
-      url='http://svn.zope.org/RestrictedPython',
+def read(*rnames):
+    return open(os.path.join(os.path.dirname(__file__), *rnames)).read()
+
+name = 'RestrictedPython'
+setup(name=name,
+      version='3.4dev',
+      url='http://svn.zope.org/'+name,
       license='ZPL 2.1',
       description='Restricted Python executiion handlers',
       author='Zope Corporation and Contributors',
       author_email='zope3-dev@zope.org',
-      long_description='',
-      
-      packages=['RestrictedPython'],
-      package_dir = {'': os.path.join(os.path.dirname(__file__), 'src')},
+      long_description=(
+        read('README.txt')
+        + '\n' +
+        'Download\n'
+        '**********************\n'
+        ),
+
+      packages = ['RestrictedPython'],
+      package_dir = {'': 'src'},
 
       tests_require = ['zope.testing'],
-      install_requires=[],
+      install_requires = ['setuptools'],
       include_package_data = True,
 
       zip_safe = False,
