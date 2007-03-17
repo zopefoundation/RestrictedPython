@@ -18,7 +18,7 @@ $Id$
 
 import os
 
-from setuptools import setup, Extension
+from setuptools import setup, find_packages
 
 def read(*rnames):
     return open(os.path.join(os.path.dirname(__file__), *rnames)).read()
@@ -38,7 +38,7 @@ setup(name=name,
         '**********************\n'
         ),
 
-      packages = ['RestrictedPython'],
+      packages = find_packages('src'),
       package_dir = {'': 'src'},
 
       tests_require = ['zope.testing'],
