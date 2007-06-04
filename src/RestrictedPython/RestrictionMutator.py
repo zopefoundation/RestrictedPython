@@ -1,9 +1,9 @@
 ##############################################################################
 #
-# Copyright (c) 2001 Zope Corporation and Contributors. All Rights Reserved.
+# Copyright (c) 2002 Zope Corporation and Contributors. All Rights Reserved.
 #
 # This software is subject to the provisions of the Zope Public License,
-# Version 2.0 (ZPL).  A copy of the ZPL should accompany this distribution.
+# Version 2.1 (ZPL).  A copy of the ZPL should accompany this distribution.
 # THIS SOFTWARE IS PROVIDED "AS IS" AND ANY AND ALL EXPRESS OR IMPLIED
 # WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
 # WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
@@ -47,6 +47,7 @@ _getitem_name = ast.Name("_getitem_")
 _getiter_name = ast.Name("_getiter_")
 _print_target_name = ast.Name("_print")
 _write_name = ast.Name("_write_")
+_inplacevar_name = ast.Name("_inplacevar_")
 
 # Constants.
 _None_const = ast.Const(None)
@@ -94,6 +95,9 @@ class RestrictionMutator:
             # Note: "_" *is* allowed.
             self.error(node, '"%s" is an invalid variable name because'
                        ' it starts with "_"' % name)
+        if name.endswith('__roles__'):
+            self.error(node, '"%s" is an invalid variable name because '
+                       'it ends with "__roles__".' % name)
         if name == "printed":
             self.error(node, '"printed" is a reserved name.')
 
@@ -109,6 +113,9 @@ class RestrictionMutator:
             # Note: "_" *is* allowed.
             self.error(node, '"%s" is an invalid attribute name '
                        'because it starts with "_".' % name)
+        if name.endswith('__roles__'):
+            self.error(node, '"%s" is an invalid attribute name '
+                       'because it ends with "__roles__".' % name)
 
     def prepBody(self, body):
         """Insert code for print at the beginning of the code suite."""
@@ -233,9 +240,9 @@ class RestrictionMutator:
         #   for x in expr:
         # to
         #   for x in _getiter(expr):
+        #        # Note that visitListCompFor is the same thing.
         #
-        # Note that visitListCompFor is the same thing.  Exactly the same
-        # transformation is needed to convert
+        # Also for list comprehensions:
         #   [... for x in expr ...]
         # to
         #   [... for x in _getiter(expr) ...]
@@ -244,6 +251,15 @@ class RestrictionMutator:
         return node
 
     visitListCompFor = visitFor
+
+    def visitGenExprFor(self, node, walker):
+        # convert
+        #   (... for x in expr ...)
+        # to
+        #   (... for x in _getiter(expr) ...)
+        node = walker.defaultVisitNode(node)
+        node.iter = ast.CallFunc(_getiter_name, [node.iter])
+        return node
 
     def visitGetattr(self, node, walker):
         """Converts attribute access to a function call.
@@ -359,8 +375,23 @@ class RestrictionMutator:
         This could be a problem if untrusted code got access to a
         mutable database object that supports augmented assignment.
         """
-        node.node.in_aug_assign = True
-        return walker.defaultVisitNode(node)
+        if node.node.__class__.__name__ == 'Name':
+            node = walker.defaultVisitNode(node)
+            newnode = ast.Assign(
+                [ast.AssName(node.node.name, OP_ASSIGN)],
+                ast.CallFunc(
+                    _inplacevar_name,
+                    [ast.Const(node.op),
+                     ast.Name(node.node.name),
+                     node.expr,
+                     ]
+                    ),
+                )
+            newnode.lineno = node.lineno
+            return newnode
+        else:
+            node.node.in_aug_assign = True
+            return walker.defaultVisitNode(node)
 
     def visitImport(self, node, walker):
         """Checks names imported using checkName()."""

@@ -1,9 +1,9 @@
 ##############################################################################
 #
-# Copyright (c) 2001 Zope Corporation and Contributors. All Rights Reserved.
+# Copyright (c) 2002 Zope Corporation and Contributors. All Rights Reserved.
 #
 # This software is subject to the provisions of the Zope Public License,
-# Version 2.0 (ZPL).  A copy of the ZPL should accompany this distribution.
+# Version 2.1 (ZPL).  A copy of the ZPL should accompany this distribution.
 # THIS SOFTWARE IS PROVIDED "AS IS" AND ANY AND ALL EXPRESS OR IMPLIED
 # WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
 # WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
@@ -46,6 +46,8 @@ class RestrictedCompileMode(AbstractCompileMode):
     # See concrete subclasses below.
 
     def __init__(self, source, filename):
+        if source:
+            source = '\n'.join(source.splitlines())
         self.rm = RestrictionMutator()
         AbstractCompileMode.__init__(self, source, filename)
 
@@ -210,6 +212,8 @@ class RFunction(RModule):
 
     def __init__(self, p, body, name, filename, globals):
         self.params = p
+        if body:
+            body = '\n'.join(body.splitlines())
         self.body = body
         self.name = name
         self.globals = globals or []
@@ -224,12 +228,13 @@ class RFunction(RModule):
         # Stitch the body code into the function.
         f.code.nodes = body_code.node.nodes
         f.name = self.name
-        # Look for a docstring.
-        stmt1 = f.code.nodes[0]
-        if (isinstance(stmt1, ast.Discard) and
-            isinstance(stmt1.expr, ast.Const) and
-            isinstance(stmt1.expr.value, str)):
-            f.doc = stmt1.expr.value
+        # Look for a docstring, if there are any nodes at all
+        if len(f.code.nodes) > 0:
+            stmt1 = f.code.nodes[0]
+            if (isinstance(stmt1, ast.Discard) and
+                isinstance(stmt1.expr, ast.Const) and
+                isinstance(stmt1.expr.value, str)):
+                f.doc = stmt1.expr.value
         # The caller may specify that certain variables are globals
         # so that they can be referenced before a local assignment.
         # The only known example is the variables context, container,

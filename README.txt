@@ -8,6 +8,14 @@ Releases
 ********
 
 ==================
+3.4.0 (2007/06/04)
+==================
+
+- RestrictedPython now has its own release cycle as a separate egg.
+
+- Synchronized with RestrictedPython from Zope 2 tree.
+
+==================
 3.2.0 (2006/01/05)
 ==================
 

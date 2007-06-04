@@ -1,9 +1,9 @@
 ##############################################################################
 #
-# Copyright (c) 2001 Zope Corporation and Contributors. All Rights Reserved.
+# Copyright (c) 2002 Zope Corporation and Contributors. All Rights Reserved.
 #
 # This software is subject to the provisions of the Zope Public License,
-# Version 2.0 (ZPL).  A copy of the ZPL should accompany this distribution.
+# Version 2.1 (ZPL).  A copy of the ZPL should accompany this distribution.
 # THIS SOFTWARE IS PROVIDED "AS IS" AND ANY AND ALL EXPRESS OR IMPLIED
 # WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
 # WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
@@ -13,8 +13,7 @@
 
 __version__='$Revision: 1.7 $'[11:-2]
 
-import string, math, random
-import DocumentTemplate.sequence
+import string, math, random, sets
 
 utility_builtins = {}
 
@@ -22,12 +21,20 @@ utility_builtins['string'] = string
 utility_builtins['math'] = math
 utility_builtins['random'] = random
 utility_builtins['whrandom'] = random
-utility_builtins['sequence'] = DocumentTemplate.sequence
+utility_builtins['sets'] = sets
 
 try:
     import DateTime
     utility_builtins['DateTime']= DateTime.DateTime
-except: pass
+except ImportError:
+    pass
+
+try:
+    import DocumentTemplate.sequence
+    utility_builtins['sequence']= DocumentTemplate.sequence
+except ImportError:
+    pass
+
 
 def same_type(arg1, *args):
     '''Compares the class or type of two or more objects.'''
