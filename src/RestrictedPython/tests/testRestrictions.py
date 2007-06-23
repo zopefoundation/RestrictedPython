@@ -527,6 +527,17 @@ class RestrictionTests(unittest.TestCase):
         # parse() is called, then you'll get a syntax error.
         gen.parse()
 
+    def checkCollector2295(self):
+        from RestrictedPython.RCompile import RestrictedCompileMode
+        gen = RestrictedCompileMode(
+            'if False:\n  pass\n# Me Grok, Say Hi',
+            '<testing>'
+            )
+        gen.mode='exec'
+        # if the source has any line ending other than \n by the time
+        # parse() is called, then you'll get a syntax error.
+        gen.parse()
+
         
 create_rmodule()
 
