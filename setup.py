@@ -25,7 +25,7 @@ def read(*rnames):
 
 name = 'RestrictedPython'
 setup(name=name,
-      version='3.4.1',
+      version='3.4.2',
       url='http://svn.zope.org/'+name,
       license='ZPL 2.1',
       description='Restricted Python execution handlers',
