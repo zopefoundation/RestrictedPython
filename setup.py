@@ -31,12 +31,7 @@ setup(name=name,
       description='Restricted Python execution handlers',
       author='Zope Corporation and Contributors',
       author_email='zope3-dev@zope.org',
-      long_description=(
-        read('README.txt')
-        + '\n' +
-        'Download\n'
-        '**********************\n'
-        ),
+      long_description=open('README.xt').read(),
 
       packages = find_packages('src'),
       package_dir = {'': 'src'},
