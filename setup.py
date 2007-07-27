@@ -15,18 +15,15 @@
 
 $Id$
 """
-
 import os
-
 from setuptools import setup, find_packages
 
 def read(*rnames):
     return open(os.path.join(os.path.dirname(__file__), *rnames)).read()
 
-name = 'RestrictedPython'
-setup(name=name,
+setup(name='RestrictedPython',
       version='3.4.2',
-      url='http://svn.zope.org/'+name,
+      url='http://cheeseshop.zope.org/pypi/RestrictedPython',
       license='ZPL 2.1',
       description='Restricted Python execution handlers',
       author='Zope Corporation and Contributors',
