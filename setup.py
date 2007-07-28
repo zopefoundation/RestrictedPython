@@ -23,7 +23,7 @@ def read(*rnames):
 
 setup(name='RestrictedPython',
       version='3.4.2',
-      url='http://cheeseshop.zope.org/pypi/RestrictedPython',
+      url='http://cheeseshop.python.org/pypi/RestrictedPython',
       license='ZPL 2.1',
       description='RestrictedPython provides a restricted execution '
       'environment for Python, e.g. for running untrusted code.',
