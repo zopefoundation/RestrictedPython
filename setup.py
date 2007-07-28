@@ -25,10 +25,11 @@ setup(name='RestrictedPython',
       version='3.4.2',
       url='http://cheeseshop.zope.org/pypi/RestrictedPython',
       license='ZPL 2.1',
-      description='Restricted Python execution handlers',
+      description='RestrictedPython provides a restricted execution '
+      'environment for Python, e.g. for running untrusted code.',
       author='Zope Corporation and Contributors',
       author_email='zope3-dev@zope.org',
-      long_description=open('README.xt').read(),
+      long_description=open('README.txt').read(),
 
       packages = find_packages('src'),
       package_dir = {'': 'src'},
