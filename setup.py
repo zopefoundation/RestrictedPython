@@ -29,7 +29,8 @@ setup(name='RestrictedPython',
       'environment for Python, e.g. for running untrusted code.',
       author='Zope Corporation and Contributors',
       author_email='zope3-dev@zope.org',
-      long_description=open('README.txt').read(),
+      long_description=open(
+          os.path.join('src', 'RestrictedPython', 'README.txt')).read(),
 
       packages = find_packages('src'),
       package_dir = {'': 'src'},
