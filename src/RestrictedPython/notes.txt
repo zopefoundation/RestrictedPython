@@ -50,7 +50,7 @@ hopefully make this a little easier. :)
 
       * It uses compiler.parse to parse the source
 
-      * it uses MutatingWalker.walk to mutaate the tree using the
+      * it uses MutatingWalker.walk to mutate the tree using the
         RestrictedCompileMode's 'rm' attr, which is a
         RestrictionMutator.
 
@@ -64,7 +64,7 @@ hopefully make this a little easier. :)
         nodes. These visit methods may mutate nodes or return new
         nodes that replace the originally visited nodes.  There is a
         default visitor that visits a node's children and replaces the
-        children who's visitors returned new nodes.
+        children whose visitors returned new nodes.
 
         The walk function just calls the visitor for the root node of
         the given tree.  Note _get_tree ignores the walk return value,
