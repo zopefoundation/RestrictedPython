@@ -195,6 +195,13 @@ restricted code to modify lists and dictionaries:
 Changes
 =======
 
+3.4.3 - Unreleased
+------------------
+
+- Fixed deprecation warning: 'with' is now a reserved keyword on
+  Python 2.6. That means RestrictedPython should run on Python 2.6
+  now. Thanks to Ranjith Kannikara, GSoC Student for the patch.
+
 3.4.2 (2007/07/28)
 ------------------
 

@@ -53,11 +53,11 @@ def test(*args):
     if l%2: return args[-1]
 utility_builtins['test'] = test
 
-def reorder(s, with=None, without=()):
-    # s, with, and without are sequences treated as sets.
-    # The result is subtract(intersect(s, with), without),
-    # unless with is None, in which case it is subtract(s, without).
-    if with is None: with=s
+def reorder(s, with_=None, without=()):
+    # s, with_, and without are sequences treated as sets.
+    # The result is subtract(intersect(s, with_), without),
+    # unless with_ is None, in which case it is subtract(s, without).
+    if with_ is None: with_=s
     d={}
     tt=type(())
     for i in s:
@@ -73,7 +73,7 @@ def reorder(s, with=None, without=()):
         else:                           k= v = i
         if h(k): del d[k]
 
-    for i in with:
+    for i in with_:
         if type(i) is tt and len(i)==2: k, v = i
         else:                           k= v = i
         if h(k):
