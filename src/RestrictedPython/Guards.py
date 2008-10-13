@@ -46,6 +46,8 @@ for name in ['False', 'None', 'True', 'abs', 'basestring', 'bool', 'callable',
 # max
 # min
 # sum
+# all
+# any
 
 # Builtins that are intentionally disabled
 # compile   - don't let them produce new code

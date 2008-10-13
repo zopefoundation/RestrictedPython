@@ -274,6 +274,11 @@ class RestrictionTests(unittest.TestCase):
                     self.fail('%s() did not trip security' % k)
 
     def checkSyntaxSecurity(self):
+        self._checkSyntaxSecurity('security_in_syntax.py')
+        if sys.version_info >= (2, 6):
+            self._checkSyntaxSecurity('security_in_syntax26.py')
+
+    def _checkSyntaxSecurity(self, mod_name):
         # Ensures that each of the functions in security_in_syntax.py
         # throws a SyntaxError when using compile_restricted.
         fn = os.path.join(_HERE, 'security_in_syntax.py')
@@ -358,25 +363,23 @@ class RestrictionTests(unittest.TestCase):
             rm.compile()
             verify.verify(rm.getCode())
 
-    if sys.version_info[:2] >= (2, 4):
-        def checkBeforeAndAfter24(self):
+    def _checkBeforeAndAfter(self, mod):
             from RestrictedPython.RCompile import RModule
-            from RestrictedPython.tests import before_and_after24
             from compiler import parse
 
             defre = re.compile(r'def ([_A-Za-z0-9]+)_(after|before)\(')
 
-            beforel = [name for name in before_and_after24.__dict__
+            beforel = [name for name in mod.__dict__
                        if name.endswith("_before")]
 
             for name in beforel:
-                before = getattr(before_and_after24, name)
+                before = getattr(mod, name)
                 before_src = get_source(before)
                 before_src = re.sub(defre, r'def \1(', before_src)
                 rm = RModule(before_src, '')
                 tree_before = rm._get_tree()
 
-                after = getattr(before_and_after24, name[:-6]+'after')
+                after = getattr(mod, name[:-6]+'after')
                 after_src = get_source(after)
                 after_src = re.sub(defre, r'def \1(', after_src)
                 tree_after = parse(after_src)
@@ -385,6 +388,21 @@ class RestrictionTests(unittest.TestCase):
 
                 rm.compile()
                 verify.verify(rm.getCode())
+
+    if sys.version_info[:2] >= (2, 4):
+        def checkBeforeAndAfter24(self):
+            from RestrictedPython.tests import before_and_after24
+            self._checkBeforeAndAfter(before_and_after24)
+
+    if sys.version_info[:2] >= (2, 5):
+        def checkBeforeAndAfter25(self):
+            from RestrictedPython.tests import before_and_after25
+            self._checkBeforeAndAfter(before_and_after25)
+
+    if sys.version_info[:2] >= (2, 6):
+        def checkBeforeAndAfter26(self):
+            from RestrictedPython.tests import before_and_after26
+            self._checkBeforeAndAfter(before_and_after26)
 
     def _compile_file(self, name):
         path = os.path.join(_HERE, name)

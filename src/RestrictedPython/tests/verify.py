@@ -46,6 +46,7 @@ def _verifycode(code):
     line = code.co_firstlineno
     # keep a window of the last three opcodes, with the most recent first
     window = (None, None, None)
+    with_context = (None, None)
 
     for op in disassemble(code):
         if op.line is not None:
@@ -54,11 +55,28 @@ def _verifycode(code):
             # All the user code that generates LOAD_ATTR should be
             # rewritten, but the code generated for a list comp
             # includes a LOAD_ATTR to extract the append method.
-            if not (op.arg == "append" and
-                    window[0].opname == "DUP_TOP" and
-                    window[1].opname == "BUILD_LIST"):
+            # Another exception is the new-in-Python 2.6 'context
+            # managers', which do a LOAD_ATTR for __exit__ and
+            # __enter__.
+            if op.arg == "__exit__":
+                with_context = (op, with_context[1])
+            elif op.arg == "__enter__":
+                with_context = (with_context[0], op)
+            elif not ((op.arg == "__enter__" and
+                       window[0].opname == "ROT_TWO" and
+                       window[1].opname == "DUP_TOP") or 
+                      (op.arg == "append" and
+                       window[0].opname == "DUP_TOP" and
+                       window[1].opname == "BUILD_LIST")):
                 raise ValueError("direct attribute access %s: %s, %s:%d"
-                                 % (op.opname, op.arg, co.co_filename, line))
+                                 % (op.opname, op.arg, code.co_filename, line))
+        if op.opname in ("WITH_CLEANUP"):
+            # Here we check if the LOAD_ATTR for __exit__ and
+            # __enter__ were part of a 'with' statement by checking
+            # for the 'WITH_CLEANUP' bytecode. If one is seen, we
+            # clear the with_context variable and let it go. The
+            # access was safe.
+            with_context = (None, None)
         if op.opname in ("STORE_ATTR", "DEL_ATTR"):
             if not (window[0].opname == "CALL_FUNCTION" and
                     window[2].opname == "LOAD_GLOBAL" and
@@ -89,6 +107,16 @@ def _verifycode(code):
                              (code.co_filename, line))
 
         window = (op,) + window[:2]
+
+    if not with_context == (None, None):
+        # An access to __enter__ and __exit__ was performed but not as
+        # part of a 'with' statement. This is not allowed.
+        for op in with_context:
+            if op is not None:
+                if op.line is not None:
+                    line = op.line
+                raise ValueError("direct attribute access %s: %s, %s:%d"
+                                 % (op.opname, op.arg, code.co_filename, line))
 
 class Op(object):
     __slots__ = (
