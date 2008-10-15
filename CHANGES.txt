@@ -4,7 +4,7 @@ Changes
 3.4.3 (unreleased)
 ------------------
 
-- Fixed deprecation warning: 'with' is now a reserved keyword on
+- Fixed deprecation warning: ``with`` is now a reserved keyword on
   Python 2.6. That means RestrictedPython should run on Python 2.6
   now. Thanks to Ranjith Kannikara, GSoC Student for the patch.
 
@@ -42,7 +42,7 @@ Changes
 - Corresponds to the verison of the RestrictedPython package shipped
   as part of the Zope 3.1.0 release.
 
-- Removed unused fossil module, 'SafeMapping'.
+- Removed unused fossil module, ``SafeMapping``.
 
 - Replaced use of deprecated 'whrandom' module with 'random' (aliased
   to 'whrandom' for backward compatibility).
