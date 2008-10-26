@@ -1,14 +1,17 @@
 Changes
 =======
 
-3.4.3 (unreleased)
+3.4.3 (2008-10-26)
 ------------------
 
 - Fixed deprecation warning: ``with`` is now a reserved keyword on
   Python 2.6. That means RestrictedPython should run on Python 2.6
   now. Thanks to Ranjith Kannikara, GSoC Student for the patch.
 
-3.4.2 (2007/07/28)
+- Added tests for ternary if expression and for 'with' keyword and
+  context managers.
+
+3.4.2 (2007-07-28)
 ------------------
 
 - Changed homepage URL to the CheeseShop site
