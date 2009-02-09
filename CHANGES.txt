@@ -1,7 +1,7 @@
 Changes
 =======
 
-3.5.0 (2000-02-09)
+3.5.0 (2009-02-09)
 ------------------
 
 - Dropped legacy support for Python 2.1 / 2.2 (``__future__`` imports
