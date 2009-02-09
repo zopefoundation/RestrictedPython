@@ -1,8 +1,8 @@
 Changes
 =======
 
-After 3.4.3
------------
+3.5.0 (2000-02-09)
+------------------
 
 - Dropped legacy support for Python 2.1 / 2.2 (``__future__`` imports
   of ``nested_scopes`` / ``generators``.).
