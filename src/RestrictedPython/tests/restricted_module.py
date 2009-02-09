@@ -1,4 +1,3 @@
-from __future__ import nested_scopes
 import sys
 
 def print0():

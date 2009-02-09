@@ -2,8 +2,6 @@
 # compile_restricted() but not when using compile().
 # Each function in this module is compiled using compile_restricted().
 
-from __future__ import generators
-
 def overrideGuardWithFunction():
     def _getattr(o): return o
 

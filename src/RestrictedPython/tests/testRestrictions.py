@@ -292,7 +292,6 @@ class RestrictionTests(unittest.TestCase):
         for k, v in m.items():
             if hasattr(v, 'func_code'):
                 filename, source = find_source(fn, v.func_code)
-                source = "from __future__ import generators\n\n" + source
                 # Now compile it with restrictions
                 try:
                     code = compile_restricted(source, filename, 'exec')
