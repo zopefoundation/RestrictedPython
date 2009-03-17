@@ -1,6 +1,13 @@
 Changes
 =======
 
+After 3.5.0 (unreleased)
+------------------------
+
+- Added tests for ``Utilities`` module.
+
+- Filtered DeprecationWarnings when importing Python's ``sets`` module.
+
 3.5.0 (2009-02-09)
 ------------------
 

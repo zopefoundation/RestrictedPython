@@ -13,7 +13,20 @@
 
 __version__='$Revision: 1.7 $'[11:-2]
 
-import string, math, random, sets
+import math
+import random
+import string
+import warnings
+
+_old_filters = warnings.filters[:]
+warnings.filterwarnings('ignore', category=DeprecationWarning)
+try:
+    try:
+        import sets
+    except ImportError:
+        sets = None
+finally:
+    warnings.filters[:] = _old_filters
 
 utility_builtins = {}
 
@@ -46,39 +59,47 @@ def same_type(arg1, *args):
 utility_builtins['same_type'] = same_type
 
 def test(*args):
-    l=len(args)
-    for i in range(1, l, 2):
-        if args[i-1]: return args[i]
+    length = len(args)
+    for i in range(1, length, 2):
+        if args[i-1]:
+            return args[i]
 
-    if l%2: return args[-1]
+    if length % 2:
+        return args[-1]
 utility_builtins['test'] = test
 
 def reorder(s, with_=None, without=()):
     # s, with_, and without are sequences treated as sets.
     # The result is subtract(intersect(s, with_), without),
     # unless with_ is None, in which case it is subtract(s, without).
-    if with_ is None: with_=s
-    d={}
-    tt=type(())
-    for i in s:
-        if type(i) is tt and len(i)==2: k, v = i
-        else:                           k= v = i
-        d[k]=v
-    r=[]
-    a=r.append
-    h=d.has_key
+    if with_ is None:
+        with_ = s
+    orig = {}
+    for item in s:
+        if isinstance(item, tuple) and len(item) == 2:
+            key, value = item
+        else:
+            key = value = item
+        orig[key] = value
 
-    for i in without:
-        if type(i) is tt and len(i)==2: k, v = i
-        else:                           k= v = i
-        if h(k): del d[k]
+    result = []
 
-    for i in with_:
-        if type(i) is tt and len(i)==2: k, v = i
-        else:                           k= v = i
-        if h(k):
-            a((k,d[k]))
-            del d[k]
+    for item in without:
+        if isinstance(item, tuple) and len(item) == 2:
+            key, ignored = item
+        else:
+            key = item
+        if key in orig:
+            del orig[key]
 
-    return r
+    for item in with_:
+        if isinstance(item, tuple) and len(item) == 2:
+            key, ignored = item
+        else:
+            key = item
+        if key in orig:
+            result.append((key, orig[key]))
+            del orig[key]
+
+    return result
 utility_builtins['reorder'] = reorder
