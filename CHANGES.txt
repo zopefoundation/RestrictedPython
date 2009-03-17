@@ -1,8 +1,8 @@
 Changes
 =======
 
-After 3.5.0 (unreleased)
-------------------------
+3.5.1 (2009-03-17)
+------------------
 
 - Added tests for ``Utilities`` module.
 
