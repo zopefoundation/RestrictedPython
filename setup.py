@@ -1,6 +1,6 @@
 ##############################################################################
 #
-# Copyright (c) 2006 Zope Corporation and Contributors.
+# Copyright (c) 2006 Zope Foundation and Contributors.
 # All Rights Reserved.
 #
 # This software is subject to the provisions of the Zope Public License,
@@ -27,7 +27,7 @@ setup(name='RestrictedPython',
       license='ZPL 2.1',
       description='RestrictedPython provides a restricted execution '
       'environment for Python, e.g. for running untrusted code.',
-      author='Zope Corporation and Contributors',
+      author='Zope Foundation and Contributors',
       author_email='zope3-dev@zope.org',
       long_description=(read('src', 'RestrictedPython', 'README.txt')
                         + '\n' +
