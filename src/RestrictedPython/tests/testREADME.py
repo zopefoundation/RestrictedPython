@@ -14,7 +14,7 @@
 """Run tests in README.txt
 """
 import unittest
-from zope.testing.doctestunit import DocFileSuite
+from doctest import DocFileSuite
 
 __docformat__ = "reStructuredText"
 
@@ -22,6 +22,3 @@ def test_suite():
     return unittest.TestSuite([
         DocFileSuite('README.txt', package='RestrictedPython'),        
         ])
-
-if __name__ == '__main__':
-    unittest.main(defaultTest='test_suite')

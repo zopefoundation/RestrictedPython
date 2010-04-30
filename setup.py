@@ -22,23 +22,20 @@ def read(*rnames):
     return open(os.path.join(os.path.dirname(__file__), *rnames)).read()
 
 setup(name='RestrictedPython',
-      version='3.5.1',
-      url='http://cheeseshop.python.org/pypi/RestrictedPython',
+      version='3.5.2dev',
+      url='http://pypi.python.org/pypi/RestrictedPython',
       license='ZPL 2.1',
       description='RestrictedPython provides a restricted execution '
       'environment for Python, e.g. for running untrusted code.',
       author='Zope Foundation and Contributors',
-      author_email='zope3-dev@zope.org',
+      author_email='zope-dev@zope.org',
       long_description=(read('src', 'RestrictedPython', 'README.txt')
                         + '\n' +
                         read('CHANGES.txt')),
 
       packages = find_packages('src'),
       package_dir = {'': 'src'},
-
-      tests_require = ['zope.testing'],
       install_requires = ['setuptools'],
       include_package_data = True,
-
       zip_safe = False,
       )
