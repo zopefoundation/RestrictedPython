@@ -60,15 +60,6 @@ class UtilitiesTests(unittest.TestCase):
             from RestrictedPython.Utilities import utility_builtins
             self.failUnless('DateTime' in utility_builtins)
 
-    def test_sequence_in_utility_builtins_if_importable(self):
-        try:
-            import DocumentTemplate.sequence
-        except ImportError:
-            pass
-        else:
-            from RestrictedPython.Utilities import utility_builtins
-            self.failUnless('sequence' in utility_builtins)
-
     def test_same_type_in_utility_builtins(self):
         from RestrictedPython.Utilities import same_type
         from RestrictedPython.Utilities import utility_builtins

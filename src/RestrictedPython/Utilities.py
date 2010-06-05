@@ -42,12 +42,6 @@ try:
 except ImportError:
     pass
 
-try:
-    import DocumentTemplate.sequence
-    utility_builtins['sequence']= DocumentTemplate.sequence
-except ImportError:
-    pass
-
 
 def same_type(arg1, *args):
     '''Compares the class or type of two or more objects.'''
@@ -58,6 +52,7 @@ def same_type(arg1, *args):
     return 1
 utility_builtins['same_type'] = same_type
 
+
 def test(*args):
     length = len(args)
     for i in range(1, length, 2):
@@ -67,6 +62,7 @@ def test(*args):
     if length % 2:
         return args[-1]
 utility_builtins['test'] = test
+
 
 def reorder(s, with_=None, without=()):
     # s, with_, and without are sequences treated as sets.

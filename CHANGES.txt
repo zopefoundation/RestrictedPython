@@ -1,9 +1,11 @@
 Changes
 =======
 
-3.5.3 (unreleased)
+3.6.0 (unreleased)
 ------------------
 
+- Removed support for DocumentTemplate.sequence - this is handled in the
+  DocumentTemplate package itself.
 
 3.5.2 (2010-04-30)
 ------------------
