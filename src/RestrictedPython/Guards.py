@@ -71,10 +71,13 @@ for name in ['False', 'None', 'True', 'abs', 'basestring', 'bool', 'callable',
 # one should care.
 
 # buffer
+# bytes
+# bytearray
 # classmethod
 # coerce
 # eval
 # intern
+# memoryview
 # object
 # property
 # reload
