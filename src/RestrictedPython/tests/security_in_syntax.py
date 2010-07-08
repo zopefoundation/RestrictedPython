@@ -41,6 +41,9 @@ def check_getattr_in_lambda(arg=lambda _getattr=(lambda ob, name: name):
 def import_as_bad_name():
     import os as _leading_underscore
 
+def from_import_as_bad_name():
+    from x import y as _leading_underscore
+
 def except_using_bad_name():
     try:
         foo

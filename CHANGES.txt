@@ -4,6 +4,9 @@ Changes
 3.6.0 (unreleased)
 ------------------
 
+- Added name check for names assigned during imports using the
+  "from x import y" format.
+
 - Added test for name check when assigning an alias using multiple-context with
   statements in Python 2.7.
 
