@@ -281,7 +281,7 @@ class RestrictionTests(unittest.TestCase):
     def _checkSyntaxSecurity(self, mod_name):
         # Ensures that each of the functions in security_in_syntax.py
         # throws a SyntaxError when using compile_restricted.
-        fn = os.path.join(_HERE, 'security_in_syntax.py')
+        fn = os.path.join(_HERE, mod_name)
         f = open(fn, 'r')
         source = f.read()
         f.close()
