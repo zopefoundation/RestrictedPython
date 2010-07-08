@@ -4,6 +4,8 @@ Changes
 3.6.0 (unreleased)
 ------------------
 
+- Added tests for protection of the iterators for dict and set comprehensions
+  in Python 2.7.
 
 3.6.0a1 (2010-06-05)
 --------------------

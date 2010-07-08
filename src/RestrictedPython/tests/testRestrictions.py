@@ -277,6 +277,8 @@ class RestrictionTests(unittest.TestCase):
         self._checkSyntaxSecurity('security_in_syntax.py')
         if sys.version_info >= (2, 6):
             self._checkSyntaxSecurity('security_in_syntax26.py')
+        if sys.version_info >= (2, 7):
+            self._checkSyntaxSecurity('security_in_syntax27.py')
 
     def _checkSyntaxSecurity(self, mod_name):
         # Ensures that each of the functions in security_in_syntax.py
@@ -402,6 +404,11 @@ class RestrictionTests(unittest.TestCase):
         def checkBeforeAndAfter26(self):
             from RestrictedPython.tests import before_and_after26
             self._checkBeforeAndAfter(before_and_after26)
+
+    if sys.version_info[:2] >= (2, 7):
+        def checkBeforeAndAfter27(self):
+            from RestrictedPython.tests import before_and_after27
+            self._checkBeforeAndAfter(before_and_after27)
 
     def _compile_file(self, name):
         path = os.path.join(_HERE, name)
