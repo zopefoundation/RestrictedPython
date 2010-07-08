@@ -4,6 +4,9 @@ Changes
 3.6.0 (unreleased)
 ------------------
 
+- Added test for name check when assigning an alias using multiple-context with
+  statements in Python 2.7.
+
 - Added tests for protection of the iterators for dict and set comprehensions
   in Python 2.7.
 

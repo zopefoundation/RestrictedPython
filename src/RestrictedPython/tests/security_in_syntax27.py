@@ -7,3 +7,7 @@ def dict_comp_bad_name():
 
 def set_comp_bad_name():
     {y for _restricted_name in x}
+
+def compound_with_bad_name():
+    with a as b, c as _restricted_name:
+        pass
