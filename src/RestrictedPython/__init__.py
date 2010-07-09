@@ -12,7 +12,6 @@
 ##############################################################################
 '''
 RestrictedPython package.
-$Id$
 '''
 
 from SelectCompiler import *

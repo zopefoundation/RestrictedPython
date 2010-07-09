@@ -11,8 +11,6 @@
 #
 ##############################################################################
 """Compiler selector.
-
-$Id$
 """
 
 # Use the compiler from the standard library.

@@ -22,8 +22,6 @@ These examples are actually used in the testRestrictions.py
 checkBeforeAndAfter() unit tests, which verifies that the restricted compiler
 actually produces the same output as would be output by the normal compiler
 for the after function.
-
-$Id: before_and_after24.py 76322 2007-06-04 17:40:03Z philikon $
 """
 
 def simple_context_before():
