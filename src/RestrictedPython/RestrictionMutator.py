@@ -400,3 +400,5 @@ class RestrictionMutator:
             if asname:
                 self.checkName(node, asname)
         return node
+
+    visitFrom = visitImport

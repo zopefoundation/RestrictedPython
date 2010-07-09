@@ -5,3 +5,12 @@
 def with_as_bad_name():
     with x as _leading_underscore:
         pass
+
+def relative_import_as_bad_name():
+    from .x import y as _leading_underscore
+
+def except_as_bad_name():
+    try:
+        1/0
+    except Exception as _leading_underscore:
+        pass

@@ -24,6 +24,12 @@ global namespace:
   >>> hello_world()
   'Hello World!'
 
+Compatibility
+=============
+
+This release of RestrictedPython is compatible with Python 2.3, 2.4, 2.5, 2.6,
+and 2.7.
+
 Implementing a policy
 =====================
 
