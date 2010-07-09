@@ -1,7 +1,7 @@
 Changes
 =======
 
-3.6.0 (unreleased)
+3.6.0 (2010-07-09)
 ------------------
 
 - Added name check for names assigned during imports using the
