@@ -1,0 +1,9 @@
+language: python
+python:
+    - 
+install:
+    - pip install . --use-mirrors
+script:
+    - python setup.py test -q
+notifications:
+    email: false
