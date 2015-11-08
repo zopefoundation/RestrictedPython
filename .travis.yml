@@ -3,7 +3,7 @@ sudo: false
 python:
     - 2.7
 install:
-    - pip install . --use-mirrors
+    - pip install .
 script:
     - python setup.py test -q
 notifications:
