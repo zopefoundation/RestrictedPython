@@ -1,22 +1,27 @@
 import sys
 
+
 def print0():
     print 'Hello, world!',
     return printed
+
 
 def print1():
     print 'Hello,',
     print 'world!',
     return printed
 
+
 def printStuff():
     print 'a', 'b', 'c',
     return printed
+
 
 def printToNone():
     x = None
     print >>x, 'Hello, world!',
     return printed
+
 
 def printLines():
     # This failed before Zope 2.4.0a2
@@ -27,11 +32,13 @@ def printLines():
         print
     return printed
 
+
 def try_map():
-    inc = lambda i: i+1
+    inc = lambda i: i + 1
     x = [1, 2, 3]
     print map(inc, x),
     return printed
+
 
 def try_apply():
     def f(x, y, z):
@@ -39,15 +46,18 @@ def try_apply():
     print f(*(300, 20), **{'z': 1}),
     return printed
 
+
 def try_inplace():
     x = 1
     x += 3
+
 
 def primes():
     # Somewhat obfuscated code on purpose
     print filter(None,map(lambda y:y*reduce(lambda x,y:x*y!=0,
     map(lambda x,y=y:y%x,range(2,int(pow(y,0.5)+1))),1),range(2,20))),
     return printed
+
 
 def allowed_read(ob):
     print ob.allowed
@@ -58,13 +68,14 @@ def allowed_read(ob):
     print len(ob)
     return printed
 
+
 def allowed_default_args(ob):
     def f(a=ob.allowed, s=ob.s):
         return a, s
 
 
 def allowed_simple():
-    q = {'x':'a'}
+    q = {'x': 'a'}
     q['y'] = 'b'
     q.update({'z': 'c'})
     r = ['a']
@@ -80,62 +91,78 @@ def allowed_simple():
 
     return q['x'] + q['y'] + q['z'] + r[0] + r[1] + r[2] + s
 
+
 def allowed_write(ob):
     ob.writeable = 1
-    #ob.writeable += 1
-    [1 for ob.writeable in 1,2]
+    # ob.writeable += 1
+    [1 for ob.writeable in 1, 2]
     ob['safe'] = 2
-    #ob['safe'] += 2
-    [1 for ob['safe'] in 1,2]
+    # ob['safe'] += 2
+    [1 for ob['safe'] in 1, 2]
+
 
 def denied_print(ob):
     print >> ob, 'Hello, world!',
 
+
 def denied_getattr(ob):
-    #ob.disallowed += 1
+    # ob.disallowed += 1
     ob.disallowed = 1
     return ob.disallowed
+
 
 def denied_default_args(ob):
     def f(d=ob.disallowed):
         return d
 
+
 def denied_setattr(ob):
     ob.allowed = -1
 
+
 def denied_setattr2(ob):
-    #ob.allowed += -1
+    # ob.allowed += -1
     ob.allowed = -1
 
+
 def denied_setattr3(ob):
-    [1 for ob.allowed in 1,2]
+    [1 for ob.allowed in 1, 2]
+
 
 def denied_getitem(ob):
     ob[1]
 
+
 def denied_getitem2(ob):
-    #ob[1] += 1
+    # ob[1] += 1
     ob[1]
+
 
 def denied_setitem(ob):
     ob['x'] = 2
 
+
 def denied_setitem2(ob):
-    #ob[0] += 2
+    # ob[0] += 2
     ob['x'] = 2
 
+
 def denied_setitem3(ob):
-    [1 for ob['x'] in 1,2]
+    [1 for ob['x'] in 1, 2]
+
 
 def denied_setslice(ob):
     ob[0:1] = 'a'
 
+
 def denied_setslice2(ob):
-    #ob[0:1] += 'a'
+    # ob[0:1] += 'a'
     ob[0:1] = 'a'
 
+
 def denied_setslice3(ob):
-    [1 for ob[0:1] in 1,2]
+    [1 for ob[0:1] in 1, 2]
+
 
 ##def strange_attribute():
 ##    # If a guard has attributes with names that don't start with an
@@ -145,6 +172,7 @@ def denied_setslice3(ob):
 
 def order_of_operations():
     return 3 * 4 * -2 + 2 * 12
+
 
 def rot13(ss):
     mapping = {}
@@ -165,15 +193,18 @@ def rot13(ss):
         res = res + mapping.get(c, c)
     return res
 
+
 def nested_scopes_1():
     # Fails if 'a' is consumed by the first function.
     a = 1
+
     def f1():
         return a
+
     def f2():
         return a
     return f1() + f2()
 
+
 class Classic:
     pass
-

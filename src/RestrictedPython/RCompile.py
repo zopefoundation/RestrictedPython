@@ -14,14 +14,23 @@
 Python standard library.
 """
 
-__version__='$Revision: 1.6 $'[11:-2]
+from ast import parse
 
-from compiler import ast, parse, misc, syntax, pycodegen
-from compiler.pycodegen import AbstractCompileMode, Expression, \
-     Interactive, Module, ModuleCodeGenerator, FunctionCodeGenerator, findOp
+from compiler import ast as c_ast
+from compiler import parse as c_parse
+from compiler import misc as c_misc
+from compiler import syntax as c_syntax
+from compiler import pycodegen
+from compiler.pycodegen import AbstractCompileMode
+from compiler.pycodegen import Expression
+from compiler.pycodegen import Interactive
+from compiler.pycodegen import Module
+from compiler.pycodegen import ModuleCodeGenerator
+from compiler.pycodegen import FunctionCodeGenerator
+from compiler.pycodegen import findOp
 
-import MutatingWalker
-from RestrictionMutator import RestrictionMutator
+from RestrictedPython import MutatingWalker
+from RestrictedPython.RestrictionMutator import RestrictionMutator
 
 
 def niceParse(source, filename, mode):
@@ -30,7 +39,9 @@ def niceParse(source, filename, mode):
         # detects this as a UTF-8 encoded string.
         source = '\xef\xbb\xbf' + source.encode('utf-8')
     try:
-        return parse(source, mode)
+        compiler_code = c_parse(source, mode)
+        ast_code = parse(source, filename, mode)
+        return compiler_code
     except:
         # Try to make a clean error message using
         # the builtin Python compiler.
@@ -41,26 +52,28 @@ def niceParse(source, filename, mode):
         # Some other error occurred.
         raise
 
+
 class RestrictedCompileMode(AbstractCompileMode):
     """Abstract base class for hooking up custom CodeGenerator."""
     # See concrete subclasses below.
 
     def __init__(self, source, filename):
-        if source:                                  
+        if source:
             source = '\n'.join(source.splitlines()) + '\n'
         self.rm = RestrictionMutator()
         AbstractCompileMode.__init__(self, source, filename)
 
     def parse(self):
-        return niceParse(self.source, self.filename, self.mode)
+        code = niceParse(self.source, self.filename, self.mode)
+        return code
 
     def _get_tree(self):
         tree = self.parse()
         MutatingWalker.walk(tree, self.rm)
         if self.rm.errors:
-            raise SyntaxError, self.rm.errors[0]
-        misc.set_filename(self.filename, tree)
-        syntax.check(tree)
+            raise SyntaxError(self.rm.errors[0])
+        c_misc.set_filename(self.filename, tree)
+        c_syntax.check(tree)
         return tree
 
     def compile(self):
@@ -72,9 +85,10 @@ class RestrictedCompileMode(AbstractCompileMode):
 def compileAndTuplize(gen):
     try:
         gen.compile()
-    except SyntaxError, v:
+    except SyntaxError as v:
         return None, (str(v),), gen.rm.warnings, gen.rm.used_names
     return gen.getCode(), (), gen.rm.warnings, gen.rm.used_names
+
 
 def compile_restricted_function(p, body, name, filename, globalize=None):
     """Compiles a restricted code object for a function.
@@ -90,15 +104,18 @@ def compile_restricted_function(p, body, name, filename, globalize=None):
     gen = RFunction(p, body, name, filename, globalize)
     return compileAndTuplize(gen)
 
-def compile_restricted_exec(s, filename='<string>'):
+
+def compile_restricted_exec(source, filename='<string>'):
     """Compiles a restricted code suite."""
-    gen = RModule(s, filename)
+    gen = RModule(source, filename)
     return compileAndTuplize(gen)
 
-def compile_restricted_eval(s, filename='<string>'):
+
+def compile_restricted_eval(source, filename='<string>'):
     """Compiles a restricted expression."""
-    gen = RExpression(s, filename)
+    gen = RExpression(source, filename)
     return compileAndTuplize(gen)
+
 
 def compile_restricted(source, filename, mode):
     """Replacement for the builtin compile() function."""
@@ -113,6 +130,7 @@ def compile_restricted(source, filename, mode):
                          "'eval' or 'single'")
     gen.compile()
     return gen.getCode()
+
 
 class RestrictedCodeGenerator:
     """Mixin for CodeGenerator to replace UNPACK_SEQUENCE bytecodes.
@@ -167,17 +185,21 @@ class RestrictedCodeGenerator:
 # handle unpacking for all the different compilation modes.  They
 # are defined here (at the end) so that can refer to RestrictedCodeGenerator.
 
+
 class RestrictedFunctionCodeGenerator(RestrictedCodeGenerator,
                                       pycodegen.FunctionCodeGenerator):
     pass
+
 
 class RestrictedExpressionCodeGenerator(RestrictedCodeGenerator,
                                         pycodegen.ExpressionCodeGenerator):
     pass
 
+
 class RestrictedInteractiveCodeGenerator(RestrictedCodeGenerator,
                                          pycodegen.InteractiveCodeGenerator):
     pass
+
 
 class RestrictedModuleCodeGenerator(RestrictedCodeGenerator,
                                     pycodegen.ModuleCodeGenerator):
@@ -197,13 +219,16 @@ class RExpression(RestrictedCompileMode, Expression):
     mode = "eval"
     CodeGeneratorClass = RestrictedExpressionCodeGenerator
 
+
 class RInteractive(RestrictedCompileMode, Interactive):
     mode = "single"
     CodeGeneratorClass = RestrictedInteractiveCodeGenerator
 
+
 class RModule(RestrictedCompileMode, Module):
     mode = "exec"
     CodeGeneratorClass = RestrictedModuleCodeGenerator
+
 
 class RFunction(RModule):
     """A restricted Python function built from parts."""
@@ -231,8 +256,8 @@ class RFunction(RModule):
         # Look for a docstring, if there are any nodes at all
         if len(f.code.nodes) > 0:
             stmt1 = f.code.nodes[0]
-            if (isinstance(stmt1, ast.Discard) and
-                isinstance(stmt1.expr, ast.Const) and
+            if (isinstance(stmt1, c_ast.Discard) and
+                isinstance(stmt1.expr, c_ast.Const) and
                 isinstance(stmt1.expr.value, str)):
                 f.doc = stmt1.expr.value
         # The caller may specify that certain variables are globals

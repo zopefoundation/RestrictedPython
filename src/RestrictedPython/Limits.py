@@ -11,11 +11,10 @@
 #
 ##############################################################################
 
-__version__='$Revision: 1.5 $'[11:-2]
-
 limited_builtins = {}
 
-def limited_range(iFirst, *args):
+
+def _limited_range(iFirst, *args):
     # limited range function from Martijn Pieters
     RANGELIMIT = 1000
     if not len(args):
@@ -25,22 +24,27 @@ def limited_range(iFirst, *args):
     elif len(args) == 2:
         iStart, iEnd, iStep = iFirst, args[0], args[1]
     else:
-        raise AttributeError, 'range() requires 1-3 int arguments'
-    if iStep == 0: raise ValueError, 'zero step for range()'
+        raise AttributeError('range() requires 1-3 int arguments')
+    if iStep == 0:
+        raise ValueError('zero step for range()')
     iLen = int((iEnd - iStart) / iStep)
-    if iLen < 0: iLen = 0
-    if iLen >= RANGELIMIT: raise ValueError, 'range() too large'
+    if iLen < 0:
+        iLen = 0
+    if iLen >= RANGELIMIT:
+        raise ValueError('range() too large')
     return range(iStart, iEnd, iStep)
-limited_builtins['range'] = limited_range
+limited_builtins['range'] = _limited_range
 
-def limited_list(seq):
+
+def _limited_list(seq):
     if isinstance(seq, str):
-        raise TypeError, 'cannot convert string to list'
+        raise TypeError('cannot convert string to list')
     return list(seq)
-limited_builtins['list'] = limited_list
+limited_builtins['list'] = _limited_list
 
-def limited_tuple(seq):
+
+def _limited_tuple(seq):
     if isinstance(seq, str):
-        raise TypeError, 'cannot convert string to tuple'
+        raise TypeError('cannot convert string to tuple')
     return tuple(seq)
-limited_builtins['tuple'] = limited_tuple
+limited_builtins['tuple'] = _limited_tuple

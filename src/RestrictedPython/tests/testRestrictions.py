@@ -1,8 +1,3 @@
-import os
-import re
-import sys
-import unittest
-
 # Note that nothing should be imported from AccessControl, and in particular
 # nothing from ZopeGuards.py.  Transformed code may need several wrappers
 # in order to run at all, and most of the production wrappers are defined
@@ -15,27 +10,38 @@ from RestrictedPython.Eval import RestrictionCapableEval
 from RestrictedPython.tests import restricted_module, verify
 from RestrictedPython.RCompile import RModule, RFunction
 
+import os
+import re
+import sys
+import unittest
+
 try:
     __file__
 except NameError:
     __file__ = os.path.abspath(sys.argv[1])
-_FILEPATH = os.path.abspath( __file__ )
-_HERE = os.path.dirname( _FILEPATH )
+_FILEPATH = os.path.abspath(__file__)
+_HERE = os.path.dirname(_FILEPATH)
+
 
 def _getindent(line):
     """Returns the indentation level of the given line."""
     indent = 0
     for c in line:
-        if c == ' ': indent = indent + 1
-        elif c == '\t': indent = indent + 8
-        else: break
+        if c == ' ':
+            indent = indent + 1
+        elif c == '\t':
+            indent = indent + 8
+        else:
+            break
     return indent
+
 
 def find_source(fn, func):
     """Given a func_code object, this function tries to find and return
-    the python source code of the function.  Originally written by
+    the python source code of the function.
+    Originally written by
     Harm van der Heijden (H.v.d.Heijden@phys.tue.nl)"""
-    f = open(fn,"r")
+    f = open(fn, "r")
     for i in range(func.co_firstlineno):
         line = f.readline()
     ind = _getindent(line)
@@ -46,9 +52,11 @@ def find_source(fn, func):
         # the following should be <= ind, but then we get
         # confused by multiline docstrings. Using == works most of
         # the time... but not always!
-        if _getindent(line) == ind: break
+        if _getindent(line) == ind:
+            break
     f.close()
     return fn, msg
+
 
 def get_source(func):
     """Less silly interface to find_source"""
@@ -58,6 +66,7 @@ def get_source(func):
     source = find_source(file, func.func_code)[1]
     assert source.strip(), "Source should not be empty!"
     return source
+
 
 def create_rmodule():
     global rmodule
@@ -69,18 +78,25 @@ def create_rmodule():
     compile(source, fn, 'exec')
     # Now compile it for real
     code = compile_restricted(source, fn, 'exec')
-    rmodule = {'__builtins__':{'__import__':__import__, 'None':None,
-                               '__name__': 'restricted_module'}}
+    rmodule = {'__builtins__': {'__import__': __import__,
+                                'None': None,
+                                '__name__': 'restricted_module'
+                                }
+               }
+
     builtins = getattr(__builtins__, '__dict__', __builtins__)
     for name in ('map', 'reduce', 'int', 'pow', 'range', 'filter',
                  'len', 'chr', 'ord',
                  ):
         rmodule[name] = builtins[name]
-    exec code in rmodule
+    exec(code, rmodule)
 
-class AccessDenied (Exception): pass
+
+class AccessDenied (Exception):
+    pass
 
 DisallowedObject = []
+
 
 class RestrictedObject:
     disallowed = DisallowedObject
@@ -127,6 +143,8 @@ def guarded_getattr(ob, name):
     return v
 
 SliceType = type(slice(0))
+
+
 def guarded_getitem(ob, index):
     if type(index) is SliceType and index.step is None:
         start = index.start
@@ -143,9 +161,10 @@ def guarded_getitem(ob, index):
         raise AccessDenied
     return v
 
+
 def minimal_import(name, _globals, _locals, names):
     if name != "__future__":
-        raise ValueError, "Only future imports are allowed"
+        raise ValueError("Only future imports are allowed")
     import __future__
     return __future__
 
@@ -176,17 +195,22 @@ class TestGuard:
 
 # A wrapper for _apply_.
 apply_wrapper_called = []
+
+
 def apply_wrapper(func, *args, **kws):
     apply_wrapper_called.append('yes')
     return func(*args, **kws)
 
 inplacevar_wrapper_called = {}
+
+
 def inplacevar_wrapper(op, x, y):
     inplacevar_wrapper_called[op] = x, y
     # This is really lame.  But it's just a test. :)
     globs = {'x': x, 'y': y}
-    exec 'x'+op+'y' in globs
+    exec('x' + op + 'y', globs)
     return globs['x']
+
 
 class RestrictionTests(unittest.TestCase):
     def execFunc(self, name, *args, **kw):
@@ -196,13 +220,7 @@ class RestrictionTests(unittest.TestCase):
                                   '_getitem_': guarded_getitem,
                                   '_write_': TestGuard,
                                   '_print_': PrintCollector,
-        # I don't want to write something as involved as ZopeGuard's
-        # SafeIter just for these tests.  Using the builtin list() function
-        # worked OK for everything the tests did at the time this was added,
-        # but may fail in the future.  If Python 2.1 is no longer an
-        # interesting platform then, using 2.2's builtin iter() here should
-        # work for everything.
-                                  '_getiter_': list,
+                                  '_getiter_': iter,
                                   '_apply_': apply_wrapper,
                                   '_inplacevar_': inplacevar_wrapper,
                                   })
@@ -228,7 +246,7 @@ class RestrictionTests(unittest.TestCase):
 
     def checkPrintLines(self):
         res = self.execFunc('printLines')
-        self.assertEqual(res,  '0 1 2\n3 4 5\n6 7 8\n')
+        self.assertEqual(res, '0 1 2\n3 4 5\n6 7 8\n')
 
     def checkPrimes(self):
         res = self.execFunc('primes')
@@ -289,8 +307,8 @@ class RestrictionTests(unittest.TestCase):
         f.close()
         # Unrestricted compile.
         code = compile(source, fn, 'exec')
-        m = {'__builtins__': {'__import__':minimal_import}}
-        exec code in m
+        m = {'__builtins__': {'__import__': minimal_import}}
+        exec(code, m)
         for k, v in m.items():
             if hasattr(v, 'func_code'):
                 filename, source = find_source(fn, v.func_code)
@@ -320,7 +338,7 @@ class RestrictionTests(unittest.TestCase):
         v = [12, 34]
         expect = v[:]
         expect.reverse()
-        res = expr.eval({'m':v})
+        res = expr.eval({'m': v})
         self.assertEqual(res, expect)
         v = [12, 34]
         res = expr(m=v)
@@ -335,7 +353,6 @@ class RestrictionTests(unittest.TestCase):
                     rss >= ss, 'The stack size estimate for %s() '
                     'should have been at least %d, but was only %d'
                     % (k, ss, rss))
-
 
     def checkBeforeAndAfter(self):
         from RestrictedPython.RCompile import RModule
@@ -354,7 +371,7 @@ class RestrictionTests(unittest.TestCase):
             rm = RModule(before_src, '')
             tree_before = rm._get_tree()
 
-            after = getattr(before_and_after, name[:-6]+'after')
+            after = getattr(before_and_after, name[:-6] + 'after')
             after_src = get_source(after)
             after_src = re.sub(defre, r'def \1(', after_src)
             tree_after = parse(after_src)
@@ -380,7 +397,7 @@ class RestrictionTests(unittest.TestCase):
                 rm = RModule(before_src, '')
                 tree_before = rm._get_tree()
 
-                after = getattr(mod, name[:-6]+'after')
+                after = getattr(mod, name[:-6] + 'after')
                 after_src = get_source(after)
                 after_src = re.sub(defre, r'def \1(', after_src)
                 tree_after = parse(after_src)
@@ -423,18 +440,19 @@ class RestrictionTests(unittest.TestCase):
     def checkUnpackSequence(self):
         co = self._compile_file("unpack.py")
         calls = []
+
         def getiter(seq):
             calls.append(seq)
             return list(seq)
         globals = {"_getiter_": getiter, '_inplacevar_': inplacevar_wrapper}
-        exec co in globals, {}
+        exec(co, globals, {})
         # The comparison here depends on the exact code that is
         # contained in unpack.py.
         # The test doing implicit unpacking in an "except:" clause is
         # a pain, because there are two levels of unpacking, and the top
         # level is unpacking the specific TypeError instance constructed
         # by the test.  We have to worm around that one.
-        ineffable =  "a TypeError instance"
+        ineffable = "a TypeError instance"
         expected = [[1, 2],
                     (1, 2),
                     "12",
@@ -462,22 +480,24 @@ class RestrictionTests(unittest.TestCase):
         co = compile_restricted("[x for x, y in [(1, 2)]]", "<string>", "eval")
         verify.verify(co)
         calls = []
+
         def getiter(s):
             calls.append(s)
             return list(s)
         globals = {"_getiter_": getiter}
-        exec co in globals, {}
-        self.assertEqual(calls, [[(1,2)], (1, 2)])
+        exec(co, globals, {})
+        self.assertEqual(calls, [[(1, 2)], (1, 2)])
 
     def checkUnpackSequenceSingle(self):
         co = compile_restricted("x, y = 1, 2", "<string>", "single")
         verify.verify(co)
         calls = []
+
         def getiter(s):
             calls.append(s)
             return list(s)
         globals = {"_getiter_": getiter}
-        exec co in globals, {}
+        exec(co, globals, {})
         self.assertEqual(calls, [(1, 2)])
 
     def checkClass(self):
@@ -496,7 +516,7 @@ class RestrictionTests(unittest.TestCase):
         globals = {"_getattr_": test_getattr,
                    "_write_": test_setattr,
                    }
-        exec co in globals, {}
+        exec(co, globals, {})
         # Note that the getattr calls don't correspond to the method call
         # order, because the x.set method is fetched before its arguments
         # are evaluated.
@@ -506,7 +526,7 @@ class RestrictionTests(unittest.TestCase):
 
     def checkLambda(self):
         co = self._compile_file("lambda.py")
-        exec co in {}, {}
+        exec(co, {}, {})
 
     def checkEmpty(self):
         rf = RFunction("", "", "issue945", "empty.py", {})
@@ -534,7 +554,7 @@ class RestrictionTests(unittest.TestCase):
             name='test',
             filename='<test>',
             globals=(),
-            )
+        )
         gen.mode = 'exec'
         # if the source has any line ending other than \n by the time
         # parse() is called, then you'll get a syntax error.
@@ -545,8 +565,8 @@ class RestrictionTests(unittest.TestCase):
         gen = RestrictedCompileMode(
             '# testing\r\nprint "testing"\r\nreturn printed\n',
             '<testing>'
-            )
-        gen.mode='exec'
+        )
+        gen.mode = 'exec'
         # if the source has any line ending other than \n by the time
         # parse() is called, then you'll get a syntax error.
         gen.parse()
@@ -556,17 +576,18 @@ class RestrictionTests(unittest.TestCase):
         gen = RestrictedCompileMode(
             'if False:\n  pass\n# Me Grok, Say Hi',
             '<testing>'
-            )
-        gen.mode='exec'
+        )
+        gen.mode = 'exec'
         # if the source has any line ending other than \n by the time
         # parse() is called, then you'll get a syntax error.
         gen.parse()
 
-        
+
 create_rmodule()
+
 
 def test_suite():
     return unittest.makeSuite(RestrictionTests, 'check')
 
-if __name__=='__main__':
+if __name__ == '__main__':
     unittest.main(defaultTest="test_suite")

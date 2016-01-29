@@ -11,9 +11,10 @@
 # FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
-"""Run tests in README.txt
-"""
+"""Run tests in README.txt"""
+
 import unittest
+
 
 class UtilitiesTests(unittest.TestCase):
 
@@ -37,19 +38,13 @@ class UtilitiesTests(unittest.TestCase):
         from RestrictedPython.Utilities import utility_builtins
         self.failUnless(utility_builtins['random'] is random)
 
-    def test_sets_in_utility_builtins_if_importable(self):
-        import warnings
+    def test_set_in_utility_builtins(self):
         from RestrictedPython.Utilities import utility_builtins
-        _old_filters = warnings.filters[:]
-        warnings.filterwarnings('ignore', category=DeprecationWarning)
-        try:
-            try:
-                import sets
-            except ImportError:
-                sets = None
-        finally:
-            warnings.filters[:] = _old_filters
-        self.failUnless(utility_builtins['sets'] is sets)
+        self.failUnless(utility_builtins['set'] is set)
+
+    def test_frozenset_in_utility_builtins(self):
+        from RestrictedPython.Utilities import utility_builtins
+        self.failUnless(utility_builtins['frozenset'] is frozenset)
 
     def test_DateTime_in_utility_builtins_if_importable(self):
         try:
@@ -85,6 +80,7 @@ class UtilitiesTests(unittest.TestCase):
 
     def test_sametype_only_two_args_different(self):
         from RestrictedPython.Utilities import same_type
+
         class Foo(object):
             pass
         self.failIf(same_type(object(), Foo()))
@@ -95,6 +91,7 @@ class UtilitiesTests(unittest.TestCase):
 
     def test_sametype_only_multipe_args_one_different(self):
         from RestrictedPython.Utilities import same_type
+
         class Foo(object):
             pass
         self.failIf(same_type(object(), object(), Foo()))
@@ -147,11 +144,9 @@ class UtilitiesTests(unittest.TestCase):
         after = reorder(before, with_=with_, without=without)
         self.assertEqual(after, [('d', 'd')])
 
+
 def test_suite():
-    return unittest.TestSuite((
-        unittest.makeSuite(UtilitiesTests),
-        ))
+    return unittest.TestSuite((unittest.makeSuite(UtilitiesTests), ))
 
 if __name__ == '__main__':
     unittest.main(defaultTest='test_suite')
-

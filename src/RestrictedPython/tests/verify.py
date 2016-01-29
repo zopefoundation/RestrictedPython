@@ -24,6 +24,7 @@ function.
 import dis
 import types
 
+
 def verify(code):
     """Verify all code objects reachable from code.
 
@@ -35,12 +36,14 @@ def verify(code):
         if isinstance(ob, types.CodeType):
             verify(ob)
 
+
 def verifycode(code):
     try:
         _verifycode(code)
     except:
         dis.dis(code)
         raise
+
 
 def _verifycode(code):
     line = code.co_firstlineno
@@ -64,7 +67,7 @@ def _verifycode(code):
                 with_context = (with_context[0], op)
             elif not ((op.arg == "__enter__" and
                        window[0].opname == "ROT_TWO" and
-                       window[1].opname == "DUP_TOP") or 
+                       window[1].opname == "DUP_TOP") or
                       (op.arg == "append" and
                        window[0].opname == "DUP_TOP" and
                        window[1].opname == "BUILD_LIST")):
@@ -118,15 +121,16 @@ def _verifycode(code):
                 raise ValueError("direct attribute access %s: %s, %s:%d"
                                  % (op.opname, op.arg, code.co_filename, line))
 
+
 class Op(object):
     __slots__ = (
-        "opname",  # string, name of the opcode
-        "argcode", # int, the number of the argument
-        "arg",     # any, the object, name, or value of argcode
-        "line",    # int, line number or None
-        "target",  # boolean, is this op the target of a jump
-        "pos",     # int, offset in the bytecode
-        )
+        "opname",   # string, name of the opcode
+        "argcode",  # int, the number of the argument
+        "arg",      # any, the object, name, or value of argcode
+        "line",     # int, line number or None
+        "target",   # boolean, is this op the target of a jump
+        "pos",      # int, offset in the bytecode
+    )
 
     def __init__(self, opcode, pos):
         self.opname = dis.opname[opcode]
@@ -134,6 +138,7 @@ class Op(object):
         self.line = None
         self.target = False
         self.pos = pos
+
 
 def disassemble(co, lasti=-1):
     code = co.co_code
@@ -152,7 +157,7 @@ def disassemble(co, lasti=-1):
         if i in labels:
             o.target = True
         if op > dis.HAVE_ARGUMENT:
-            arg = ord(code[i]) + ord(code[i+1]) * 256 + extended_arg
+            arg = ord(code[i]) + ord(code[i + 1]) * 256 + extended_arg
             extended_arg = 0
             i += 2
             if op == dis.EXTENDED_ARG:
@@ -171,6 +176,7 @@ def disassemble(co, lasti=-1):
             elif op in dis.hasfree:
                 o.arg = free[arg]
         yield o
+
 
 # findlinestarts is copied from Python 2.4's dis module.  The code
 # didn't exist in 2.3, but it would be painful to code disassemble()

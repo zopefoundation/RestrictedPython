@@ -11,13 +11,12 @@
 #
 ##############################################################################
 
-__version__='$Revision: 1.6 $'[11:-2]
-
-from SelectCompiler import ast
+from compiler import ast
 
 ListType = type([])
 TupleType = type(())
 SequenceTypes = (ListType, TupleType)
+
 
 class MutatingWalker:
 
@@ -43,7 +42,7 @@ class MutatingWalker:
             if v is not child:
                 # Change the sequence.
                 if type(res) is ListType:
-                    res[idx : idx + 1] = [v]
+                    res[idx: idx + 1] = [v]
                 else:
                     res = res[:idx] + (v,) + res[idx + 1:]
         return res
@@ -69,6 +68,7 @@ class MutatingWalker:
                            self.defaultVisitNode)
             self._cache[klass] = meth
         return meth(node, self)
+
 
 def walk(tree, visitor):
     return MutatingWalker(visitor).dispatchNode(tree)

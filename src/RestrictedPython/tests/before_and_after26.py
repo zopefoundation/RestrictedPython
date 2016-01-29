@@ -24,25 +24,31 @@ actually produces the same output as would be output by the normal compiler
 for the after function.
 """
 
+
 def simple_context_before():
     with whatever as x:
         x.y = z
+
 
 def simple_context_after():
     with whatever as x:
         _write_(x).y = z
 
+
 def simple_context_assign_attr_before():
     with whatever as x.y:
         x.y = z
+
 
 def simple_context_assign_attr_after():
     with whatever as _write_(x).y:
         _write_(x).y = z
 
+
 def simple_context_load_attr_before():
     with whatever.w as z:
         x.y = z
+
 
 def simple_context_load_attr_after():
     with _getattr_(whatever, 'w') as z:

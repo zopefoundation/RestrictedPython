@@ -10,9 +10,18 @@
 # FOR A PARTICULAR PURPOSE
 #
 ##############################################################################
-'''
-RestrictedPython package.
-'''
+"""RestrictedPython package."""
 
-from SelectCompiler import *
-from PrintCollector import PrintCollector
+# from SelectCompiler import *
+
+from RestrictedPython.RCompile import compile_restricted
+from RestrictedPython.RCompile import compile_restricted_eval
+from RestrictedPython.RCompile import compile_restricted_exec
+from RestrictedPython.RCompile import compile_restricted_function
+from RestrictedPython.PrintCollector import PrintCollector
+
+from RestrictedPython.Eval import RestrictionCapableEval
+
+from RestrictedPython.Guards import safe_builtins
+from RestrictedPython.Utilities import utility_builtins
+from RestrictedPython.Limits import limited_builtins

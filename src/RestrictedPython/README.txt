@@ -100,7 +100,7 @@ callable, from which the restricted machinery will create the object):
 
   >>> from RestrictedPython.PrintCollector import PrintCollector
   >>> _print_ = PrintCollector
- 
+
   >>> src = '''
   ... print "Hello World!"
   ... '''

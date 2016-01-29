@@ -11,13 +11,15 @@
 #
 ##############################################################################
 
-__version__='$Revision: 1.4 $'[11:-2]
 
-class PrintCollector:
-    '''Collect written text, and return it when called.'''
+class PrintCollector(object):
+    """Collect written text, and return it when called."""
+
     def __init__(self):
         self.txt = []
+
     def write(self, text):
         self.txt.append(text)
+
     def __call__(self):
         return ''.join(self.txt)

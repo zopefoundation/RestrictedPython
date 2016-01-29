@@ -10,19 +10,18 @@
 # FOR A PARTICULAR PURPOSE
 #
 ##############################################################################
-"""Restricted Python Expressions
-"""
+"""Restricted Python Expressions."""
 
-__version__='$Revision: 1.6 $'[11:-2]
+from RestrictedPython.RCompile import compile_restricted_eval
+from string import strip
+from string import translate
 
-from RestrictedPython import compile_restricted_eval
-
-from string import translate, strip
 import string
 
-nltosp = string.maketrans('\r\n','  ')
+nltosp = string.maketrans('\r\n', '  ')
 
-default_guarded_getattr = getattr # No restrictions.
+default_guarded_getattr = getattr  # No restrictions.
+
 
 def default_guarded_getitem(ob, index):
     # No restrictions.
@@ -30,9 +29,10 @@ def default_guarded_getitem(ob, index):
 
 PROFILE = 0
 
-class RestrictionCapableEval:
+
+class RestrictionCapableEval(object):
     """A base class for restricted code."""
-    
+
     globals = {'__builtins__': None}
     rcode = None  # restricted
     ucode = None  # unrestricted
@@ -61,9 +61,9 @@ class RestrictionCapableEval:
             if PROFILE:
                 end = clock()
                 print 'prepRestrictedCode: %d ms for %s' % (
-                    (end - start) * 1000, `self.expr`)
+                    (end - start) * 1000, repr(self.expr))
             if err:
-                raise SyntaxError, err[0]
+                raise SyntaxError(err[0])
             self.used = tuple(used.keys())
             self.rcode = co
 
@@ -74,23 +74,25 @@ class RestrictionCapableEval:
             if self.used is None:
                 # Examine the code object, discovering which names
                 # the expression needs.
-                names=list(co.co_names)
-                used={}
-                i=0
-                code=co.co_code
-                l=len(code)
-                LOAD_NAME=101
-                HAVE_ARGUMENT=90
+                names = list(co.co_names)
+                used = {}
+                i = 0
+                code = co.co_code
+                l = len(code)
+                LOAD_NAME = 101
+                HAVE_ARGUMENT = 90
                 while(i < l):
-                    c=ord(code[i])
-                    if c==LOAD_NAME:
-                        name=names[ord(code[i+1])+256*ord(code[i+2])]
-                        used[name]=1
-                        i=i+3
-                    elif c >= HAVE_ARGUMENT: i=i+3
-                    else: i=i+1
-                self.used=tuple(used.keys())
-            self.ucode=co
+                    c = ord(code[i])
+                    if c == LOAD_NAME:
+                        name = names[ord(code[i + 1]) + 256 * ord(code[i + 2])]
+                        used[name] = 1
+                        i = i + 3
+                    elif c >= HAVE_ARGUMENT:
+                        i = i + 3
+                    else:
+                        i = i + 1
+                self.used = tuple(used.keys())
+            self.ucode = co
 
     def eval(self, mapping):
         # This default implementation is probably not very useful. :-(

@@ -24,15 +24,19 @@ actually produces the same output as would be output by the normal compiler
 for the after function.
 """
 
+
 def simple_generator_expression_before():
     x = (y**2 for y in whatever if y > 3)
+
 
 def simple_generator_expression_after():
     x = (y**2 for y in _getiter_(whatever) if y > 3)
 
+
 def nested_generator_expression_before():
     x = (x**2 + y**2 for x in whatever1 if x >= 0
                      for y in whatever2 if y >= x)
+
 
 def nested_generator_expression_after():
     x = (x**2 + y**2 for x in _getiter_(whatever1) if x >= 0

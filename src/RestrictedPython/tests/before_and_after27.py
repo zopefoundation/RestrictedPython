@@ -24,22 +24,28 @@ actually produces the same output as would be output by the normal compiler
 for the after function.
 """
 
+
 # dictionary and set comprehensions
 
 def simple_dict_comprehension_before():
     x = {y: y for y in whatever if y}
 
+
 def simple_dict_comprehension_after():
     x = {y: y for y in _getiter_(whatever) if y}
+
 
 def dict_comprehension_attrs_before():
     x = {y: y.q for y in whatever.z if y.q}
 
+
 def dict_comprehension_attrs_after():
     x = {y: _getattr_(y, 'q') for y in _getiter_(_getattr_(whatever, 'z')) if _getattr_(y, 'q')}
 
+
 def simple_set_comprehension_before():
     x = {y for y in whatever if y}
+
 
 def simple_set_comprehension_after():
     x = {y for y in _getiter_(whatever) if y}

@@ -1,12 +1,14 @@
 # A series of short tests for unpacking sequences.
 
+
 def u1(L):
     x, y = L
     assert x == 1
     assert y == 2
 
-u1([1,2])
+u1([1, 2])
 u1((1, 2))
+
 
 def u1a(L):
     x, y = L
@@ -20,7 +22,8 @@ try:
 except ValueError:
     pass
 else:
-    raise AssertionError, "expected 'unpack list of wrong size'"
+    raise AssertionError("expected 'unpack list of wrong size'")
+
 
 def u2(L):
     x, (a, b), y = L
@@ -37,7 +40,8 @@ try:
 except TypeError:
     pass
 else:
-    raise AssertionError, "expected 'iteration over non-sequence'"
+    raise AssertionError("expected 'iteration over non-sequence'")
+
 
 def u3((x, y)):
     assert x == 'a'
@@ -46,12 +50,15 @@ def u3((x, y)):
 
 u3(('a', 'b'))
 
+
 def u4(x):
     (a, b), c = d, (e, f) = x
     assert a == 1 and b == 2 and c == (3, 4)
     assert d == (1, 2) and e == 3 and f == 4
 
-u4( ((1, 2), (3, 4)) )
+
+u4(((1, 2), (3, 4)))
+
 
 def u5(x):
     try:
@@ -64,6 +71,7 @@ def u5(x):
 
 u5([42, 666])
 
+
 def u6(x):
     expected = 0
     for i, j in x:
@@ -74,8 +82,10 @@ def u6(x):
 
 u6([[0, 1], [2, 3], [4, 5]])
 
+
 def u7(x):
     stuff = [i + j for toplevel, in x for i, j in toplevel]
     assert stuff == [3, 7]
 
-u7( ([[[1, 2]]], [[[3, 4]]]) )
+
+u7(([[[1, 2]]], [[[3, 4]]]))

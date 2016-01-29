@@ -10,9 +10,6 @@
 # FOR A PARTICULAR PURPOSE
 #
 ##############################################################################
-__version__ = '$Revision: 1.14 $'[11:-2]
-
-import exceptions
 
 # This tiny set of safe builtins is extended by users of the module.
 # AccessControl.ZopeGuards contains a large set of wrappers for builtins.
@@ -20,13 +17,98 @@ import exceptions
 
 safe_builtins = {}
 
-for name in ['False', 'None', 'True', 'abs', 'basestring', 'bool', 'callable',
-             'chr', 'cmp', 'complex', 'divmod', 'float', 'hash',
-             'hex', 'id', 'int', 'isinstance', 'issubclass', 'len',
-             'long', 'oct', 'ord', 'pow', 'range', 'repr', 'round',
-             'str', 'tuple', 'unichr', 'unicode', 'xrange', 'zip']:
+_safe_names = [
+    'None',
+    'False',
+    'True',
+    'abs',
+    'basestring',
+    'bool',
+    'callable',
+    'chr',
+    'cmp',
+    'complex',
+    'divmod',
+    'float',
+    'hash',
+    'hex',
+    'id',
+    'int',
+    'isinstance',
+    'issubclass',
+    'len',
+    'long',
+    'oct',
+    'ord',
+    'pow',
+    'range',
+    'repr',
+    'round',
+    'str',
+    'tuple',
+    'unichr',
+    'unicode',
+    'xrange',
+    'zip'
+]
 
+_safe_exceptions = [
+    'ArithmeticError',
+    'AssertionError',
+    'AttributeError',
+    'BaseException',
+    'BufferError',
+    'BytesWarning',
+    'DeprecationWarning',
+    'EOFError',
+    'EnvironmentError',
+    'Exception',
+    'FloatingPointError',
+    'FutureWarning',
+    'GeneratorExit',
+    'IOError',
+    'ImportError',
+    'ImportWarning',
+    'IndentationError',
+    'IndexError',
+    'KeyError',
+    'KeyboardInterrupt',
+    'LookupError',
+    'MemoryError',
+    'NameError',
+    'NotImplementedError',
+    'OSError',
+    'OverflowError',
+    'PendingDeprecationWarning',
+    'ReferenceError',
+    'RuntimeError',
+    'RuntimeWarning',
+    'StandardError',
+    'StopIteration',
+    'SyntaxError',
+    'SyntaxWarning',
+    'SystemError',
+    'SystemExit',
+    'TabError',
+    'TypeError',
+    'UnboundLocalError',
+    'UnicodeDecodeError',
+    'UnicodeEncodeError',
+    'UnicodeError',
+    'UnicodeTranslateError',
+    'UnicodeWarning',
+    'UserWarning',
+    'ValueError',
+    'Warning',
+    'ZeroDivisionError',
+]
+
+for name in _safe_names:
     safe_builtins[name] = __builtins__[name]
+
+for name in _safe_exceptions:
+    safe_builtins[name] = __builtins__[name]
+
 
 # Wrappers provided by this module:
 # delattr
@@ -86,9 +168,10 @@ for name in ['False', 'None', 'True', 'abs', 'basestring', 'bool', 'callable',
 # super
 # type
 
-for name in dir(exceptions):
-    if name[0] != "_":
-        safe_builtins[name] = getattr(exceptions, name)
+# for name in dir(exceptions):
+#    if name[0] != "_":
+#        safe_builtins[name] = getattr(exceptions, name)
+
 
 def _write_wrapper():
     # Construct the write wrapper class
@@ -98,30 +181,42 @@ def _write_wrapper():
             try:
                 f = getattr(self.ob, secattr)
             except AttributeError:
-                raise TypeError, error_msg
+                raise TypeError(error_msg)
             f(*args)
         return handler
-    class Wrapper:
+
+    class Wrapper(object):
         def __len__(self):
             # Required for slices with negative bounds.
             return len(self.ob)
+
         def __init__(self, ob):
             self.__dict__['ob'] = ob
-        __setitem__ = _handler('__guarded_setitem__',
-          'object does not support item or slice assignment')
-        __delitem__ = _handler('__guarded_delitem__',
-          'object does not support item or slice assignment')
-        __setattr__ = _handler('__guarded_setattr__',
-          'attribute-less object (assign or del)')
-        __delattr__ = _handler('__guarded_delattr__',
-          'attribute-less object (assign or del)')
+
+        __setitem__ = _handler(
+            '__guarded_setitem__',
+            'object does not support item or slice assignment')
+
+        __delitem__ = _handler(
+            '__guarded_delitem__',
+            'object does not support item or slice assignment')
+
+        __setattr__ = _handler(
+            '__guarded_setattr__',
+            'attribute-less object (assign or del)')
+
+        __delattr__ = _handler(
+            '__guarded_delattr__',
+            'attribute-less object (assign or del)')
     return Wrapper
+
 
 def _full_write_guard():
     # Nested scope abuse!
     # safetype and Wrapper variables are used by guard()
     safetype = {dict: True, list: True}.has_key
     Wrapper = _write_wrapper()
+
     def guard(ob):
         # Don't bother wrapping simple types, or objects that claim to
         # handle their own write security.
@@ -132,9 +227,11 @@ def _full_write_guard():
     return guard
 full_write_guard = _full_write_guard()
 
+
 def guarded_setattr(object, name, value):
     setattr(full_write_guard(object), name, value)
 safe_builtins['setattr'] = guarded_setattr
+
 
 def guarded_delattr(object, name):
     delattr(full_write_guard(object), name)

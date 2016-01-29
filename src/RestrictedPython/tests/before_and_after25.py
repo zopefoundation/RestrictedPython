@@ -24,9 +24,10 @@ actually produces the same output as would be output by the normal compiler
 for the after function.
 """
 
+
 def simple_ternary_if_before():
     x.y = y.z if y.z else y.x
 
+
 def simple_ternary_if_after():
     _write_(x).y = _getattr_(y, 'z') if _getattr_(y, 'z') else _getattr_(y, 'x')
-
