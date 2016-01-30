@@ -33,9 +33,8 @@ and 2.7.
 Implementing a policy
 =====================
 
-RestrictedPython only provides the raw material for restricted
-execution.  To actually enforce any restrictions, you need to supply a
-policy implementation by providing restricted versions of ``print``,
+RestrictedPython only provides the raw material for restricted execution.
+To actually enforce any restrictions, you need to supply a policy implementation by providing restricted versions of ``print``,
 ``getattr``, ``setattr``, ``import``, etc.  These restricted
 implementations are hooked up by providing a set of specially named
 objects in the global dict that you use for execution of code.
