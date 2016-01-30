@@ -94,7 +94,7 @@ We want to rewrite RestrictedPython as it is one of the core dependencies for th
 Zope2 should become Python3 compatible.
 
 One of the core features of Zope2 and therefore Plone is the capability to write and modify Code and Templates TTW (through the web).
-As Python is a Touring Complete programming language programmers don't have any limitation and could potentially harm the Application and Server itself.
+As Python is a Turing Complete programming language programmers don't have any limitation and could potentially harm the Application and Server itself.
 
 RestrictedPython and AccessControl aims on this topic to provide a reduced subset of the Python Programming language, where all functions that could harm the system are permitted by default.
 
@@ -120,7 +120,7 @@ The following Packages used in Zope2 for Plone depend on RestricedPython:
 Targeted Versions to support
 ............................
 
-For a RestrictedPython 4.0.0+ Update we aim to support only current Python Versions:
+For a RestrictedPython 4.0.0+ Update we aim to support only current Python Versions (under active Security Support):
 
 * 2.6
 * 2.7
@@ -146,11 +146,19 @@ RestrictedPython is a classical approach of compiler construction to create a li
 
 As compiler construction do have basic concepts on how to build a Programming Language and Runtime Environment.
 
-Defining a Programming Language means to define a regular grammar (Chomski 3 / EBNF) first.
+Defining a Programming Language means to define a regular grammar (Chomsky 3 / EBNF) first.
 This grammar will be implemented in an abstract syntax tree (AST), which will be passed on to a code generator to produce a machine understandable version.
 
 As Python is a plattform independend programming / scripting language, this machine understandable version is a byte code which will be translated on the fly by an interpreter into machine code.
 This machine code then gets executed on the specific CPU architecture, with all Operating System restriction.
+
+Produced byte code has to compatible with the execution environment, the Python Interpreter within this code is called.
+So we must not generate the byte code that has to be returned from ``compile_restricted`` and the other ``compile_restricted_*`` methods manually, as this might harm the interpreter.
+We actually don't even need that.
+The Python ``compile()`` function introduced the capability to compile ``ast.AST`` code into byte code.
+
+
+
 
 
 
