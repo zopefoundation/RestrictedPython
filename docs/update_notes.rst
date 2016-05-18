@@ -157,6 +157,17 @@ So we must not generate the byte code that has to be returned from ``compile_res
 We actually don't even need that.
 The Python ``compile()`` function introduced the capability to compile ``ast.AST`` code into byte code.
 
+Technical Backgrounds
+.....................
+
+https://docs.python.org/3.5/library/ast.html#abstract-grammar
+
+NodeVistiors (https://docs.python.org/3.5/library/ast.html#ast.NodeVisitor)
+
+NodeTransformer (https://docs.python.org/3.5/library/ast.html#ast.NodeTransformer)
+
+dump (https://docs.python.org/3.5/library/ast.html#ast.dump)
+
 
 
 
