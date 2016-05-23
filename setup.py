@@ -28,16 +28,23 @@ setup(name='RestrictedPython',
       license='ZPL 2.1',
       description='RestrictedPython provides a restricted execution '
       'environment for Python, e.g. for running untrusted code.',
-      long_description=(read('src', 'RestrictedPython', 'README.txt')
-                        + '\n' +
+      long_description=(read('src', 'RestrictedPython', 'README.txt') + '\n' +
                         read('CHANGES.txt')),
       author='Zope Foundation and Contributors',
       author_email='zope-dev@zope.org',
-      packages = find_packages('src'),
-      package_dir = {'': 'src'},
-      install_requires = [
+      packages=find_packages('src'),
+      package_dir={'': 'src'},
+      install_requires=[
           'setuptools'
       ],
-      include_package_data = True,
-      zip_safe = False,
+      extras_require={
+          'docs': [
+              'Sphinx',
+          ],
+          'release': [
+              'zest.releaser',
+          ],
+      },
+      include_package_data=True,
+      zip_safe=False,
       )
