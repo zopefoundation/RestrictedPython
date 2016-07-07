@@ -10,6 +10,7 @@
 /local.cfg
 .coverage
 /*.egg-info
+/src/*.egg-info
 /.installed.cfg
 *.pyc
 /.Python
