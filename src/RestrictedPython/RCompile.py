@@ -34,6 +34,7 @@ from RestrictedPython.RestrictionMutator import RestrictionMutator
 
 
 def niceParse(source, filename, mode):
+    import ipdb; ipdb.set_trace()
     if isinstance(source, unicode):
         # Use the utf-8-sig BOM so the compiler
         # detects this as a UTF-8 encoded string.
@@ -68,8 +69,8 @@ class RestrictedCompileMode(AbstractCompileMode):
         return code
 
     def _get_tree(self):
-        tree = self.parse()
-        MutatingWalker.walk(tree, self.rm)
+        c_tree = self.parse()
+        MutatingWalker.walk(c_tree, self.rm)
         if self.rm.errors:
             raise SyntaxError(self.rm.errors[0])
         c_misc.set_filename(self.filename, tree)

@@ -24,20 +24,25 @@ Die Definition von ``comile()`` hat sich mit der Zeit verändert, aber die relev
 * ``'single'``
 
 Diese ist für RestrictedPython durch folgende Funktion ersetzt:
+
 .. code:: Python
 
     compile_restriced(source, filename, mode [, flags [, dont_inherit]])
 
+Der primäre Parameter ``source`` musste ein ASCII oder ``unicode`` String sein, heute nimmt es auch einen ast.AST auf.
 
-The primary param ``source`` has been restriced to be an ASCII string or ``unicode`` string.
+Zusätzlich bietet RestrictedPython einen Weg Policies zu definieren.
+Dies funktioniert über das redefinieren von eingeschränkten (restricted) Versionen von:
 
+* ``print``
+* ``getattr``
+* ``setattr``
+* ``import``
 
-
-Also RestrictedPython provides a way to define Policies, by redefining restricted versions of ``print``, ``getattr``, ``setattr``, ``import``, etc..
-As shortcutes it offers three stripped down versions of Pythons ``__builtins__``:
+Als Abkürzungen bietet es drei vordefinierte, runtergekürzte Versionen der Python ``__builtins__`` an:
 
 * ``safe_builtins`` (by Guards.py)
 * ``limited_builtins`` (by Limits.py), which provides restriced sequence types
 * ``utilities_builtins`` (by Utilities.py), which provides access for standard modules math, random, string and for sets.
 
-There is also a guard function for making attributes immutable --> ``full_write_guard`` (write and delete protected)
+Zusätzlich git es eine Guard-Function (Schutzfunktion) um Attribute von Python Objekten unveränderbar (immutable) zu machen --> ``full_write_guard`` (Schreib und Lösch-Schutz / write and delete protected)
