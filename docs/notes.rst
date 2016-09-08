@@ -56,7 +56,7 @@ hopefully make this a little easier. :)
 
         The RestrictionMutator has the recipies for mutating the parse
         tree. (Note, for comparison, that Zope3's
-        zope.security.untrustedpython.rcompile module an alternative
+        zope.untrustedpython.rcompile module an alternative
         RestrictionMutator that provides a much smaller set of
         changes.)
 
