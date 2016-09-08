@@ -14,7 +14,7 @@
 Python standard library.
 """
 
-from ast import parse
+import ast
 
 from compiler import ast as c_ast
 from compiler import parse as c_parse
@@ -40,7 +40,7 @@ def niceParse(source, filename, mode):
         source = '\xef\xbb\xbf' + source.encode('utf-8')
     try:
         compiler_code = c_parse(source, mode)
-        # ast_code = parse(source, filename, mode)
+        # ast_code = ast.parse(source, filename, mode)
         return compiler_code
     except:
         # Try to make a clean error message using
@@ -117,7 +117,27 @@ def compile_restricted_eval(source, filename='<string>'):
     return compileAndTuplize(gen)
 
 
-def compile_restricted(source, filename, mode):
+class RestrictingNodeTransformer(ast.NodeTransformer):
+
+    whitelist = [
+        ast.Module,
+        ast.FunctionDef,
+        ast.Expr,
+        ast.Num,
+    ]
+
+    def generic_visit(self, node):
+        if node.__class__ not in self.whitelist:
+            raise SyntaxError(
+                'Node {0.__class__.__name__!r} not allowed.'.format(node))
+        else:
+            return super(RestrictingNodeTransformer, self).generic_visit(node)
+
+    def visit_arguments(self, node):
+        return node
+
+
+def compile_restricted(source, filename, mode):  # OLD
     """Replacement for the builtin compile() function."""
     if mode == "single":
         gen = RInteractive(source, filename)
@@ -130,6 +150,13 @@ def compile_restricted(source, filename, mode):
                          "'eval' or 'single'")
     gen.compile()
     return gen.getCode()
+
+
+def compile_restricted_ast(source, filename, mode):
+    """Replacement for the builtin compile() function."""
+    c_ast = ast.parse(source, filename, mode)
+    r_ast = RestrictingNodeTransformer().visit(c_ast)
+    return compile(r_ast, filename, mode)
 
 
 class RestrictedCodeGenerator:

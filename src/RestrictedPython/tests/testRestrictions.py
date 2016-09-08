@@ -9,6 +9,7 @@ from RestrictedPython import compile_restricted, PrintCollector
 from RestrictedPython.Eval import RestrictionCapableEval
 from RestrictedPython.tests import restricted_module, verify
 from RestrictedPython.RCompile import RModule, RFunction
+from RestrictedPython.RCompile import compile_restricted_ast
 
 import os
 import re
@@ -297,6 +298,16 @@ class RestrictionTests(unittest.TestCase):
             self._checkSyntaxSecurity('security_in_syntax26.py')
         if sys.version_info >= (2, 7):
             self._checkSyntaxSecurity('security_in_syntax27.py')
+
+    def checkSyntaxSecurityAst(self):
+        with self.assertRaises(SyntaxError) as err:
+            with open(os.path.join(os.path.join(
+                    _HERE, 'security_yield.py'))) as f:
+                compile_restricted_ast(f.read(), 'security_yield.py', 'exec')
+        self.assertEqual("Node 'Yield' not allowed.", str(err.exception))
+
+    def checkNumberAstOk(self):
+        compile_restricted_ast('42', '<undefined>', 'exec')
 
     def _checkSyntaxSecurity(self, mod_name):
         # Ensures that each of the functions in security_in_syntax.py
