@@ -34,14 +34,13 @@ from RestrictedPython.RestrictionMutator import RestrictionMutator
 
 
 def niceParse(source, filename, mode):
-    import ipdb; ipdb.set_trace()
     if isinstance(source, unicode):
         # Use the utf-8-sig BOM so the compiler
         # detects this as a UTF-8 encoded string.
         source = '\xef\xbb\xbf' + source.encode('utf-8')
     try:
         compiler_code = c_parse(source, mode)
-        ast_code = parse(source, filename, mode)
+        # ast_code = parse(source, filename, mode)
         return compiler_code
     except:
         # Try to make a clean error message using
@@ -73,9 +72,9 @@ class RestrictedCompileMode(AbstractCompileMode):
         MutatingWalker.walk(c_tree, self.rm)
         if self.rm.errors:
             raise SyntaxError(self.rm.errors[0])
-        c_misc.set_filename(self.filename, tree)
-        c_syntax.check(tree)
-        return tree
+        c_misc.set_filename(self.filename, c_tree)
+        c_syntax.check(c_tree)
+        return c_tree
 
     def compile(self):
         tree = self._get_tree()
