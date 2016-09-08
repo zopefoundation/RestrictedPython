@@ -26,3 +26,19 @@ For a RestrictedPython 4.0.0+ Update we aim to support only current Python Versi
 * 3.3
 * 3.4
 * 3.5
+
+Abhängigkeiten
+--------------
+
+Folgende Packete haben Abhägigkeiten zu RestrictedPython:
+
+* AccessControl -->
+* zope.untrustedpython --> SelectCompiler
+* DocumentTemplate -->
+* Products.PageTemplates -->
+* Products.PythonScripts -->
+* Products.PluginIndexes -->
+* five.pt (wrapping some functions and procetion for Chameleon) -->
+
+Zusätzlich sind in folgenden Add'ons Abhängigkeiten zu RestrictedPython
+*

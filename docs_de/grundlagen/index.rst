@@ -1,4 +1,4 @@
-u.Grundlagen von RestrictedPython und der Sicherheitskonzepte von Zope2
+Grundlagen von RestrictedPython und der Sicherheitskonzepte von Zope2
 =====================================================================
 
 

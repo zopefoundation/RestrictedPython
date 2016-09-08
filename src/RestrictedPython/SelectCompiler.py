@@ -17,10 +17,11 @@
 import compiler
 from compiler import ast
 from compiler.transformer import parse
-from compiler.consts import OP_ASSIGN, OP_DELETE, OP_APPLY
+from compiler.consts import OP_ASSIGN
+from compiler.consts import OP_DELETE
+from compiler.consts import OP_APPLY
 
-from RestrictedPython.RCompile import \
-    compile_restricted, \
-    compile_restricted_function, \
-    compile_restricted_exec, \
-    compile_restricted_eval
+from RestrictedPython.RCompile import compile_restricted
+from RestrictedPython.RCompile import compile_restricted_function
+from RestrictedPython.RCompile import compile_restricted_exec
+from RestrictedPython.RCompile import compile_restricted_eval

@@ -16,15 +16,11 @@ Contents
    :maxdepth: 2
 
    idee
-
-
    grundlagen/index
-   api/index
-
    RestrictedPython3/index
    RestrictedPython4/index
-
    update/index
+   api/index
 
 
 Indices and tables
