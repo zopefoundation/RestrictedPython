@@ -27,7 +27,7 @@ setup(name='RestrictedPython',
       url='http://pypi.python.org/pypi/RestrictedPython',
       license='ZPL 2.1',
       description='RestrictedPython provides a restricted execution '
-      'environment for Python, e.g. for running untrusted code.',
+                  'environment for Python, e.g. for running untrusted code.',
       long_description=(read('src', 'RestrictedPython', 'README.txt') + '\n' +
                         read('CHANGES.txt')),
       author='Zope Foundation and Contributors',
@@ -35,7 +35,8 @@ setup(name='RestrictedPython',
       packages=find_packages('src'),
       package_dir={'': 'src'},
       install_requires=[
-          'setuptools'
+          'setuptools',
+          'zope.deprecation'
       ],
       extras_require={
           'docs': [
@@ -43,6 +44,10 @@ setup(name='RestrictedPython',
           ],
           'release': [
               'zest.releaser',
+          ],
+          'develop': [
+              'ipython',
+              'ipdb',
           ],
       },
       include_package_data=True,

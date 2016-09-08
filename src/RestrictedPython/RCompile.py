@@ -29,8 +29,11 @@ from compiler.pycodegen import ModuleCodeGenerator
 from compiler.pycodegen import FunctionCodeGenerator
 from compiler.pycodegen import findOp
 
+from zope.deprecation import deprecation
+
 from RestrictedPython import MutatingWalker
 from RestrictedPython.RestrictionMutator import RestrictionMutator
+from RestrictedPython.RestrictingNodeTransformer import RestrictingNodeTransformer
 
 
 def niceParse(source, filename, mode):
@@ -90,6 +93,7 @@ def compileAndTuplize(gen):
     return gen.getCode(), (), gen.rm.warnings, gen.rm.used_names
 
 
+@deprecation.deprecate('compile_restricted_function() will go in RestrictedPython 5.0')
 def compile_restricted_function(p, body, name, filename, globalize=None):
     """Compiles a restricted code object for a function.
 
@@ -105,36 +109,18 @@ def compile_restricted_function(p, body, name, filename, globalize=None):
     return compileAndTuplize(gen)
 
 
+@deprecation.deprecate('compile_restricted_exec() will go in RestrictedPython 5.0, use compile_restricted(source, filename, mode="exec") instead.')
 def compile_restricted_exec(source, filename='<string>'):
     """Compiles a restricted code suite."""
     gen = RModule(source, filename)
     return compileAndTuplize(gen)
 
 
+@deprecation.deprecate('compile_restricted_eval() will go in RestrictedPython 5.0, use compile_restricted(source, filename, mode="eval") instead.')
 def compile_restricted_eval(source, filename='<string>'):
     """Compiles a restricted expression."""
     gen = RExpression(source, filename)
     return compileAndTuplize(gen)
-
-
-class RestrictingNodeTransformer(ast.NodeTransformer):
-
-    whitelist = [
-        ast.Module,
-        ast.FunctionDef,
-        ast.Expr,
-        ast.Num,
-    ]
-
-    def generic_visit(self, node):
-        if node.__class__ not in self.whitelist:
-            raise SyntaxError(
-                'Node {0.__class__.__name__!r} not allowed.'.format(node))
-        else:
-            return super(RestrictingNodeTransformer, self).generic_visit(node)
-
-    def visit_arguments(self, node):
-        return node
 
 
 def compile_restricted(source, filename, mode):  # OLD
@@ -152,11 +138,11 @@ def compile_restricted(source, filename, mode):  # OLD
     return gen.getCode()
 
 
-def compile_restricted_ast(source, filename, mode):
+def compile_restricted_ast(source, filename='<unknown>', mode='exec', flags=0, dont_inherit=0):  # NEW
     """Replacement for the builtin compile() function."""
     c_ast = ast.parse(source, filename, mode)
     r_ast = RestrictingNodeTransformer().visit(c_ast)
-    return compile(r_ast, filename, mode)
+    return compile(r_ast, filename, mode, flags, dont_inherit)
 
 
 class RestrictedCodeGenerator:
