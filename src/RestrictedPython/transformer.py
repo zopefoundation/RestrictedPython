@@ -10,15 +10,11 @@ AST_WHITELIST = [
 ]
 
 version = sys.version_info
-if sys.version_info <= (2, 7):
+if version <= (2, 8):
     AST_WHITELIST.extend([
         ast.Print
     ])
-
-elif sys.version <= (3, 0):
-    AST_WHITELIST
-
-elif sys.version <= (3, 6):
+elif version >= (3, 5):
     AST_WHITELIST.extend([
         ast.AsyncFunctionDef
     ])

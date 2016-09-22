@@ -1,0 +1,7 @@
+[run]
+branch = True
+source = RestrictedPython
+
+[report]
+precision = 2
+omit = */tests/*

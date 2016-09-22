@@ -33,7 +33,6 @@ from zope.deprecation import deprecation
 
 from RestrictedPython import MutatingWalker
 from RestrictedPython.RestrictionMutator import RestrictionMutator
-from RestrictedPython.RestrictingNodeTransformer import RestrictingNodeTransformer
 
 
 def niceParse(source, filename, mode):
@@ -136,13 +135,6 @@ def compile_restricted(source, filename, mode):  # OLD
                          "'eval' or 'single'")
     gen.compile()
     return gen.getCode()
-
-
-def compile_restricted_ast(source, filename='<unknown>', mode='exec', flags=0, dont_inherit=0):  # NEW
-    """Replacement for the builtin compile() function."""
-    c_ast = ast.parse(source, filename, mode)
-    r_ast = RestrictingNodeTransformer().visit(c_ast)
-    return compile(r_ast, filename, mode, flags, dont_inherit)
 
 
 class RestrictedCodeGenerator:
