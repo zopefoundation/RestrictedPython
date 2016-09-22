@@ -14,8 +14,6 @@
 Python standard library.
 """
 
-import ast
-
 from compiler import ast as c_ast
 from compiler import parse as c_parse
 from compiler import misc as c_misc
