@@ -78,3 +78,17 @@ def test_transformer__RestrictingNodeTransformer__generic_visit__104():
         compile_restricted(BAD_NAME, '<undefined>', 'exec')
     assert ('Line 2: Names starting with "__" are not allowed.' ==
             str(err.value))
+
+
+BAD_ATTR = """\
+def bad_attr():
+    some_ob._some_attr = 15
+"""
+
+
+def test_transformer__RestrictingNodeTransformer__generic_visit__105():
+    """It raises a SyntaxError if a bad attribute name is used."""
+    with pytest.raises(SyntaxError) as err:
+        compile_restricted(BAD_ATTR, '<undefined>', 'exec')
+    assert ('Line 2: Attribute names starting with "_" are not allowed.' ==
+            str(err.value))

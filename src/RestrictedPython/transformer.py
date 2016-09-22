@@ -4,6 +4,7 @@ import sys
 
 AST_WHITELIST = [
     ast.Assign,
+    ast.Attribute,  # see visit_Attribute for restrictions
     ast.Call,  # see visit_Call for restrictions
     ast.Expr,
     ast.FunctionDef,
@@ -54,6 +55,13 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
 
     def visit_arguments(self, node):
         return node
+
+    def visit_Attribute(self, node):
+        if node.attr.startswith('_'):
+            self.error(
+                node, 'Attribute names starting with "_" are not allowed.')
+        else:
+            return self.generic_visit(node)
 
     def visit_Call(self, node):
         if node.func.id == 'exec':
