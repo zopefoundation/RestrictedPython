@@ -38,10 +38,6 @@ def bad_attr():
     some_ob._some_attr = 15
 
 
-def no_exec():
-    exec 'q = 1'
-
-
 def check_getattr_in_lambda(arg=lambda _getattr=(lambda ob, name: name):
                                        _getattr):
     42
