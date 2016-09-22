@@ -64,3 +64,31 @@ def test_transformer__RestrictingNodeTransformer__generic_visit__103():
         compile_restricted(EXEC_STATEMENT, '<undefined>', 'exec')
     assert ("Missing parentheses in call to 'exec' (<undefined>, line 2)" ==
             str(err.value))
+
+
+BAD_NAME = """\
+def bad_name():
+    __ = 12
+"""
+
+
+def test_transformer__RestrictingNodeTransformer__generic_visit__104():
+    """It raises a SyntaxError if a bad name is used."""
+    with pytest.raises(SyntaxError) as err:
+        compile_restricted(BAD_NAME, '<undefined>', 'exec')
+    assert ('Line 2: Names starting with "__" are not allowed.' ==
+            str(err.value))
+
+
+BAD_ATTR = """\
+def bad_attr():
+    some_ob._some_attr = 15
+"""
+
+
+def test_transformer__RestrictingNodeTransformer__generic_visit__105():
+    """It raises a SyntaxError if a bad attribute name is used."""
+    with pytest.raises(SyntaxError) as err:
+        compile_restricted(BAD_ATTR, '<undefined>', 'exec')
+    assert ('Line 2: Attribute names starting with "_" are not allowed.' ==
+            str(err.value))
