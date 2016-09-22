@@ -16,6 +16,7 @@
 import unittest
 
 
+# Ported to test_utilities.py
 class UtilitiesTests(unittest.TestCase):
 
     def test_string_in_utility_builtins(self):

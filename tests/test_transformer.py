@@ -76,7 +76,7 @@ def test_transformer__RestrictingNodeTransformer__generic_visit__104():
     """It raises a SyntaxError if a bad name is used."""
     with pytest.raises(SyntaxError) as err:
         compile_restricted(BAD_NAME, '<undefined>', 'exec')
-    assert ('Line 2: Names starting with "__" are not allowed.' ==
+    assert ('Line 2: "__" is an invalid variable name because it starts with "_"' ==
             str(err.value))
 
 
@@ -90,5 +90,5 @@ def test_transformer__RestrictingNodeTransformer__generic_visit__105():
     """It raises a SyntaxError if a bad attribute name is used."""
     with pytest.raises(SyntaxError) as err:
         compile_restricted(BAD_ATTR, '<undefined>', 'exec')
-    assert ('Line 2: Attribute names starting with "_" are not allowed.' ==
+    assert ('Line 2: "_some_attr" is an invalid attribute name because it starts with "_".' ==
             str(err.value))

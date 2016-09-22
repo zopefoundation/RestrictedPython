@@ -12,13 +12,14 @@
 #
 ##############################################################################
 
-
+# Ported
 from RestrictedPython.RCompile import niceParse
 
 import compiler.ast
 import unittest
 
 
+# Ported --> test_niceParse.py
 class CompileTests(unittest.TestCase):
 
     def testUnicodeSource(self):
