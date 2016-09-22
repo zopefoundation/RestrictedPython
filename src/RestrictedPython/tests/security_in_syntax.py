@@ -30,12 +30,20 @@ def reserved_names():
     printed = ''
 
 
-def bad_name():
+def bad_name():  # ported
     __ = 12
 
 
-def bad_attr():
+def bad_attr():  # ported
     some_ob._some_attr = 15
+
+
+def no_exec():  # ported
+    exec 'q = 1'
+
+
+def no_yield():  # ported
+    yield 42
 
 
 def check_getattr_in_lambda(arg=lambda _getattr=(lambda ob, name: name):
