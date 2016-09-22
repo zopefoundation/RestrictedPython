@@ -3,10 +3,15 @@ import ast
 import sys
 
 AST_WHITELIST = [
-    ast.Module,
-    ast.FunctionDef,
+    ast.Call,  # see visit_Call for restrictions
     ast.Expr,
+    ast.FunctionDef,
+    ast.List,
+    ast.Load,
+    ast.Module,
+    ast.Name,
     ast.Num,
+    ast.Str,
 ]
 
 version = sys.version_info
@@ -22,12 +27,34 @@ elif version >= (3, 5):
 
 class RestrictingNodeTransformer(ast.NodeTransformer):
 
+    def __init__(self):
+        self.errors = []
+
+    def error(self, node, info):
+        """Record a security error discovered during transformation."""
+        lineno = getattr(node, 'lineno', None)
+        self.errors.append('Line {}: {}'.format(lineno, info))
+
+    def visit(self, node):
+        code = super(RestrictingNodeTransformer, self).visit(node)
+        if self.errors:
+            raise SyntaxError('\n'.join(self.errors))
+        return code
+
     def generic_visit(self, node):
         if node.__class__ not in AST_WHITELIST:
-            raise SyntaxError(
-                'Node {0.__class__.__name__!r} not allowed.'.format(node))
+            self.error(
+                node,
+                '{0.__class__.__name__} statements are not allowed.'.format(
+                    node))
         else:
             return super(RestrictingNodeTransformer, self).generic_visit(node)
 
     def visit_arguments(self, node):
         return node
+
+    def visit_Call(self, node):
+        if node.func.id == 'exec':
+            self.error(node, 'Exec statements are not allowed.')
+        else:
+            return self.generic_visit(node)
