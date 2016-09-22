@@ -1,4 +1,4 @@
-from RestrictedPython.compiler import compile_restricted
+from RestrictedPython import compile_restricted
 import pytest
 import sys
 
