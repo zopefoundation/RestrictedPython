@@ -115,7 +115,7 @@ The following Packages used in Zope2 for Plone depend on RestricedPython:
 * Products.PageTemplates
 * Products.PythonScripts
 * Products.PluginIndexes
-* five.pt (wrapping some functions and procetion for Chameleon)
+* five.pt (wrapping some functions and protection for Chameleon)
 
 Targeted Versions to support
 ............................
