@@ -3,14 +3,16 @@ import ast
 import sys
 
 AST_WHITELIST = [
+    ast.Assign,
     ast.Call,  # see visit_Call for restrictions
     ast.Expr,
     ast.FunctionDef,
     ast.List,
     ast.Load,
     ast.Module,
-    ast.Name,
+    ast.Name,  # see visit_Name for restrictions
     ast.Num,
+    ast.Store,
     ast.Str,
 ]
 
@@ -56,5 +58,11 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
     def visit_Call(self, node):
         if node.func.id == 'exec':
             self.error(node, 'Exec statements are not allowed.')
+        else:
+            return self.generic_visit(node)
+
+    def visit_Name(self, node):
+        if node.id.startswith('__'):
+            self.error(node, 'Names starting with "__" are not allowed.')
         else:
             return self.generic_visit(node)

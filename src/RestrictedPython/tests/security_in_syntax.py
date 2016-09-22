@@ -30,10 +30,6 @@ def reserved_names():
     printed = ''
 
 
-def bad_name():
-    __ = 12
-
-
 def bad_attr():
     some_ob._some_attr = 15
 
