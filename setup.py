@@ -36,9 +36,9 @@ setup(name='RestrictedPython',
       package_dir={'': 'src'},
       install_requires=[
           'setuptools',
-          'zope.deprecation',
-          'ipython',
-          'ipdb',
+          #'zope.deprecation',
+          #'ipython',
+          #'ipdb',
       ],
       extras_require={
           'docs': [
