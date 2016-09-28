@@ -26,7 +26,7 @@ from RestrictedPython.compile import compile_restricted_function
 
 from RestrictedPython.PrintCollector import PrintCollector
 
-from RestrictedPython.Eval import RestrictionCapableEval
+#from RestrictedPython.Eval import RestrictionCapableEval
 
 from RestrictedPython.Guards import safe_builtins
 from RestrictedPython.Utilities import utility_builtins
