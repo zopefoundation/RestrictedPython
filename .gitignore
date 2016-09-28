@@ -1,6 +1,6 @@
 *.mo
 *.pyc
-.coverage
+.coverage*
 /.python-version
 /*.egg-info
 /.Python
