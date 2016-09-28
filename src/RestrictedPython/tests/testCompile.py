@@ -13,7 +13,7 @@
 ##############################################################################
 
 # Ported
-from RestrictedPython.RCompile import niceParse
+from RestrictedPython.RCompile import _niceParse
 
 import compiler.ast
 import unittest
@@ -26,11 +26,11 @@ class CompileTests(unittest.TestCase):
         # We support unicode sourcecode.
         source = u"u'Ä väry nice säntänce with umlauts.'"
 
-        parsed = niceParse(source, "test.py", "exec")
+        parsed = _niceParse(source, "test.py", "exec")
         self.failUnless(isinstance(parsed, compiler.ast.Module))
-        parsed = niceParse(source, "test.py", "single")
+        parsed = _niceParse(source, "test.py", "single")
         self.failUnless(isinstance(parsed, compiler.ast.Module))
-        parsed = niceParse(source, "test.py", "eval")
+        parsed = _niceParse(source, "test.py", "eval")
         self.failUnless(isinstance(parsed, compiler.ast.Expression))
 
 

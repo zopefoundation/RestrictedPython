@@ -33,7 +33,7 @@ from RestrictedPython import MutatingWalker
 from RestrictedPython.RestrictionMutator import RestrictionMutator
 
 
-def niceParse(source, filename, mode):
+def _niceParse(source, filename, mode):
     if isinstance(source, unicode):
         # Use the utf-8-sig BOM so the compiler
         # detects this as a UTF-8 encoded string.
@@ -64,7 +64,7 @@ class RestrictedCompileMode(AbstractCompileMode):
         AbstractCompileMode.__init__(self, source, filename)
 
     def parse(self):
-        code = niceParse(self.source, self.filename, self.mode)
+        code = _niceParse(self.source, self.filename, self.mode)
         return code
 
     def _get_tree(self):
@@ -82,7 +82,7 @@ class RestrictedCompileMode(AbstractCompileMode):
         self.code = gen.getCode()
 
 
-def compileAndTuplize(gen):
+def _compileAndTuplize(gen):
     try:
         gen.compile()
     except SyntaxError as v:
@@ -103,7 +103,7 @@ def compile_restricted_function(p, body, name, filename, globalize=None):
     appeared in a global statement at the top of the function).
     """
     gen = RFunction(p, body, name, filename, globalize)
-    return compileAndTuplize(gen)
+    return _compileAndTuplize(gen)
 
 
 @deprecation.deprecate('compile_restricted_exec() will go in RestrictedPython 5.0, use compile_restricted(source, filename, mode="exec") instead.')
@@ -117,7 +117,7 @@ def compile_restricted_exec(source, filename='<string>'):
 def compile_restricted_eval(source, filename='<string>'):
     """Compiles a restricted expression."""
     gen = RExpression(source, filename)
-    return compileAndTuplize(gen)
+    return _compileAndTuplize(gen)
 
 
 def compile_restricted(source, filename, mode):  # OLD
@@ -250,9 +250,9 @@ class RFunction(RModule):
     def parse(self):
         # Parse the parameters and body, then combine them.
         firstline = 'def f(%s): pass' % self.params
-        tree = niceParse(firstline, '<function parameters>', 'exec')
+        tree = _niceParse(firstline, '<function parameters>', 'exec')
         f = tree.node.nodes[0]
-        body_code = niceParse(self.body, self.filename, 'exec')
+        body_code = _niceParse(self.body, self.filename, 'exec')
         # Stitch the body code into the function.
         f.code.nodes = body_code.node.nodes
         f.name = self.name

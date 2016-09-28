@@ -13,6 +13,7 @@
 """Restricted Python Expressions."""
 
 from RestrictedPython.RCompile import compile_restricted_eval
+#from RestrictedPython.compile import compile_restricted_eval
 from string import strip
 from string import translate
 
