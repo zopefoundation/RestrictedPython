@@ -1,0 +1,6 @@
+collective.themefragments: /collective/themefragments/traversal.py:6:from RestrictedPython import compile_restricted_function
+collective.themefragments: /collective/themefragments/traversal.py:29:    r = compile_restricted_function(p, body, name, filename, globalize)
+Products.PythonScripts: /Products/PythonScripts/PythonScript.py:45:from RestrictedPython import compile_restricted_function
+Products.PythonScripts: /Products/PythonScripts/PythonScript.py:239:        return compile_restricted_function(*args, **kw)
+Zope2: /Products/PageTemplates/ZRPythonExpr.py:20:from RestrictedPython import compile_restricted_eval
+Zope2: /Products/PageTemplates/ZRPythonExpr.py:36:        code, err, warn, use = compile_restricted_eval(text,

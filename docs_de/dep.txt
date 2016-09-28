@@ -1,0 +1,70 @@
+AccessControl --> /AccessControl/tests/testZopeGuards.py:471:class TestRestrictedPythonApply(GuardTestCase):
+AccessControl --> /AccessControl/tests/testZopeGuards.py:517:# Given the high wall between AccessControl and RestrictedPython, I suppose
+AccessControl --> /AccessControl/tests/testZopeGuards.py:601:        from RestrictedPython.tests import verify
+AccessControl --> /AccessControl/tests/testZopeGuards.py:631:        from RestrictedPython.tests import verify
+AccessControl --> /AccessControl/tests/testZopeGuards.py:658:        from RestrictedPython.tests import verify
+AccessControl --> /AccessControl/tests/testZopeGuards.py:680:        from RestrictedPython.tests import verify
+AccessControl --> /AccessControl/tests/testZopeGuards.py:702:        from RestrictedPython.tests import verify
+AccessControl --> /AccessControl/tests/testZopeGuards.py:722:        from RestrictedPython.tests import verify
+AccessControl --> /AccessControl/tests/testZopeGuards.py:748:        from RestrictedPython import compile_restricted
+AccessControl --> /AccessControl/tests/testZopeGuards.py:764:        from RestrictedPython import compile_restricted
+AccessControl --> /AccessControl/tests/testZopeGuards.py:872:                TestRestrictedPythonApply,
+
+AccessControl --> /AccessControl/ZopeGuards.py:20:import RestrictedPython
+AccessControl --> /AccessControl/ZopeGuards.py:21:from RestrictedPython.Guards import safe_builtins, full_write_guard
+AccessControl --> /AccessControl/ZopeGuards.py:22:from RestrictedPython.Utilities import utility_builtins
+AccessControl --> /AccessControl/ZopeGuards.py:23:from RestrictedPython.Eval import RestrictionCapableEval
+AccessControl --> /AccessControl/ZopeGuards.py:540:                 '_print_':      RestrictedPython.PrintCollector,
+
+collective.themefragments --> collective/themefragments/traversal.py:6:from RestrictedPython import compile_restricted_function
+
+DocumentTemplate --> DocumentTemplate/DT_Util.py:25:from RestrictedPython.Guards import safe_builtins
+DocumentTemplate --> DocumentTemplate/DT_Util.py:26:from RestrictedPython.Utilities import utility_builtins
+DocumentTemplate --> DocumentTemplate/DT_Util.py:27:from RestrictedPython.Eval import RestrictionCapableEval
+DocumentTemplate --> DocumentTemplate/DT_Util.py:38:    from RestrictedPython.Utilities import test
+DocumentTemplate --> DocumentTemplate/DT_Util.py:79:    from RestrictedPython.Limits import limited_builtins
+
+five.pt-2.2.3-py2.7.egg/five/pt/expressions.py:23:from RestrictedPython.RestrictionMutator import RestrictionMutator
+five.pt-2.2.3-py2.7.egg/five/pt/expressions.py:24:from RestrictedPython.Utilities import utility_builtins
+five.pt-2.2.3-py2.7.egg/five/pt/expressions.py:25:from RestrictedPython import MutatingWalker
+
+Products.CMFPlone-4.3.9-py2.7.egg/Products/CMFPlone/tests/testSecurity.py:32:    def test_PT_allow_module_not_available_in_RestrictedPython_1(self):
+Products.CMFPlone-4.3.9-py2.7.egg/Products/CMFPlone/tests/testSecurity.py:47:    def test_PT_allow_module_not_available_in_RestrictedPython_2(self):
+Products.CMFPlone-4.3.9-py2.7.egg/Products/CMFPlone/tests/testSecurityDeclarations.py:16:class RestrictedPythonTest(ZopeTestCase.ZopeTestCase):
+Products.CMFPlone-4.3.9-py2.7.egg/Products/CMFPlone/tests/testSecurityDeclarations.py:38:class TestSecurityDeclarations(RestrictedPythonTest):
+Products.CMFPlone-4.3.9-py2.7.egg/Products/CMFPlone/tests/testSecurityDeclarations.py:343:class TestAcquisitionMethods(RestrictedPythonTest):
+Products.CMFPlone-4.3.9-py2.7.egg/Products/CMFPlone/tests/testSecurityDeclarations.py:432:class TestNavtreeSecurity(PloneTestCase.PloneTestCase, RestrictedPythonTest):
+
+Products.CMFPlone-5.0.2-py2.7.egg/Products/CMFPlone/tests/testSecurity.py:30:    def test_PT_allow_module_not_available_in_RestrictedPython_1(self):
+Products.CMFPlone-5.0.2-py2.7.egg/Products/CMFPlone/tests/testSecurity.py:45:    def test_PT_allow_module_not_available_in_RestrictedPython_2(self):
+Products.CMFPlone-5.0.2-py2.7.egg/Products/CMFPlone/tests/testSecurityDeclarations.py:15:class RestrictedPythonTest(TestCase):
+Products.CMFPlone-5.0.2-py2.7.egg/Products/CMFPlone/tests/testSecurityDeclarations.py:49:class TestSecurityDeclarations(RestrictedPythonTest):
+Products.CMFPlone-5.0.2-py2.7.egg/Products/CMFPlone/tests/testSecurityDeclarations.py:325:class TestAcquisitionMethods(RestrictedPythonTest):
+Products.CMFPlone-5.0.2-py2.7.egg/Products/CMFPlone/tests/testSecurityDeclarations.py:400:class TestNavtreeSecurity(PloneTestCase.PloneTestCase, RestrictedPythonTest):
+
+Products.CMFPlone-5.1a1-py2.7.egg/Products/CMFPlone/tests/testSecurity.py:30:    def test_PT_allow_module_not_available_in_RestrictedPython_1(self):
+Products.CMFPlone-5.1a1-py2.7.egg/Products/CMFPlone/tests/testSecurity.py:45:    def test_PT_allow_module_not_available_in_RestrictedPython_2(self):
+Products.CMFPlone-5.1a1-py2.7.egg/Products/CMFPlone/tests/testSecurityDeclarations.py:15:class RestrictedPythonTest(TestCase):
+Products.CMFPlone-5.1a1-py2.7.egg/Products/CMFPlone/tests/testSecurityDeclarations.py:49:class TestSecurityDeclarations(RestrictedPythonTest):
+Products.CMFPlone-5.1a1-py2.7.egg/Products/CMFPlone/tests/testSecurityDeclarations.py:325:class TestAcquisitionMethods(RestrictedPythonTest):
+Products.CMFPlone-5.1a1-py2.7.egg/Products/CMFPlone/tests/testSecurityDeclarations.py:400:class TestNavtreeSecurity(PloneTestCase.PloneTestCase, RestrictedPythonTest):
+
+Products.PythonScripts --> Products/PythonScripts/PythonScript.py:45:from RestrictedPython import compile_restricted_function
+Products.PythonScripts --> Products/PythonScripts/tests/testPythonScript.py:18:from RestrictedPython.tests.verify import verify
+
+Products.ZCatalog --> /Products/PluginIndexes/TopicIndex/FilteredSet.py:19:from RestrictedPython.Eval import RestrictionCapableEval
+
+zope.security-3.7.4-py2.7-macosx-10.10-x86_64.egg/zope/security/untrustedpython/rcompile.py:23:import RestrictedPython.RCompile
+zope.security-3.7.4-py2.7-macosx-10.10-x86_64.egg/zope/security/untrustedpython/rcompile.py:24:from RestrictedPython.SelectCompiler import ast, OP_ASSIGN, OP_DELETE, OP_APPLY
+zope.security-3.7.4-py2.7-macosx-10.10-x86_64.egg/zope/security/untrustedpython/rcompile.py:33:class RExpression(RestrictedPython.RCompile.RestrictedCompileMode):
+zope.security-3.7.4-py2.7-macosx-10.10-x86_64.egg/zope/security/untrustedpython/rcompile.py:39:        RestrictedPython.RCompile.RestrictedCompileMode.__init__(
+zope.security-3.7.4-py2.7-macosx-10.10-x86_64.egg/zope/security/untrustedpython/rcompile.txt:28:The implementation makes use of the `RestrictedPython` package,
+
+zope.untrustedpython --> rcompile.py:21:import RestrictedPython.RCompile
+zope.untrustedpython --> rcompile.py:22:from RestrictedPython.SelectCompiler import ast
+zope.untrustedpython --> rcompile.py:31:class RExpression(RestrictedPython.RCompile.RestrictedCompileMode):
+zope.untrustedpython --> rcompile.py:37:        RestrictedPython.RCompile.RestrictedCompileMode.__init__(
+
+* Products.PageTemplates --> ZRPythonExpr.py:15:Handler for Python expressions that uses the RestrictedPython package.
+* Products.PageTemplates --> ZRPythonExpr.py:20:from RestrictedPython import compile_restricted_eval
+* Products.PageTemplates --> ZRPythonExpr.py:32:        # Unicode expression are not handled properly by RestrictedPython
