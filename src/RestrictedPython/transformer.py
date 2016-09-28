@@ -125,9 +125,10 @@ if version >= (3, 5):
 
 class RestrictingNodeTransformer(ast.NodeTransformer):
 
-    def __init__(self):
-        self.errors = []
-        self.warnings = []
+    def __init__(self, errors=[], warnings=[], used_names=[]):
+        self.errors = errors
+        self.warnings = warnings
+        self.used_names = used_names
 
     def error(self, node, info):
         """Record a security error discovered during transformation."""
