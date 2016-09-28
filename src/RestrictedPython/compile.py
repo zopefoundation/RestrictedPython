@@ -17,15 +17,16 @@ def compile_restricted_exec(
         # Unrestricted Source Checks
         return compile(source, filename, mode='exec', flags=flags, dont_inherit=dont_inherit)
     c_ast = ast.parse(source, filename, 'exec')
-    r_ast = policy(errors, warnings, used_names).visit(c_ast)
-    if r_ast is None:
-        raise SyntaxError('AST parse fehlgeschlagen')
+    policy(errors, warnings, used_names).visit(c_ast)
     try:
-        byte_code = compile(r_ast, filename, mode='exec'  # ,
+        byte_code = compile(c_ast, filename, mode='exec'  # ,
                             #flags=flags,
                             #dont_inherit=dont_inherit
                             )
     except SyntaxError as v:
+        byte_code = None
+        errors.append(v)
+    except TypeError as v:
         byte_code = None
         errors.append(v)
     return byte_code, errors, warnings, used_names
@@ -69,9 +70,9 @@ def compile_restricted_single(
         # Unrestricted Source Checks
         return compile(source, filename, mode='single', flags=flags, dont_inherit=dont_inherit)
     c_ast = ast.parse(source, filename, 'single')
-    r_ast = policy(errors, warnings, used_names).visit(c_ast)
+    policy(errors, warnings, used_names).visit(c_ast)
     try:
-        byte_code = compile(r_ast, filename, mode='single', flags=flags,
+        byte_code = compile(c_ast, filename, mode='single', flags=flags,
                             dont_inherit=dont_inherit)
     except SyntaxError as v:
         byte_code = None

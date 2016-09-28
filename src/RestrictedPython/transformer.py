@@ -96,6 +96,7 @@ AST_WHITELIST = [
     #ast.Global,
     #ast.Nonlocal,
     ast.ClassDef,
+    ast.Module,
 ]
 
 version = sys.version_info
@@ -143,12 +144,6 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         self.used_names.append('Line {lineno}: {info}'.format(lineno=lineno, info=info))
 
     # Special Functions for an ast.NodeTransformer
-
-    def visit(self, node):
-        code = super(RestrictingNodeTransformer, self).visit(node)
-        if self.errors:
-            raise SyntaxError('\n'.join(self.errors))
-        return code
 
     def generic_visit(self, node):
         if node.__class__ not in AST_WHITELIST:
@@ -223,6 +218,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         """
         if node.id.startswith('_'):
             self.error(node, '"{name}" is an invalid variable name because it starts with "_"'.format(name=node.id))
+            self.error(node, 'Attribute names starting with "_" are not allowed.')
         else:
             return self.generic_visit(node)
         return self.generic_visit(node)
@@ -471,7 +467,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
     def visit_Attribute(self, node):
         if node.attr.startswith('_'):
             self.error(
-                node, 'Attribute names starting with "_" are not allowed.')
+                node, '"{name}" is an invalid attribute name because it starts with "_".'.format(name=node.attr))
         else:
             return self.generic_visit(node)
 
@@ -704,6 +700,12 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         return self.generic_visit(node)
 
     def visit_ClassDef(self, node):
+        """
+
+        """
+        return self.generic_visit(node)
+
+    def visit_Module(self, node):
         """
 
         """
