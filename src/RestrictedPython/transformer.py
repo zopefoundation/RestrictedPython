@@ -3,28 +3,119 @@ import ast
 import sys
 
 AST_WHITELIST = [
-    ast.Assign,
-    ast.Attribute,  # see visit_Attribute for restrictions
-    ast.Call,  # see visit_Call for restrictions
-    ast.Expr,
-    ast.FunctionDef,
-    ast.List,
-    ast.Load,
-    ast.Module,
-    ast.Name,  # see visit_Name for restrictions
-    ast.Num,
-    ast.Store,
-    ast.Str,
+    # ast for Literals,
+    ast.visit_Num,
+    ast.visit_Str,
+    ast.visit_Bytes,
+    ast.visit_List,
+    ast.visit_Tuple,
+    ast.visit_Set,
+    ast.visit_Dict,
+    ast.visit_Ellipsis,
+    ast.visit_NameConstant
+    # ast for Variables,
+    ast.visit_Name,
+    ast.visit_Load,
+    ast.visit_Store,
+    ast.visit_Del,
+    ast.visit_Starred
+    # Expressions,
+    ast.visit_Expr,
+    ast.visit_UnaryOp,
+    ast.visit_UAdd,
+    ast.visit_USub,
+    ast.visit_Not,
+    ast.visit_Invert,
+    ast.visit_BinOp,
+    ast.visit_Add,
+    ast.visit_Sub,
+    ast.visit_Div,
+    ast.visit_FloorDiv,
+    ast.visit_Mod,
+    ast.visit_Pow,
+    ast.visit_LShift,
+    ast.visit_RShift,
+    ast.visit_BitOr,
+    ast.visit_BitAnd,
+    ast.visit_MatMult,
+    ast.visit_BoolOp,
+    ast.visit_And,
+    ast.visit_Or,
+    ast.visit_Compare,
+    ast.visit_Eq,
+    ast.visit_NotEq,
+    ast.visit_Lt,
+    ast.visit_LtE,
+    ast.visit_Gt,
+    ast.visit_GtE,
+    ast.visit_Is,
+    ast.visit_IsNot,
+    ast.visit_In,
+    ast.visit_NotIn,
+    ast.visit_Call,
+    ast.visit_keyword,
+    ast.visit_IfExp,
+    ast.visit_Attribute
+    # Subscripting,
+    ast.visit_Subscript,
+    ast.visit_Index,
+    ast.visit_Slice,
+    ast.visit_ExtSlice
+    # Comprehensions,
+    ast.visit_ListComp,
+    ast.visit_SetComp,
+    ast.visit_GeneratorExp,
+    ast.visit_DictComp,
+    ast.visit_comprehension
+    # Statements,
+    ast.visit_Assign,
+    ast.visit_AugAssign,
+    ast.visit_Print,
+    ast.visit_Raise,
+    ast.visit_Assert,
+    ast.visit_Delete,
+    ast.visit_Pass
+    # Imports,
+    ast.visit_Import,
+    ast.visit_ImportFrom,
+    ast.visit_alias
+    # Control flow,
+    ast.visit_If,
+    ast.visit_For,
+    ast.visit_While,
+    ast.visit_Break,
+    ast.visit_Continue,
+    ast.visit_Try,
+    ast.visit_TryFinally,
+    ast.visit_TryExcept,
+    ast.visit_ExceptHandler,
+    ast.visit_With,
+    ast.visit_withitem
+    # Function and class definitions,
+    ast.visit_FunctionDef,
+    ast.visit_Lambda,
+    ast.visit_arguments,
+    ast.visit_arg,
+    ast.visit_Return,
+    ast.visit_Yield,
+    ast.visit_YieldFrom,
+    ast.visit_Global,
+    ast.visit_Nonlocal,
+    ast.visit_ClassDef
 ]
 
 version = sys.version_info
 if version <= (2, 8):
     AST_WHITELIST.extend([
-        ast.Print
+,        ast.Print
     ])
 elif version >= (3, 5):
     AST_WHITELIST.extend([
-        ast.AsyncFunctionDef
+        # Async und await,  # No Async Elements
+        #ast.visit_AsyncFunctionDef,  # No Async Elements
+        #ast.visit_Await,  # No Async Elements
+        #ast.visit_AsyncFor,  # No Async Elements
+        #ast.visit_AsyncWith,  # No Async Elements
     ])
 
 
