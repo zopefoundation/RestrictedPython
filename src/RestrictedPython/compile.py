@@ -15,8 +15,8 @@ def compile_restricted_eval(
     if policy is None:
         # Unrestricted Source Checks
         return compile(source, filename, flags=flags, dont_inherit=dont_inherit)
-    c_ast = ast.parse(source, filename, mode)
-    r_ast = policy(errors, wanings, used_names).visit(c_ast)
+    c_ast = ast.parse(source, filename, 'eval')
+    r_ast = policy(errors, warnings, used_names).visit(c_ast)
     try:
         byte_code = compile(r_ast, filename, mode='eval', flags=flags,
                             dont_inherit=dont_inherit)
@@ -38,8 +38,8 @@ def compile_restricted_exec(
     if policy is None:
         # Unrestricted Source Checks
         return compile(source, filename, flags=flags, dont_inherit=dont_inherit)
-    c_ast = ast.parse(source, filename, mode)
-    r_ast = policy(errors, wanings, used_names).visit(c_ast)
+    c_ast = ast.parse(source, filename, 'exec')
+    r_ast = policy(errors, warnings, used_names).visit(c_ast)
     try:
         byte_code = compile(r_ast, filename, mode='exec', flags=flags,
                             dont_inherit=dont_inherit)
@@ -54,6 +54,16 @@ def compile_restricted_function(
         flags=0,
         dont_inherit=0,
         policy=RestrictingNodeTransformer):
+    """Compiles a restricted code object for a function.
+
+    The function can be reconstituted using the 'new' module:
+
+    new.function(<code>, <globals>)
+
+    The globalize argument, if specified, is a list of variable names to be
+    treated as globals (code is generated as if each name in the list
+    appeared in a global statement at the top of the function).
+    """
     byte_code = None
     errors = []
     warnings = []
@@ -62,7 +72,7 @@ def compile_restricted_function(
         # Unrestricted Source Checks
         return compile(source, filename, flags=flags, dont_inherit=dont_inherit)
     c_ast = ast.parse(source, filename, mode)
-    r_ast = policy(errors, wanings, used_names).visit(c_ast)
+    r_ast = policy(errors, warnings, used_names).visit(c_ast)
     try:
         byte_code = compile(r_ast, filename, mode='single', flags=flags,
                             dont_inherit=dont_inherit)
