@@ -9,7 +9,7 @@ from RestrictedPython import compile_restricted
 from RestrictedPython import PrintCollector
 from RestrictedPython.Eval import RestrictionCapableEval
 from RestrictedPython.tests import restricted_module
-from RestrictedPython.tests import verify
+from RestrictedPython.test_helper import verify
 from RestrictedPython.RCompile import RModule
 from RestrictedPython.RCompile import RFunction
 
@@ -218,7 +218,7 @@ def inplacevar_wrapper(op, x, y):
 class RestrictionTests(unittest.TestCase):
     def execFunc(self, name, *args, **kw):
         func = rmodule[name]
-        verify.verify(func.func_code)
+        verify(func.func_code)
         func.func_globals.update({'_getattr_': guarded_getattr,
                                   '_getitem_': guarded_getitem,
                                   '_write_': TestGuard,
@@ -382,7 +382,7 @@ class RestrictionTests(unittest.TestCase):
             self.assertEqual(str(tree_before), str(tree_after))
 
             rm.compile()
-            verify.verify(rm.getCode())
+            verify(rm.getCode())
 
     def _checkBeforeAndAfter(self, mod):
             from RestrictedPython.RCompile import RModule
@@ -408,7 +408,7 @@ class RestrictionTests(unittest.TestCase):
                 self.assertEqual(str(tree_before), str(tree_after))
 
                 rm.compile()
-                verify.verify(rm.getCode())
+                verify(rm.getCode())
 
     if sys.version_info[:2] >= (2, 4):
         def checkBeforeAndAfter24(self):
@@ -437,7 +437,7 @@ class RestrictionTests(unittest.TestCase):
         f.close()
 
         co = compile_restricted(source, path, "exec")
-        verify.verify(co)
+        verify(co)
         return co
 
     def checkUnpackSequence(self):
@@ -481,7 +481,7 @@ class RestrictionTests(unittest.TestCase):
 
     def checkUnpackSequenceExpression(self):
         co = compile_restricted("[x for x, y in [(1, 2)]]", "<string>", "eval")
-        verify.verify(co)
+        verify(co)
         calls = []
 
         def getiter(s):
@@ -493,7 +493,7 @@ class RestrictionTests(unittest.TestCase):
 
     def checkUnpackSequenceSingle(self):
         co = compile_restricted("x, y = 1, 2", "<string>", "single")
-        verify.verify(co)
+        verify(co)
         calls = []
 
         def getiter(s):
