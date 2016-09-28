@@ -122,6 +122,7 @@ if version >= (3, 5):
 class RestrictingNodeTransformer(ast.NodeTransformer):
 
     def __init__(self, errors=[], warnings=[], used_names=[]):
+        super(RestrictingNodeTransformer, self).__init__()
         self.errors = errors
         self.warnings = warnings
         self.used_names = used_names
@@ -130,6 +131,16 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         """Record a security error discovered during transformation."""
         lineno = getattr(node, 'lineno', None)
         self.errors.append('Line {lineno}: {info}'.format(lineno=lineno, info=info))
+
+    def warn(self, node, info):
+        """Record a security error discovered during transformation."""
+        lineno = getattr(node, 'lineno', None)
+        self.warnings.append('Line {lineno}: {info}'.format(lineno=lineno, info=info))
+
+    def use_name(self, node, info):
+        """Record a security error discovered during transformation."""
+        lineno = getattr(node, 'lineno', None)
+        self.used_names.append('Line {lineno}: {info}'.format(lineno=lineno, info=info))
 
     # Special Functions for an ast.NodeTransformer
 

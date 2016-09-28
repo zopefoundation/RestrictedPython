@@ -106,7 +106,7 @@ def compile_restricted_function(p, body, name, filename, globalize=None):
 def compile_restricted_exec(source, filename='<string>'):
     """Compiles a restricted code suite."""
     gen = RModule(source, filename)
-    return compileAndTuplize(gen)
+    return _compileAndTuplize(gen)
 
 
 def compile_restricted_eval(source, filename='<string>'):
