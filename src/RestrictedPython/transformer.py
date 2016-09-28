@@ -83,7 +83,6 @@ AST_WHITELIST = [
     ast.While,
     ast.Break,
     ast.Continue,
-    ast.ExceptHandler,
     ast.With,
     #ast.withitem,
     # Function and class definitions,
@@ -103,14 +102,11 @@ version = sys.version_info
 if version >= (2, 7) and version <= (2, 8):
     AST_WHITELIST.extend([
         ast.Print,
-        ast.TryFinally,
-        ast.TryExcept,
     ])
 
 if version >= (3, 0):
     AST_WHITELIST.extend([
         ast.Bytes,
-        ast.Try,
     ])
 
 if version >= (3, 5):
@@ -623,30 +619,6 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         return self.generic_visit(node)
 
     def visit_Continue(self, node):
-        """
-
-        """
-        return self.generic_visit(node)
-
-    def visit_Try(self, node):
-        """
-
-        """
-        return self.generic_visit(node)
-
-    def visit_TryFinally(self, node):
-        """
-
-        """
-        return self.generic_visit(node)
-
-    def visit_TryExcept(self, node):
-        """
-
-        """
-        return self.generic_visit(node)
-
-    def visit_ExceptHandler(self, node):
         """
 
         """
