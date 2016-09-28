@@ -19,10 +19,10 @@
 #from RestrictedPython.RCompile import compile_restricted_function
 
 # new API Style
-from RestrictedPython.compiler import compile_restricted
-from RestrictedPython.compiler import compile_restricted_eval
-from RestrictedPython.compiler import compile_restricted_exec
-from RestrictedPython.compiler import compile_restricted_function
+from RestrictedPython.compile import compile_restricted
+from RestrictedPython.compile import compile_restricted_eval
+from RestrictedPython.compile import compile_restricted_exec
+from RestrictedPython.compile import compile_restricted_function
 
 from RestrictedPython.PrintCollector import PrintCollector
 
