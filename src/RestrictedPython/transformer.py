@@ -83,9 +83,6 @@ AST_WHITELIST = [
     ast.While,
     ast.Break,
     ast.Continue,
-    #ast.Try,
-    ast.TryFinally,
-    ast.TryExcept,
     ast.ExceptHandler,
     ast.With,
     #ast.withitem,
@@ -103,14 +100,17 @@ AST_WHITELIST = [
 ]
 
 version = sys.version_info
-if version <= (2, 8):
+if version >= (2, 7) and version <= (2, 8):
     AST_WHITELIST.extend([
-        ast.Print
+        ast.Print,
+        ast.TryFinally,
+        ast.TryExcept,
     ])
 
 if version >= (3, 0):
     AST_WHITELIST.extend([
         ast.Bytes,
+        ast.Try,
     ])
 
 if version >= (3, 5):
