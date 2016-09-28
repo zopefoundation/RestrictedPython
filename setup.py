@@ -37,8 +37,6 @@ setup(name='RestrictedPython',
       install_requires=[
           'setuptools',
           #'zope.deprecation',
-          #'ipython',
-          #'ipdb',
       ],
       extras_require={
           'docs': [
@@ -46,10 +44,6 @@ setup(name='RestrictedPython',
           ],
           'release': [
               'zest.releaser',
-          ],
-          'develop': [
-              'ipython',
-              'ipdb',
           ],
       },
       include_package_data=True,
