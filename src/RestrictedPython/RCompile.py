@@ -27,8 +27,6 @@ from compiler.pycodegen import ModuleCodeGenerator
 from compiler.pycodegen import FunctionCodeGenerator
 from compiler.pycodegen import findOp
 
-from zope.deprecation import deprecation
-
 from RestrictedPython import MutatingWalker
 from RestrictedPython.RestrictionMutator import RestrictionMutator
 
@@ -90,7 +88,6 @@ def _compileAndTuplize(gen):
     return gen.getCode(), (), gen.rm.warnings, gen.rm.used_names
 
 
-@deprecation.deprecate('compile_restricted_function() will go in RestrictedPython 5.0')
 def compile_restricted_function(p, body, name, filename, globalize=None):
     """Compiles a restricted code object for a function.
 
@@ -106,14 +103,12 @@ def compile_restricted_function(p, body, name, filename, globalize=None):
     return _compileAndTuplize(gen)
 
 
-@deprecation.deprecate('compile_restricted_exec() will go in RestrictedPython 5.0, use compile_restricted(source, filename, mode="exec") instead.')
 def compile_restricted_exec(source, filename='<string>'):
     """Compiles a restricted code suite."""
     gen = RModule(source, filename)
     return compileAndTuplize(gen)
 
 
-@deprecation.deprecate('compile_restricted_eval() will go in RestrictedPython 5.0, use compile_restricted(source, filename, mode="eval") instead.')
 def compile_restricted_eval(source, filename='<string>'):
     """Compiles a restricted expression."""
     gen = RExpression(source, filename)
