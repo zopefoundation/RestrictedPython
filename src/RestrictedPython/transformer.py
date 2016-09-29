@@ -17,7 +17,6 @@ AST_WHITELIST = [
     ast.Load,
     ast.Store,
     ast.Del,
-    #ast.Starred,
     # Expressions,
     ast.Expr,
     ast.UnaryOp,
@@ -28,6 +27,7 @@ AST_WHITELIST = [
     ast.BinOp,
     ast.Add,
     ast.Sub,
+    ast.Mult,
     ast.Div,
     ast.FloorDiv,
     ast.Mod,
@@ -36,7 +36,6 @@ AST_WHITELIST = [
     ast.RShift,
     ast.BitOr,
     ast.BitAnd,
-    #ast.MatMult,
     ast.BoolOp,
     ast.And,
     ast.Or,
@@ -108,6 +107,7 @@ if version >= (2, 7) and version < (2, 8):
 if version >= (3, 0):
     AST_WHITELIST.extend([
         ast.Bytes,
+        ast.Starred,
     ])
 
 if version >= (3, 4):
@@ -116,6 +116,7 @@ if version >= (3, 4):
 
 if version >= (3, 5):
     AST_WHITELIST.extend([
+        ast.MatMult,
         # Async und await,  # No Async Elements
         #ast.AsyncFunctionDef,  # No Async Elements
         #ast.Await,  # No Async Elements
@@ -125,12 +126,8 @@ if version >= (3, 5):
 
 if version >= (3, 6):
     AST_WHITELIST.extend([
-        # Async und await,  # No Async Elements
-        #ast.AsyncFunctionDef,  # No Async Elements
-        #ast.Await,  # No Async Elements
-        #ast.AsyncFor,  # No Async Elements
-        #ast.AsyncWith,  # No Async Elements
     ])
+
 
 class RestrictingNodeTransformer(ast.NodeTransformer):
 
@@ -457,10 +454,12 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         """
         func, args, keywords, starargs, kwargs
         """
-        if node.func.id == 'exec':
-            self.error(node, 'Exec statements are not allowed.')
-        elif node.func.id == 'eval':
-            self.error(node, 'Eval functions are not allowed.')
+        #import ipdb; ipdb.set_trace()
+        if hasattr(node, 'func') and node.func is ast.Name and hasattr(node.func, 'id'):
+            if node.func.id == 'exec':
+                self.warn(node, 'Exec statements are not allowed.')
+            elif node.func.id == 'eval':
+                self.warn(node, 'Eval functions are not allowed.')
         else:
             return self.generic_visit(node)
 
