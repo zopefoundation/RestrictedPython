@@ -81,7 +81,7 @@ def test_transformer__RestrictingNodeTransformer__generic_visit__102():
 def test_transformer__RestrictingNodeTransformer__generic_visit__103():
     """It raises a SyntaxError if the code contains an `exec` statement."""
     code, errors, warnings, used_names = compile_restricted_exec(EXEC_STATEMENT, '<undefined>')
-    assert "Missing parentheses in call to 'exec' (<undefined>, line 2)" in errors
+    assert "Line 2: SyntaxError: Missing parentheses in call to 'exec' in on statement: exec 'q = 1'" in errors
 
 
 BAD_NAME = """\
@@ -98,6 +98,7 @@ def test_transformer__RestrictingNodeTransformer__generic_visit__104():
 
 BAD_ATTR = """\
 def bad_attr():
+    some_ob = object()
     some_ob._some_attr = 15
 """
 

@@ -100,7 +100,7 @@ AST_WHITELIST = [
 ]
 
 version = sys.version_info
-if version >= (2, 7) and version <= (2, 8):
+if version >= (2, 7) and version < (2, 8):
     AST_WHITELIST.extend([
         ast.Print,
     ])
@@ -108,6 +108,10 @@ if version >= (2, 7) and version <= (2, 8):
 if version >= (3, 0):
     AST_WHITELIST.extend([
         ast.Bytes,
+    ])
+
+if version >= (3, 4):
+    AST_WHITELIST.extend([
     ])
 
 if version >= (3, 5):
@@ -119,6 +123,14 @@ if version >= (3, 5):
         #ast.AsyncWith,  # No Async Elements
     ])
 
+if version >= (3, 6):
+    AST_WHITELIST.extend([
+        # Async und await,  # No Async Elements
+        #ast.AsyncFunctionDef,  # No Async Elements
+        #ast.Await,  # No Async Elements
+        #ast.AsyncFor,  # No Async Elements
+        #ast.AsyncWith,  # No Async Elements
+    ])
 
 class RestrictingNodeTransformer(ast.NodeTransformer):
 

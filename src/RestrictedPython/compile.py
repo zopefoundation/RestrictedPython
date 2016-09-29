@@ -15,20 +15,33 @@ def compile_restricted_exec(
     used_names = []
     if policy is None:
         # Unrestricted Source Checks
-        return compile(source, filename, mode='exec', flags=flags, dont_inherit=dont_inherit)
-    c_ast = ast.parse(source, filename, 'exec')
-    policy(errors, warnings, used_names).visit(c_ast)
-    try:
-        byte_code = compile(c_ast, filename, mode='exec'  # ,
-                            #flags=flags,
-                            #dont_inherit=dont_inherit
-                            )
-    except SyntaxError as v:
-        byte_code = None
-        errors.append(v)
-    except TypeError as v:
-        byte_code = None
-        errors.append(v)
+        byte_code = compile(source, filename, mode='exec', flags=flags,
+                            dont_inherit=dont_inherit)
+    else:
+        c_ast = None
+        try:
+            c_ast = ast.parse(source, filename, 'exec')
+        except SyntaxError as v:
+            c_ast = None
+            errors.append('Line {lineno}: {type}: {msg} in on statement: {statement}'.format(
+                lineno=v.lineno,
+                type=v.__class__.__name__,
+                msg=v.msg,
+                statement=v.text.strip()
+            ))
+        try:
+            if c_ast:
+                policy(errors, warnings, used_names).visit(c_ast)
+                byte_code = compile(c_ast, filename, mode='exec'  # ,
+                                    #flags=flags,
+                                    #dont_inherit=dont_inherit
+                                    )
+        except SyntaxError as v:
+            byte_code = None
+            errors.append(v)
+        except TypeError as v:
+            byte_code = None
+            errors.append(v)
     return byte_code, errors, warnings, used_names
 
 

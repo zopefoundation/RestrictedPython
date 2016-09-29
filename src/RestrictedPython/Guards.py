@@ -15,6 +15,8 @@
 # AccessControl.ZopeGuards contains a large set of wrappers for builtins.
 # DocumentTemplate.DT_UTil contains a few.
 
+import sys
+
 safe_builtins = {}
 
 _safe_names = [
@@ -22,11 +24,9 @@ _safe_names = [
     'False',
     'True',
     'abs',
-    'basestring',
     'bool',
     'callable',
     'chr',
-    'cmp',
     'complex',
     'divmod',
     'float',
@@ -37,7 +37,6 @@ _safe_names = [
     'isinstance',
     'issubclass',
     'len',
-    'long',
     'oct',
     'ord',
     'pow',
@@ -46,9 +45,6 @@ _safe_names = [
     'round',
     'str',
     'tuple',
-    'unichr',
-    'unicode',
-    'xrange',
     'zip'
 ]
 
@@ -83,7 +79,6 @@ _safe_exceptions = [
     'ReferenceError',
     'RuntimeError',
     'RuntimeWarning',
-    'StandardError',
     'StopIteration',
     'SyntaxError',
     'SyntaxWarning',
@@ -102,6 +97,37 @@ _safe_exceptions = [
     'Warning',
     'ZeroDivisionError',
 ]
+
+version = sys.version_info
+if version >= (2, 7) and version < (2, 8):
+    _safe_names.extend([
+        'basestring',
+        'cmp',
+        'long',
+        'unichr',
+        'unicode',
+        'xrange',
+    ])
+    _safe_exceptions.extend([
+        'StandardError',
+    ])
+
+if version >= (3, 0):
+    _safe_names.extend([
+
+    ])
+    _safe_exceptions.extend([
+
+    ])
+
+if version >= (3, 5):
+    _safe_names.extend([
+
+    ])
+    _safe_exceptions.extend([
+
+    ])
+
 
 for name in _safe_names:
     safe_builtins[name] = __builtins__[name]
@@ -214,7 +240,7 @@ def _write_wrapper():
 def _full_write_guard():
     # Nested scope abuse!
     # safetype and Wrapper variables are used by guard()
-    safetype = {dict: True, list: True}.has_key
+    safetype = {dict: True, list: True}.has_key if version < (3, 0) else {dict: True, list: True}.keys
     Wrapper = _write_wrapper()
 
     def guard(ob):
