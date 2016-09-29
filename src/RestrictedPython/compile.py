@@ -3,9 +3,10 @@ from RestrictedPython.transformer import RestrictingNodeTransformer
 import ast
 
 
-def compile_restricted_exec(
+def _compile_restricted_mode(
         source,
         filename='<string>',
+        mode="exec"
         flags=0,
         dont_inherit=0,
         policy=RestrictingNodeTransformer):
@@ -15,12 +16,12 @@ def compile_restricted_exec(
     used_names = []
     if policy is None:
         # Unrestricted Source Checks
-        byte_code = compile(source, filename, mode='exec', flags=flags,
+        byte_code = compile(source, filename, mode=mode, flags=flags,
                             dont_inherit=dont_inherit)
     else:
         c_ast = None
         try:
-            c_ast = ast.parse(source, filename, 'exec')
+            c_ast = ast.parse(source, filename, mode)
         except SyntaxError as v:
             c_ast = None
             errors.append('Line {lineno}: {type}: {msg} in on statement: {statement}'.format(
@@ -32,10 +33,11 @@ def compile_restricted_exec(
         try:
             if c_ast:
                 policy(errors, warnings, used_names).visit(c_ast)
-                byte_code = compile(c_ast, filename, mode='exec'  # ,
-                                    #flags=flags,
-                                    #dont_inherit=dont_inherit
-                                    )
+                if not errors:
+                    byte_code = compile(c_ast, filename, mode=mode  # ,
+                                        #flags=flags,
+                                        #dont_inherit=dont_inherit
+                                        )
         except SyntaxError as v:
             byte_code = None
             errors.append(v)
@@ -45,28 +47,35 @@ def compile_restricted_exec(
     return byte_code, errors, warnings, used_names
 
 
+def compile_restricted_exec(
+        source,
+        filename='<string>',
+        flags=0,
+        dont_inherit=0,
+        policy=RestrictingNodeTransformer):
+    return _compile_restricted_mode(
+        source,
+        filename=filename,
+        mode='exec'
+        flags=flags,
+        dont_inherit=dont_inherit,
+        policy=policy)
+
+
 def compile_restricted_eval(
         source,
         filename='<string>',
         flags=0,
         dont_inherit=0,
         policy=RestrictingNodeTransformer):
-    byte_code = None
-    errors = []
-    warnings = []
-    used_names = []
-    if policy is None:
-        # Unrestricted Source Checks
-        return compile(source, filename, mode='eval', flags=flags, dont_inherit=dont_inherit)
-    c_ast = ast.parse(source, filename, 'eval')
-    r_ast = policy(errors, warnings, used_names).visit(c_ast)
-    try:
-        byte_code = compile(r_ast, filename, mode='eval', flags=flags,
-                            dont_inherit=dont_inherit)
-    except SyntaxError as v:
-        byte_code = None
-        errors.append(v)
-    return byte_code, errors, warnings, used_names
+
+    return _compile_restricted_mode(
+        source,
+        filename=filename,
+        mode='eval'
+        flags=flags,
+        dont_inherit=dont_inherit,
+        policy=policy)
 
 
 def compile_restricted_single(
@@ -75,22 +84,13 @@ def compile_restricted_single(
         flags=0,
         dont_inherit=0,
         policy=RestrictingNodeTransformer):
-    byte_code = None
-    errors = []
-    warnings = []
-    used_names = []
-    if policy is None:
-        # Unrestricted Source Checks
-        return compile(source, filename, mode='single', flags=flags, dont_inherit=dont_inherit)
-    c_ast = ast.parse(source, filename, 'single')
-    policy(errors, warnings, used_names).visit(c_ast)
-    try:
-        byte_code = compile(c_ast, filename, mode='single', flags=flags,
-                            dont_inherit=dont_inherit)
-    except SyntaxError as v:
-        byte_code = None
-        errors.append(v)
-    return byte_code, errors, warnings, used_names
+    return _compile_restricted_mode(
+        source,
+        filename=filename,
+        mode='single'
+        flags=flags,
+        dont_inherit=dont_inherit,
+        policy=policy)
 
 
 def compile_restricted_function(
@@ -112,22 +112,13 @@ def compile_restricted_function(
     TODO: Special function not comparable with the other restricted_compile_*
     functions.
     """
-    byte_code = None
-    errors = []
-    warnings = []
-    used_names = []
-    if policy is None:
-        # Unrestricted Source Checks
-        return compile(source, filename, flags=flags, dont_inherit=dont_inherit)
-    c_ast = ast.parse(source, filename, mode)
-    r_ast = policy(errors, warnings, used_names).visit(c_ast)
-    try:
-        byte_code = compile(r_ast, filename, mode='', flags=flags,
-                            dont_inherit=dont_inherit)
-    except SyntaxError as v:
-        byte_code = None
-        errors.append(v)
-    return byte_code, errors, warnings, used_names
+    return _compile_restricted_mode(
+        source,
+        filename=filename,
+        mode='function'
+        flags=flags,
+        dont_inherit=dont_inherit,
+        policy=policy)
 
 
 def compile_restricted(
@@ -143,21 +134,13 @@ def compile_restricted(
 
     """
     byte_code, errors, warnings, used_names = None, None, None, None
-    if mode == 'exec':
-        byte_code, errors, warnings, used_names = compile_restricted_exec(
-            source, filename=filename, flags=flags, dont_inherit=dont_inherit,
-            policy=policy)
-    elif mode == 'eval':
-        byte_code, errors, warnings, used_names = compile_restricted_eval(
-            source, filename=filename, flags=flags, dont_inherit=dont_inherit,
-            policy=policy)
-    elif mode == 'single':
-        byte_code, errors, warnings, used_names = compile_restricted_single(
-            source, filename=filename, flags=flags, dont_inherit=dont_inherit,
-            policy=policy)
-    elif mode == 'function':
-        byte_code, errors, warnings, used_names = compile_restricted_function(
-            source, filename=filename, flags=flags, dont_inherit=dont_inherit,
+    if mode in ['exec', 'eval', 'single', 'function']:
+        byte_code, errors, warnings, used_names = _compile_restricted_mode(
+            source,
+            filename=filename,
+            mode='exec'
+            flags=flags,
+            dont_inherit=dont_inherit,
             policy=policy)
     else:
         raise TypeError('unknown mode %s', mode)
