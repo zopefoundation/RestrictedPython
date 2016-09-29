@@ -106,4 +106,4 @@ def bad_attr():
 def test_transformer__RestrictingNodeTransformer__generic_visit__105():
     """It raises a SyntaxError if a bad attribute name is used."""
     code, errors, warnings, used_names = compile_restricted_exec(BAD_ATTR, '<undefined>')
-    assert 'Line 2: "_some_attr" is an invalid attribute name because it starts with "_".' in errors
+    assert 'Line 3: "_some_attr" is an invalid attribute name because it starts with "_".' in errors
