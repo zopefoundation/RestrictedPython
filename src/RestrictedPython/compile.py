@@ -56,7 +56,7 @@ def compile_restricted_exec(
     return _compile_restricted_mode(
         source,
         filename=filename,
-        mode='exec'
+        mode='exec',
         flags=flags,
         dont_inherit=dont_inherit,
         policy=policy)
@@ -72,7 +72,7 @@ def compile_restricted_eval(
     return _compile_restricted_mode(
         source,
         filename=filename,
-        mode='eval'
+        mode='eval',
         flags=flags,
         dont_inherit=dont_inherit,
         policy=policy)
@@ -87,7 +87,7 @@ def compile_restricted_single(
     return _compile_restricted_mode(
         source,
         filename=filename,
-        mode='single'
+        mode='single',
         flags=flags,
         dont_inherit=dont_inherit,
         policy=policy)
@@ -115,7 +115,7 @@ def compile_restricted_function(
     return _compile_restricted_mode(
         source,
         filename=filename,
-        mode='function'
+        mode='function',
         flags=flags,
         dont_inherit=dont_inherit,
         policy=policy)
