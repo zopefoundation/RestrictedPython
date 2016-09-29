@@ -6,7 +6,7 @@ import ast
 def _compile_restricted_mode(
         source,
         filename='<string>',
-        mode="exec"
+        mode="exec",
         flags=0,
         dont_inherit=0,
         policy=RestrictingNodeTransformer):
