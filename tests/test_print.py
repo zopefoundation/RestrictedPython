@@ -1,7 +1,13 @@
 from RestrictedPython import compile_restricted
-from RestrictedPython import compile_restricted_exec
 from RestrictedPython import compile_restricted_eval
+from RestrictedPython import compile_restricted_exec
 from RestrictedPython import compile_restricted_function
+from RestrictedPython.PrintCollector import PrintCollector
+from RestrictedPython.PrintCollector import printed
+from RestrictedPython.PrintCollector import safe_print
+
+import pytest
+import sys
 
 
 ALLOWED_PRINT_STATEMENT = """\
@@ -52,8 +58,9 @@ DISALLOWED_PRINT_FUNCTION_WITH_FILE = """\
 print('Hello World!', file=sys.stderr)
 """
 
+
+@pytest.mark.skipif(sys.version_info >= (3, 0),
+                    reason="print statement no longer exists in Python 3")
 def test_print__simple_print_statement():
-    #code, err, warn, use = compile_restricted_exec(ALLOWED_PRINT, '<undefined>')
-    #exec(code)
-    #assert 'code' == code
-    pass
+    code, err, warn, use = compile_restricted_exec(ALLOWED_PRINT_STATEMENT, '<undefined>')
+    exec(code)

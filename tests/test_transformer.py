@@ -1,8 +1,8 @@
 from RestrictedPython import compile_restricted
-from RestrictedPython import compile_restricted_exec
 from RestrictedPython import compile_restricted_eval
-#from RestrictedPython import compile_restricted_single
+from RestrictedPython import compile_restricted_exec
 from RestrictedPython import compile_restricted_function
+from RestrictedPython import compile_restricted_single
 
 import pytest
 import sys
