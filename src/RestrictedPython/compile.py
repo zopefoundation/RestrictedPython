@@ -138,7 +138,7 @@ def compile_restricted(
         byte_code, errors, warnings, used_names = _compile_restricted_mode(
             source,
             filename=filename,
-            mode='exec'
+            mode=mode,
             flags=flags,
             dont_inherit=dont_inherit,
             policy=policy)
