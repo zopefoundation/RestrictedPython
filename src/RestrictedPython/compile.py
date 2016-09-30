@@ -13,7 +13,7 @@ def _compile_restricted_mode(
     byte_code = None
     errors = []
     warnings = []
-    used_names = []
+    used_names = {}
     if policy is None:
         # Unrestricted Source Checks
         byte_code = compile(source, filename, mode=mode, flags=flags,
@@ -44,7 +44,7 @@ def _compile_restricted_mode(
         except TypeError as v:
             byte_code = None
             errors.append(v)
-    return byte_code, errors, warnings, used_names
+    return byte_code, tuple(errors), warnings, used_names
 
 
 def compile_restricted_exec(

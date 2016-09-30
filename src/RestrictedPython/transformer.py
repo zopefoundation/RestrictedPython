@@ -90,7 +90,7 @@ AST_WHITELIST = [
     ast.arguments,
     #ast.arg,
     ast.Return,
-    #ast.Yield,
+    # ast.Yield, # yield is not supported
     #ast.YieldFrom,
     #ast.Global,
     #ast.Nonlocal,
@@ -226,8 +226,8 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
 
         """
         if node.id.startswith('_'):
-            self.error(node, '"{name}" is an invalid variable name because it starts with "_"'.format(name=node.id))
-            self.error(node, 'Attribute names starting with "_" are not allowed.')
+            self.error(node, '"{name}" is an invalid variable name because it '
+                       'starts with "_"'.format(name=node.id))
         else:
             return self.generic_visit(node)
         return self.generic_visit(node)
@@ -445,17 +445,15 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         return self.generic_visit(node)
 
     def visit_Call(self, node):
-        """
-        func, args, keywords, starargs, kwargs
-        """
-        #import ipdb; ipdb.set_trace()
-        if hasattr(node, 'func') and node.func is ast.Name and hasattr(node.func, 'id'):
+        """func, args, keywords, starargs, kwargs"""
+        if (hasattr(node, 'func') and
+                isinstance(node.func, ast.Name) and
+                hasattr(node.func, 'id')):
             if node.func.id == 'exec':
-                self.warn(node, 'Exec statements are not allowed.')
+                self.error(node, 'Exec calls are not allowed.')
             elif node.func.id == 'eval':
-                self.warn(node, 'Eval functions are not allowed.')
-        else:
-            return self.generic_visit(node)
+                self.error(node, 'Eval calls are not allowed.')
+        return self.generic_visit(node)
 
     def visit_keyword(self, node):
         """
