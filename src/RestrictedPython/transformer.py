@@ -1,7 +1,33 @@
+##############################################################################
+#
+# Copyright (c) 2002 Zope Foundation and Contributors.
+#
+# This software is subject to the provisions of the Zope Public License,
+# Version 2.1 (ZPL).  A copy of the ZPL should accompany this distribution.
+# THIS SOFTWARE IS PROVIDED "AS IS" AND ANY AND ALL EXPRESS OR IMPLIED
+# WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
+# FOR A PARTICULAR PURPOSE
+#
+##############################################################################
+"""
+transformer module:
+
+uses Python standard library ast module and its containing classes to transform
+the parsed python code to create a modified AST for a byte code generation.
+"""
+
+# This package should follow the Plone Sytleguide for Python,
+# which differ from PEP8:
+# http://docs.plone.org/develop/styleguide/python.html
+
 
 import ast
 import sys
 
+
+# if any of the ast Classes should not be whitelisted, please comment them out
+# and add a comment why.
 AST_WHITELIST = [
     # ast for Literals,
     ast.Num,
@@ -82,6 +108,7 @@ AST_WHITELIST = [
     ast.While,
     ast.Break,
     ast.Continue,
+    #ast.ExceptHanlder,  # We do not Support ExceptHanlders
     ast.With,
     #ast.withitem,
     # Function and class definitions,
@@ -102,12 +129,15 @@ version = sys.version_info
 if version >= (2, 7) and version < (2, 8):
     AST_WHITELIST.extend([
         ast.Print,
+        #ast.TryFinally,  # TryFinally should not be supported
+        #ast.TryExcept,  # TryExcept should not be supported
     ])
 
 if version >= (3, 0):
     AST_WHITELIST.extend([
         ast.Bytes,
         ast.Starred,
+        #ast.Try,  # Try should not be supported
     ])
 
 if version >= (3, 4):
@@ -117,11 +147,11 @@ if version >= (3, 4):
 if version >= (3, 5):
     AST_WHITELIST.extend([
         ast.MatMult,
-        # Async und await,  # No Async Elements
-        #ast.AsyncFunctionDef,  # No Async Elements
-        #ast.Await,  # No Async Elements
-        #ast.AsyncFor,  # No Async Elements
-        #ast.AsyncWith,  # No Async Elements
+        # Async und await,  # No Async Elements should be supported
+        #ast.AsyncFunctionDef,  # No Async Elements should be supported
+        #ast.Await,  # No Async Elements should be supported
+        #ast.AsyncFor,  # No Async Elements should be supported
+        #ast.AsyncWith,  # No Async Elements should be supported
     ])
 
 if version >= (3, 6):
@@ -162,6 +192,18 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
                     node))
         else:
             return super(RestrictingNodeTransformer, self).generic_visit(node)
+
+    ##########################################################################
+    # visti_*ast.ElementName* methods are used to eigther inspect special
+    # ast Modules or modify the behaviour
+    # therefore please have for all existing ast modules of all python versions
+    # that should be supported included.
+    # if nothing is need on that element you could comment it out, but please
+    # let it remain in the file and do document why it is uncritical.
+    # RestrictedPython is a very complicated peace of software and every
+    # maintainer needs a way to understand why something happend here.
+    # Longish code with lot of comments are better than ununderstandable code.
+    ##########################################################################
 
     # ast for Literals
 
@@ -633,6 +675,30 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
 
         """
         return self.generic_visit(node)
+
+#    def visit_Try(self, node):
+#        """
+#
+#        """
+#        return self.generic_visit(node)
+
+#    def visit_TryFinally(self, node):
+#        """
+#
+#        """
+#        return self.generic_visit(node)
+
+#    def visit_TryExcept(self, node):
+#        """
+#
+#        """
+#        return self.generic_visit(node)
+
+#    def visit_ExceptHandler(self, node):
+#        """
+#
+#        """
+#        return self.generic_visit(node)
 
     def visit_With(self, node):
         """
