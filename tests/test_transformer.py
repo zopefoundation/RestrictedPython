@@ -1,12 +1,11 @@
-from RestrictedPython import compile_restricted
-from RestrictedPython import compile_restricted_eval
-from RestrictedPython import compile_restricted_exec
-from RestrictedPython import compile_restricted_function
-from RestrictedPython import compile_restricted_single
-
-import pytest
 import sys
 
+import pytest
+
+from RestrictedPython import (compile_restricted, compile_restricted_eval,
+                              compile_restricted_exec,
+                              compile_restricted_function,
+                              compile_restricted_single)
 
 YIELD = """\
 def no_yield():
