@@ -16,6 +16,10 @@
 # DocumentTemplate.DT_UTil contains a few.
 
 import sys
+try:
+    import builtins
+except ImportError:
+    import __builtin__ as builtins
 
 safe_builtins = {}
 
@@ -130,10 +134,10 @@ if version >= (3, 5):
 
 
 for name in _safe_names:
-    safe_builtins[name] = __builtins__[name]
+    safe_builtins[name] = getattr(builtins, name)
 
 for name in _safe_exceptions:
-    safe_builtins[name] = __builtins__[name]
+    safe_builtins[name] = getattr(builtins, name)
 
 
 # Wrappers provided by this module:
