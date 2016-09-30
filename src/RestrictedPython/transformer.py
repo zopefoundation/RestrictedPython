@@ -258,12 +258,6 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
 
     # Expressions
 
-    def visit_Expr(self, node):
-        """
-
-        """
-        return self.generic_visit(node)
-
     def visit_UnaryOp(self, node):
         """
 
@@ -698,13 +692,6 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         """
         return self.generic_visit(node)
 
-    def visit_Expr(self, node):
-        """
-
-        """
-        self.warn(node, '"exec" Statement will be gone in Python 3')
-        return self.generic_visit(node)
-
     def visit_Global(self, node):
         """
 
@@ -712,12 +699,6 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         return self.generic_visit(node)
 
     def visit_Nonlocal(self, node):
-        """
-
-        """
-        return self.generic_visit(node)
-
-    def visit_Expr(self, node):
         """
 
         """
