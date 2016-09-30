@@ -1,8 +1,7 @@
+import pytest
+import RestrictedPython
 import sys
 
-import pytest
-
-import RestrictedPython
 
 # Define the arguments for @pytest.mark.parametrize to be able to test both the
 # old and the new implementation to be equal:

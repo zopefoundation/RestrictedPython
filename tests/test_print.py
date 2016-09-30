@@ -1,11 +1,13 @@
-import sys
+from RestrictedPython import compile_restricted
+from RestrictedPython import compile_restricted_eval
+from RestrictedPython import compile_restricted_exec
+from RestrictedPython import compile_restricted_function
+from RestrictedPython.PrintCollector import PrintCollector
+from RestrictedPython.PrintCollector import printed
+from RestrictedPython.PrintCollector import safe_print
 
 import pytest
-
-from RestrictedPython import (compile_restricted, compile_restricted_eval,
-                              compile_restricted_exec,
-                              compile_restricted_function)
-from RestrictedPython.PrintCollector import PrintCollector, printed, safe_print
+import sys
 
 
 ALLOWED_PRINT_STATEMENT = """\
