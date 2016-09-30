@@ -128,3 +128,21 @@ def test_transformer__RestrictingNodeTransformer__visit_Call__1(compile):
     code, errors, warnings, used_names = compile.compile_restricted_exec(
         EXEC_FUNCTION, '<undefined>')
     assert ("Line 2: Exec calls are not allowed.",) == errors
+
+
+EVAL_FUNCTION = """\
+def no_eval():
+    eval('q = 1')
+"""
+
+
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__visit_Call__2(compile):
+    """It is an error if the code call the `eval` function."""
+    code, errors, warnings, used_names = compile.compile_restricted_exec(
+        EVAL_FUNCTION, '<undefined>')
+    if compile is RestrictedPython.compile:
+        assert ("Line 2: Eval calls are not allowed.",) == errors
+    else:
+        # `eval()` is allowed in the old implementation.
+        assert () == errors
