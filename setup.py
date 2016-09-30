@@ -45,6 +45,9 @@ setup(name='RestrictedPython',
           'release': [
               'zest.releaser',
           ],
+          'test': [
+              'pytest',
+          ]
       },
       include_package_data=True,
       zip_safe=False,
