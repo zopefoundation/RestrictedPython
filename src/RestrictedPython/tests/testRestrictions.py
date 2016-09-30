@@ -5,18 +5,19 @@
 # AccessControl, so we need to define throwaway wrapper implementations
 # here instead.
 
-from RestrictedPython import compile_restricted
 from RestrictedPython import PrintCollector
 from RestrictedPython.Eval import RestrictionCapableEval
-from RestrictedPython.tests import restricted_module
-from RestrictedPython.test_helper import verify
-from RestrictedPython.RCompile import RModule
+from RestrictedPython.RCompile import compile_restricted
 from RestrictedPython.RCompile import RFunction
+from RestrictedPython.RCompile import RModule
+from RestrictedPython.test_helper import verify
+from RestrictedPython.tests import restricted_module
 
 import os
 import re
 import sys
 import unittest
+
 
 try:
     __file__
@@ -229,12 +230,12 @@ class RestrictionTests(unittest.TestCase):
                                   })
         return func(*args, **kw)
 
-    def checkPrint(self):
+    def test_Print(self):
         for i in range(2):
             res = self.execFunc('print%s' % i)
             self.assertEqual(res, 'Hello, world!')
 
-    def checkPrintToNone(self):
+    def test_PrintToNone(self):
         try:
             res = self.execFunc('printToNone')
         except AttributeError:
@@ -243,47 +244,47 @@ class RestrictionTests(unittest.TestCase):
         else:
             self.fail(0, res)
 
-    def checkPrintStuff(self):
+    def test_PrintStuff(self):
         res = self.execFunc('printStuff')
         self.assertEqual(res, 'a b c')
 
-    def checkPrintLines(self):
+    def test_PrintLines(self):
         res = self.execFunc('printLines')
         self.assertEqual(res, '0 1 2\n3 4 5\n6 7 8\n')
 
-    def checkPrimes(self):
+    def test_Primes(self):
         res = self.execFunc('primes')
         self.assertEqual(res, '[2, 3, 5, 7, 11, 13, 17, 19]')
 
-    def checkAllowedSimple(self):
+    def test_AllowedSimple(self):
         res = self.execFunc('allowed_simple')
         self.assertEqual(res, 'abcabcabc')
 
-    def checkAllowedRead(self):
+    def test_AllowedRead(self):
         self.execFunc('allowed_read', RestrictedObject())
 
-    def checkAllowedWrite(self):
+    def test_AllowedWrite(self):
         self.execFunc('allowed_write', RestrictedObject())
 
-    def checkAllowedArgs(self):
+    def test_AllowedArgs(self):
         self.execFunc('allowed_default_args', RestrictedObject())
 
-    def checkTryMap(self):
+    def test_TryMap(self):
         res = self.execFunc('try_map')
         self.assertEqual(res, "[2, 3, 4]")
 
-    def checkApply(self):
+    def test_Apply(self):
         del apply_wrapper_called[:]
         res = self.execFunc('try_apply')
         self.assertEqual(apply_wrapper_called, ["yes"])
         self.assertEqual(res, "321")
 
-    def checkInplace(self):
+    def test_Inplace(self):
         inplacevar_wrapper_called.clear()
         res = self.execFunc('try_inplace')
         self.assertEqual(inplacevar_wrapper_called['+='], (1, 3))
 
-    def checkDenied(self):
+    def test_Denied(self):
         for k in rmodule.keys():
             if k[:6] == 'denied':
                 try:
@@ -294,14 +295,14 @@ class RestrictionTests(unittest.TestCase):
                 else:
                     self.fail('%s() did not trip security' % k)
 
-    def checkSyntaxSecurity(self):
-        self._checkSyntaxSecurity('security_in_syntax.py')
+    def test_SyntaxSecurity(self):
+        self._test_SyntaxSecurity('security_in_syntax.py')
         if sys.version_info >= (2, 6):
-            self._checkSyntaxSecurity('security_in_syntax26.py')
+            self._test_SyntaxSecurity('security_in_syntax26.py')
         if sys.version_info >= (2, 7):
-            self._checkSyntaxSecurity('security_in_syntax27.py')
+            self._test_SyntaxSecurity('security_in_syntax27.py')
 
-    def _checkSyntaxSecurity(self, mod_name):
+    def _test_SyntaxSecurity(self, mod_name):
         # Ensures that each of the functions in security_in_syntax.py
         # throws a SyntaxError when using compile_restricted.
         fn = os.path.join(_HERE, mod_name)
@@ -324,19 +325,19 @@ class RestrictionTests(unittest.TestCase):
                 else:
                     self.fail('%s should not have compiled' % k)
 
-    def checkOrderOfOperations(self):
+    def test_OrderOfOperations(self):
         res = self.execFunc('order_of_operations')
         self.assertEqual(res, 0)
 
-    def checkRot13(self):
+    def test_Rot13(self):
         res = self.execFunc('rot13', 'Zope is k00l')
         self.assertEqual(res, 'Mbcr vf x00y')
 
-    def checkNestedScopes1(self):
+    def test_NestedScopes1(self):
         res = self.execFunc('nested_scopes_1')
         self.assertEqual(res, 2)
 
-    def checkUnrestrictedEval(self):
+    def test_UnrestrictedEval(self):
         expr = RestrictionCapableEval("{'a':[m.pop()]}['a'] + [m[0]]")
         v = [12, 34]
         expect = v[:]
@@ -347,7 +348,7 @@ class RestrictionTests(unittest.TestCase):
         res = expr(m=v)
         self.assertEqual(res, expect)
 
-    def checkStackSize(self):
+    def test_StackSize(self):
         for k, rfunc in rmodule.items():
             if not k.startswith('_') and hasattr(rfunc, 'func_code'):
                 rss = rfunc.func_code.co_stacksize
@@ -357,7 +358,7 @@ class RestrictionTests(unittest.TestCase):
                     'should have been at least %d, but was only %d'
                     % (k, ss, rss))
 
-    def checkBeforeAndAfter(self):
+    def test_BeforeAndAfter(self):
         from RestrictedPython.RCompile import RModule
         from RestrictedPython.tests import before_and_after
         from compiler import parse
@@ -384,7 +385,7 @@ class RestrictionTests(unittest.TestCase):
             rm.compile()
             verify(rm.getCode())
 
-    def _checkBeforeAndAfter(self, mod):
+    def _test_BeforeAndAfter(self, mod):
             from RestrictedPython.RCompile import RModule
             from compiler import parse
 
@@ -411,24 +412,24 @@ class RestrictionTests(unittest.TestCase):
                 verify(rm.getCode())
 
     if sys.version_info[:2] >= (2, 4):
-        def checkBeforeAndAfter24(self):
+        def test_BeforeAndAfter24(self):
             from RestrictedPython.tests import before_and_after24
-            self._checkBeforeAndAfter(before_and_after24)
+            self._test_BeforeAndAfter(before_and_after24)
 
     if sys.version_info[:2] >= (2, 5):
-        def checkBeforeAndAfter25(self):
+        def test_BeforeAndAfter25(self):
             from RestrictedPython.tests import before_and_after25
-            self._checkBeforeAndAfter(before_and_after25)
+            self._test_BeforeAndAfter(before_and_after25)
 
     if sys.version_info[:2] >= (2, 6):
-        def checkBeforeAndAfter26(self):
+        def test_BeforeAndAfter26(self):
             from RestrictedPython.tests import before_and_after26
-            self._checkBeforeAndAfter(before_and_after26)
+            self._test_BeforeAndAfter(before_and_after26)
 
     if sys.version_info[:2] >= (2, 7):
-        def checkBeforeAndAfter27(self):
+        def test_BeforeAndAfter27(self):
             from RestrictedPython.tests import before_and_after27
-            self._checkBeforeAndAfter(before_and_after27)
+            self._test_BeforeAndAfter(before_and_after27)
 
     def _compile_file(self, name):
         path = os.path.join(_HERE, name)
@@ -440,7 +441,7 @@ class RestrictionTests(unittest.TestCase):
         verify(co)
         return co
 
-    def checkUnpackSequence(self):
+    def test_UnpackSequence(self):
         co = self._compile_file("unpack.py")
         calls = []
 
@@ -479,7 +480,7 @@ class RestrictionTests(unittest.TestCase):
         expected[i] = calls[i]
         self.assertEqual(calls, expected)
 
-    def checkUnpackSequenceExpression(self):
+    def test_UnpackSequenceExpression(self):
         co = compile_restricted("[x for x, y in [(1, 2)]]", "<string>", "eval")
         verify(co)
         calls = []
@@ -491,7 +492,7 @@ class RestrictionTests(unittest.TestCase):
         exec(co, globals, {})
         self.assertEqual(calls, [[(1, 2)], (1, 2)])
 
-    def checkUnpackSequenceSingle(self):
+    def test_UnpackSequenceSingle(self):
         co = compile_restricted("x, y = 1, 2", "<string>", "single")
         verify(co)
         calls = []
@@ -503,7 +504,7 @@ class RestrictionTests(unittest.TestCase):
         exec(co, globals, {})
         self.assertEqual(calls, [(1, 2)])
 
-    def checkClass(self):
+    def test_Class(self):
         getattr_calls = []
         setattr_calls = []
 
@@ -527,17 +528,17 @@ class RestrictionTests(unittest.TestCase):
                          ["set", "set", "get", "state", "get", "state"])
         self.assertEqual(setattr_calls, ["MyClass", "MyClass"])
 
-    def checkLambda(self):
+    def test_Lambda(self):
         co = self._compile_file("lambda.py")
         exec(co, {}, {})
 
-    def checkEmpty(self):
+    def test_Empty(self):
         rf = RFunction("", "", "issue945", "empty.py", {})
         rf.parse()
         rf2 = RFunction("", "# still empty\n\n# by", "issue945", "empty.py", {})
         rf2.parse()
 
-    def checkSyntaxError(self):
+    def test_SyntaxError(self):
         err = ("def f(x, y):\n"
                "    if x, y < 2 + 1:\n"
                "        return x + y\n"
@@ -546,10 +547,10 @@ class RestrictionTests(unittest.TestCase):
         self.assertRaises(SyntaxError,
                           compile_restricted, err, "<string>", "exec")
 
-    # these two tests check that source code with Windows line
+    # these two tests test_ that source code with Windows line
     # endings still works.
 
-    def checkLineEndingsRFunction(self):
+    def test_LineEndingsRFunction(self):
         from RestrictedPython.RCompile import RFunction
         gen = RFunction(
             p='',
@@ -563,7 +564,7 @@ class RestrictionTests(unittest.TestCase):
         # parse() is called, then you'll get a syntax error.
         gen.parse()
 
-    def checkLineEndingsRestrictedCompileMode(self):
+    def test_LineEndingsRestrictedCompileMode(self):
         from RestrictedPython.RCompile import RestrictedCompileMode
         gen = RestrictedCompileMode(
             '# testing\r\nprint "testing"\r\nreturn printed\n',
@@ -574,7 +575,7 @@ class RestrictionTests(unittest.TestCase):
         # parse() is called, then you'll get a syntax error.
         gen.parse()
 
-    def checkCollector2295(self):
+    def test_Collector2295(self):
         from RestrictedPython.RCompile import RestrictedCompileMode
         gen = RestrictedCompileMode(
             'if False:\n  pass\n# Me Grok, Say Hi',
@@ -590,7 +591,7 @@ create_rmodule()
 
 
 def test_suite():
-    return unittest.makeSuite(RestrictionTests, 'check')
+    return unittest.makeSuite(RestrictionTests, 'test')
 
 if __name__ == '__main__':
     unittest.main(defaultTest="test_suite")
