@@ -47,7 +47,12 @@ setup(name='RestrictedPython',
           ],
           'test': [
               'pytest',
-          ]
+          ],
+          'develop': [
+              'ipdb',
+              'ipython',
+              'isort',
+          ],
       },
       include_package_data=True,
       zip_safe=False,
