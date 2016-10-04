@@ -524,7 +524,9 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
     def visit_Attribute(self, node):
         if node.attr.startswith('_'):
             self.error(
-                node, '"{name}" is an invalid attribute name because it starts with "_".'.format(name=node.attr))
+                node,
+                '"{name}" is an invalid attribute name because it starts '
+                'with "_".'.format(name=node.attr))
 
         if isinstance(node.ctx, ast.Load):
             node = self.generic_visit(node)
