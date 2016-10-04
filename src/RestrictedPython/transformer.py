@@ -279,7 +279,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         """
 
         """
-        if node.id.startswith('_'):
+        if node.id.startswith('_') and node.id != '_':
             self.error(node, '"{name}" is an invalid variable name because it '
                        'starts with "_"'.format(name=node.id))
         else:
@@ -522,7 +522,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         return self.generic_visit(node)
 
     def visit_Attribute(self, node):
-        if node.attr.startswith('_'):
+        if node.attr.startswith('_') and node.attr != '_':
             self.error(
                 node,
                 '"{name}" is an invalid attribute name because it starts '

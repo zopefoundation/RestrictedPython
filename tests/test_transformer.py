@@ -154,6 +154,23 @@ def test_transformer__RestrictingNodeTransformer__visit_Attribute__3(compile, mo
     glb['_getattr_'].assert_called_once_with([], 'b')
 
 
+ALLOW_UNDERSCORE_ONLY = """\
+def func():
+    some_ob = object()
+    some_ob._
+    _ = some_ob
+"""
+
+
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__visit_Attribute__4(compile, mocker):
+    code, errors, warnings, used_names = compile.compile_restricted_exec(
+        ALLOW_UNDERSCORE_ONLY)
+
+    assert errors == ()
+    assert warnings == []
+    assert code != None
+
 
 EXEC_FUNCTION = """\
 def no_exec():
