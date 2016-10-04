@@ -1,5 +1,6 @@
 import pytest
 import RestrictedPython
+import six
 import sys
 
 
@@ -111,6 +112,29 @@ def test_transformer__RestrictingNodeTransformer__visit_Attribute__1(compile):
         BAD_ATTR, '<undefined>')
     assert ('Line 3: "_some_attr" is an invalid attribute name because it '
             'starts with "_".',) == errors
+
+
+TRANSFORM_ATTRIBUTE_ACCESS = """\
+def func():
+    return a.b
+"""
+
+
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__visit_Attribute__2(compile, mocker):
+    code, errors, warnings, used_names = compile.compile_restricted_exec(
+        TRANSFORM_ATTRIBUTE_ACCESS)
+
+    glb = {
+        '_getattr_': mocker.stub(),
+        'a': [],
+        'b': 'b'
+    }
+
+    six.exec_(code, glb)
+    glb['func']()
+    glb['_getattr_'].assert_called_once_with([], 'b')
+
 
 
 EXEC_FUNCTION = """\

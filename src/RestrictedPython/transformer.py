@@ -159,6 +159,18 @@ if version >= (3, 6):
     ])
 
 
+# When new ast nodes are generated they have no 'lineno' and 'col_offset'.
+# This function copies these two fields from the incoming node
+def copy_locations(new_node, old_node):
+    assert 'lineno' in new_node._attributes
+    new_node.lineno = old_node.lineno
+
+    assert 'col_offset' in new_node._attributes
+    new_node.col_offset = old_node.col_offset
+
+    ast.fix_missing_locations(new_node)
+
+
 class RestrictingNodeTransformer(ast.NodeTransformer):
 
     def __init__(self, errors=[], warnings=[], used_names=[]):
@@ -513,6 +525,16 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         if node.attr.startswith('_'):
             self.error(
                 node, '"{name}" is an invalid attribute name because it starts with "_".'.format(name=node.attr))
+
+        if isinstance(node.ctx, ast.Load):
+            node = self.generic_visit(node)
+            new_node = ast.Call(
+                func=ast.Name('_getattr_', ast.Load()),
+                args=[node.value, ast.Str(node.attr)],
+                keywords=[])
+
+            copy_locations(new_node, node)
+            return new_node
         else:
             return self.generic_visit(node)
 
