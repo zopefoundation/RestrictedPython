@@ -542,6 +542,18 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
 
             copy_locations(new_node, node)
             return new_node
+
+        elif isinstance(node.ctx, ast.Store):
+            node = self.generic_visit(node)
+            new_value = ast.Call(
+                func=ast.Name('_write_', ast.Load()),
+                args=[node.value],
+                keywords=[])
+
+            copy_locations(new_value, node.value)
+            node.value = new_value
+            return node
+
         else:
             return self.generic_visit(node)
 

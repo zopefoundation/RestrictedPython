@@ -172,6 +172,30 @@ def test_transformer__RestrictingNodeTransformer__visit_Attribute__4(compile, mo
     assert code != None
 
 
+TRANSFORM_ATTRIBUTE_WRITE = """\
+def func():
+    a.b = 'it works'
+"""
+
+
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__visit_Attribute__5(compile, mocker):
+    code, errors, warnings, used_names = compile.compile_restricted_exec(
+        TRANSFORM_ATTRIBUTE_WRITE)
+
+    glb = {
+        '_write_': mocker.stub(),
+        'a': mocker.stub(),
+    }
+    glb['_write_'].return_value = glb['a']
+
+    six.exec_(code, glb)
+    glb['func']()
+
+    glb['_write_'].assert_called_once_with(glb['a'])
+    assert glb['a'].b == 'it works'
+
+
 EXEC_FUNCTION = """\
 def no_exec():
     exec('q = 1')
