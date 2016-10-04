@@ -98,7 +98,7 @@ def test_transformer__RestrictingNodeTransformer__visit_Name__1(compile):
             '"_"',) == errors
 
 
-BAD_ATTR = """\
+BAD_ATTR_UNDERSCORE = """\
 def bad_attr():
     some_ob = object()
     some_ob._some_attr = 15
@@ -109,9 +109,27 @@ def bad_attr():
 def test_transformer__RestrictingNodeTransformer__visit_Attribute__1(compile):
     """It is an error if a bad attribute name is used."""
     code, errors, warnings, used_names = compile.compile_restricted_exec(
-        BAD_ATTR, '<undefined>')
+        BAD_ATTR_UNDERSCORE, '<undefined>')
+
     assert ('Line 3: "_some_attr" is an invalid attribute name because it '
             'starts with "_".',) == errors
+
+
+BAD_ATTR_ROLES = """\
+def bad_attr():
+    some_ob = object()
+    some_ob.abc__roles__
+"""
+
+
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__visit_Attribute__2(compile):
+    """It is an error if a bad attribute name is used."""
+    code, errors, warnings, used_names = compile.compile_restricted_exec(
+        BAD_ATTR_ROLES, '<undefined>')
+
+    assert ('Line 3: "abc__roles__" is an invalid attribute name because it '
+            'ends with "__roles__".',) == errors
 
 
 TRANSFORM_ATTRIBUTE_ACCESS = """\
@@ -121,7 +139,7 @@ def func():
 
 
 @pytest.mark.parametrize(*compile)
-def test_transformer__RestrictingNodeTransformer__visit_Attribute__2(compile, mocker):
+def test_transformer__RestrictingNodeTransformer__visit_Attribute__3(compile, mocker):
     code, errors, warnings, used_names = compile.compile_restricted_exec(
         TRANSFORM_ATTRIBUTE_ACCESS)
 

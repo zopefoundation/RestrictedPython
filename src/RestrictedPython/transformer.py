@@ -528,6 +528,12 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
                 '"{name}" is an invalid attribute name because it starts '
                 'with "_".'.format(name=node.attr))
 
+        if node.attr.endswith('__roles__'):
+            self.error(
+                node,
+                '"{name}" is an invalid attribute name because it ends '
+                'with "__roles__".'.format(name=node.attr))
+
         if isinstance(node.ctx, ast.Load):
             node = self.generic_visit(node)
             new_node = ast.Call(
