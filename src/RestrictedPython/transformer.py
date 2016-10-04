@@ -282,8 +282,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         if node.id.startswith('_') and node.id != '_':
             self.error(node, '"{name}" is an invalid variable name because it '
                        'starts with "_"'.format(name=node.id))
-        else:
-            return self.generic_visit(node)
+
         return self.generic_visit(node)
 
     def visit_Load(self, node):
