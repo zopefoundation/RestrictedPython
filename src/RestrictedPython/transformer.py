@@ -123,6 +123,7 @@ AST_WHITELIST = [
     #ast.Nonlocal,
     ast.ClassDef,
     ast.Module,
+    ast.Param
 ]
 
 version = sys.version_info
@@ -137,6 +138,7 @@ if version >= (3, 0):
     AST_WHITELIST.extend([
         ast.Bytes,
         ast.Starred,
+        ast.arg,
         #ast.Try,  # Try should not be supported
     ])
 
@@ -193,6 +195,30 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         """Record a security error discovered during transformation."""
         lineno = getattr(node, 'lineno', None)
         self.used_names.append('Line {lineno}: {info}'.format(lineno=lineno, info=info))
+
+    def guard_iter(self, node):
+        """
+        Converts:
+            for x in expr
+        to
+            for x in _getiter_(expr)
+
+        Also used for
+        * list comprehensions
+        * dict comprehensions
+        * set comprehensions
+        * generator expresions
+        """
+        node = self.generic_visit(node)
+
+        new_iter = ast.Call(
+            func=ast.Name("_getiter_", ast.Load()),
+            args=[node.iter],
+            keywords=[])
+
+        copy_locations(new_iter, node.iter)
+        node.iter = new_iter
+        return node
 
     # Special Functions for an ast.NodeTransformer
 
@@ -613,7 +639,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         """
 
         """
-        return self.generic_visit(node)
+        return self.guard_iter(node)
 
     # Statements
 
@@ -697,7 +723,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         """
 
         """
-        return self.generic_visit(node)
+        return self.guard_iter(node)
 
     def visit_While(self, node):
         """

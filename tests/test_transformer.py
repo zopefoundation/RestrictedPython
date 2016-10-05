@@ -2,6 +2,7 @@ import pytest
 import RestrictedPython
 import six
 import sys
+import types
 
 
 # Define the arguments for @pytest.mark.parametrize to be able to test both the
@@ -228,3 +229,63 @@ def test_transformer__RestrictingNodeTransformer__visit_Call__2(compile):
     else:
         # `eval()` is allowed in the old implementation.
         assert () == errors
+
+
+ITERATORS = """
+def for_loop(it):
+    c = 0
+    for a in it:
+        c = c + a
+    return c
+
+def dict_comp(it):
+    return {a: a + a for a in it}
+
+def list_comp(it):
+    return [a + a for a in it]
+
+def set_comp(it):
+    return {a + a for a in it}
+
+def generator(it):
+    return (a + a for a in it)
+"""
+
+
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__guard_iter(compile, mocker):
+    """It is an error if the code call the `eval` function."""
+    code, errors, warnings, used_names = compile.compile_restricted_exec(
+        ITERATORS)
+
+    it = (1, 2, 3)
+    _getiter_ = mocker.stub()
+    _getiter_.side_effect = lambda x: x
+    glb = {'_getiter_': _getiter_}
+    six.exec_(code, glb)
+
+    ret = glb['for_loop'](it)
+    assert 6 == ret
+    _getiter_.assert_called_once_with(it)
+    _getiter_.reset_mock()
+
+    ret = glb['dict_comp'](it)
+    assert {1: 2, 2: 4, 3: 6} == ret
+    _getiter_.assert_called_once_with(it)
+    _getiter_.reset_mock()
+
+    ret = glb['list_comp'](it)
+    assert [2, 4, 6] == ret
+    _getiter_.assert_called_once_with(it)
+    _getiter_.reset_mock()
+
+    ret = glb['set_comp'](it)
+    assert {2, 4, 6} == ret
+    _getiter_.assert_called_once_with(it)
+    _getiter_.reset_mock()
+
+    ret = glb['generator'](it)
+    assert isinstance(ret, types.GeneratorType)
+    assert list(ret) == [2, 4, 6]
+    _getiter_.assert_called_once_with(it)
+    _getiter_.reset_mock()
