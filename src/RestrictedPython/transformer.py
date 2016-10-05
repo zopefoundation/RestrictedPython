@@ -547,6 +547,13 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         return self.generic_visit(node)
 
     def visit_Attribute(self, node):
+        """Checks and mutates attribute access/assignment.
+
+        'a.b' becomes '_getattr_(a, "b")'
+
+        'a.b = c' becomes '_write_(a).b = c'
+        The _write_ function should return a security proxy.
+        """
         if node.attr.startswith('_') and node.attr != '_':
             self.error(
                 node,
