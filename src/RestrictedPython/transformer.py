@@ -593,10 +593,22 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
     # Subscripting
 
     def visit_Subscript(self, node):
-        """
+        """Transforms all kinds of subscripts.
 
+        'foo[bar]' becomes '_getitem_(foo, bar)'
         """
-        return self.generic_visit(node)
+        node = self.generic_visit(node)
+
+        if isinstance(node.ctx, ast.Load):
+            if isinstance(node.slice, ast.Index):
+                new_node = ast.Call(
+                    func=ast.Name('_getitem_', ast.Load()),
+                    args=[node.value, node.slice.value],
+                    keywords=[])
+                copy_locations(new_node, node)
+                return new_node
+
+        return node
 
     def visit_Index(self, node):
         """

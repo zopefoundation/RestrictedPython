@@ -289,3 +289,25 @@ def test_transformer__RestrictingNodeTransformer__guard_iter(compile, mocker):
     assert list(ret) == [2, 4, 6]
     _getiter_.assert_called_once_with(it)
     _getiter_.reset_mock()
+
+
+SUBSCRIPTS = """
+def simple_subscript(a):
+    return a['b']
+"""
+
+
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__visit_Subscript(compile, mocker):
+    code, errors, warnings, used_names = compile.compile_restricted_exec(
+        SUBSCRIPTS)
+
+    value = [1, 2]
+    _getitem_ = mocker.stub()
+    _getitem_.side_effect = lambda ob, index: (ob, index)
+    glb = {'_getitem_': _getitem_}
+    six.exec_(code, glb)
+
+    ret = glb['simple_subscript'](value)
+    _getitem_.assert_called_once_with(value, 'b')
+    assert (value, 'b') == ret
