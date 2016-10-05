@@ -220,6 +220,12 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         node.iter = new_iter
         return node
 
+    def gen_none_node(self):
+        if version >= (3, 4):
+            return ast.NameConstant(value=None)
+        else:
+            return ast.Name(id='None', ctx=ast.Load())
+
     # Special Functions for an ast.NodeTransformer
 
     def generic_visit(self, node):
@@ -596,10 +602,46 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         """Transforms all kinds of subscripts.
 
         'foo[bar]' becomes '_getitem_(foo, bar)'
+        'foo[:ab]' becomes '_getitem_(foo, slice(None, ab, None))'
+        'foo[ab:]' becomes '_getitem_(foo, slice(ab, None, None))'
+        'foo[a:b]' becomes '_getitem_(foo, slice(a, b, None))'
+        'foo[a:b:c]' becomes '_getitem_(foo, slice(a, b, c))'
         """
         node = self.generic_visit(node)
-
         if isinstance(node.ctx, ast.Load):
+            if isinstance(node.slice, ast.Slice):
+                # Create a python slice object.
+                args = []
+
+                if node.slice.lower:
+                    args.append(node.slice.lower)
+                else:
+                    args.append(self.gen_none_node())
+
+                if node.slice.upper:
+                    args.append(node.slice.upper)
+                else:
+                    args.append(self.gen_none_node())
+
+                if node.slice.step:
+                    args.append(node.slice.step)
+                else:
+                    args.append(self.gen_none_node())
+
+                slice_ob = ast.Call(
+                    func=ast.Name('slice', ast.Load()),
+                    args=args,
+                    keywords=[])
+
+                # Feed this slice object into _getitem_
+                new_node = ast.Call(
+                    func=ast.Name('_getitem_', ast.Load()),
+                    args=[node.value, slice_ob],
+                    keywords=[])
+
+                copy_locations(new_node, node)
+                return new_node
+
             if isinstance(node.slice, ast.Index):
                 new_node = ast.Call(
                     func=ast.Name('_getitem_', ast.Load()),

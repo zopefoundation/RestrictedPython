@@ -294,6 +294,18 @@ def test_transformer__RestrictingNodeTransformer__guard_iter(compile, mocker):
 SUBSCRIPTS = """
 def simple_subscript(a):
     return a['b']
+
+def slice_subscript_no_upper_bound(a):
+    return a[1:]
+
+def slice_subscript_no_lower_bound(a):
+    return a[:1]
+
+def slice_subscript_no_step(a):
+    return a[1:2]
+
+def slice_subscript_with_step(a):
+    return a[1:2:3]
 """
 
 
@@ -302,12 +314,38 @@ def test_transformer__RestrictingNodeTransformer__visit_Subscript(compile, mocke
     code, errors, warnings, used_names = compile.compile_restricted_exec(
         SUBSCRIPTS)
 
-    value = [1, 2]
+    value = None
     _getitem_ = mocker.stub()
     _getitem_.side_effect = lambda ob, index: (ob, index)
     glb = {'_getitem_': _getitem_}
     six.exec_(code, glb)
 
     ret = glb['simple_subscript'](value)
-    _getitem_.assert_called_once_with(value, 'b')
-    assert (value, 'b') == ret
+    ref = (value, 'b')
+    assert ref == ret
+    _getitem_.assert_called_once_with(*ref)
+    _getitem_.reset_mock()
+
+    ret = glb['slice_subscript_no_upper_bound'](value)
+    ref = (value, slice(1, None, None))
+    assert ref == ret
+    _getitem_.assert_called_once_with(*ref)
+    _getitem_.reset_mock()
+
+    ret = glb['slice_subscript_no_lower_bound'](value)
+    ref = (value, slice(None, 1, None))
+    assert ref == ret
+    _getitem_.assert_called_once_with(*ref)
+    _getitem_.reset_mock()
+
+    ret = glb['slice_subscript_no_step'](value)
+    ref = (value, slice(1, 2, None))
+    assert ref == ret
+    _getitem_.assert_called_once_with(*ref)
+    _getitem_.reset_mock()
+
+    ret = glb['slice_subscript_with_step'](value)
+    ref = (value, slice(1, 2, 3))
+    assert ref == ret
+    _getitem_.assert_called_once_with(*ref)
+    _getitem_.reset_mock()
