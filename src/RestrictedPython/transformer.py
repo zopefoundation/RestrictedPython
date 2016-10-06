@@ -226,6 +226,51 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         else:
             return ast.Name(id='None', ctx=ast.Load())
 
+    def transform_slice(self, slice_):
+        """Transforms slices into function parameters.
+
+        ast.Slice nodes are only allowed within a ast.Subscript node.
+        To use a slice as an argument of ast.Call it has to be converted.
+        Conversion is done by calling the 'slice' function from builtins
+        """
+
+        if isinstance(slice_, ast.Index):
+            return slice_.value
+
+        elif isinstance(slice_, ast.Slice):
+            # Create a python slice object.
+            args = []
+
+            if slice_.lower:
+                args.append(slice_.lower)
+            else:
+                args.append(self.gen_none_node())
+
+            if slice_.upper:
+                args.append(slice_.upper)
+            else:
+                args.append(self.gen_none_node())
+
+            if slice_.step:
+                args.append(slice_.step)
+            else:
+                args.append(self.gen_none_node())
+
+            return ast.Call(
+                func=ast.Name('slice', ast.Load()),
+                args=args,
+                keywords=[])
+
+        elif isinstance(slice_, ast.ExtSlice):
+            dims = ast.Tuple([], ast.Load())
+            for item in slice_.dims:
+                dims.elts.append(self.transform_slice(item))
+            return dims
+
+        else:
+            raise Exception("Unknown slice type: {0}".format(slice_))
+
+
     # Special Functions for an ast.NodeTransformer
 
     def generic_visit(self, node):
@@ -606,51 +651,18 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         'foo[ab:]' becomes '_getitem_(foo, slice(ab, None, None))'
         'foo[a:b]' becomes '_getitem_(foo, slice(a, b, None))'
         'foo[a:b:c]' becomes '_getitem_(foo, slice(a, b, c))'
+        'foo[a, b:c] becomes '_getitem_(foo, (a, slice(b, c, None)))'
         """
         node = self.generic_visit(node)
+
         if isinstance(node.ctx, ast.Load):
-            if isinstance(node.slice, ast.Slice):
-                # Create a python slice object.
-                args = []
+            new_node = ast.Call(
+                func=ast.Name('_getitem_', ast.Load()),
+                args=[node.value, self.transform_slice(node.slice)],
+                keywords=[])
 
-                if node.slice.lower:
-                    args.append(node.slice.lower)
-                else:
-                    args.append(self.gen_none_node())
-
-                if node.slice.upper:
-                    args.append(node.slice.upper)
-                else:
-                    args.append(self.gen_none_node())
-
-                if node.slice.step:
-                    args.append(node.slice.step)
-                else:
-                    args.append(self.gen_none_node())
-
-                slice_ob = ast.Call(
-                    func=ast.Name('slice', ast.Load()),
-                    args=args,
-                    keywords=[])
-
-                # Feed this slice object into _getitem_
-                new_node = ast.Call(
-                    func=ast.Name('_getitem_', ast.Load()),
-                    args=[node.value, slice_ob],
-                    keywords=[])
-
-                copy_locations(new_node, node)
-                return new_node
-
-            if isinstance(node.slice, ast.Index):
-                new_node = ast.Call(
-                    func=ast.Name('_getitem_', ast.Load()),
-                    args=[node.value, node.slice.value],
-                    keywords=[])
-                copy_locations(new_node, node)
-                return new_node
-
-        return node
+            copy_locations(new_node, node)
+            return new_node
 
     def visit_Index(self, node):
         """

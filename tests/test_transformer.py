@@ -306,6 +306,9 @@ def slice_subscript_no_step(a):
 
 def slice_subscript_with_step(a):
     return a[1:2:3]
+
+def extended_slice_subscript(a):
+    return a[0, :1, 1:, 1:2, 1:2:3]
 """
 
 
@@ -346,6 +349,22 @@ def test_transformer__RestrictingNodeTransformer__visit_Subscript(compile, mocke
 
     ret = glb['slice_subscript_with_step'](value)
     ref = (value, slice(1, 2, 3))
+    assert ref == ret
+    _getitem_.assert_called_once_with(*ref)
+    _getitem_.reset_mock()
+
+    ret = glb['extended_slice_subscript'](value)
+    ref = (
+        value,
+        (
+            0,
+            slice(None, 1, None),
+            slice(1, None, None),
+            slice(1, 2, None),
+            slice(1, 2, 3)
+        )
+    )
+
     assert ref == ret
     _getitem_.assert_called_once_with(*ref)
     _getitem_.reset_mock()
