@@ -652,8 +652,17 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         'foo[a:b]' becomes '_getitem_(foo, slice(a, b, None))'
         'foo[a:b:c]' becomes '_getitem_(foo, slice(a, b, c))'
         'foo[a, b:c] becomes '_getitem_(foo, (a, slice(b, c, None)))'
+        'foo[a] = c' becomes '_write(foo)[a] = c'
+        'del foo[a]' becomes 'del _write_(foo)[a]'
+
+        The _write_ function should return a security proxy.
         """
         node = self.generic_visit(node)
+
+        # 'AugStore' and 'AugLoad' are defined in 'Python.asdl' as possible
+        # 'expr_context'. However, according to Python/ast.c
+        # they are NOT used by the implementation => No need to worry here.
+        # Instead ast.c creates 'AugAssign' nodes, which can be visited.
 
         if isinstance(node.ctx, ast.Load):
             new_node = ast.Call(
@@ -663,6 +672,19 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
 
             copy_locations(new_node, node)
             return new_node
+
+        elif isinstance(node.ctx, (ast.Del, ast.Store)):
+            new_value = ast.Call(
+                func=ast.Name('_write_', ast.Load()),
+                args=[node.value],
+                keywords=[])
+
+            copy_locations(new_value, node)
+            node.value = new_value
+            return node
+
+        else:
+            return node
 
     def visit_Index(self, node):
         """

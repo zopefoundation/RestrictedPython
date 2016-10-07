@@ -291,7 +291,7 @@ def test_transformer__RestrictingNodeTransformer__guard_iter(compile, mocker):
     _getiter_.reset_mock()
 
 
-SUBSCRIPTS = """
+GET_SUBSCRIPTS = """
 def simple_subscript(a):
     return a['b']
 
@@ -313,9 +313,9 @@ def extended_slice_subscript(a):
 
 
 @pytest.mark.parametrize(*compile)
-def test_transformer__RestrictingNodeTransformer__visit_Subscript(compile, mocker):
+def test_transformer__RestrictingNodeTransformer__visit_Subscript_1(compile, mocker):
     code, errors, warnings, used_names = compile.compile_restricted_exec(
-        SUBSCRIPTS)
+        GET_SUBSCRIPTS)
 
     value = None
     _getitem_ = mocker.stub()
@@ -368,3 +368,33 @@ def test_transformer__RestrictingNodeTransformer__visit_Subscript(compile, mocke
     assert ref == ret
     _getitem_.assert_called_once_with(*ref)
     _getitem_.reset_mock()
+
+
+WRITE_SUBSCRIPTS = """
+def assign_subscript(a):
+    a['b'] = 1
+
+def del_subscript(a):
+    del a['b']
+"""
+
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__visit_Subscript_2(compile, mocker):
+    code, errors, warnings, used_names = compile.compile_restricted_exec(
+        WRITE_SUBSCRIPTS)
+
+    value = {'b': None}
+    _write_ = mocker.stub()
+    _write_.side_effect = lambda ob: ob
+    glb = {'_write_': _write_}
+    six.exec_(code, glb)
+
+    glb['assign_subscript'](value)
+    assert value['b'] == 1
+    _write_.assert_called_once_with(value)
+    _write_.reset_mock()
+
+    glb['del_subscript'](value)
+    assert value == {}
+    _write_.assert_called_once_with(value)
+    _write_.reset_mock()
