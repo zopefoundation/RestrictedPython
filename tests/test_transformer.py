@@ -398,3 +398,32 @@ def test_transformer__RestrictingNodeTransformer__visit_Subscript_2(compile, moc
     assert value == {}
     _write_.assert_called_once_with(value)
     _write_.reset_mock()
+
+
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__visit_AugAssing(compile, mocker):
+    def do_compile(code):
+        return compile.compile_restricted_exec(code)[:2]
+
+    _inplacevar_ = mocker.stub()
+    _inplacevar_.side_effect = lambda op, val, expr: val + expr
+
+    glb = {'a': 1, '_inplacevar_': _inplacevar_}
+    code, errors = do_compile("a += 1")
+    six.exec_(code, glb)
+
+    assert code != None
+    assert errors == ()
+    assert glb['a'] == 2
+    _inplacevar_.assert_called_once_with('+=', 1, 1)
+    _inplacevar_.reset_mock()
+
+    code, errors = do_compile("a.a += 1")
+    assert code == None
+    assert ('Line 1: Augmented assignment of attributes '
+            'is not allowed.',) == errors
+
+    code, errors = do_compile("a[a] += 1")
+    assert code == None
+    assert ('Line 1: Augmented assignment of object items and '
+            'slices is not allowed.',) == errors

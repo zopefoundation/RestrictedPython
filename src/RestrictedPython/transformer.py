@@ -126,6 +126,25 @@ AST_WHITELIST = [
     ast.Param
 ]
 
+
+# For AugAssign the operator must be converted to a string.
+IOPERATOR_TO_STR = {
+    # Shared by python2 and python3
+    ast.Add: '+=',
+    ast.Sub: '-=',
+    ast.Mult: '*=',
+    ast.Div: '/=',
+    ast.Mod: '%=',
+    ast.Pow: '**=',
+    ast.LShift: '<<=',
+    ast.RShift: '>>=',
+    ast.BitOr: '|=',
+    ast.BitXor: '^=',
+    ast.BitAnd: '&=',
+    ast.FloorDiv: '//='
+}
+
+
 version = sys.version_info
 if version >= (2, 7) and version < (2, 8):
     AST_WHITELIST.extend([
@@ -147,6 +166,8 @@ if version >= (3, 4):
     ])
 
 if version >= (3, 5):
+    IOPERATOR_TO_STR[ast.MatMult] = '@='
+
     AST_WHITELIST.extend([
         ast.MatMult,
         # Async und await,  # No Async Elements should be supported
@@ -171,6 +192,8 @@ def copy_locations(new_node, old_node):
     new_node.col_offset = old_node.col_offset
 
     ast.fix_missing_locations(new_node)
+
+
 
 
 class RestrictingNodeTransformer(ast.NodeTransformer):
@@ -745,10 +768,49 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         return self.generic_visit(node)
 
     def visit_AugAssign(self, node):
+        """Forbid certain kinds of AugAssign
+
+        According to the language reference (and ast.c) the following nodes
+        are are possible:
+        Name, Attribute, Subscript
+
+        Note that although augmented assignment of attributes and
+        subscripts is disallowed, augmented assignment of names (such
+        as 'n += 1') is allowed.
+        'n += 1' becomes 'n = _inplacevar_("+=", n, 1)'
         """
 
-        """
-        return self.generic_visit(node)
+        node = self.generic_visit(node)
+
+        if isinstance(node.target, ast.Attribute):
+            self.error(
+                node,
+                "Augmented assignment of attributes is not allowed.")
+            return node
+
+        elif isinstance(node.target, ast.Subscript):
+            self.error(
+                node,
+                "Augmented assignment of object items "
+                "and slices is not allowed.")
+            return node
+
+        elif isinstance(node.target, ast.Name):
+            new_node = ast.Assign(
+                targets=[node.target],
+                value=ast.Call(
+                    func=ast.Name('_inplacevar_', ast.Load()),
+                    args=[
+                        ast.Str(IOPERATOR_TO_STR[type(node.op)]),
+                        ast.Name(node.target.id, ast.Load()),
+                        node.value
+                    ],
+                    keywords=[]))
+
+            copy_locations(new_node, node)
+            return new_node
+
+        return node
 
     def visit_Print(self, node):
         """
