@@ -598,14 +598,57 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         return self.generic_visit(node)
 
     def visit_Call(self, node):
-        """func, args, keywords, starargs, kwargs"""
+        """Checks calls with '*args' and '**kwargs'.
+
+        Note: The following happens only if '*args' or '**kwargs' is used.
+
+        Transfroms 'foo(<all the possible ways of args>)' into
+        _apply_(foo, <all the possible ways for args>)
+
+        The thing is that '_apply_' has only '*args', '**kwargs', so it gets
+        Python to collapse all the myriad ways to call functions
+        into one manageable from.
+
+        From there, '_apply_()' wraps args and kws in guarded accessors,
+        then calls the function, returning the value.
+        """
+
         if isinstance(node.func, ast.Name):
             if node.func.id == 'exec':
                 self.error(node, 'Exec calls are not allowed.')
             elif node.func.id == 'eval':
                 self.error(node, 'Eval calls are not allowed.')
 
-        return self.generic_visit(node)
+        needs_wrap = False
+
+        # In python2.7 till python3.4 '*args', '**kwargs' have dedicated
+        # attributes on the ast.Call node.
+        # In python 3.5 and greater this has changed due to the fact that
+        # multiple '*args' and '**kwargs' are possible.
+        # '*args' can be detected by 'ast.Starred' nodes.
+        # '**kwargs' can be deteced by 'keyword' nodes with 'arg=None'.
+
+        if version < (3, 5):
+            if (node.starargs is not None) or (node.kwargs is not None):
+                needs_wrap = True
+        else:
+            for pos_arg in node.args:
+                if isinstance(pos_arg, ast.Starred):
+                    needs_wrap = True
+
+            for keyword_arg in node.keywords:
+                if keyword_arg.arg is None:
+                    needs_wrap = True
+
+        node = self.generic_visit(node)
+
+        if not needs_wrap:
+            return node
+
+        node.args.insert(0, node.func)
+        node.func = ast.Name('_apply_', ast.Load())
+        copy_locations(node.func, node.args[0])
+        return node
 
     def visit_keyword(self, node):
         """

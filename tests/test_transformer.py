@@ -427,3 +427,50 @@ def test_transformer__RestrictingNodeTransformer__visit_AugAssing(compile, mocke
     assert code == None
     assert ('Line 1: Augmented assignment of object items and '
             'slices is not allowed.',) == errors
+
+
+FUNCTIONC_CALLS = """
+def no_star_args_no_kwargs():
+    return foo(1, 2)
+
+def star_args_no_kwargs():
+    star = (10, 20, 30)
+    return foo(1, 2, *star)
+
+def star_args_kwargs():
+    star = (10, 20, 30)
+    kwargs = {'x': 100, 'z': 200}
+    return foo(1, 2, *star, r=9, **kwargs)
+"""
+
+
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__visit_Call(compile, mocker):
+    code, errors = compile.compile_restricted_exec(FUNCTIONC_CALLS)[:2]
+
+    _apply_ = mocker.stub()
+    _apply_.side_effect = lambda func, *args, **kwargs: func(*args, **kwargs)
+
+    glb = {
+        '_apply_': _apply_,
+        'foo': lambda *args, **kwargs: (args, kwargs)
+    }
+
+    six.exec_(code, glb)
+
+    ret = (glb['no_star_args_no_kwargs']())
+    assert ((1, 2), {}) == ret
+    assert _apply_.called is False
+    _apply_.reset_mock()
+
+    ret = (glb['star_args_no_kwargs']())
+    ref = ((1, 2, 10, 20, 30), {})
+    assert ref == ret
+    _apply_.assert_called_once_with(glb['foo'], *ref[0])
+    _apply_.reset_mock()
+
+    ret = (glb['star_args_kwargs']())
+    ref = ((1, 2, 10, 20, 30), {'r': 9, 'z': 200, 'x': 100})
+    assert ref == ret
+    _apply_.assert_called_once_with(glb['foo'], *ref[0], **ref[1])
+    _apply_.reset_mock()
