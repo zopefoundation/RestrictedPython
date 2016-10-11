@@ -170,7 +170,7 @@ def test_transformer__RestrictingNodeTransformer__visit_Attribute__4(compile, mo
 
     assert errors == ()
     assert warnings == []
-    assert code != None
+    assert code is not None
 
 
 TRANSFORM_ATTRIBUTE_WRITE = """\
@@ -378,6 +378,7 @@ def del_subscript(a):
     del a['b']
 """
 
+
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__visit_Subscript_2(compile, mocker):
     code, errors, warnings, used_names = compile.compile_restricted_exec(
@@ -412,19 +413,19 @@ def test_transformer__RestrictingNodeTransformer__visit_AugAssing(compile, mocke
     code, errors = do_compile("a += 1")
     six.exec_(code, glb)
 
-    assert code != None
+    assert code is not None
     assert errors == ()
     assert glb['a'] == 2
     _inplacevar_.assert_called_once_with('+=', 1, 1)
     _inplacevar_.reset_mock()
 
     code, errors = do_compile("a.a += 1")
-    assert code == None
+    assert code is None
     assert ('Line 1: Augmented assignment of attributes '
             'is not allowed.',) == errors
 
     code, errors = do_compile("a[a] += 1")
-    assert code == None
+    assert code is None
     assert ('Line 1: Augmented assignment of object items and '
             'slices is not allowed.',) == errors
 
