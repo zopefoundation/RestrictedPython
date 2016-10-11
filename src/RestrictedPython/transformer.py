@@ -599,13 +599,12 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
 
     def visit_Call(self, node):
         """func, args, keywords, starargs, kwargs"""
-        if (hasattr(node, 'func') and
-                isinstance(node.func, ast.Name) and
-                hasattr(node.func, 'id')):
+        if isinstance(node.func, ast.Name):
             if node.func.id == 'exec':
                 self.error(node, 'Exec calls are not allowed.')
             elif node.func.id == 'eval':
                 self.error(node, 'Eval calls are not allowed.')
+
         return self.generic_visit(node)
 
     def visit_keyword(self, node):
