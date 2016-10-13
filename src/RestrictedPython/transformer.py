@@ -994,9 +994,44 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
     # Function and class definitions
 
     def visit_FunctionDef(self, node):
+        """Checks a function defintion.
+
+        Checks the name of the function and the arguments.
         """
 
-        """
+        self.check_name(node, node.name)
+
+        # In python3 arguments are always identifiers.
+        # In python2 the 'Python.asdl' specifies expressions, but
+        # the python grammer allows only identifiers or a tuple of
+        # identifiers. If its a tuple 'tuple parameter unpacking' is used,
+        # which is gone in python3.
+        # See https://www.python.org/dev/peps/pep-3113/
+
+        if version.major == 2:
+            for arg in node.args.args:
+                if isinstance(arg, ast.Tuple):
+                    for item in arg.elts:
+                        self.check_name(node, item.id)
+                else:
+                    self.check_name(node, arg.id)
+
+            self.check_name(node, node.args.vararg)
+            self.check_name(node, node.args.kwarg)
+
+        else:
+            for arg in node.args.args:
+                self.check_name(node, arg.arg)
+
+            if node.args.vararg:
+                self.check_name(node, node.args.vararg.arg)
+
+            if node.args.kwarg:
+                self.check_name(node, node.args.kwarg.arg)
+
+            for arg in node.args.kwonlyargs:
+                self.check_name(node, arg.arg)
+
         return self.generic_visit(node)
 
     def visit_Lambda(self, node):

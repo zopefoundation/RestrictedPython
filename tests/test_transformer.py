@@ -475,3 +475,38 @@ def test_transformer__RestrictingNodeTransformer__visit_Call(compile, mocker):
     assert ref == ret
     _apply_.assert_called_once_with(glb['foo'], *ref[0], **ref[1])
     _apply_.reset_mock()
+
+
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__visit_FunctionDef(compile):
+    def do_compile(src):
+        return compile.compile_restricted_exec(src)[:2]
+
+    err_msg = 'Line 1: "_bad" is an invalid variable ' \
+              'name because it starts with "_"'
+
+    code, errors = do_compile("def foo(_bad): pass")
+    assert code is None
+    assert errors[0] == err_msg
+
+    code, errors = do_compile("def foo(_bad=1): pass")
+    assert code is None
+    assert errors[0] == err_msg
+
+    code, errors = do_compile("def foo(*_bad): pass")
+    assert code is None
+    assert errors[0] == err_msg
+
+    code, errors = do_compile("def foo(**_bad): pass")
+    assert code is None
+    assert errors[0] == err_msg
+
+    if sys.version_info.major == 2:
+        code, errors = do_compile("def foo((a, _bad)): pass")
+        assert code is None
+        assert errors[0] == err_msg
+
+    if sys.version_info.major == 3:
+        code, errors = do_compile("def foo(good, *, _bad): pass")
+        assert code is None
+        assert errors[0] == err_msg
