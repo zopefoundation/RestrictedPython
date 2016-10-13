@@ -293,6 +293,22 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         else:
             raise Exception("Unknown slice type: {0}".format(slice_))
 
+    def check_name(self, node, name):
+        if name is None:
+            return
+
+        if name.startswith('_') and name != '_':
+            self.error(
+                node,
+                '"{name}" is an invalid variable name because it '
+                'starts with "_"'.format(name=name))
+
+        elif name.endswith('__roles__'):
+            self.error(node, '"%s" is an invalid variable name because '
+                       'it ends with "__roles__".' % name)
+
+        elif name == "printed":
+            self.error(node, '"printed" is a reserved name.')
 
     # Special Functions for an ast.NodeTransformer
 
@@ -379,10 +395,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         """
 
         """
-        if node.id.startswith('_') and node.id != '_':
-            self.error(node, '"{name}" is an invalid variable name because it '
-                       'starts with "_"'.format(name=node.id))
-
+        self.check_name(node, node.id)
         return self.generic_visit(node)
 
     def visit_Load(self, node):
