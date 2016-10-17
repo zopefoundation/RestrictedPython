@@ -1009,12 +1009,15 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         # See https://www.python.org/dev/peps/pep-3113/
 
         if version.major == 2:
-            for arg in node.args.args:
-                if isinstance(arg, ast.Tuple):
-                    for item in arg.elts:
-                        self.check_name(node, item.id)
+            # Needed to handle nested 'tuple parameter unpacking'.
+            # For example 'def foo((a, b, (c, (d, e)))): pass'
+            to_check = list(node.args.args)
+            while to_check:
+                item = to_check.pop()
+                if isinstance(item, ast.Tuple):
+                    to_check.extend(item.elts)
                 else:
-                    self.check_name(node, arg.id)
+                    self.check_name(node, item.id)
 
             self.check_name(node, node.args.vararg)
             self.check_name(node, node.args.kwarg)

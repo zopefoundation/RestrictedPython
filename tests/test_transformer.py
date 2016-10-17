@@ -506,6 +506,12 @@ def test_transformer__RestrictingNodeTransformer__visit_FunctionDef(compile):
         assert code is None
         assert errors[0] == err_msg
 
+        # The old one did not support nested checks.
+        if compile is RestrictedPython.compile:
+            code, errors = do_compile("def foo(a, (c, (_bad, c))): pass")
+            assert code is None
+            assert errors[0] == err_msg
+
     if sys.version_info.major == 3:
         code, errors = do_compile("def foo(good, *, _bad): pass")
         assert code is None
