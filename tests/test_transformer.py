@@ -478,7 +478,7 @@ def test_transformer__RestrictingNodeTransformer__visit_Call(compile, mocker):
 
 
 @pytest.mark.parametrize(*compile)
-def test_transformer__RestrictingNodeTransformer__visit_FunctionDef(compile):
+def test_transformer__RestrictingNodeTransformer__visit_FunctionDef_1(compile):
     def do_compile(src):
         return compile.compile_restricted_exec(src)[:2]
 
@@ -516,3 +516,57 @@ def test_transformer__RestrictingNodeTransformer__visit_FunctionDef(compile):
         code, errors = do_compile("def foo(good, *, _bad): pass")
         assert code is None
         assert errors[0] == err_msg
+
+
+NESTED_SEQ_UNPACK =  """
+def nested((a, b, (c, (d, e)))):
+    return a, b, c, d, e
+
+def nested_with_order((a, b), (c, d)):
+    return a, b, c, d
+"""
+
+
+@pytest.mark.skipif(
+    sys.version_info.major == 3,
+    reason="tuple parameter unpacking is gone in python 3")
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__visit_FunctionDef_2(compile, mocker):
+    def do_compile(code):
+        return compile.compile_restricted_exec(code)[:2]
+
+    code, errors = do_compile('def simple((a, b)): return a, b')
+
+    _getiter_ = mocker.stub()
+    _getiter_.side_effect = lambda it: it
+    glb = {'_getiter_': _getiter_}
+    six.exec_(code, glb)
+
+    val = (1, 2)
+    ret = glb['simple'](val)
+    assert ret == val
+    _getiter_.assert_called_once_with(val)
+    _getiter_.reset_mock()
+
+    # The old RCompile did not support nested.
+    if compile is RestrictedPython.RCompile:
+        return
+
+    code, errors = do_compile(NESTED_SEQ_UNPACK)
+    six.exec_(code, glb)
+
+    val = (1, 2, (3, (4, 5)))
+    ret = glb['nested'](val)
+    assert ret == (1, 2, 3, 4, 5)
+    assert 3 == _getiter_.call_count
+    _getiter_.assert_any_call(val)
+    _getiter_.assert_any_call(val[2])
+    _getiter_.assert_any_call(val[2][1])
+    _getiter_.reset_mock()
+
+    ret = glb['nested_with_order']((1, 2), (3, 4))
+    assert ret == (1, 2, 3, 4)
+    _getiter_.assert_has_calls([
+        mocker.call((1, 2)),
+        mocker.call((3, 4))])
+    _getiter_.reset_mock()

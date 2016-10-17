@@ -310,6 +310,48 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         elif name == "printed":
             self.error(node, '"printed" is a reserved name.')
 
+    def transform_seq_unpack(self, tmp_idx, tpl):
+        """Protects sequence unpacking with _getiter_"""
+
+        assert isinstance(tpl, ast.Tuple)
+        assert isinstance(tpl.ctx, ast.Store)
+
+        # This name is used to feed the '_getiter_' method, so the *caller* of
+        # this method has to ensure that the temporary name exsits and has the
+        # correct value! Needed to support nested sequence unpacking and the
+        # reason why this name is returned to the caller.
+        # 'check_name' ensures that no variable is prefixed with '_'.
+        # => Its safe to use '_tmp..' as a temporary variable.
+        my_name = "_tmp%i" % tmp_idx
+        tmp_idx += 1
+        unpacks = []
+
+        # Handle nested sequence unpacking.
+        for idx, el in enumerate(tpl.elts):
+            if isinstance(el, ast.Tuple):
+                tmp_idx, child = self.transform_seq_unpack(tmp_idx, el)
+                tpl.elts[idx] = ast.Name(child['name'], ast.Store())
+                unpacks.append(child['body'])
+
+        # The actual 'guarded' sequence unpacking.
+        unpack = ast.Assign(
+            targets=[tpl],
+            value=ast.Call(
+                func=ast.Name("_getiter_", ast.Load()),
+                args=[ast.Name(my_name, ast.Load())],
+                keywords=[]))
+
+        unpacks.insert(0, unpack)
+
+        # Delete the temporary variable from the scope.
+        cleanup = ast.TryFinally(
+            body=unpacks,
+            finalbody=[
+                ast.Delete(
+                    targets=[ast.Name(my_name, ast.Del())])])
+
+        return tmp_idx, {'name': my_name, 'body': cleanup}
+
     # Special Functions for an ast.NodeTransformer
 
     def generic_visit(self, node):
@@ -1035,7 +1077,57 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
             for arg in node.args.kwonlyargs:
                 self.check_name(node, arg.arg)
 
-        return self.generic_visit(node)
+        node = self.generic_visit(node)
+
+        if version.major == 3:
+            return node
+
+        # Protect 'tuple parameter unpacking' with '_getiter_'.
+        # Without this individual items from an arbitrary iterable are exposed.
+        # _getiter_ applies security checks to each item the iterable delivers.
+        # To apply these check to each item their container (the iterable) is
+        # used. So a simple a = _guard(a) does not work.
+        #
+        # Here are two example how the code transformation looks like:
+        # Example 1):
+        #  def foo((a, b)): pass
+        # is converted itno
+        #  def foo(_tmp0):
+        #      try:
+        #          (a, b) = _getiter_(_tmp0)
+        #      finally:
+        #          del _tmp0
+        #
+        # Nested unpacking is also  supported:
+        #  def foo((a, (b, c))): pass
+        # is converted into
+        #  def foo(_tmp0):
+        #      try:
+        #          (a, (_tmp1)) = _getiter_(_tmp0)
+        #          try:
+        #              (b, c) = _getiter_(_tmp1)
+        #          finally:
+        #              del _tmp1
+        #      finally:
+        #          del _tmp0
+
+        tmp_idx = 0
+        unpacks = []
+        for index, arg in enumerate(list(node.args.args)):
+            if isinstance(arg, ast.Tuple):
+                tmp_idx, child = self.transform_seq_unpack(tmp_idx, arg)
+
+                # Replace the tuple with a single (temporary) parameter.
+                node.args.args[index] = ast.Name(child['name'], ast.Param())
+
+                copy_locations(node.args.args[index], node)
+                copy_locations(child['body'], node)
+                unpacks.append(child['body'])
+
+        # Add the unpacks at the front of the body.
+        # Keep the order, so that tuple one is unpacked first.
+        node.body[0:0] = unpacks
+        return node
 
     def visit_Lambda(self, node):
         """
