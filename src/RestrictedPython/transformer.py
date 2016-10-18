@@ -204,6 +204,16 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         self.warnings = warnings
         self.used_names = used_names
 
+        # Global counter to construct temporary variable names.
+        self._tmp_idx = 0
+
+    def gen_tmp_name(self):
+        # 'check_name' ensures that no variable is prefixed with '_'.
+        # => Its safe to use '_tmp..' as a temporary variable.
+        name = '_tmp%i' % self._tmp_idx
+        self._tmp_idx +=1
+        return name
+
     def error(self, node, info):
         """Record a security error discovered during transformation."""
         lineno = getattr(node, 'lineno', None)
@@ -310,7 +320,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         elif name == "printed":
             self.error(node, '"printed" is a reserved name.')
 
-    def transform_seq_unpack(self, tmp_idx, tpl):
+    def transform_seq_unpack(self, tpl):
         """Protects sequence unpacking with _getiter_"""
 
         assert isinstance(tpl, ast.Tuple)
@@ -320,16 +330,13 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         # this method has to ensure that the temporary name exsits and has the
         # correct value! Needed to support nested sequence unpacking and the
         # reason why this name is returned to the caller.
-        # 'check_name' ensures that no variable is prefixed with '_'.
-        # => Its safe to use '_tmp..' as a temporary variable.
-        my_name = "_tmp%i" % tmp_idx
-        tmp_idx += 1
+        my_name = self.gen_tmp_name()
         unpacks = []
 
         # Handle nested sequence unpacking.
         for idx, el in enumerate(tpl.elts):
             if isinstance(el, ast.Tuple):
-                tmp_idx, child = self.transform_seq_unpack(tmp_idx, el)
+                child = self.transform_seq_unpack(el)
                 tpl.elts[idx] = ast.Name(child['name'], ast.Store())
                 unpacks.append(child['body'])
 
@@ -350,7 +357,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
                 ast.Delete(
                     targets=[ast.Name(my_name, ast.Del())])])
 
-        return tmp_idx, {'name': my_name, 'body': cleanup}
+        return {'name': my_name, 'body': cleanup}
 
     # Special Functions for an ast.NodeTransformer
 
@@ -1111,11 +1118,10 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         #      finally:
         #          del _tmp0
 
-        tmp_idx = 0
         unpacks = []
         for index, arg in enumerate(list(node.args.args)):
             if isinstance(arg, ast.Tuple):
-                tmp_idx, child = self.transform_seq_unpack(tmp_idx, arg)
+                child = self.transform_seq_unpack(arg)
 
                 # Replace the tuple with a single (temporary) parameter.
                 node.args.args[index] = ast.Name(child['name'], ast.Param())
