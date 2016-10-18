@@ -80,7 +80,7 @@ def _verifycode(code):
                     window[2].arg == "_write_"):
                 # check that arg is appropriately wrapped
                 for i, op in enumerate(window):
-                    print i, op.opname, op.arg
+                    print(i, op.opname, op.arg)
                 raise ValueError("unguard attribute set/del at %s:%d"
                                  % (code.co_filename, line))
         if op.opname.startswith("UNPACK"):

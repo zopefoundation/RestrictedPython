@@ -61,8 +61,8 @@ class RestrictionCapableEval(object):
                 self.expr, '<string>')
             if PROFILE:
                 end = clock()
-                print 'prepRestrictedCode: %d ms for %s' % (
-                    (end - start) * 1000, repr(self.expr))
+                print('prepRestrictedCode: %d ms for %s' % (
+                    (end - start) * 1000, repr(self.expr)))
             if err:
                 raise SyntaxError(err[0])
             self.used = tuple(used.keys())
