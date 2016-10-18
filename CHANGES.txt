@@ -1,9 +1,13 @@
 Changes
 =======
 
-3.6.1 (unreleased)
+4.0.0 (unreleased)
 ------------------
 
+- Mostly complete rewrite based on Python AST module.
+  [loechel (Alexander Loechel), icemac (Michael Howitz), stephan-hof (Stephan Hof)]
+
+- switch to pytest
 
 3.6.0 (2010-07-09)
 ------------------
