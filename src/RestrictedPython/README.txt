@@ -11,7 +11,7 @@ controlled and restricted execution of code:
   ... def hello_world():
   ...     return "Hello World!"
   ... '''
-  >>> from RestrictedPython import compile_restricted
+  >>> from RestrictedPython.RCompile import compile_restricted
   >>> code = compile_restricted(src, '<string>', 'exec')
 
 The resulting code can be executed using the ``exec`` built-in:
