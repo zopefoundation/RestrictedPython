@@ -261,6 +261,11 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         else:
             return ast.Name(id='None', ctx=ast.Load())
 
+    def gen_lambda(self, args, body):
+        return ast.Lambda(
+            args=ast.arguments(args=args, vararg=None, kwarg=None, defaults=[]),
+            body=body)
+
     def transform_slice(self, slice_):
         """Transforms slices into function parameters.
 
@@ -322,44 +327,131 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         # elif name == "printed":
         #     self.error(node, '"printed" is a reserved name.')
 
-    def transform_seq_unpack(self, tpl):
-        """Protects sequence unpacking with _getiter_"""
+    def transform_tuple_unpack(self, root, src, to_wrap=None):
+        """Protects tuple unpacking with _getiter_
 
-        assert isinstance(tpl, ast.Tuple)
-        assert isinstance(tpl.ctx, ast.Store)
+        root: is the original tuple to unpack
+        src: ast node where the tuple to unpack should be loaded
+        to_wrap: set of (child) tuples of root which sould be unpacked
 
-        # This name is used to feed the '_getiter_' method, so the *caller* of
-        # this method has to ensure that the temporary name exsits and has the
-        # correct value! Needed to support nested sequence unpacking and the
-        # reason why this name is returned to the caller.
-        my_name = self.gen_tmp_name()
-        unpacks = []
+        It becomes complicated when you think about nested unpacking.
+        For example '(a, (b, (d, e)), (x,z))'
 
-        # Handle nested sequence unpacking.
-        for idx, el in enumerate(tpl.elts):
-            if isinstance(el, ast.Tuple):
-                child = self.transform_seq_unpack(el)
-                tpl.elts[idx] = ast.Name(child['name'], ast.Store())
-                unpacks.append(child['body'])
+        For each of this tuple (from the outside to the inside) _getiter_ must
+        be called. The following illustrates what this function constructs to
+        solve this:
 
-        # The actual 'guarded' sequence unpacking.
-        unpack = ast.Assign(
-            targets=[tpl],
-            value=ast.Call(
-                func=ast.Name("_getiter_", ast.Load()),
-                args=[ast.Name(my_name, ast.Load())],
-                keywords=[]))
+        l0 = _getiter_(x)
+        l1 = lambda (a, t0, t1): (a, _getiter_(t0), _getiter_(t1))
+        l2 = lambda (a, (b, t2), (x, z)): (a, (b, _getiter(t2)), (x, z))
 
-        unpacks.insert(0, unpack)
+        Return value: l2(l1(l0(<src>)))
+        """
 
-        # Delete the temporary variable from the scope.
-        cleanup = ast.TryFinally(
-            body=unpacks,
-            finalbody=[
-                ast.Delete(
-                    targets=[ast.Name(my_name, ast.Del())])])
+        if to_wrap is None:
+            to_wrap = {root}
+        elif not to_wrap:
+            return
 
-        return {'name': my_name, 'body': cleanup}
+        # Generate a wrapper for the current level of tuples to wrap/unpack.
+        wrapper_param, wrapper_body = self.gen_tuple_wrapper(root, to_wrap)
+
+        # In the end wrapper is a callable with one argument.
+        # If the body is not a callable its wrapped with a lambda
+        if isinstance(wrapper_body, ast.Call):
+            wrapper = ast.Call(func=wrapper_body.func, args=[src], keywords=[])
+        else:
+            wrapper = self.gen_lambda([wrapper_param], wrapper_body)
+            wrapper = ast.Call(func=wrapper, args=[src], keywords=[])
+
+        # Check if the elements of the current tuple are tuples again (nested).
+        child_tuples = self.find_tuple_childs(root, to_wrap)
+        if not child_tuples:
+            return wrapper
+
+        return self.transform_tuple_unpack(root, wrapper, child_tuples)
+
+    def gen_tuple_wrapper(self, parent, to_wrap):
+        """Constructs the parameter and body to unpack the tuples in 'to_wrap'
+
+        For example the 'root' tuple is
+        (a, (b, (d, e)), (x,z))'
+        and the 'to_wrap' is (d, e) the return value is
+        param = (a, (b, t2), (x, z))
+        body = (a, (b, _getiter(t2)), (x, z))
+        """
+        if parent in to_wrap:
+            name = self.gen_tmp_name()
+            param = ast.Name(name, ast.Param())
+            body = ast.Call(
+                func=ast.Name('_getiter_', ast.Load()),
+                args=[ast.Name(name, ast.Load())],
+                keywords=[])
+
+        elif isinstance(parent, ast.Name):
+            param = ast.Name(parent.id, ast.Param())
+            body = ast.Name(parent.id, ast.Load())
+
+        elif isinstance(parent, ast.Tuple):
+            param = ast.Tuple([], ast.Store())
+            body = ast.Tuple([], ast.Load())
+            for c in parent.elts:
+                c_param, c_body = self.gen_tuple_wrapper(c, to_wrap)
+                c_param.ctx = ast.Store()
+                param.elts.append(c_param)
+                body.elts.append(c_body)
+        else:
+            raise Exception("Cannot handle node %" % parent)
+
+        return param, body
+
+    def find_tuple_childs(self, parent, to_wrap):
+        """Finds child tuples of the 'to_wrap' nodes. """
+        childs = set()
+
+        if parent in to_wrap:
+            childs.update(c for c in parent.elts if isinstance(c, ast.Tuple))
+
+        elif isinstance(parent, ast.Tuple):
+            for c in parent.elts:
+                childs.update(self.find_tuple_childs(c, to_wrap))
+
+        return childs
+
+    def check_function_argument_names(self, node):
+        # In python3 arguments are always identifiers.
+        # In python2 the 'Python.asdl' specifies expressions, but
+        # the python grammer allows only identifiers or a tuple of
+        # identifiers. If its a tuple 'tuple parameter unpacking' is used,
+        # which is gone in python3.
+        # See https://www.python.org/dev/peps/pep-3113/
+
+        if version.major == 2:
+            # Needed to handle nested 'tuple parameter unpacking'.
+            # For example 'def foo((a, b, (c, (d, e)))): pass'
+            to_check = list(node.args.args)
+            while to_check:
+                item = to_check.pop()
+                if isinstance(item, ast.Tuple):
+                    to_check.extend(item.elts)
+                else:
+                    self.check_name(node, item.id)
+
+            self.check_name(node, node.args.vararg)
+            self.check_name(node, node.args.kwarg)
+
+        else:
+            for arg in node.args.args:
+                self.check_name(node, arg.arg)
+
+            if node.args.vararg:
+                self.check_name(node, node.args.vararg.arg)
+
+            if node.args.kwarg:
+                self.check_name(node, node.args.kwarg.arg)
+
+            for arg in node.args.kwonlyargs:
+                self.check_name(node, arg.arg)
 
     # Special Functions for an ast.NodeTransformer
 
@@ -1051,40 +1143,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         """
 
         self.check_name(node, node.name)
-
-        # In python3 arguments are always identifiers.
-        # In python2 the 'Python.asdl' specifies expressions, but
-        # the python grammer allows only identifiers or a tuple of
-        # identifiers. If its a tuple 'tuple parameter unpacking' is used,
-        # which is gone in python3.
-        # See https://www.python.org/dev/peps/pep-3113/
-
-        if version.major == 2:
-            # Needed to handle nested 'tuple parameter unpacking'.
-            # For example 'def foo((a, b, (c, (d, e)))): pass'
-            to_check = list(node.args.args)
-            while to_check:
-                item = to_check.pop()
-                if isinstance(item, ast.Tuple):
-                    to_check.extend(item.elts)
-                else:
-                    self.check_name(node, item.id)
-
-            self.check_name(node, node.args.vararg)
-            self.check_name(node, node.args.kwarg)
-
-        else:
-            for arg in node.args.args:
-                self.check_name(node, arg.arg)
-
-            if node.args.vararg:
-                self.check_name(node, node.args.vararg.arg)
-
-            if node.args.kwarg:
-                self.check_name(node, node.args.kwarg.arg)
-
-            for arg in node.args.kwonlyargs:
-                self.check_name(node, arg.arg)
+        self.check_function_argument_names(node)
 
         node = self.generic_visit(node)
 
@@ -1092,45 +1151,40 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
             return node
 
         # Protect 'tuple parameter unpacking' with '_getiter_'.
-        # Without this individual items from an arbitrary iterable are exposed.
-        # _getiter_ applies security checks to each item the iterable delivers.
-        # To apply these check to each item their container (the iterable) is
-        # used. So a simple a = _guard(a) does not work.
-        #
-        # Here are two example how the code transformation looks like:
-        # Example 1):
-        #  def foo((a, b)): pass
-        # is converted itno
-        #  def foo(_tmp0):
-        #      try:
-        #          (a, b) = _getiter_(_tmp0)
-        #      finally:
-        #          del _tmp0
-        #
-        # Nested unpacking is also  supported:
-        #  def foo((a, (b, c))): pass
-        # is converted into
-        #  def foo(_tmp0):
-        #      try:
-        #          (a, (_tmp1)) = _getiter_(_tmp0)
-        #          try:
-        #              (b, c) = _getiter_(_tmp1)
-        #          finally:
-        #              del _tmp1
-        #      finally:
-        #          del _tmp0
 
         unpacks = []
         for index, arg in enumerate(list(node.args.args)):
             if isinstance(arg, ast.Tuple):
-                child = self.transform_seq_unpack(arg)
+                tmp_name = self.gen_tmp_name()
+
+                # converter looks like wrapper(tmp_name).
+                # Wrapper takes care to protect
+                # sequence unpacking with _getiter_
+                converter = self.transform_tuple_unpack(
+                        arg,
+                        ast.Name(tmp_name, ast.Load()))
+
+                # Generates:
+                # try:
+                #     # converter is 'wrapper(tmp_name)'
+                #     arg = converter
+                # finally:
+                #     del tmp_arg
+                cleanup = ast.TryFinally(
+                    body=[
+                        ast.Assign(targets=[arg], value=converter)
+                    ],
+                    finalbody=[
+                        ast.Delete(targets=[ast.Name(tmp_name, ast.Del())])
+                    ]
+                )
 
                 # Replace the tuple with a single (temporary) parameter.
-                node.args.args[index] = ast.Name(child['name'], ast.Param())
+                node.args.args[index] = ast.Name(tmp_name, ast.Param())
 
                 copy_locations(node.args.args[index], node)
-                copy_locations(child['body'], node)
-                unpacks.append(child['body'])
+                copy_locations(cleanup, node)
+                unpacks.append(cleanup)
 
         # Add the unpacks at the front of the body.
         # Keep the order, so that tuple one is unpacked first.
@@ -1138,10 +1192,50 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         return node
 
     def visit_Lambda(self, node):
-        """
+        """Checks a lambda definition."""
+        self.check_function_argument_names(node)
 
-        """
-        return self.generic_visit(node)
+        node = self.generic_visit(node)
+
+        if version.major == 3:
+            return node
+
+        # Check for tuple parameters which need _getiter_ protection
+        if not any(isinstance(arg, ast.Tuple) for arg in node.args.args):
+            return node
+
+        # Wrap this lambda function with another. Via this wrapping it is
+        # possible to protect the 'tuple arguments' with _getiter_
+        outer_params = []
+        inner_args = []
+
+        for arg in node.args.args:
+            if isinstance(arg, ast.Tuple):
+                tmp_name = self.gen_tmp_name()
+                converter = self.transform_tuple_unpack(
+                    arg,
+                    ast.Name(tmp_name, ast.Load()))
+
+                outer_params.append(ast.Name(tmp_name, ast.Param()))
+                inner_args.append(converter)
+
+            else:
+                outer_params.append(arg)
+                inner_args.append(ast.Name(arg.id, ast.Load()))
+
+        body = ast.Call(func=node, args=inner_args, keywords=[])
+        new_node = self.gen_lambda(outer_params, body)
+
+        if node.args.vararg:
+            new_node.args.vararg = node.args.vararg
+            body.starargs = ast.Name(node.args.vararg, ast.Load())
+
+        if node.args.kwarg:
+            new_node.args.kwarg = node.args.kwarg
+            body.kwargs = ast.Name(node.args.kwarg, ast.Load())
+
+        copy_locations(new_node, node)
+        return new_node
 
     def visit_arguments(self, node):
         """
