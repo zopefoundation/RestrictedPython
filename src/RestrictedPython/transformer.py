@@ -123,7 +123,7 @@ AST_WHITELIST = [
     #ast.Nonlocal,
     ast.ClassDef,
     ast.Module,
-    ast.Param
+    ast.Param,
 ]
 
 
@@ -158,7 +158,9 @@ if version >= (3, 0):
         ast.Bytes,
         ast.Starred,
         ast.arg,
-        #ast.Try,  # Try should not be supported
+        ast.Try,  # Try should not be supported
+        ast.TryExcept,  # TryExcept should not be supported
+        ast.NameConstant
     ])
 
 if version >= (3, 4):
@@ -322,8 +324,8 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
             self.error(node, '"%s" is an invalid variable name because '
                        'it ends with "__roles__".' % name)
 
-        elif name == "printed":
-            self.error(node, '"printed" is a reserved name.')
+        # elif name == "printed":
+        #     self.error(node, '"printed" is a reserved name.')
 
     def transform_tuple_unpack(self, root, src, to_wrap=None):
         """Protects tuple unpacking with _getiter_

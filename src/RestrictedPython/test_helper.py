@@ -22,6 +22,7 @@ function.
 """
 
 import dis
+import sys
 import types
 
 from dis import findlinestarts
@@ -135,7 +136,11 @@ class Op(object):
 
 
 def _disassemble(co, lasti=-1):
+    # in py2 code is str
     code = co.co_code
+    #in py3 code is bytes
+    #if sys.version_info.major > 2:
+    #    code = code.decode()
     labels = dis.findlabels(code)
     linestarts = dict(findlinestarts(co))
     n = len(code)
@@ -143,7 +148,10 @@ def _disassemble(co, lasti=-1):
     extended_arg = 0
     free = co.co_cellvars + co.co_freevars
     while i < n:
-        op = ord(code[i])
+        if sys.version_info.major < 3:
+            op = ord(code[i])
+        else:
+            op = code[i]
         o = Op(op, i)
         i += 1
         if i in linestarts and i > 0:
@@ -151,7 +159,11 @@ def _disassemble(co, lasti=-1):
         if i in labels:
             o.target = True
         if op > dis.HAVE_ARGUMENT:
-            arg = ord(code[i]) + ord(code[i + 1]) * 256 + extended_arg
+            if sys.version_info.major < 3:
+                arg = ord(code[i]) + ord(code[i + 1]) * 256 + extended_arg
+            else:
+                arg = code[i] + code[i + 1] * 256 + extended_arg
+
             extended_arg = 0
             i += 2
             if op == dis.EXTENDED_ARG:

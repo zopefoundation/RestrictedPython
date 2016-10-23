@@ -39,7 +39,7 @@ def bad_attr():  # ported
 
 
 def no_exec():  # ported
-    exec 'q = 1'
+    exec('q = 1')
 
 
 def no_yield():  # ported
@@ -62,7 +62,7 @@ def from_import_as_bad_name():
 def except_using_bad_name():
     try:
         foo
-    except NameError, _leading_underscore:
+    except NameError:  #, _leading_underscore:
         # The name of choice (say, _write) is now assigned to an exception
         # object.  Hard to exploit, but conceivable.
         pass
