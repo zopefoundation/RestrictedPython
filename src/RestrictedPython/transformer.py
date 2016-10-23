@@ -416,6 +416,42 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
 
         return childs
 
+    def check_function_argument_names(self, node):
+        # In python3 arguments are always identifiers.
+        # In python2 the 'Python.asdl' specifies expressions, but
+        # the python grammer allows only identifiers or a tuple of
+        # identifiers. If its a tuple 'tuple parameter unpacking' is used,
+        # which is gone in python3.
+        # See https://www.python.org/dev/peps/pep-3113/
+
+        if version.major == 2:
+            # Needed to handle nested 'tuple parameter unpacking'.
+            # For example 'def foo((a, b, (c, (d, e)))): pass'
+            to_check = list(node.args.args)
+            while to_check:
+                item = to_check.pop()
+                if isinstance(item, ast.Tuple):
+                    to_check.extend(item.elts)
+                else:
+                    self.check_name(node, item.id)
+
+            self.check_name(node, node.args.vararg)
+            self.check_name(node, node.args.kwarg)
+
+        else:
+            for arg in node.args.args:
+                self.check_name(node, arg.arg)
+
+            if node.args.vararg:
+                self.check_name(node, node.args.vararg.arg)
+
+            if node.args.kwarg:
+                self.check_name(node, node.args.kwarg.arg)
+
+            for arg in node.args.kwonlyargs:
+                self.check_name(node, arg.arg)
+
+
     # Special Functions for an ast.NodeTransformer
 
     def generic_visit(self, node):
@@ -1106,40 +1142,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         """
 
         self.check_name(node, node.name)
-
-        # In python3 arguments are always identifiers.
-        # In python2 the 'Python.asdl' specifies expressions, but
-        # the python grammer allows only identifiers or a tuple of
-        # identifiers. If its a tuple 'tuple parameter unpacking' is used,
-        # which is gone in python3.
-        # See https://www.python.org/dev/peps/pep-3113/
-
-        if version.major == 2:
-            # Needed to handle nested 'tuple parameter unpacking'.
-            # For example 'def foo((a, b, (c, (d, e)))): pass'
-            to_check = list(node.args.args)
-            while to_check:
-                item = to_check.pop()
-                if isinstance(item, ast.Tuple):
-                    to_check.extend(item.elts)
-                else:
-                    self.check_name(node, item.id)
-
-            self.check_name(node, node.args.vararg)
-            self.check_name(node, node.args.kwarg)
-
-        else:
-            for arg in node.args.args:
-                self.check_name(node, arg.arg)
-
-            if node.args.vararg:
-                self.check_name(node, node.args.vararg.arg)
-
-            if node.args.kwarg:
-                self.check_name(node, node.args.kwarg.arg)
-
-            for arg in node.args.kwonlyargs:
-                self.check_name(node, arg.arg)
+        self.check_function_argument_names(node)
 
         node = self.generic_visit(node)
 
@@ -1191,6 +1194,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         """
 
         """
+        self.check_function_argument_names(node)
         return self.generic_visit(node)
 
     def visit_arguments(self, node):

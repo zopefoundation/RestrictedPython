@@ -570,3 +570,44 @@ def test_transformer__RestrictingNodeTransformer__visit_FunctionDef_2(compile, m
         mocker.call((1, 2)),
         mocker.call((3, 4))])
     _getiter_.reset_mock()
+
+
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__visit_Lambda_1(compile):
+    def do_compile(src):
+        return compile.compile_restricted_exec(src)[:2]
+
+    err_msg = 'Line 1: "_bad" is an invalid variable ' \
+              'name because it starts with "_"'
+
+    code, errors = do_compile("lambda _bad: None")
+    assert code is None
+    assert errors[0] == err_msg
+
+    code, errors = do_compile("lambda _bad=1: None")
+    assert code is None
+    assert errors[0] == err_msg
+
+    code, errors = do_compile("lambda *_bad: None")
+    assert code is None
+    assert errors[0] == err_msg
+
+    code, errors = do_compile("lambda **_bad: None")
+    assert code is None
+    assert errors[0] == err_msg
+
+    if sys.version_info.major == 2:
+        # The old one did not support tuples at all.
+        if compile is RestrictedPython.compile:
+            code, errors = do_compile("lambda (a, _bad): None")
+            assert code is None
+            assert errors[0] == err_msg
+
+            code, errors = do_compile("lambda (a, (c, (_bad, c))): None")
+            assert code is None
+            assert errors[0] == err_msg
+
+    if sys.version_info.major == 3:
+        code, errors = do_compile("lambda good, *, _bad: None")
+        assert code is None
+        assert errors[0] == err_msg
