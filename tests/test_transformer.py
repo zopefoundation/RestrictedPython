@@ -611,3 +611,29 @@ def test_transformer__RestrictingNodeTransformer__visit_Lambda_1(compile):
         code, errors = do_compile("lambda good, *, _bad: None")
         assert code is None
         assert errors[0] == err_msg
+
+
+@pytest.mark.skipif(
+    sys.version_info.major == 3,
+    reason="tuple parameter unpacking is gone in python 3")
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__visit_Lambda_2(compile, mocker):
+    if compile is not RestrictedPython.compile:
+        return
+
+    _getiter_ = mocker.stub()
+    _getiter_.side_effect = lambda it: it
+    glb = {
+        '_getiter_': _getiter_,
+        '_getattr_': lambda ob, val: getattr(ob, val)
+    }
+
+    src = "m = lambda (a, (b, c)), *ag, **kw: a+b+c+sum(ag)+sum(kw.values())"
+    code, errors = compile.compile_restricted_exec(src)[:2]
+    six.exec_(code, glb)
+
+    ret = glb['m']((1, (2, 3)), 4, 5, 6, g=7, e=8)
+    assert ret == 36
+    assert 2 == _getiter_.call_count
+    _getiter_.assert_any_call((1, (2, 3)))
+    _getiter_.assert_any_call((2, 3))

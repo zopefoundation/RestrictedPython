@@ -451,7 +451,6 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
             for arg in node.args.kwonlyargs:
                 self.check_name(node, arg.arg)
 
-
     # Special Functions for an ast.NodeTransformer
 
     def generic_visit(self, node):
@@ -1191,11 +1190,50 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         return node
 
     def visit_Lambda(self, node):
-        """
-
-        """
+        """Checks a lambda definition."""
         self.check_function_argument_names(node)
-        return self.generic_visit(node)
+
+        node = self.generic_visit(node)
+
+        if version.major == 3:
+            return node
+
+        # Check for tuple parameters which need _getiter_ protection
+        if not any(isinstance(arg, ast.Tuple) for arg in node.args.args):
+            return node
+
+        # Wrap this lambda function with another. Via this wrapping it is
+        # possible to protect the 'tuple arguments' with _getiter_
+        outer_params = []
+        inner_args = []
+
+        for arg in node.args.args:
+            if isinstance(arg, ast.Tuple):
+                tmp_name = self.gen_tmp_name()
+                converter = self.transform_tuple_unpack(
+                    arg,
+                    ast.Name(tmp_name, ast.Load()))
+
+                outer_params.append(ast.Name(tmp_name, ast.Param()))
+                inner_args.append(converter)
+
+            else:
+                outer_params.append(arg)
+                inner_args.append(ast.Name(arg.id, ast.Load()))
+
+        body = ast.Call(func=node, args=inner_args, keywords=[])
+        new_node = self.gen_lambda(outer_params, body)
+
+        if node.args.vararg:
+            new_node.args.vararg = node.args.vararg
+            body.starargs = ast.Name(node.args.vararg, ast.Load())
+
+        if node.args.kwarg:
+            new_node.args.kwarg = node.args.kwarg
+            body.kwargs = ast.Name(node.args.kwarg, ast.Load())
+
+        copy_locations(new_node, node)
+        return new_node
 
     def visit_arguments(self, node):
         """
