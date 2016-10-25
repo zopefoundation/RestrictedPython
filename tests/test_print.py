@@ -39,13 +39,13 @@ print('Hello World!', 'Hello Earth!')
 """
 
 ALLOWED_FUTURE_PRINT_FUNCTION = """\
-from __future__ import print_function
+from __future import print_function
 
 print('Hello World!')
 """
 
 ALLOWED_FUTURE_MULTI_PRINT_FUNCTION = """\
-from __future__ import print_function
+from __future import print_function
 
 print('Hello World!', 'Hello Earth!')
 """
