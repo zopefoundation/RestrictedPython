@@ -7,8 +7,10 @@ python:
     - 3.6-dev
     - pypy
 install:
-    - pip install tox
+    - pip install tox coveralls
 script:
     - tox -e py
+after_success:
+    - coveralls
 notifications:
     email: false
