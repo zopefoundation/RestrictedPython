@@ -637,3 +637,24 @@ def test_transformer__RestrictingNodeTransformer__visit_Lambda_2(compile, mocker
     assert 2 == _getiter_.call_count
     _getiter_.assert_any_call((1, (2, 3)))
     _getiter_.assert_any_call((2, 3))
+
+
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__visit_Assign(compile, mocker):
+    src = "(a, (x, z)) = (c, d) = g"
+    code, errors = compile.compile_restricted_exec(src)[:2]
+
+    _getiter_ = mocker.stub()
+    _getiter_.side_effect = lambda it: it
+    glb = {'g': (1, (2, 3)), '_getiter_': _getiter_}
+
+    six.exec_(code, glb)
+    assert glb['a'] == 1
+    assert glb['x'] == 2
+    assert glb['z'] == 3
+    assert glb['c'] == 1
+    assert glb['d'] == (2, 3)
+    assert _getiter_.call_count == 3
+    _getiter_.assert_any_call((1, (2, 3)))
+    _getiter_.assert_any_call((2, 3))
+    _getiter_.reset_mock()

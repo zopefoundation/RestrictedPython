@@ -264,6 +264,21 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
             args=ast.arguments(args=args, vararg=None, kwarg=None, defaults=[]),
             body=body)
 
+    def gen_del_stmt(self, name_to_del):
+        return ast.Delete(targets=[ast.Name(name_to_del, ast.Del())])
+
+    def gen_try_finally(self, body, finalbody):
+        if version.major == 2:
+            return ast.TryFinally(body=body, finalbody=finalbody)
+
+        else:
+            return ast.Try(
+                body=body,
+                handlers=[],
+                orelse=[],
+                finalbody=finalbody)
+
+
     def transform_slice(self, slice_):
         """Transforms slices into function parameters.
 
@@ -325,8 +340,84 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         elif name == "printed":
             self.error(node, '"printed" is a reserved name.')
 
+    # Boha yeah, there are two different ways to unpack tuples.
+    # Way 1: 'transform_tuple_assign'.
+    #  This transforms tuple unpacking via multiple statements.
+    #  Pro: Can be used in python2 and python3
+    #  Con: statements can *NOT* be used in expressions.
+    #       Unfortunately lambda parameters in python2 can have tuple parameters
+    #       too, which must be unpacked as well. However lambda bodies allow
+    #       only expressions.
+    #       => This way cannot be used to unpack tuple parameters in lambdas.
+    # Way 2: 'transform_tuple_unpack'
+    #  This transforms tuple unpacking by using nested lambdas.
+    #  Pro: Implemented by using expressions only.
+    #       => can be used to unpack tuple parameters in lambdas.
+    #  Con: Not usable in python3
+    # So the second way is only needed for unpacking of tuple parameters on
+    # lambda functions. Luckily tuple parameters are gone in python3.
+    # So way 2 is needed in python2 only.
+
+    def transform_tuple_assign(self, target, value):
+        """Protects tuple unpacking with _getiter_ by using multiple statements.
+
+        Works in python2 and python3, but does not help if only expressions are
+        allowed.
+
+        (a, b) = value
+        becomes:
+        (a, b) = _getiter_(value)
+
+        (a, (b, c)) = value
+        becomes:
+
+        (a, t1) = _getiter_(value)
+        try:
+            (b, c) = _getiter_(t1)
+        finally:
+            del t1
+        """
+
+        # Finds all the child tuples and give them temporary names
+        child_tuples = []
+        new_target = []
+        for el in target.elts:
+            if isinstance(el, ast.Tuple):
+                tmp_name = self.gen_tmp_name()
+                new_target.append(ast.Name(tmp_name, ast.Store()))
+                child_tuples.append((tmp_name, el))
+            else:
+                new_target.append(el)
+
+        unpacks = []
+
+        # Protect target via '_getiter_'
+        wrap = ast.Assign(
+            targets=[ast.Tuple(new_target, ast.Store())],
+            value=ast.Call(
+                func=ast.Name('_getiter_', ast.Load()),
+                args=[value],
+                keywords=[]
+            )
+        )
+
+        unpacks.append(wrap)
+
+        # unpack the child tuples and cleanup the temporary names.
+        for tmp_name, child in child_tuples:
+            src = ast.Name(tmp_name, ast.Load())
+            unpacks.append(
+                self.gen_try_finally(
+                    self.transform_tuple_assign(child, src),
+                    [self.gen_del_stmt(tmp_name)])
+            )
+
+        return unpacks
+
     def transform_tuple_unpack(self, root, src, to_wrap=None):
-        """Protects tuple unpacking with _getiter_
+        """Protects tuple unpacking with _getiter_ by using expressions only.
+
+        Works only in python2.
 
         root: is the original tuple to unpack
         src: ast node where the tuple to unpack should be loaded
@@ -372,6 +463,8 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
     def gen_tuple_wrapper(self, parent, to_wrap):
         """Constructs the parameter and body to unpack the tuples in 'to_wrap'
 
+        Helper method of 'transform_tuple_unpack'.
+
         For example the 'root' tuple is
         (a, (b, (d, e)), (x,z))'
         and the 'to_wrap' is (d, e) the return value is
@@ -404,7 +497,10 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         return param, body
 
     def find_tuple_childs(self, parent, to_wrap):
-        """Finds child tuples of the 'to_wrap' nodes. """
+        """Finds child tuples of the 'to_wrap' nodes.
+
+        Helper method of 'transform_tuple_unpack'.
+        """
         childs = set()
 
         if parent in to_wrap:
@@ -961,7 +1057,48 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         """
 
         """
-        return self.generic_visit(node)
+
+        node = self.generic_visit(node)
+
+        if not any(isinstance(t, ast.Tuple) for t in node.targets):
+            return node
+
+        # Handle sequence unpacking.
+        # For briefness this example omits cleanup of the temporary variables.
+        # Check 'transform_tuple_assign' how its done.
+        #
+        # - Single target (with nested support)
+        # (a, (b, (c, d))) = <exp>
+        # is converted to
+        # (a, t1) = _getiter_(<exp>)
+        # (b, t2) = _getiter_(t1)
+        # (c, d) = _getiter_(t2)
+        #
+        # - Multi targets
+        # (a, b) = (c, d) = <exp>
+        # is converted to
+        # (c, d) = _getiter_(<exp>)
+        # (a, b) = _getiter_(<exp>)
+        # Why is this valid ? The original bytecode for this multi targets
+        # behaves the same way.
+
+        # ast.NodeTransformer works with list results.
+        # He injects it at the right place of the node's parent statements.
+        new_nodes = []
+
+        # python fills the right most target first.
+        for target in reversed(node.targets):
+            if isinstance(target, ast.Tuple):
+                wrappers = self.transform_tuple_assign(target, node.value)
+                new_nodes.extend(wrappers)
+            else:
+                new_node = ast.Assign(targets=[target], value=target.value)
+                new_nodes.append(new_node)
+
+        for new_node in new_nodes:
+            copy_locations(new_node, node)
+
+        return new_nodes
 
     def visit_AugAssign(self, node):
         """Forbid certain kinds of AugAssign
@@ -1169,12 +1306,8 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
                 # finally:
                 #     del tmp_arg
                 cleanup = ast.TryFinally(
-                    body=[
-                        ast.Assign(targets=[arg], value=converter)
-                    ],
-                    finalbody=[
-                        ast.Delete(targets=[ast.Name(tmp_name, ast.Del())])
-                    ]
+                    body=[ast.Assign(targets=[arg], value=converter)],
+                    finalbody=[self.gen_del_stmt(tmp_name)]
                 )
 
                 # Replace the tuple with a single (temporary) parameter.
