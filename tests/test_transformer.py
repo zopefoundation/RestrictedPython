@@ -658,3 +658,95 @@ def test_transformer__RestrictingNodeTransformer__visit_Assign(compile, mocker):
     _getiter_.assert_any_call((1, (2, 3)))
     _getiter_.assert_any_call((2, 3))
     _getiter_.reset_mock()
+
+
+TRY_EXCEPT_FINALLY = """
+def try_except(m):
+    try:
+        m('try')
+        raise IndentationError('f1')
+    except IndentationError as error:
+        m('except')
+
+def try_except_else(m):
+    try:
+        m('try')
+    except:
+        m('except')
+    else:
+        m('else')
+
+def try_finally(m):
+    try:
+        m('try')
+        1 / 0
+    finally:
+        m('finally')
+        return
+
+def try_except_finally(m):
+    try:
+        m('try')
+        1 / 0
+    except:
+        m('except')
+    finally:
+        m('finally')
+
+def try_except_else_finally(m):
+    try:
+        m('try')
+    except:
+        m('except')
+    else:
+        m('else')
+    finally:
+        m('finally')
+"""
+
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__error_handling(compile, mocker):
+    code, errors = compile.compile_restricted_exec(TRY_EXCEPT_FINALLY)[:2]
+    assert code != None
+
+    glb = {}
+    six.exec_(code, glb)
+
+    trace = mocker.stub()
+
+    glb['try_except'](trace)
+    trace.assert_has_calls([
+        mocker.call('try'),
+        mocker.call('except')
+    ])
+    trace.reset_mock()
+
+    glb['try_except_else'](trace)
+    trace.assert_has_calls([
+        mocker.call('try'),
+        mocker.call('else')
+    ])
+    trace.reset_mock()
+
+    glb['try_finally'](trace)
+    trace.assert_has_calls([
+        mocker.call('try'),
+        mocker.call('finally')
+    ])
+    trace.reset_mock()
+
+    glb['try_except_finally'](trace)
+    trace.assert_has_calls([
+        mocker.call('try'),
+        mocker.call('except'),
+        mocker.call('finally')
+    ])
+    trace.reset_mock()
+
+    glb['try_except_else_finally'](trace)
+    trace.assert_has_calls([
+        mocker.call('try'),
+        mocker.call('else'),
+        mocker.call('finally')
+    ])
+    trace.reset_mock()

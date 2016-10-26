@@ -149,8 +149,10 @@ version = sys.version_info
 if version >= (2, 7) and version < (2, 8):
     AST_WHITELIST.extend([
         ast.Print,
-        #ast.TryFinally,  # TryFinally should not be supported
-        #ast.TryExcept,  # TryExcept should not be supported
+        ast.Raise,
+        ast.TryExcept,
+        ast.TryFinally,
+        ast.ExceptHandler
     ])
 
 if version >= (3, 0):
@@ -158,7 +160,8 @@ if version >= (3, 0):
         ast.Bytes,
         ast.Starred,
         ast.arg,
-        #ast.Try,  # Try should not be supported
+        ast.Try,
+        ast.ExceptHandler
     ])
 
 if version >= (3, 4):
