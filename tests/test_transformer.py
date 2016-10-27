@@ -750,3 +750,35 @@ def test_transformer__RestrictingNodeTransformer__error_handling(compile, mocker
         mocker.call('finally')
     ])
     trace.reset_mock()
+
+
+EXCEPT_WITH_TUPLE_UNPACK = """
+def tuple_unpack(err):
+    try:
+        raise err
+    except Exception as (a, (b, c)):
+        return a + b + c
+"""
+
+
+@pytest.mark.skipif(
+    sys.version_info.major == 3,
+    reason="tuple unpacking on exceptions is gone in python3")
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__visit_ExceptHandler(compile, mocker):
+    code, errors = compile.compile_restricted_exec(EXCEPT_WITH_TUPLE_UNPACK)[:2]
+    assert code != None
+
+    _getiter_ = mocker.stub()
+    _getiter_.side_effect = lambda it: it
+
+    glb = {'_getiter_': _getiter_}
+    six.exec_(code, glb)
+
+    err = Exception(1, (2, 3))
+    ret = glb['tuple_unpack'](err)
+    assert ret == 6
+
+    _getiter_.assert_has_calls([
+        mocker.call(err),
+        mocker.call((2, 3))])

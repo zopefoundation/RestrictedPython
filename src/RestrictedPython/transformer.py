@@ -1254,11 +1254,57 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
 #        """
 #        return self.generic_visit(node)
 
-#    def visit_ExceptHandler(self, node):
-#        """
-#
-#        """
-#        return self.generic_visit(node)
+    def visit_ExceptHandler(self, node):
+        """Protects tuple unpacking on exception handlers.
+
+        try:
+            .....
+        except Exception as (a, b):
+            ....
+
+        becomes
+
+        try:
+            .....
+        except Exception as tmp:
+            try:
+                (a, b) = _getiter_(tmp)
+            finally:
+                del tmp
+        """
+
+        node = self.generic_visit(node)
+
+        if version.major == 3:
+            return node
+
+        if not isinstance(node.name, ast.Tuple):
+            return node
+
+        # Generate a tmp name to replace the tuple with.
+        tmp_name = self.gen_tmp_name()
+
+        # Generates an expressions which protects the unpack.
+        converter = self.transform_tuple_unpack(
+            node.name,
+            ast.Name(tmp_name, ast.Load()))
+
+        # Assign the expression to the original names.
+        # Cleanup the temporary variable.
+        cleanup = ast.TryFinally(
+            body=[ast.Assign(targets=[node.name], value=converter)],
+            finalbody=[self.gen_del_stmt(tmp_name)]
+
+        )
+
+        # Repalce the tuple with the temporary variable.
+        node.name = ast.Name(tmp_name, ast.Store())
+
+        copy_locations(cleanup, node)
+        copy_locations(node.name, node)
+        node.body.insert(0, cleanup)
+
+        return node
 
     def visit_With(self, node):
         """
