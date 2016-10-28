@@ -7,10 +7,11 @@ python:
     - 3.6-dev
     - pypy
 install:
-    - pip install tox coveralls
+    - pip install tox coveralls coverage
 script:
     - tox -e py
 after_success:
-    - coveralls --merge=.coverage.py
+    - coverage combine
+    - coveralls
 notifications:
     email: false
