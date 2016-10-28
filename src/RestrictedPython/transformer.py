@@ -1187,15 +1187,21 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
     # Imports
 
     def visit_Import(self, node):
-        """
+        """ """
+        for alias in node.names:
+            self.check_name(node, alias.name)
+            if alias.asname:
+                self.check_name(node, alias.asname)
 
-        """
         return self.generic_visit(node)
 
     def visit_ImportFrom(self, node):
-        """
+        """ """
+        for alias in node.names:
+            self.check_name(node, alias.name)
+            if alias.asname:
+                self.check_name(node, alias.asname)
 
-        """
         return self.generic_visit(node)
 
     def visit_alias(self, node):
