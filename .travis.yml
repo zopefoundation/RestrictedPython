@@ -11,6 +11,6 @@ install:
 script:
     - tox -e py
 after_success:
-    - coveralls debug
+    - coveralls --merge=.coverage.py
 notifications:
     email: false
