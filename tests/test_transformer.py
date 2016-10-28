@@ -782,3 +782,44 @@ def test_transformer__RestrictingNodeTransformer__visit_ExceptHandler(compile, m
     _getiter_.assert_has_calls([
         mocker.call(err),
         mocker.call((2, 3))])
+
+
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__visit_Import(compile):
+    def do_compile(src):
+        return compile.compile_restricted_exec(src)[:2]
+
+    errmsg = 'Line 1: "%s" is an invalid variable name ' \
+             'because it starts with "_"'
+
+    code, errors = do_compile('import a')
+    assert code != None
+    assert errors == ()
+
+    code, errors = do_compile('import _a')
+    assert code == None
+    assert errors[0] == (errmsg % '_a')
+
+    code, errors = do_compile('import _a as m')
+    assert code == None
+    assert errors[0] == (errmsg % '_a')
+
+    code, errors = do_compile('import a as _m')
+    assert code == None
+    assert errors[0] == (errmsg % '_m')
+
+    code, errors = do_compile('from a import m')
+    assert code != None
+    assert errors == ()
+
+    code, errors = do_compile('from _a import m')
+    assert code != None
+    assert errors == ()
+
+    code, errors = do_compile('from a import m as _n')
+    assert code == None
+    assert errors[0] == (errmsg % '_n')
+
+    code, errors = do_compile('from a import _m as n')
+    assert code == None
+    assert errors[0] == (errmsg % '_m')
