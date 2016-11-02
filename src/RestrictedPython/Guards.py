@@ -266,3 +266,15 @@ safe_builtins['setattr'] = guarded_setattr
 def guarded_delattr(object, name):
     delattr(full_write_guard(object), name)
 safe_builtins['delattr'] = guarded_delattr
+
+
+def guarded_unpack_sequence(it, spec, _getiter_):
+    ret = list(_getiter_(it))
+
+    if len(ret) < spec['min_len']:
+        return ret
+
+    for (idx, child_spec) in spec['childs']:
+        ret[idx] = guarded_unpack_sequence(ret[idx], child_spec, _getiter_)
+
+    return ret
