@@ -1466,9 +1466,9 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         return self.generic_visit(node)
 
     def visit_ClassDef(self, node):
-        """
+        """Checks the name of classes."""
 
-        """
+        self.check_name(node, node.name)
         return self.generic_visit(node)
 
     def visit_Module(self, node):
