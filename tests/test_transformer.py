@@ -792,3 +792,15 @@ def test_transformer__RestrictingNodeTransformer__visit_Import(compile):
     code, errors = compile('from a import _m as n')[:2]
     assert code == None
     assert errors[0] == (errmsg % '_m')
+
+
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__visit_ClassDef(compile):
+    code, errors = compile('class Good: pass')[:2]
+    assert code is not None
+    assert errors == ()
+
+    code, errors = compile('class _bad: pass')[:2]
+    assert code is None
+    assert errors[0] == 'Line 1: "_bad" is an invalid variable name ' \
+                        'because it starts with "_"'
