@@ -268,6 +268,11 @@ def guarded_delattr(object, name):
 safe_builtins['delattr'] = guarded_delattr
 
 
+def guarded_iter_unpack_sequence(it, spec, _getiter_):
+    for ob in _getiter_(it):
+        yield guarded_unpack_sequence(ob, spec, _getiter_)
+
+
 def guarded_unpack_sequence(it, spec, _getiter_):
     ret = list(_getiter_(it))
 

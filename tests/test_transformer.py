@@ -1,4 +1,5 @@
 from RestrictedPython.Guards import guarded_unpack_sequence
+from RestrictedPython.Guards import guarded_iter_unpack_sequence
 
 import pytest
 import RestrictedPython
@@ -277,6 +278,80 @@ def test_transformer__RestrictingNodeTransformer__guard_iter(compile, mocker):
     assert list(ret) == [2, 4, 6]
     _getiter_.assert_called_once_with(it)
     _getiter_.reset_mock()
+
+
+ITERATORS_WITH_UNPACK_SEQUENCE = """
+def for_loop(it):
+    c = 0
+    for (a, b) in it:
+        c = c + a + b
+    return c
+
+def dict_comp(it):
+    return {a: a + b for (a, b) in it}
+
+def list_comp(it):
+    return [a + b for (a, b) in it]
+
+def set_comp(it):
+    return {a + b for (a, b) in it}
+
+def generator(it):
+    return (a + b for (a, b) in it)
+"""
+
+
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__guard_iter2(compile, mocker):
+    """It is an error if the code call the `eval` function."""
+    code, errors = compile(ITERATORS_WITH_UNPACK_SEQUENCE)[:2]
+
+    it = ((1, 2), (3, 4), (5, 6))
+
+    call_ref = [
+        mocker.call(it),
+        mocker.call(it[0]),
+        mocker.call(it[1]),
+        mocker.call(it[2])
+    ]
+
+    _getiter_ = mocker.stub()
+    _getiter_.side_effect = lambda x: x
+
+    glb = {
+        '_getiter_': _getiter_,
+        '_iter_unpack_sequence_': guarded_iter_unpack_sequence
+    }
+
+    six.exec_(code, glb)
+
+    ret = glb['for_loop'](it)
+    assert ret == 21
+    _getiter_.assert_has_calls(call_ref)
+    _getiter_.reset_mock()
+
+    ret = glb['dict_comp'](it)
+    assert ret == {1: 3, 3: 7, 5: 11}
+    _getiter_.assert_has_calls(call_ref)
+    _getiter_.reset_mock()
+
+    ret = glb['list_comp'](it)
+    assert ret == [3, 7, 11]
+    _getiter_.assert_has_calls(call_ref)
+    _getiter_.reset_mock()
+
+
+    ret = glb['set_comp'](it)
+    assert ret == {3, 7, 11}
+    _getiter_.assert_has_calls(call_ref)
+    _getiter_.reset_mock()
+
+    # The old code did not run with unpack sequence inside generators
+    if compile == RestrictedPython.compile.compile_restricted_exec:
+        ret = list(glb['generator'](it))
+        assert ret == [3, 7, 11]
+        _getiter_.assert_has_calls(call_ref)
+        _getiter_.reset_mock()
 
 
 GET_SUBSCRIPTS = """
