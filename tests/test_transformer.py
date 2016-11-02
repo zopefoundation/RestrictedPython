@@ -646,6 +646,35 @@ def test_transformer__RestrictingNodeTransformer__visit_Assign(compile, mocker):
     _getiter_.reset_mock()
 
 
+@pytest.mark.skipif(
+    sys.version_info.major == 2,
+    reason="starred assignments are python3 only")
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__visit_Assign2(compile, mocker):
+    src = "a, *d, (c, *e), x  = (1, 2, 3, (4, 3, 4), 5)"
+    code, errors = compile(src)[:2]
+
+    _getiter_ = mocker.stub()
+    _getiter_.side_effect = lambda it: it
+
+    glb = {
+        '_getiter_': _getiter_,
+        '_unpack_sequence_': guarded_unpack_sequence
+    }
+
+    six.exec_(code, glb)
+
+    assert glb['a'] == 1
+    assert glb['d'] == [2, 3]
+    assert glb['c'] == 4
+    assert glb['e'] == [3, 4]
+    assert glb['x'] == 5
+
+    _getiter_.assert_has_calls([
+        mocker.call((1, 2, 3, (4, 3, 4), 5)),
+        mocker.call((4, 3, 4))])
+
+
 TRY_EXCEPT_FINALLY = """
 def try_except(m):
     try:
