@@ -256,6 +256,43 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         node.iter = new_iter
         return node
 
+    def is_starred(self, ob):
+        if version.major == 3:
+            return isinstance(ob, ast.Starred)
+        else:
+            return False
+
+    def gen_unpack_spec(self, tpl):
+        spec = ast.Dict(keys=[], values=[])
+
+        spec.keys.append(ast.Str('childs'))
+        spec.values.append(ast.Tuple([], ast.Load()))
+
+        min_len = len([ob for ob in tpl.elts if not self.is_starred(ob)])
+        offset = 0
+
+        for idx, val in enumerate(tpl.elts):
+            if self.is_starred(val):
+                offset = min_len + 1
+
+            elif isinstance(val, ast.Tuple):
+                el = ast.Tuple([], ast.Load())
+                el.elts.append(ast.Num(idx - offset))
+                el.elts.append(self.gen_unpack_spec(val))
+                spec.values[0].elts.append(el)
+
+        spec.keys.append(ast.Str('min_len'))
+        spec.values.append(ast.Num(min_len))
+
+        return spec
+
+    def protect_unpack_sequence(self, target, value):
+        spec = self.gen_unpack_spec(target)
+        return ast.Call(
+            func=ast.Name('_unpack_sequence_', ast.Load()),
+            args=[value, spec, ast.Name('_getiter_', ast.Load())],
+            keywords=[])
+
     def gen_none_node(self):
         if version >= (3, 4):
             return ast.NameConstant(value=None)
@@ -269,18 +306,6 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
 
     def gen_del_stmt(self, name_to_del):
         return ast.Delete(targets=[ast.Name(name_to_del, ast.Del())])
-
-    def gen_try_finally(self, body, finalbody):
-        if version.major == 2:
-            return ast.TryFinally(body=body, finalbody=finalbody)
-
-        else:
-            return ast.Try(
-                body=body,
-                handlers=[],
-                orelse=[],
-                finalbody=finalbody)
-
 
     def transform_slice(self, slice_):
         """Transforms slices into function parameters.
@@ -342,178 +367,6 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
 
         elif name == "printed":
             self.error(node, '"printed" is a reserved name.')
-
-    # Boha yeah, there are two different ways to unpack tuples.
-    # Way 1: 'transform_tuple_assign'.
-    #  This transforms tuple unpacking via multiple statements.
-    #  Pro: Can be used in python2 and python3
-    #  Con: statements can *NOT* be used in expressions.
-    #       Unfortunately lambda parameters in python2 can have tuple parameters
-    #       too, which must be unpacked as well. However lambda bodies allow
-    #       only expressions.
-    #       => This way cannot be used to unpack tuple parameters in lambdas.
-    # Way 2: 'transform_tuple_unpack'
-    #  This transforms tuple unpacking by using nested lambdas.
-    #  Pro: Implemented by using expressions only.
-    #       => can be used to unpack tuple parameters in lambdas.
-    #  Con: Not usable in python3
-    # So the second way is only needed for unpacking of tuple parameters on
-    # lambda functions. Luckily tuple parameters are gone in python3.
-    # So way 2 is needed in python2 only.
-
-    def transform_tuple_assign(self, target, value):
-        """Protects tuple unpacking with _getiter_ by using multiple statements.
-
-        Works in python2 and python3, but does not help if only expressions are
-        allowed.
-
-        (a, b) = value
-        becomes:
-        (a, b) = _getiter_(value)
-
-        (a, (b, c)) = value
-        becomes:
-
-        (a, t1) = _getiter_(value)
-        try:
-            (b, c) = _getiter_(t1)
-        finally:
-            del t1
-        """
-
-        # Finds all the child tuples and give them temporary names
-        child_tuples = []
-        new_target = []
-        for el in target.elts:
-            if isinstance(el, ast.Tuple):
-                tmp_name = self.gen_tmp_name()
-                new_target.append(ast.Name(tmp_name, ast.Store()))
-                child_tuples.append((tmp_name, el))
-            else:
-                new_target.append(el)
-
-        unpacks = []
-
-        # Protect target via '_getiter_'
-        wrap = ast.Assign(
-            targets=[ast.Tuple(new_target, ast.Store())],
-            value=ast.Call(
-                func=ast.Name('_getiter_', ast.Load()),
-                args=[value],
-                keywords=[]
-            )
-        )
-
-        unpacks.append(wrap)
-
-        # unpack the child tuples and cleanup the temporary names.
-        for tmp_name, child in child_tuples:
-            src = ast.Name(tmp_name, ast.Load())
-            unpacks.append(
-                self.gen_try_finally(
-                    self.transform_tuple_assign(child, src),
-                    [self.gen_del_stmt(tmp_name)])
-            )
-
-        return unpacks
-
-    def transform_tuple_unpack(self, root, src, to_wrap=None):
-        """Protects tuple unpacking with _getiter_ by using expressions only.
-
-        Works only in python2.
-
-        root: is the original tuple to unpack
-        src: ast node where the tuple to unpack should be loaded
-        to_wrap: set of (child) tuples of root which sould be unpacked
-
-        It becomes complicated when you think about nested unpacking.
-        For example '(a, (b, (d, e)), (x,z))'
-
-        For each of this tuple (from the outside to the inside) _getiter_ must
-        be called. The following illustrates what this function constructs to
-        solve this:
-
-        l0 = _getiter_(x)
-        l1 = lambda (a, t0, t1): (a, _getiter_(t0), _getiter_(t1))
-        l2 = lambda (a, (b, t2), (x, z)): (a, (b, _getiter(t2)), (x, z))
-
-        Return value: l2(l1(l0(<src>)))
-        """
-
-        if to_wrap is None:
-            to_wrap = {root}
-        elif not to_wrap:
-            return
-
-        # Generate a wrapper for the current level of tuples to wrap/unpack.
-        wrapper_param, wrapper_body = self.gen_tuple_wrapper(root, to_wrap)
-
-        # In the end wrapper is a callable with one argument.
-        # If the body is not a callable its wrapped with a lambda
-        if isinstance(wrapper_body, ast.Call):
-            wrapper = ast.Call(func=wrapper_body.func, args=[src], keywords=[])
-        else:
-            wrapper = self.gen_lambda([wrapper_param], wrapper_body)
-            wrapper = ast.Call(func=wrapper, args=[src], keywords=[])
-
-        # Check if the elements of the current tuple are tuples again (nested).
-        child_tuples = self.find_tuple_childs(root, to_wrap)
-        if not child_tuples:
-            return wrapper
-
-        return self.transform_tuple_unpack(root, wrapper, child_tuples)
-
-    def gen_tuple_wrapper(self, parent, to_wrap):
-        """Constructs the parameter and body to unpack the tuples in 'to_wrap'
-
-        Helper method of 'transform_tuple_unpack'.
-
-        For example the 'root' tuple is
-        (a, (b, (d, e)), (x,z))'
-        and the 'to_wrap' is (d, e) the return value is
-        param = (a, (b, t2), (x, z))
-        body = (a, (b, _getiter(t2)), (x, z))
-        """
-        if parent in to_wrap:
-            name = self.gen_tmp_name()
-            param = ast.Name(name, ast.Param())
-            body = ast.Call(
-                func=ast.Name('_getiter_', ast.Load()),
-                args=[ast.Name(name, ast.Load())],
-                keywords=[])
-
-        elif isinstance(parent, ast.Name):
-            param = ast.Name(parent.id, ast.Param())
-            body = ast.Name(parent.id, ast.Load())
-
-        elif isinstance(parent, ast.Tuple):
-            param = ast.Tuple([], ast.Store())
-            body = ast.Tuple([], ast.Load())
-            for c in parent.elts:
-                c_param, c_body = self.gen_tuple_wrapper(c, to_wrap)
-                c_param.ctx = ast.Store()
-                param.elts.append(c_param)
-                body.elts.append(c_body)
-        else:
-            raise Exception("Cannot handle node %" % parent)
-
-        return param, body
-
-    def find_tuple_childs(self, parent, to_wrap):
-        """Finds child tuples of the 'to_wrap' nodes.
-
-        Helper method of 'transform_tuple_unpack'.
-        """
-        childs = set()
-
-        if parent in to_wrap:
-            childs.update(c for c in parent.elts if isinstance(c, ast.Tuple))
-
-        elif isinstance(parent, ast.Tuple):
-            for c in parent.elts:
-                childs.update(self.find_tuple_childs(c, to_wrap))
-
-        return childs
 
     def check_function_argument_names(self, node):
         # In python3 arguments are always identifiers.
@@ -1092,10 +945,12 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         # python fills the right most target first.
         for target in reversed(node.targets):
             if isinstance(target, ast.Tuple):
-                wrappers = self.transform_tuple_assign(target, node.value)
-                new_nodes.extend(wrappers)
+                wrapper = ast.Assign(
+                    targets=[target],
+                    value=self.protect_unpack_sequence(target, node.value))
+                new_nodes.append(wrapper)
             else:
-                new_node = ast.Assign(targets=[target], value=target.value)
+                new_node = ast.Assign(targets=[target], value=node.value)
                 new_nodes.append(new_node)
 
         for new_node in new_nodes:
@@ -1291,7 +1146,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         tmp_name = self.gen_tmp_name()
 
         # Generates an expressions which protects the unpack.
-        converter = self.transform_tuple_unpack(
+        converter = self.protect_unpack_sequence(
             node.name,
             ast.Name(tmp_name, ast.Load()))
 
@@ -1350,7 +1205,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
                 # converter looks like wrapper(tmp_name).
                 # Wrapper takes care to protect
                 # sequence unpacking with _getiter_
-                converter = self.transform_tuple_unpack(
+                converter = self.protect_unpack_sequence(
                         arg,
                         ast.Name(tmp_name, ast.Load()))
 
@@ -1398,7 +1253,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         for arg in node.args.args:
             if isinstance(arg, ast.Tuple):
                 tmp_name = self.gen_tmp_name()
-                converter = self.transform_tuple_unpack(
+                converter = self.protect_unpack_sequence(
                     arg,
                     ast.Name(tmp_name, ast.Load()))
 

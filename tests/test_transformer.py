@@ -1,3 +1,5 @@
+from RestrictedPython.Guards import guarded_unpack_sequence
+
 import pytest
 import RestrictedPython
 import six
@@ -514,7 +516,12 @@ def test_transformer__RestrictingNodeTransformer__visit_FunctionDef_2(compile, m
 
     _getiter_ = mocker.stub()
     _getiter_.side_effect = lambda it: it
-    glb = {'_getiter_': _getiter_}
+
+    glb = {
+        '_getiter_': _getiter_,
+        '_unpack_sequence_': guarded_unpack_sequence
+    }
+
     six.exec_(code, glb)
 
     val = (1, 2)
@@ -597,6 +604,7 @@ def test_transformer__RestrictingNodeTransformer__visit_Lambda_2(compile, mocker
     _getiter_.side_effect = lambda it: it
     glb = {
         '_getiter_': _getiter_,
+        '_unpack_sequence_': guarded_unpack_sequence,
         '_getattr_': lambda ob, val: getattr(ob, val)
     }
 
@@ -618,7 +626,12 @@ def test_transformer__RestrictingNodeTransformer__visit_Assign(compile, mocker):
 
     _getiter_ = mocker.stub()
     _getiter_.side_effect = lambda it: it
-    glb = {'g': (1, (2, 3)), '_getiter_': _getiter_}
+
+    glb = {
+        '_getiter_': _getiter_,
+        '_unpack_sequence_': guarded_unpack_sequence,
+        'g': (1, (2, 3)),
+    }
 
     six.exec_(code, glb)
     assert glb['a'] == 1
@@ -744,7 +757,11 @@ def test_transformer__RestrictingNodeTransformer__visit_ExceptHandler(compile, m
     _getiter_ = mocker.stub()
     _getiter_.side_effect = lambda it: it
 
-    glb = {'_getiter_': _getiter_}
+    glb = {
+        '_getiter_': _getiter_,
+        '_unpack_sequence_': guarded_unpack_sequence
+    }
+
     six.exec_(code, glb)
 
     err = Exception(1, (2, 3))
