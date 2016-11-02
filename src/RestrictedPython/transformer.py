@@ -247,10 +247,17 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         """
         node = self.generic_visit(node)
 
-        new_iter = ast.Call(
-            func=ast.Name("_getiter_", ast.Load()),
-            args=[node.iter],
-            keywords=[])
+        if isinstance(node.target, ast.Tuple):
+            spec = self.gen_unpack_spec(node.target)
+            new_iter = ast.Call(
+                func=ast.Name('_iter_unpack_sequence_', ast.Load()),
+                args=[node.iter, spec, ast.Name('_getiter_', ast.Load())],
+                keywords=[])
+        else:
+            new_iter = ast.Call(
+                func=ast.Name("_getiter_", ast.Load()),
+                args=[node.iter],
+                keywords=[])
 
         copy_locations(new_iter, node.iter)
         node.iter = new_iter
