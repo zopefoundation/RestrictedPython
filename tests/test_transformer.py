@@ -388,7 +388,7 @@ def test_transformer__RestrictingNodeTransformer__visit_Subscript_2(compile, moc
 
 
 @pytest.mark.parametrize(*compile)
-def test_transformer__RestrictingNodeTransformer__visit_AugAssing(compile, mocker):
+def test_transformer__RestrictingNodeTransformer__visit_AugAssign(compile, mocker):
     _inplacevar_ = mocker.stub()
     _inplacevar_.side_effect = lambda op, val, expr: val + expr
 
@@ -621,7 +621,7 @@ def test_transformer__RestrictingNodeTransformer__visit_Lambda_2(compile, mocker
 
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__visit_Assign(compile, mocker):
-    src = "(a, (x, z)) = (c, d) = g"
+    src = "orig = (a, (x, z)) = (c, d) = g"
     code, errors = compile(src)[:2]
 
     _getiter_ = mocker.stub()
@@ -639,6 +639,7 @@ def test_transformer__RestrictingNodeTransformer__visit_Assign(compile, mocker):
     assert glb['z'] == 3
     assert glb['c'] == 1
     assert glb['d'] == (2, 3)
+    assert glb['orig'] == (1, (2, 3))
     assert _getiter_.call_count == 3
     _getiter_.assert_any_call((1, (2, 3)))
     _getiter_.assert_any_call((2, 3))
