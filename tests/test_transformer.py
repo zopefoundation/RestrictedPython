@@ -637,3 +637,148 @@ def test_transformer__RestrictingNodeTransformer__visit_Lambda_2(compile, mocker
     assert 2 == _getiter_.call_count
     _getiter_.assert_any_call((1, (2, 3)))
     _getiter_.assert_any_call((2, 3))
+
+
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__visit_Assign(compile, mocker):
+    src = "(a, (x, z)) = (c, d) = g"
+    code, errors = compile.compile_restricted_exec(src)[:2]
+
+    _getiter_ = mocker.stub()
+    _getiter_.side_effect = lambda it: it
+    glb = {'g': (1, (2, 3)), '_getiter_': _getiter_}
+
+    six.exec_(code, glb)
+    assert glb['a'] == 1
+    assert glb['x'] == 2
+    assert glb['z'] == 3
+    assert glb['c'] == 1
+    assert glb['d'] == (2, 3)
+    assert _getiter_.call_count == 3
+    _getiter_.assert_any_call((1, (2, 3)))
+    _getiter_.assert_any_call((2, 3))
+    _getiter_.reset_mock()
+
+
+TRY_EXCEPT_FINALLY = """
+def try_except(m):
+    try:
+        m('try')
+        raise IndentationError('f1')
+    except IndentationError as error:
+        m('except')
+
+def try_except_else(m):
+    try:
+        m('try')
+    except:
+        m('except')
+    else:
+        m('else')
+
+def try_finally(m):
+    try:
+        m('try')
+        1 / 0
+    finally:
+        m('finally')
+        return
+
+def try_except_finally(m):
+    try:
+        m('try')
+        1 / 0
+    except:
+        m('except')
+    finally:
+        m('finally')
+
+def try_except_else_finally(m):
+    try:
+        m('try')
+    except:
+        m('except')
+    else:
+        m('else')
+    finally:
+        m('finally')
+"""
+
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__error_handling(compile, mocker):
+    code, errors = compile.compile_restricted_exec(TRY_EXCEPT_FINALLY)[:2]
+    assert code != None
+
+    glb = {}
+    six.exec_(code, glb)
+
+    trace = mocker.stub()
+
+    glb['try_except'](trace)
+    trace.assert_has_calls([
+        mocker.call('try'),
+        mocker.call('except')
+    ])
+    trace.reset_mock()
+
+    glb['try_except_else'](trace)
+    trace.assert_has_calls([
+        mocker.call('try'),
+        mocker.call('else')
+    ])
+    trace.reset_mock()
+
+    glb['try_finally'](trace)
+    trace.assert_has_calls([
+        mocker.call('try'),
+        mocker.call('finally')
+    ])
+    trace.reset_mock()
+
+    glb['try_except_finally'](trace)
+    trace.assert_has_calls([
+        mocker.call('try'),
+        mocker.call('except'),
+        mocker.call('finally')
+    ])
+    trace.reset_mock()
+
+    glb['try_except_else_finally'](trace)
+    trace.assert_has_calls([
+        mocker.call('try'),
+        mocker.call('else'),
+        mocker.call('finally')
+    ])
+    trace.reset_mock()
+
+
+EXCEPT_WITH_TUPLE_UNPACK = """
+def tuple_unpack(err):
+    try:
+        raise err
+    except Exception as (a, (b, c)):
+        return a + b + c
+"""
+
+
+@pytest.mark.skipif(
+    sys.version_info.major == 3,
+    reason="tuple unpacking on exceptions is gone in python3")
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__visit_ExceptHandler(compile, mocker):
+    code, errors = compile.compile_restricted_exec(EXCEPT_WITH_TUPLE_UNPACK)[:2]
+    assert code != None
+
+    _getiter_ = mocker.stub()
+    _getiter_.side_effect = lambda it: it
+
+    glb = {'_getiter_': _getiter_}
+    six.exec_(code, glb)
+
+    err = Exception(1, (2, 3))
+    ret = glb['tuple_unpack'](err)
+    assert ret == 6
+
+    _getiter_.assert_has_calls([
+        mocker.call(err),
+        mocker.call((2, 3))])
