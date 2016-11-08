@@ -340,7 +340,6 @@ def test_transformer__RestrictingNodeTransformer__guard_iter2(compile, mocker):
     _getiter_.assert_has_calls(call_ref)
     _getiter_.reset_mock()
 
-
     ret = glb['set_comp'](it)
     assert ret == {3, 7, 11}
     _getiter_.assert_has_calls(call_ref)
@@ -573,7 +572,7 @@ def test_transformer__RestrictingNodeTransformer__visit_FunctionDef_1(compile):
         assert errors[0] == err_msg
 
 
-NESTED_SEQ_UNPACK =  """
+NESTED_SEQ_UNPACK = """
 def nested((a, b, (c, (d, e)))):
     return a, b, c, d, e
 
@@ -794,10 +793,11 @@ def try_except_else_finally(m):
         m('finally')
 """
 
+
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__error_handling(compile, mocker):
     code, errors = compile(TRY_EXCEPT_FINALLY)[:2]
-    assert code != None
+    assert code is not None
 
     glb = {}
     six.exec_(code, glb)
@@ -857,7 +857,7 @@ def tuple_unpack(err):
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__visit_ExceptHandler(compile, mocker):
     code, errors = compile(EXCEPT_WITH_TUPLE_UNPACK)[:2]
-    assert code != None
+    assert code is not None
 
     _getiter_ = mocker.stub()
     _getiter_.side_effect = lambda it: it
@@ -884,35 +884,35 @@ def test_transformer__RestrictingNodeTransformer__visit_Import(compile):
              'because it starts with "_"'
 
     code, errors = compile('import a')[:2]
-    assert code != None
+    assert code is not None
     assert errors == ()
 
     code, errors = compile('import _a')[:2]
-    assert code == None
+    assert code is None
     assert errors[0] == (errmsg % '_a')
 
     code, errors = compile('import _a as m')[:2]
-    assert code == None
+    assert code is None
     assert errors[0] == (errmsg % '_a')
 
     code, errors = compile('import a as _m')[:2]
-    assert code == None
+    assert code is None
     assert errors[0] == (errmsg % '_m')
 
     code, errors = compile('from a import m')[:2]
-    assert code != None
+    assert code is not None
     assert errors == ()
 
     code, errors = compile('from _a import m')[:2]
-    assert code != None
+    assert code is not None
     assert errors == ()
 
     code, errors = compile('from a import m as _n')[:2]
-    assert code == None
+    assert code is None
     assert errors[0] == (errmsg % '_n')
 
     code, errors = compile('from a import _m as n')[:2]
-    assert code == None
+    assert code is None
     assert errors[0] == (errmsg % '_m')
 
 

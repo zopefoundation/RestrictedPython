@@ -197,8 +197,6 @@ def copy_locations(new_node, old_node):
     ast.fix_missing_locations(new_node)
 
 
-
-
 class RestrictingNodeTransformer(ast.NodeTransformer):
 
     def __init__(self, errors=[], warnings=[], used_names=[]):
@@ -214,7 +212,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         # 'check_name' ensures that no variable is prefixed with '_'.
         # => Its safe to use '_tmp..' as a temporary variable.
         name = '_tmp%i' % self._tmp_idx
-        self._tmp_idx +=1
+        self._tmp_idx += 1
         return name
 
     def error(self, node, info):
@@ -1328,7 +1326,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         return self.generic_visit(node)
 
     def visit_ClassDef(self, node):
-        """Checks the name of classes."""
+        """Check the name of a class definition."""
 
         self.check_name(node, node.name)
         return self.generic_visit(node)
