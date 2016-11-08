@@ -1,5 +1,5 @@
-from RestrictedPython.Guards import guarded_unpack_sequence
 from RestrictedPython.Guards import guarded_iter_unpack_sequence
+from RestrictedPython.Guards import guarded_unpack_sequence
 
 import pytest
 import RestrictedPython
