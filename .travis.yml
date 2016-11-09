@@ -7,8 +7,11 @@ python:
     - 3.6-dev
     - pypy
 install:
-    - pip install tox
+    - pip install tox coveralls coverage
 script:
     - tox -e py
+after_success:
+    - coverage combine
+    - coveralls
 notifications:
     email: false
