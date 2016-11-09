@@ -269,16 +269,38 @@ safe_builtins['delattr'] = guarded_delattr
 
 
 def guarded_iter_unpack_sequence(it, spec, _getiter_):
+    """Protect sequence unpacking of targets in a 'for loop'.
+
+    The target of a for loop could be a sequence.
+    For example "for a, b in it"
+    => Each object from the iterator needs guarded sequence unpacking.
+    """
+
+    # The iteration itself needs to be protected as well.
     for ob in _getiter_(it):
         yield guarded_unpack_sequence(ob, spec, _getiter_)
 
 
 def guarded_unpack_sequence(it, spec, _getiter_):
+    """Protect nested sequence unpacking.
+
+    Protect the unpacking of 'it' by wrapping it with '_getiter_'.
+    Furthermore for each child element, defined by spec,
+    guarded_unpack_sequence is called again.
+
+    Have a look at transformer.py 'gen_unpack_spec' for a more detailed
+    explanation.
+    """
+    # Do the guarded unpacking of the sequence.
     ret = list(_getiter_(it))
 
+    # If the sequence is shorter then expected the interpreter will raise
+    # 'ValueError: need more than X value to unpack' anyway
+    # => No childs are unpacked => nothing to protect.
     if len(ret) < spec['min_len']:
         return ret
 
+    # For all child elements do the guarded unpacking again.
     for (idx, child_spec) in spec['childs']:
         ret[idx] = guarded_unpack_sequence(ret[idx], child_spec, _getiter_)
 
