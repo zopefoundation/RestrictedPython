@@ -408,6 +408,21 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
             for arg in node.args.kwonlyargs:
                 self.check_name(node, arg.arg)
 
+    def check_import_names(self, node):
+        """Check the names being imported.
+
+        This is a protection against rebinding dunder names like
+        _getitem_, _write_ via imports.
+
+        => 'from _a import x' is ok, because '_a' is not added to the scope.
+        """
+        for alias in node.names:
+            self.check_name(node, alias.name)
+            if alias.asname:
+                self.check_name(node, alias.asname)
+
+        return self.generic_visit(node)
+
     # Special Functions for an ast.NodeTransformer
 
     def generic_visit(self, node):
@@ -1048,21 +1063,11 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
 
     def visit_Import(self, node):
         """ """
-        for alias in node.names:
-            self.check_name(node, alias.name)
-            if alias.asname:
-                self.check_name(node, alias.asname)
-
-        return self.generic_visit(node)
+        return self.check_import_names(node)
 
     def visit_ImportFrom(self, node):
         """ """
-        for alias in node.names:
-            self.check_name(node, alias.name)
-            if alias.asname:
-                self.check_name(node, alias.asname)
-
-        return self.generic_visit(node)
+        return self.check_import_names(node)
 
     def visit_alias(self, node):
         """
