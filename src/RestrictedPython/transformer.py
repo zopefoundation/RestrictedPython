@@ -268,15 +268,66 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
             return False
 
     def gen_unpack_spec(self, tpl):
+        """Generate a specification for 'guarded_unpack_sequence'.
+
+        This spec is used to protect sequence unpacking.
+        The primary goal of this spec is to tell which elements in a sequence
+        are sequences again. These 'child' sequences have to be protected again.
+
+        For example there is a sequence like this:
+            (a, (b, c), (d, (e, f))) = g
+
+        On a higher level the spec says:
+            - There is a sequence of len 3
+            - The element at index 1 is a sequence again with len 2
+            - The element at index 2 is a sequence again with len 2
+              - The element at index 1 in this subsequence is a sequence again
+                with len 2
+
+        With this spec 'guarded_unpack_sequence' does something like this for
+        protection (len checks are omitted):
+
+            t = list(_getiter_(g))
+            t[1] = list(_getiter_(t[1]))
+            t[2] = list(_getiter_(t[2]))
+            t[2][1] = list(_getiter_(t[2][1]))
+            return t
+
+        The 'real' spec for the case above is then:
+            spec = {
+                'min_len': 3,
+                'childs': (
+                    (1, {'min_len': 2, 'childs': ()}),
+                    (2, {
+                            'min_len': 2,
+                            'childs': (
+                                (1, {'min_len': 2, 'childs': ()})
+                            )
+                        }
+                    )
+                )
+            }
+
+        So finally the assignment above is converted into:
+            (a, (b, c), (d, (e, f))) = guarded_unpack_sequence(g, spec)
+        """
         spec = ast.Dict(keys=[], values=[])
 
         spec.keys.append(ast.Str('childs'))
         spec.values.append(ast.Tuple([], ast.Load()))
 
+        # starred elements in a sequence do not contribute into the min_len.
+        # For example a, b, *c = g
+        # g must have at least 2 elements, not 3. 'c' is empyt if g has only 2.
         min_len = len([ob for ob in tpl.elts if not self.is_starred(ob)])
         offset = 0
 
         for idx, val in enumerate(tpl.elts):
+            # After a starred element specify the child index from the back.
+            # Since it is unknown how many elements from the sequence are
+            # consumed by the starred element.
+            # For example a, *b, (c, d) = g
+            # Then (c, d) has the index '-1'
             if self.is_starred(val):
                 offset = min_len + 1
 

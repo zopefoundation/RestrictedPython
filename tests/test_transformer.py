@@ -922,6 +922,7 @@ def test_transformer__RestrictingNodeTransformer__visit_ClassDef(compile):
     assert code is not None
     assert errors == ()
 
+    # Do not allow class names which start with an underscore.
     code, errors = compile('class _bad: pass')[:2]
     assert code is None
     assert errors[0] == 'Line 1: "_bad" is an invalid variable name ' \
