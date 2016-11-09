@@ -195,6 +195,22 @@ def no_exec():
 """
 
 
+DISALLOW_TRACEBACK_ACCESS = """
+try:
+    raise Exception()
+except Exception as e:
+    tb = e.__traceback__
+"""
+
+
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__visit_Attribute__6(compile):
+    code, errors = compile(DISALLOW_TRACEBACK_ACCESS)[:2]
+    assert code is None
+    assert errors[0] == 'Line 5: "__traceback__" is an invalid attribute ' \
+                        'name because it starts with "_".'
+
+
 @pytest.mark.skipif(sys.version_info < (3, 0),
                     reason="exec is a statement in Python 2")
 @pytest.mark.parametrize(*compile)
