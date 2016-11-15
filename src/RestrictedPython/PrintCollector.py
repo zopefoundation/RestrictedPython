@@ -12,17 +12,13 @@
 ##############################################################################
 from __future__ import print_function
 
-import sys
-
-
-version = sys.version_info
-
 
 class PrintCollector(object):
     """Collect written text, and return it when called."""
 
-    def __init__(self):
+    def __init__(self, _getattr_=None):
         self.txt = []
+        self._getattr_ = _getattr_
 
     def write(self, text):
         self.txt.append(text)
@@ -30,19 +26,14 @@ class PrintCollector(object):
     def __call__(self):
         return ''.join(self.txt)
 
+    def _call_print(self, *objects, **kwargs):
+        if not 'file' in kwargs:
+            kwargs['file'] = self
 
-printed = PrintCollector()
+        elif kwargs['file'] is None:
+            kwargs['file'] = self
 
+        else:
+            self._getattr_(kwargs['file'], 'write')
 
-def safe_print(sep=' ', end='\n', file=printed, flush=False, *objects):
-    """
-
-    """
-    # TODO: Reorder method args so that *objects is first
-    #       This could first be done if we drop Python 2 support
-    if file is None or file is sys.stdout or file is sys.stderr:
-        file = printed
-    if version >= (3, 3):
-        print(self, objects, sep=sep, end=end, file=file, flush=flush)
-    else:
-        print(self, objects, sep=sep, end=end, file=file)
+        print(*objects, **kwargs)

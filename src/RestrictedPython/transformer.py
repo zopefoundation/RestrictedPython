@@ -447,6 +447,10 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         elif name == "printed":
             self.error(node, '"printed" is a reserved name.')
 
+        elif name == 'print':
+            # Assignments to 'print' would lead to funny results.
+            self.error(node, '"print" is a reserved name.')
+
     def check_function_argument_names(self, node):
         # In python3 arguments are always identifiers.
         # In python2 the 'Python.asdl' specifies expressions, but
@@ -497,27 +501,27 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
 
         return self.generic_visit(node)
 
-    def inject_print_collector(self, node):
+    def inject_print_collector(self, node, position=0):
         print_used = self.print_info.print_used
         printed_used = self.print_info.printed_used
 
         if print_used or printed_used:
-            # Add '_print = _print_()' add the top of a function/module.
+            # Add '_print = _print_(_getattr_)' add the top of a function/module.
             _print = ast.Assign(
                 targets=[ast.Name('_print', ast.Store())],
                 value=ast.Call(
                     func=ast.Name("_print_", ast.Load()),
-                    args=[],
+                    args=[ast.Name("_getattr_", ast.Load())],
                     keywords=[]))
 
             if isinstance(node, ast.Module):
-                _print.lineno = 0
-                _print.col_offset = 0
+                _print.lineno = position
+                _print.col_offset = position
                 ast.fix_missing_locations(_print)
             else:
                 copy_locations(_print, node)
 
-            node.body.insert(0, _print)
+            node.body.insert(position, _print)
 
             if not printed_used:
                 self.warn(node, "Prints, but never reads 'printed' variable.")
@@ -627,15 +631,26 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
 
         node = self.generic_visit(node)
 
-        if node.id == 'printed' and isinstance(node.ctx, ast.Load):
-            self.print_info.printed_used = True
-            new_node = ast.Call(
-                func=ast.Name("_print", ast.Load()),
-                args=[],
-                keywords=[])
+        if isinstance(node.ctx, ast.Load):
+            if node.id == 'printed':
+                self.print_info.printed_used = True
+                new_node = ast.Call(
+                    func=ast.Name("_print", ast.Load()),
+                    args=[],
+                    keywords=[])
 
-            copy_locations(new_node, node)
-            return new_node
+                copy_locations(new_node, node)
+                return new_node
+
+            elif node.id == 'print':
+                self.print_info.print_used = True
+                new_node = ast.Attribute(
+                    value=ast.Name('_print', ast.Load()),
+                    attr="_call_print",
+                    ctx=ast.Load())
+
+                copy_locations(new_node, node)
+                return new_node
 
         self.check_name(node, node.id)
         return node
@@ -1487,7 +1502,17 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         """Adds the print_collector (only if print is used) at the top."""
 
         node = self.generic_visit(node)
-        self.inject_print_collector(node)
+
+        # Inject the print collector after 'from __future__ import ....'
+        position = 0
+        for position, child in enumerate(node.body):
+            if not isinstance(child, ast.ImportFrom):
+                break
+
+            if not child.module == '__future__':
+                break
+
+        self.inject_print_collector(node, position)
         return node
 
     # Async und await
