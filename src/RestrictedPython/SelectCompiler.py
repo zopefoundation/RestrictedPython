@@ -13,15 +13,15 @@
 """Compiler selector.
 """
 
-# Use the compiler from the standard library.
-import compiler
 from compiler import ast
-from compiler.transformer import parse
+from compiler.consts import OP_APPLY
 from compiler.consts import OP_ASSIGN
 from compiler.consts import OP_DELETE
-from compiler.consts import OP_APPLY
-
+from compiler.transformer import parse
 from RestrictedPython.RCompile import compile_restricted
-from RestrictedPython.RCompile import compile_restricted_function
-from RestrictedPython.RCompile import compile_restricted_exec
 from RestrictedPython.RCompile import compile_restricted_eval
+from RestrictedPython.RCompile import compile_restricted_exec
+from RestrictedPython.RCompile import compile_restricted_function
+
+# Use the compiler from the standard library.
+import compiler

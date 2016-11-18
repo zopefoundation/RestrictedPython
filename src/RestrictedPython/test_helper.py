@@ -21,10 +21,10 @@ all attribute access is performed via the _getattr_() checker
 function.
 """
 
+from dis import findlinestarts
+
 import dis
 import types
-
-from dis import findlinestarts
 
 
 def verify(code):

@@ -15,18 +15,17 @@ Python standard library.
 """
 
 from compiler import ast as c_ast
-from compiler import parse as c_parse
 from compiler import misc as c_misc
+from compiler import parse as c_parse
 from compiler import syntax as c_syntax
 from compiler import pycodegen
 from compiler.pycodegen import AbstractCompileMode
 from compiler.pycodegen import Expression
+from compiler.pycodegen import findOp
+from compiler.pycodegen import FunctionCodeGenerator
 from compiler.pycodegen import Interactive
 from compiler.pycodegen import Module
 from compiler.pycodegen import ModuleCodeGenerator
-from compiler.pycodegen import FunctionCodeGenerator
-from compiler.pycodegen import findOp
-
 from RestrictedPython import MutatingWalker
 from RestrictedPython.RestrictionMutator import RestrictionMutator
 

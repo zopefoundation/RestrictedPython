@@ -19,6 +19,7 @@ from string import translate
 
 import string
 
+
 nltosp = string.maketrans('\r\n', '  ')
 
 default_guarded_getattr = getattr  # No restrictions.

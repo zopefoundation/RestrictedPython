@@ -17,6 +17,7 @@ from doctest import DocFileSuite
 
 import unittest
 
+
 __docformat__ = "reStructuredText"
 
 
