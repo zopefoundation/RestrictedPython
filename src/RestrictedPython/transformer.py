@@ -162,7 +162,8 @@ if version >= (3, 0):
         ast.Starred,
         ast.arg,
         ast.Try,
-        ast.ExceptHandler
+        ast.ExceptHandler,
+        ast.NameConstant
     ])
 
 if version >= (3, 4):
