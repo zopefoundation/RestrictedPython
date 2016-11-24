@@ -260,3 +260,21 @@ def test_print_stmt_no_new_scope(compiler):
 
     ret = glb['class_scope']()
     assert ret == 'a\n'
+
+
+CONDITIONAL_PRINT = """
+def func(cond):
+    if cond:
+        print 1
+    return printed
+"""
+
+
+@pytest.mark.parametrize(*compilers)
+def test_print_stmt_conditional_print(compiler):
+    code, errors = compiler(CONDITIONAL_PRINT)[:2]
+    glb = {'_print_': PrintCollector, '_getattr_': None}
+    six.exec_(code, glb)
+
+    assert glb['func'](True) == '1\n'
+    assert glb['func'](False) == ''

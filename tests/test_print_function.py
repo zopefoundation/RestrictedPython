@@ -340,3 +340,21 @@ def test_print_function_pass_print_function():
 
     ret = glb['main']()
     assert ret == '1\n2\n'
+
+
+CONDITIONAL_PRINT = """
+from __future__ import print_function
+def func(cond):
+    if cond:
+        print(1)
+    return printed
+"""
+
+
+def test_print_function_conditional_print():
+    code, errors = compiler(CONDITIONAL_PRINT)[:2]
+    glb = {'_print_': PrintCollector, '_getattr_': None}
+    six.exec_(code, glb)
+
+    assert glb['func'](True) == '1\n'
+    assert glb['func'](False) == ''
