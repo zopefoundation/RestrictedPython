@@ -255,6 +255,9 @@ def set_comp(it):
 
 def generator(it):
     return (a + a for a in it)
+
+def nested_generator(it1, it2):
+    return (a+b for a in it1 if a > 0 for b in it2)
 """
 
 
@@ -293,6 +296,15 @@ def test_transformer__RestrictingNodeTransformer__guard_iter(compile, mocker):
     assert isinstance(ret, types.GeneratorType)
     assert list(ret) == [2, 4, 6]
     _getiter_.assert_called_once_with(it)
+    _getiter_.reset_mock()
+
+    ret = glb['nested_generator']((0, 1, 2), (1, 2))
+    assert isinstance(ret, types.GeneratorType)
+    assert list(ret) == [2, 3, 3, 4]
+    _getiter_.assert_has_calls([
+        mocker.call((0, 1, 2)),
+        mocker.call((1, 2)),
+        mocker.call((1, 2))])
     _getiter_.reset_mock()
 
 
