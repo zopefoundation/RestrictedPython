@@ -955,3 +955,43 @@ def test_transformer__RestrictingNodeTransformer__visit_ClassDef(compile):
     assert code is None
     assert errors[0] == 'Line 1: "_bad" is an invalid variable name ' \
                         'because it starts with "_"'
+
+
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__test_ternary_if(compile, mocker):
+    code, errors = compile('x.y = y.a if y.z else y.b')[:2]
+    assert code is not None
+    assert errors == ()
+
+    _getattr_ = mocker.stub()
+    _getattr_.side_effect = lambda ob, key: ob[key]
+    _write_ = mocker.stub()
+    _write_.side_effect = lambda ob: ob
+
+    glb = {
+        '_getattr_': _getattr_,
+        '_write_': _write_,
+        'x': mocker.stub(),
+        'y': {'a': 'a', 'b': 'b'},
+    }
+
+    glb['y']['z'] = True
+    six.exec_(code, glb)
+
+    assert glb['x'].y == 'a'
+    _write_.assert_called_once_with(glb['x'])
+    _getattr_.assert_has_calls([
+        mocker.call(glb['y'], 'z'),
+        mocker.call(glb['y'], 'a')])
+
+    _write_.reset_mock()
+    _getattr_.reset_mock()
+
+    glb['y']['z'] = False
+    six.exec_(code, glb)
+
+    assert glb['x'].y == 'b'
+    _write_.assert_called_once_with(glb['x'])
+    _getattr_.assert_has_calls([
+        mocker.call(glb['y'], 'z'),
+        mocker.call(glb['y'], 'b')])
