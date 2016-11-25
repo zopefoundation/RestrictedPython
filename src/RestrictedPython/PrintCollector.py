@@ -27,12 +27,8 @@ class PrintCollector(object):
         return ''.join(self.txt)
 
     def _call_print(self, *objects, **kwargs):
-        if not 'file' in kwargs:
+        if kwargs.get('file', None) is None:
             kwargs['file'] = self
-
-        elif kwargs['file'] is None:
-            kwargs['file'] = self
-
         else:
             self._getattr_(kwargs['file'], 'write')
 
