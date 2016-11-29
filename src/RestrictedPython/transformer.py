@@ -111,7 +111,6 @@ AST_WHITELIST = [
     ast.Continue,
     #ast.ExceptHanlder,  # We do not Support ExceptHanlders
     ast.With,
-    #ast.withitem,
     # Function and class definitions,
     ast.FunctionDef,
     ast.Lambda,
@@ -163,7 +162,8 @@ if version >= (3, 0):
         ast.arg,
         ast.Try,
         ast.ExceptHandler,
-        ast.NameConstant
+        ast.NameConstant,
+        ast.withitem
     ])
 
 if version >= (3, 4):
@@ -410,10 +410,14 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         #     arg = converter
         # finally:
         #     del tmp_arg
-        cleanup = ast.TryFinally(
-            body=[ast.Assign(targets=[target], value=converter)],
-            finalbody=[self.gen_del_stmt(tmp_name)]
-        )
+        try_body = [ast.Assign(targets=[target], value=converter)]
+        finalbody = [self.gen_del_stmt(tmp_name)]
+
+        if version.major == 2:
+            cleanup = ast.TryFinally(body=try_body, finalbody=finalbody)
+        else:
+            cleanup = ast.Try(
+                body=try_body, finalbody=finalbody, handlers=[], orelse=[])
 
         if ctx == 'store':
             ctx = ast.Store()
@@ -1381,10 +1385,25 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         return node
 
     def visit_With(self, node):
-        """
+        """Protects tuple unpacking on with statements. """
 
-        """
-        return self.generic_visit(node)
+        node = self.generic_visit(node)
+
+        if version.major == 2:
+            items = [node]
+        else:
+            items = node.items
+
+        for item in reversed(items):
+            if isinstance(item.optional_vars, ast.Tuple):
+                tmp_target, unpack = self.gen_unpack_wrapper(
+                    node,
+                    item.optional_vars)
+
+                item.optional_vars = tmp_target
+                node.body.insert(0, unpack)
+
+        return node
 
     def visit_withitem(self, node):
         """

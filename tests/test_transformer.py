@@ -1,6 +1,7 @@
 from RestrictedPython.Guards import guarded_iter_unpack_sequence
 from RestrictedPython.Guards import guarded_unpack_sequence
 
+import contextlib
 import pytest
 import RestrictedPython
 import six
@@ -995,3 +996,82 @@ def test_transformer__RestrictingNodeTransformer__test_ternary_if(compile, mocke
     _getattr_.assert_has_calls([
         mocker.call(glb['y'], 'z'),
         mocker.call(glb['y'], 'b')])
+
+
+WITH_STMT_WITH_UNPACK_SEQUENCE = """
+def call(ctx):
+    with ctx() as (a, (c, b)):
+        return a, c, b
+"""
+
+
+@pytest.mark.parametrize(*compile)
+def test_transformer__with_stmt_unpack_sequence(compile, mocker):
+    """It is an error if the code call the `eval` function."""
+    code, errors = compile(WITH_STMT_WITH_UNPACK_SEQUENCE)[:2]
+
+    assert code is not None
+    assert errors == ()
+
+    @contextlib.contextmanager
+    def ctx():
+        yield (1, (2, 3))
+
+    _getiter_ = mocker.stub()
+    _getiter_.side_effect = lambda ob: ob
+
+    glb = {
+        '_getiter_': _getiter_,
+        '_unpack_sequence_': guarded_unpack_sequence
+    }
+
+    six.exec_(code, glb)
+
+    ret = glb['call'](ctx)
+
+    assert ret == (1, 2, 3)
+    _getiter_.assert_has_calls([
+        mocker.call((1, (2, 3))),
+        mocker.call((2, 3))])
+
+
+WITH_STMT_MULTI_CTX_WITH_UNPACK_SEQUENCE = """
+def call(ctx1, ctx2):
+    with ctx1() as (a, (b, c)), ctx2() as ((x, z), (s, h)):
+        return a, b, c, x, z, s, h
+"""
+
+
+@pytest.mark.parametrize(*compile)
+def test_transformer__with_stmt_multi_ctx_unpack_sequence(compile, mocker):
+    """It is an error if the code call the `eval` function."""
+    code, errors = compile(WITH_STMT_MULTI_CTX_WITH_UNPACK_SEQUENCE)[:2]
+
+    @contextlib.contextmanager
+    def ctx1():
+        yield (1, (2, 3))
+
+    @contextlib.contextmanager
+    def ctx2():
+        yield (4, 5), (6, 7)
+
+    _getiter_ = mocker.stub()
+    _getiter_.side_effect = lambda ob: ob
+
+    glb = {
+        '_getiter_': _getiter_,
+        '_unpack_sequence_': guarded_unpack_sequence
+    }
+
+    six.exec_(code, glb)
+
+    ret = glb['call'](ctx1, ctx2)
+
+    assert ret == (1, 2, 3, 4, 5, 6, 7)
+    _getiter_.assert_has_calls([
+        mocker.call((1, (2, 3))),
+        mocker.call((2, 3)),
+        mocker.call(((4, 5), (6, 7))),
+        mocker.call((4, 5)),
+        mocker.call((6, 7))
+    ])
