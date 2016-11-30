@@ -1075,3 +1075,121 @@ def test_transformer__with_stmt_multi_ctx_unpack_sequence(compile, mocker):
         mocker.call((4, 5)),
         mocker.call((6, 7))
     ])
+
+
+WITH_STMT_ATTRIBUTE_ACCESS = """
+def simple(ctx):
+    with ctx as x:
+        x.z = x.y + 1
+
+def assign_attr(ctx, x):
+    with ctx as x.y:
+        x.z = 1
+
+def load_attr(w):
+    with w.ctx as x:
+        x.z = 1
+
+"""
+
+
+@pytest.mark.parametrize(*compile)
+def test_transformer_with_stmt_attribute_access(compile, mocker):
+    code, errors = compile(WITH_STMT_ATTRIBUTE_ACCESS)[:2]
+
+    assert code is not None
+    assert errors == ()
+
+    _getattr_ = mocker.stub()
+    _getattr_.side_effect = getattr
+
+    _write_ = mocker.stub()
+    _write_.side_effect = lambda ob: ob
+
+    glb = {'_getattr_': _getattr_, '_write_': _write_}
+    six.exec_(code, glb)
+
+    # Test simple
+    ctx = mocker.MagicMock(y=1)
+    ctx.__enter__.return_value = ctx
+
+    glb['simple'](ctx)
+
+    assert ctx.z == 2
+    _write_.assert_called_once_with(ctx)
+    _getattr_.assert_called_once_with(ctx, 'y')
+
+    _write_.reset_mock()
+    _getattr_.reset_mock()
+
+    # Test assign_attr
+    x = mocker.Mock()
+    glb['assign_attr'](ctx, x)
+
+    assert x.z == 1
+    assert x.y == ctx
+    _write_.assert_has_calls([
+        mocker.call(x),
+        mocker.call(x)
+    ])
+
+    _write_.reset_mock()
+
+    # Test load_attr
+    ctx = mocker.MagicMock()
+    ctx.__enter__.return_value = ctx
+
+    w = mocker.Mock(ctx=ctx)
+
+    glb['load_attr'](w)
+
+    assert w.ctx.z == 1
+    _getattr_.assert_called_once_with(w, 'ctx')
+    _write_.assert_called_once_with(w.ctx)
+
+
+WITH_STMT_SUBSCRIPT = """
+def single_key(ctx, x):
+    with ctx as x['key']:
+        pass
+
+
+def slice_key(ctx, x):
+    with ctx as x[2:3]:
+        pass
+"""
+
+
+@pytest.mark.parametrize(*compile)
+def test_transformer_with_stmt_subscript(compile, mocker):
+    code, errors = compile(WITH_STMT_SUBSCRIPT)[:2]
+
+    assert code is not None
+    assert errors == ()
+
+    _write_ = mocker.stub()
+    _write_.side_effect = lambda ob: ob
+
+    glb = {'_write_': _write_}
+    six.exec_(code, glb)
+
+    # Test single_key
+    ctx = mocker.MagicMock()
+    ctx.__enter__.return_value = ctx
+    x = {}
+
+    glb['single_key'](ctx, x)
+
+    assert x['key'] == ctx
+    _write_.assert_called_once_with(x)
+    _write_.reset_mock()
+
+    # Test slice_key
+    ctx = mocker.MagicMock()
+    ctx.__enter__.return_value = (1, 2)
+
+    x = [0, 0, 0, 0, 0, 0]
+    glb['slice_key'](ctx, x)
+
+    assert x == [0, 0, 1, 2, 0, 0, 0]
+    _write_.assert_called_once_with(x)
