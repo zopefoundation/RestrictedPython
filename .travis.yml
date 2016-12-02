@@ -10,17 +10,9 @@ env:
     - ENVIRON=py
     - ENVIRON=isort
 matrix:
+    exclude:
+        - env: ENVIRON=isort
     include:
-        - python: "2.7"
-          env: ENVIRON=py
-        - python: "3.4"
-          env: ENVIRON=py
-        - python: "3.5"
-          env: ENVIRON=py
-        - python: "3.6-dev"
-          env: ENVIRON=py
-        - python: "pypy"
-          env: ENVIRON=py
         - python: "3.5"
           env: ENVIRON=isort
 install:
