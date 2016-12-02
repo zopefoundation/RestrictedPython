@@ -10,18 +10,14 @@ env:
     ENVIRON=py
     ENVIRON=isort
 matrix:
-    include:
+    exclude:
         - python: "2.7"
-          env: ENVIRON=py
+          env: ENVIRON=isort
         - python: "3.4"
-          env: ENVIRON=py
-        - python: "3.5"
-          env: ENVIRON=py
+          env: ENVIRON=isort
         - python: "3.6-dev"
-          env: ENVIRON=py
+          env: ENVIRON=isort
         - python: "pypy"
-          env: ENVIRON=py
-        - python: "3.5"
           env: ENVIRON=isort
 install:
     - pip install tox coveralls coverage
