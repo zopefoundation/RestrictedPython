@@ -7,8 +7,8 @@ python:
     - 3.6-dev
     - pypy
 env:
-    ENVIRON=py
-    ENVIRON=isort
+    - ENVIRON=py
+    - ENVIRON=isort
 matrix:
     exclude:
         - python: "2.7"
