@@ -16,6 +16,8 @@
 # DocumentTemplate.DT_UTil contains a few.
 
 import sys
+
+
 try:
     import builtins
 except ImportError:

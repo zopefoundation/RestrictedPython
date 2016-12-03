@@ -18,10 +18,10 @@ code in various ways before sending it to pycodegen.
 """
 
 from compiler import ast
-from compiler.transformer import parse
 from compiler.consts import OP_APPLY
 from compiler.consts import OP_ASSIGN
 from compiler.consts import OP_DELETE
+from compiler.transformer import parse
 
 
 # These utility functions allow us to generate AST subtrees without
