@@ -6,10 +6,19 @@ python:
     - 3.5
     - 3.6-dev
     - pypy
+env:
+    - ENVIRON=py
+    - ENVIRON=isort
+matrix:
+    exclude:
+        - env: ENVIRON=isort
+    include:
+        - python: "3.5"
+          env: ENVIRON=isort
 install:
     - pip install tox coveralls coverage
 script:
-    - tox -e py
+    - tox -e $ENVIRON
 after_success:
     - coverage combine
     - coveralls

@@ -13,6 +13,7 @@
 
 from compiler import ast
 
+
 ListType = type([])
 TupleType = type(())
 SequenceTypes = (ListType, TupleType)
