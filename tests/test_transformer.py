@@ -264,7 +264,6 @@ def nested_generator(it1, it2):
 
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__guard_iter(compile, mocker):
-    """It is an error if the code call the `eval` function."""
     code, errors, warnings, used_names = compile(ITERATORS)
 
     it = (1, 2, 3)
@@ -332,7 +331,6 @@ def generator(it):
 
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__guard_iter2(compile, mocker):
-    """It is an error if the code call the `eval` function."""
     code, errors = compile(ITERATORS_WITH_UNPACK_SEQUENCE)[:2]
 
     it = ((1, 2), (3, 4), (5, 6))
@@ -1007,7 +1005,6 @@ def call(ctx):
 
 @pytest.mark.parametrize(*compile)
 def test_transformer__with_stmt_unpack_sequence(compile, mocker):
-    """It is an error if the code call the `eval` function."""
     code, errors = compile(WITH_STMT_WITH_UNPACK_SEQUENCE)[:2]
 
     assert code is not None
@@ -1044,7 +1041,6 @@ def call(ctx1, ctx2):
 
 @pytest.mark.parametrize(*compile)
 def test_transformer__with_stmt_multi_ctx_unpack_sequence(compile, mocker):
-    """It is an error if the code call the `eval` function."""
     code, errors = compile(WITH_STMT_MULTI_CTX_WITH_UNPACK_SEQUENCE)[:2]
 
     @contextlib.contextmanager
