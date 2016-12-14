@@ -549,18 +549,37 @@ def test_transformer__RestrictingNodeTransformer__visit_AugAssign(compile, mocke
     assert ('Line 1: Augmented assignment of object items and '
             'slices is not allowed.',) == errors
 
+# def f(a, b, c): pass
+# f(*two_element_sequence, **dict_with_key_c)
+#
+# makes the elements of two_element_sequence
+# visible to f via its 'a' and 'b' arguments,
+# and the dict_with_key_c['c'] value visible via its 'c' argument.
+# It is a devious way to extract values without going through security checks.
 
 FUNCTIONC_CALLS = """
-def no_star_args_no_kwargs():
+star = (3, 4)
+kwargs = {'x': 5, 'y': 6}
+
+def positional_args():
     return foo(1, 2)
 
-def star_args_no_kwargs():
-    star = (10, 20, 30)
+def star_args():
+    return foo(*star)
+
+def positional_and_star_args():
     return foo(1, 2, *star)
 
-def star_args_kwargs():
-    star = (10, 20, 30)
-    kwargs = {'x': 100, 'z': 200}
+def kw_args():
+    return foo(**kwargs)
+
+def star_and_kw():
+    return foo(*star, **kwargs)
+
+def positional_and_star_and_kw_args():
+    return foo(1, *star, **kwargs)
+
+def positional_and_star_and_keyword_and_kw_args():
     return foo(1, 2, *star, r=9, **kwargs)
 """
 
@@ -579,19 +598,43 @@ def test_transformer__RestrictingNodeTransformer__visit_Call(compile, mocker):
 
     six.exec_(code, glb)
 
-    ret = (glb['no_star_args_no_kwargs']())
+    ret = glb['positional_args']()
     assert ((1, 2), {}) == ret
     assert _apply_.called is False
     _apply_.reset_mock()
 
-    ret = (glb['star_args_no_kwargs']())
-    ref = ((1, 2, 10, 20, 30), {})
+    ret = glb['star_args']()
+    ref = ((3, 4), {})
     assert ref == ret
     _apply_.assert_called_once_with(glb['foo'], *ref[0])
     _apply_.reset_mock()
 
-    ret = (glb['star_args_kwargs']())
-    ref = ((1, 2, 10, 20, 30), {'r': 9, 'z': 200, 'x': 100})
+    ret = glb['positional_and_star_args']()
+    ref = ((1, 2, 3, 4), {})
+    assert ref == ret
+    _apply_.assert_called_once_with(glb['foo'], *ref[0])
+    _apply_.reset_mock()
+
+    ret = glb['kw_args']()
+    ref = ((), {'x': 5, 'y': 6})
+    assert ref == ret
+    _apply_.assert_called_once_with(glb['foo'], **ref[1])
+    _apply_.reset_mock()
+
+    ret = glb['star_and_kw']()
+    ref = ((3, 4), {'x': 5, 'y': 6})
+    assert ref == ret
+    _apply_.assert_called_once_with(glb['foo'], *ref[0], **ref[1])
+    _apply_.reset_mock()
+
+    ret = glb['positional_and_star_and_kw_args']()
+    ref = ((1, 3, 4), {'x': 5, 'y': 6})
+    assert ref == ret
+    _apply_.assert_called_once_with(glb['foo'], *ref[0], **ref[1])
+    _apply_.reset_mock()
+
+    ret = glb['positional_and_star_and_keyword_and_kw_args']()
+    ref = ((1, 2, 3, 4), {'x': 5, 'y': 6, 'r': 9})
     assert ref == ret
     _apply_.assert_called_once_with(glb['foo'], *ref[0], **ref[1])
     _apply_.reset_mock()
