@@ -245,11 +245,22 @@ def for_loop(it):
         c = c + a
     return c
 
+
+def nested_for_loop(it1, it2):
+    c = 0
+    for a in it1:
+        for b in it2:
+            c = c + a + b
+    return c
+
 def dict_comp(it):
     return {a: a + a for a in it}
 
 def list_comp(it):
     return [a + a for a in it]
+
+def nested_list_comp(it1, it2):
+    return [a + b for a in it1 if a > 1 for b in it2]
 
 def set_comp(it):
     return {a + a for a in it}
@@ -277,6 +288,14 @@ def test_transformer__RestrictingNodeTransformer__guard_iter(compile, mocker):
     _getiter_.assert_called_once_with(it)
     _getiter_.reset_mock()
 
+    ret = glb['nested_for_loop']((1, 2), (3, 4))
+    assert 20 == ret
+    _getiter_.assert_has_calls([
+        mocker.call((1, 2)),
+        mocker.call((3, 4))
+    ])
+    _getiter_.reset_mock()
+
     ret = glb['dict_comp'](it)
     assert {1: 2, 2: 4, 3: 6} == ret
     _getiter_.assert_called_once_with(it)
@@ -285,6 +304,14 @@ def test_transformer__RestrictingNodeTransformer__guard_iter(compile, mocker):
     ret = glb['list_comp'](it)
     assert [2, 4, 6] == ret
     _getiter_.assert_called_once_with(it)
+    _getiter_.reset_mock()
+
+    ret = glb['nested_list_comp']((1, 2), (3, 4))
+    assert [5, 6] == ret
+    _getiter_.assert_has_calls([
+        mocker.call((1, 2)),
+        mocker.call((3, 4))
+    ])
     _getiter_.reset_mock()
 
     ret = glb['set_comp'](it)
@@ -384,6 +411,9 @@ GET_SUBSCRIPTS = """
 def simple_subscript(a):
     return a['b']
 
+def tuple_subscript(a):
+    return a[1, 2]
+
 def slice_subscript_no_upper_bound(a):
     return a[1:]
 
@@ -413,6 +443,12 @@ def test_transformer__RestrictingNodeTransformer__visit_Subscript_1(compile, moc
 
     ret = glb['simple_subscript'](value)
     ref = (value, 'b')
+    assert ref == ret
+    _getitem_.assert_called_once_with(*ref)
+    _getitem_.reset_mock()
+
+    ret = glb['tuple_subscript'](value)
+    ref = (value, (1, 2))
     assert ref == ret
     _getitem_.assert_called_once_with(*ref)
     _getitem_.reset_mock()
