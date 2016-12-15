@@ -40,14 +40,6 @@ def no_unpack_before():
 
 no_unpack_after = no_unpack_before    # that is, should be untouched
 
-def lambda_with_getattr_in_defaults_before():
-    f = lambda x=y.z: x
-
-
-def lambda_with_getattr_in_defaults_after():
-    f = lambda x=_getattr_(y, "z"): x
-
-
 # augmented operators
 # Note that we don't have to worry about item, attr, or slice assignment,
 # as they are disallowed. Yay!
@@ -57,3 +49,4 @@ def lambda_with_getattr_in_defaults_after():
 #
 # def inplace_id_add_after():
 #     x = _inplacevar_('+=', x, y+z)
+"""

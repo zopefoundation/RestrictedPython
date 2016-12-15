@@ -212,6 +212,43 @@ def test_transformer__RestrictingNodeTransformer__visit_Attribute__6(compile):
                         'name because it starts with "_".'
 
 
+TRANSFORM_ATTRIBUTE_ACCESS_FUNCTION_DEFAULT = """
+def func_default(x=a.a):
+    return x
+
+lambda_default = lambda x=b.b: x
+"""
+
+
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__visit_Attribute__7(compile, mocker):
+    code, errors = compile(TRANSFORM_ATTRIBUTE_ACCESS_FUNCTION_DEFAULT)[:2]
+    assert code is not None
+    assert errors == ()
+
+    _getattr_ = mocker.Mock()
+    _getattr_.side_effect = getattr
+
+    glb = {
+        '_getattr_': _getattr_,
+        'a': mocker.Mock(a=1),
+        'b': mocker.Mock(b=2)
+    }
+
+    six.exec_(code, glb)
+
+    _getattr_.assert_has_calls([
+        mocker.call(glb['a'], 'a'),
+        mocker.call(glb['b'], 'b')
+    ])
+
+    ret = glb['func_default']()
+    assert ret == 1
+
+    ret = glb['lambda_default']()
+    assert ret == 2
+
+
 @pytest.mark.skipif(sys.version_info < (3, 0),
                     reason="exec is a statement in Python 2")
 @pytest.mark.parametrize(*compile)
