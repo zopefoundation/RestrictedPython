@@ -40,13 +40,4 @@ def no_unpack_before():
 
 no_unpack_after = no_unpack_before    # that is, should be untouched
 
-# augmented operators
-# Note that we don't have to worry about item, attr, or slice assignment,
-# as they are disallowed. Yay!
-#
-# def inplace_id_add_before():
-#     x += y+z
-#
-# def inplace_id_add_after():
-#     x = _inplacevar_('+=', x, y+z)
 """

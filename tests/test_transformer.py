@@ -566,8 +566,14 @@ def test_transformer__RestrictingNodeTransformer__visit_AugAssign(compile, mocke
     _inplacevar_ = mocker.stub()
     _inplacevar_.side_effect = lambda op, val, expr: val + expr
 
-    glb = {'a': 1, '_inplacevar_': _inplacevar_}
-    code, errors = compile("a += 1")[:2]
+    glb = {
+        '_inplacevar_': _inplacevar_,
+        'a': 1,
+        'x': 1,
+        'z': 0
+    }
+
+    code, errors = compile("a += x + z")[:2]
     six.exec_(code, glb)
 
     assert code is not None
