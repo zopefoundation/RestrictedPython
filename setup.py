@@ -48,6 +48,7 @@ setup(name='RestrictedPython',
       install_requires=[
           'setuptools',
           #'zope.deprecation',
+          'six',
       ],
       extras_require={
           'docs': [
@@ -58,7 +59,6 @@ setup(name='RestrictedPython',
           ],
           'test': [
               'pytest',
-              'six',
           ],
           'develop': [
               'pdbpp',
