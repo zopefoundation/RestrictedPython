@@ -1,6 +1,8 @@
 *.mo
 *.pyc
 .coverage*
+pip-selfcheck.json
+pyvenv.cfg
 /.python-version
 /*.egg-info
 /.Python
