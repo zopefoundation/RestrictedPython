@@ -30,6 +30,17 @@ setup(name='RestrictedPython',
                   'environment for Python, e.g. for running untrusted code.',
       long_description=(read('src', 'RestrictedPython', 'README.txt') + '\n' +
                         read('CHANGES.txt')),
+      classifiers=[
+          'License :: OSI Approved :: Zope Public License',
+          'Programming Language :: Python',
+          'Operating System :: OS Independent',
+          'Programming Language :: Python :: 2.7',
+          'Programming Language :: Python :: 3.3',
+          'Programming Language :: Python :: 3.4',
+          'Programming Language :: Python :: 3.5',
+          'Programming Language :: Python :: 3.6',
+          'Topic :: Security',
+      ],
       author='Zope Foundation and Contributors',
       author_email='zope-dev@zope.org',
       packages=find_packages('src'),
@@ -37,7 +48,6 @@ setup(name='RestrictedPython',
       install_requires=[
           'setuptools',
           #'zope.deprecation',
-          'six',
       ],
       extras_require={
           'docs': [
@@ -48,10 +58,10 @@ setup(name='RestrictedPython',
           ],
           'test': [
               'pytest',
+              'six',
           ],
           'develop': [
-              'ipdb',
-              'ipython',
+              'pdbpp',
               'isort',
           ],
       },
