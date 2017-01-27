@@ -22,6 +22,7 @@ import os
 def read(*rnames):
     return open(os.path.join(os.path.dirname(__file__), *rnames)).read()
 
+
 setup(name='RestrictedPython',
       version='4.0.0.dev0',
       url='http://pypi.python.org/pypi/RestrictedPython',
@@ -40,8 +41,8 @@ setup(name='RestrictedPython',
           'Programming Language :: Python :: 3.5',
           'Programming Language :: Python :: 3.6',
           'Programming Language :: Python :: Implementation :: CPython',
-          #'Programming Language :: Python :: Implementation :: IronPython',
-          #'Programming Language :: Python :: Implementation :: Jython',
+          # 'Programming Language :: Python :: Implementation :: IronPython',
+          # 'Programming Language :: Python :: Implementation :: Jython',
           'Programming Language :: Python :: Implementation :: PyPy',
           'Topic :: Security',
       ],
@@ -51,7 +52,6 @@ setup(name='RestrictedPython',
       package_dir={'': 'src'},
       install_requires=[
           'setuptools',
-          #'zope.deprecation',
           'six',
       ],
       extras_require={
