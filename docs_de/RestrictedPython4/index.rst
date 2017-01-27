@@ -26,6 +26,8 @@ For a RestrictedPython 4.0.0+ Update we aim to support only current Python Versi
 * 3.4
 * 3.5
 * 3.6
+* pypy2
+* pypy3
 
 Abhängigkeiten
 --------------

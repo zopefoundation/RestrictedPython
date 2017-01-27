@@ -2,11 +2,14 @@ language: python
 sudo: false
 python:
     - 2.7
-    - 3.3
+    - 3.3 # Drop End of September 2017
     - 3.4
     - 3.5
     - 3.6
+    # PyPy versions
     - pypy
+    - pypy2
+    - pypy3
 env:
     - ENVIRON=py
     - ENVIRON=isort
