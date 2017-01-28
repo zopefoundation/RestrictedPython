@@ -153,7 +153,7 @@ if version >= (2, 7) and version < (2, 8):
         ast.Raise,
         ast.TryExcept,
         ast.TryFinally,
-        ast.ExceptHandler
+        ast.ExceptHandler,
     ])
 
 if version >= (3, 0):
@@ -163,11 +163,11 @@ if version >= (3, 0):
         ast.arg,
         ast.Try,
         ast.ExceptHandler,
-        ast.NameConstant
     ])
 
 if version >= (3, 4):
     AST_WHITELIST.extend([
+        ast.NameConstant,
     ])
 
 if version >= (3, 5):
