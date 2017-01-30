@@ -2,7 +2,7 @@ language: python
 sudo: false
 python:
     - 2.7
-    - 3.3 # Drop End of September 2017
+    - 3.3  # Drop End of September 2017? --> PyPy3 is based on 3.3, so compare
     - 3.4
     - 3.5
     - 3.6
