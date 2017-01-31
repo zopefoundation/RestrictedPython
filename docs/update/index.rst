@@ -16,25 +16,24 @@ So we must not generate the byte code that has to be returned from ``compile_res
 We actually don't even need that.
 The Python ``compile()`` function introduced the capability to compile ``ast.AST`` code into byte code in Python 2.6.
 
-We do need to move from ``compiler.ast`` to ``ast.AST``.
+We do need to move from ``compiler.ast`` to ``ast``.
 
-
-compiler.ast --> ast.AST
-------------------------
+``compiler.ast`` --> ``ast``
+----------------------------
 
 From the point of view of compiler design the concepts of the compiler module and the ast module are similar.
 The ``compiler`` module seems to be a very old module of the Python history.
-There has happen several improvements of the Python development like a generall applied style guide.
+There have happened several improvements of the Python development like a generally applied style guide.
 While ``compiler`` still uses the old `CamelCase`_ Syntax (``visitNode(self, node, walker)``) the ``ast.AST`` did now use the Python common ``visit_Node(self, node)`` syntax.
-Also the names has been changed, while ``compiler`` did talk about ``Walker`` and ``Mutator``the corrosponding elements in ``ast.AST`` are ``NodeVisitor`` and ``NodeTransformator``.
+Also the names have been changed, while ``compiler`` did talk about ``Walker`` and ``Mutator`` the corresponding elements in ``ast.AST`` are ``NodeVisitor`` and ``NodeTransformator``.
 
 
 ast Modul (Abstract Syntax Trees)
 ---------------------------------
 
-The ast module consist of three / four areas:
+The ast module consists of four areas:
 
-* AST (Basis of all Nodes) + all node class implementation
+* AST (Basis of all Nodes) + all node class implementations
 * NodeVisitor and NodeTransformer (tool to consume and modify the AST)
 * Helper-Methods
 
@@ -50,8 +49,8 @@ The ast module consist of three / four areas:
 NodeVisitor & NodeTransformer
 -----------------------------
 
-A NodeVisitor is a class of a node / AST consumer, it just reads the data by steping through the tree but did not modify the tree.
-In oposite a NodeTransformer which inherit from a NodeVisitor is allowed to modify the tree and nodes.
+A NodeVisitor is a class of a node / AST consumer, it just reads the data by steping through the tree but does not modify the tree.
+In oposite a NodeTransformer which inherits from a NodeVisitor is allowed to modify the tree and nodes.
 
 
 Links

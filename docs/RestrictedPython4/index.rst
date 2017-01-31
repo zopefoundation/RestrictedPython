@@ -1,7 +1,7 @@
 RestrictedPython 4+
 ===================
 
-RestrictedPython 4.0.0 and upwords is a complete rewrite for Python 3 compatibility.
+RestrictedPython 4.0.0 and upwards is a complete rewrite for Python 3 compatibility.
 
 As the ``compiler`` module has been declared deprecated in Python 2.6 and already been removed in Python 3.0 it has never been avaliable for any Python 3 version.
 
@@ -44,7 +44,7 @@ The following packages / modules have hard dependencies on RestrictedPython:
 * Products.PageTemplates -->
 * Products.PythonScripts -->
 * Products.PluginIndexes -->
-* five.pt (wrapping some functions and procetion for Chameleon) -->
+* five.pt (wrapping some functions and protection for Chameleon) -->
 
 Additionally the folowing add ons have dependencies on RestrictedPython
 

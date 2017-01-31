@@ -6,14 +6,14 @@ To offer a Python interface for users in web context is a potential security ris
 Web frameworks and Content Management Systems (CMS) want to offer their users a maximum extendability and that if possible through the web (TTW).
 This also means to have permissions to add functionallity via a Python Script.
 
-From the point of IT Secruity and safty there should be additional preventive measures taken to ensure integrity of the application and the server itself.
+From the point of IT Secuity and safety there should be additional preventive measures taken to ensure integrity of the application and the server itself.
 
 RestrictedPython did chose a way to define a safe subset of the python programming laguage.
 This is a common approach for securing a programming language.
 The `Ada Ravenscar profil`_ is a well known example of such an approach.
 
-Defining a secure subset of the language did work, by restricting the `EBNF`_ elements and explicite allow or disallow language features.
-As the power of a programming language came from its core library and implemented third party libraries, the call of those modules and methods must have an additional check and restricting.
+Defining a secure subset of the language did work, by restricting the `EBNF`_ elements and explicitly allow or disallow language features.
+As the power of a programming language came from its core library and implemented third party libraries, the call of those modules and methods must have an additional check and restriction.
 RestricedPython did generally disallow calls to any library that is not explicit whitelisted.
 
 As Python is a scripting language that is executed by an interpreter.
@@ -32,7 +32,7 @@ This method is defined as following:
 
     compile(source, filename, mode [, flags [, dont_inherit]])
 
-The definition of the ``compile()`` method has changed over time, but its relevant parameters ``source`` and ``mode`` still remains.
+The definition of the ``compile()`` method has changed over time, but its relevant parameters ``source`` and ``mode`` still remain.
 
 There are three valid string values for ``mode``:
 
@@ -47,9 +47,9 @@ For RestricedPython this ``compile()`` method is replaced by:
     compile_restriced(source, filename, mode [, flags [, dont_inherit]])
 
 The primary parameter ``source`` has to be a ASCII or ``unicode`` string.
-Both methods either returns compiled byte code that the interpreter could execute or throws errors if the provided source code is invalid.
+Both methods either returns compiled byte code that the interpreter could execute or throw errors if the provided source code is invalid.
 
-As the ``compile`` and ``compile_restricted`` just compile the provided source code it is not enough to secure the system, as still all calls on the core library or third party libraries are available.
+As ``compile`` and ``compile_restricted`` just compile the provided source code it is not enough to secure the system, as still all calls on the core library or third party libraries are available.
 
 The two methods / Statements:
 
@@ -63,7 +63,7 @@ did have two parameters:
 
 which are a reference to the Python builtins.
 
-By modifing and restricting the avaliable moules, methods and constans from globals and locals we could limit the possible calls.
+By modifing and restricting the avaliable moules, methods and constants from globals and locals we could limit the possible calls.
 
 Additionally RestrictedPython offers a way to define a policy which allows to protect access on attributes and global elements.
 This works by defining a restricted version of:
@@ -79,7 +79,7 @@ Also RestrictedPython provides three predifined, limited versions of Python's ow
 * ``limited_builtins`` (by Limits.py), which provides restriced sequence types
 * ``utilities_builtins`` (by Utilities.py), which provides access for standard modules math, random, string and for sets.
 
-Additional there exists guard functions to make attributes of Python objects immutable --> ``full_write_guard`` (write and delete protected)
+Additional there exist guard functions to make attributes of Python objects immutable --> ``full_write_guard`` (write and delete protected)
 
 .. _Turing-complete: https://en.wikipedia.org/wiki/Turing_completeness
 .. _Ada Ravenscar Profile: https://en.wikipedia.org/wiki/Ravenscar_profile
