@@ -476,6 +476,8 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
 
         This is needed to prevent new ast nodes from new Python versions to be
         trusted before any security review.
+
+        To access `generic_visit` on the super class use `node_contents_visit`.
         """
         self.not_allowed(node)
 
@@ -1192,9 +1194,9 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         self.not_allowed(node)
 
     def visit_Try(self, node):
-        """Allow Try-Finally without restrictions.
+        """Allow Try without restrictions.
 
-        This is Python 3 only.
+        This is Python 3 only, Python 2 uses TryExcept.
 
         XXX This was forbidden in RestrictedPython 3.x maybe we have to revisit
             this change in RestrictedPython 4.x.
