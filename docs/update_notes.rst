@@ -122,12 +122,10 @@ Targeted Versions to support
 
 For a RestrictedPython 4.0.0+ Update we aim to support only current Python Versions (under active Security Support):
 
-* 2.6
 * 2.7
-* 3.2
-* 3.3
 * 3.4
 * 3.5
+* 3.6
 
 Targeted API
 ............
