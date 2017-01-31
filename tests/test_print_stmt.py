@@ -1,8 +1,9 @@
+from RestrictedPython._compat import IS_PY2
+from RestrictedPython._compat import IS_PY3
 from RestrictedPython.PrintCollector import PrintCollector
-from RestrictedPython._compat import IS_PY2, IS_PY3
-import RestrictedPython
+
 import pytest
-import six
+import RestrictedPython
 
 
 pytestmark = pytest.mark.skipif(
@@ -47,31 +48,31 @@ def test_print_stmt__simple_prints(compiler):
     code, errors = compiler(ALLOWED_PRINT_STATEMENT)[:2]
     assert code is not None
     assert errors == ()
-    six.exec_(code, glb)
+    exec(code, glb)
     assert glb['_print']() == 'Hello World!\n'
 
     code, errors = compiler(ALLOWED_PRINT_STATEMENT_WITH_NO_NL)[:2]
     assert code is not None
     assert errors == ()
-    six.exec_(code, glb)
+    exec(code, glb)
     assert glb['_print']() == 'Hello World!'
 
     code, errors = compiler(ALLOWED_MULTI_PRINT_STATEMENT)[:2]
     assert code is not None
     assert errors == ()
-    six.exec_(code, glb)
+    exec(code, glb)
     assert glb['_print']() == 'Hello World! Hello Earth!\n'
 
     code, errors = compiler(ALLOWED_PRINT_TUPLE)[:2]
     assert code is not None
     assert errors == ()
-    six.exec_(code, glb)
+    exec(code, glb)
     assert glb['_print']() == "Hello World!\n"
 
     code, errors = compiler(ALLOWED_PRINT_MULTI_TUPLE)[:2]
     assert code is not None
     assert errors == ()
-    six.exec_(code, glb)
+    exec(code, glb)
     assert glb['_print']() == "('Hello World!', 'Hello Earth!')\n"
 
 
@@ -85,7 +86,7 @@ def test_print_stmt__fail_with_none_target(compiler, mocker):
     glb = {'_getattr_': getattr, '_print_': PrintCollector}
 
     with pytest.raises(AttributeError) as excinfo:
-        six.exec_(code, glb)
+        exec(code, glb)
 
     assert "'NoneType' object has no attribute 'write'" in str(excinfo.value)
 
@@ -104,7 +105,7 @@ def test_print_stmt__protect_chevron_print(compiler, mocker):
     _getattr_.side_effect = getattr
     glb = {'_getattr_': _getattr_, '_print_': PrintCollector}
 
-    six.exec_(code,  glb)
+    exec(code,  glb)
 
     stream = mocker.stub()
     stream.write = mocker.stub()
@@ -144,7 +145,7 @@ def test_print_stmt__nested_print_collector(compiler, mocker):
     code, errors = compiler(INJECT_PRINT_COLLECTOR_NESTED)[:2]
 
     glb = {"_print_": PrintCollector, '_getattr_': None}
-    six.exec_(code, glb)
+    exec(code, glb)
 
     ret = glb['main']()
     assert ret == 'inner\nf1\nf2main\n'
@@ -255,7 +256,7 @@ def class_scope():
 def test_print_stmt_no_new_scope(compiler):
     code, errors = compiler(NO_PRINT_SCOPES)[:2]
     glb = {'_print_': PrintCollector, '_getattr_': None}
-    six.exec_(code, glb)
+    exec(code, glb)
 
     ret = glb['class_scope']()
     assert ret == 'a\n'
@@ -273,7 +274,7 @@ def func(cond):
 def test_print_stmt_conditional_print(compiler):
     code, errors = compiler(CONDITIONAL_PRINT)[:2]
     glb = {'_print_': PrintCollector, '_getattr_': None}
-    six.exec_(code, glb)
+    exec(code, glb)
 
     assert glb['func'](True) == '1\n'
     assert glb['func'](False) == ''

@@ -1,7 +1,6 @@
 from RestrictedPython.PrintCollector import PrintCollector
 
 import RestrictedPython
-import six
 
 
 # The old 'RCompile' has no clue about the print function.
@@ -52,43 +51,43 @@ def test_print_function__simple_prints():
     code, errors = compiler(ALLOWED_PRINT_FUNCTION)[:2]
     assert errors == ()
     assert code is not None
-    six.exec_(code, glb)
+    exec(code, glb)
     assert glb['_print']() == 'Hello World!\n'
 
     code, errors = compiler(ALLOWED_PRINT_FUNCTION_WITH_END)[:2]
     assert code is not None
     assert errors == ()
-    six.exec_(code, glb)
+    exec(code, glb)
     assert glb['_print']() == 'Hello World!'
 
     code, errors = compiler(ALLOWED_PRINT_FUNCTION_MULTI_ARGS)[:2]
     assert code is not None
     assert errors == ()
-    six.exec_(code, glb)
+    exec(code, glb)
     assert glb['_print']() == 'Hello World! Hello Earth!\n'
 
     code, errors = compiler(ALLOWED_PRINT_FUNCTION_WITH_SEPARATOR)[:2]
     assert code is not None
     assert errors == ()
-    six.exec_(code, glb)
+    exec(code, glb)
     assert glb['_print']() == "a|b|c!"
 
     code, errors = compiler(PRINT_FUNCTION_WITH_NONE_SEPARATOR)[:2]
     assert code is not None
     assert errors == ()
-    six.exec_(code, glb)
+    exec(code, glb)
     assert glb['_print']() == "a b\n"
 
     code, errors = compiler(PRINT_FUNCTION_WITH_NONE_END)[:2]
     assert code is not None
     assert errors == ()
-    six.exec_(code, glb)
+    exec(code, glb)
     assert glb['_print']() == "a b\n"
 
     code, errors = compiler(PRINT_FUNCTION_WITH_NONE_FILE)[:2]
     assert code is not None
     assert errors == ()
-    six.exec_(code, glb)
+    exec(code, glb)
     assert glb['_print']() == "a b\n"
 
 
@@ -112,7 +111,7 @@ def test_print_function_with_star_args(mocker):
     code, errors = compiler(ALLOWED_PRINT_FUNCTION_WITH_STAR_ARGS)[:2]
     assert code is not None
     assert errors == ()
-    six.exec_(code, glb)
+    exec(code, glb)
     assert glb['_print']() == "1 2 3\n"
     _apply_.assert_called_once_with(glb['_print']._call_print, 1, 2, 3)
 
@@ -138,7 +137,7 @@ def test_print_function_with_kw_args(mocker):
     code, errors = compiler(ALLOWED_PRINT_FUNCTION_WITH_KWARGS)[:2]
     assert code is not None
     assert errors == ()
-    six.exec_(code, glb)
+    exec(code, glb)
     assert glb['_print']() == "1-2-3!"
     _apply_.assert_called_once_with(
         glb['_print']._call_print,
@@ -172,7 +171,7 @@ def test_print_function__protect_file(mocker):
     assert code is not None
     assert errors == ()
 
-    six.exec_(code, glb)
+    exec(code, glb)
 
     _getattr_.assert_called_once_with(stream, 'write')
     stream.write.assert_has_calls([
@@ -209,7 +208,7 @@ def test_print_function__nested_print_collector():
     code, errors = compiler(INJECT_PRINT_COLLECTOR_NESTED)[:2]
 
     glb = {"_print_": PrintCollector, '_getattr_': None}
-    six.exec_(code, glb)
+    exec(code, glb)
 
     ret = glb['main']()
     assert ret == 'inner\nf1\nf2main\n'
@@ -309,7 +308,7 @@ def test_print_function_no_new_scope():
         '_getattr_': None,
         '_getiter_': lambda ob: ob
     }
-    six.exec_(code, glb)
+    exec(code, glb)
 
     ret = glb['class_scope']()
     assert ret == 'a\n'
@@ -336,7 +335,7 @@ def main():
 def test_print_function_pass_print_function():
     code, errors = compiler(PASS_PRINT_FUNCTION)[:2]
     glb = {'_print_': PrintCollector, '_getattr_': None}
-    six.exec_(code, glb)
+    exec(code, glb)
 
     ret = glb['main']()
     assert ret == '1\n2\n'
@@ -354,7 +353,7 @@ def func(cond):
 def test_print_function_conditional_print():
     code, errors = compiler(CONDITIONAL_PRINT)[:2]
     glb = {'_print_': PrintCollector, '_getattr_': None}
-    six.exec_(code, glb)
+    exec(code, glb)
 
     assert glb['func'](True) == '1\n'
     assert glb['func'](False) == ''
