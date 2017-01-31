@@ -12,7 +12,6 @@ Idea of RestrictedPython
 RestrictedPython offers a replacement for the Python builtin function ``compile()`` (https://docs.python.org/2/library/functions.html#compile) which is defined as:
 
 .. code:: Python
-    :caption: compile()
 
     compile(source, filename, mode [, flags [, dont_inherit]])
 
