@@ -27,7 +27,7 @@ pyvenv.cfg
 /src/*.egg-info
 /var
 coverage.xml
-docs/Makefile
+#docs/Makefile
 docs/doctrees
 docs/html
-docs/make.bat
+#docs/make.bat
