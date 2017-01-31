@@ -1,17 +1,19 @@
 RestrictedPython 4+
 ===================
 
-RestrictedPython 4.0.0 und aufwärts ist ein komplett Rewrite für Python 3 Kompatibilität.
+RestrictedPython 4.0.0 and upwords is a complete rewrite for Python 3 compatibility.
 
-Da das ``compiler`` Package in Python 2.6 als depricated erklärt und in 3.0 bereits entfernt wurde und somit in allen Python 3 Versionen nicht verfügbar ist, muss die Grundlage neu geschaffen werden.
+As the ``compiler`` module has been declared deprecated in Python 2.6 and already been removed in Python 3.0 it has never been avaliable for any Python 3 version.
 
-Ziele des Rewrite
------------------
 
-Wir wollen RestrictedPython weiter führen, da es eine Core-Dependency für den Zope2 Applikations-Server ist und somit auch eine wichtige Grundlage für das CMS Plone.
-Zope2 soll Python 3 kompatibel werden.
+Goals for a rewrite
+-------------------
 
-Eine der Kernfunktionalitäten von Zope2 und damit für Plone ist die Möglichkeit Python Skripte und Templates TTW (through the web) zu schreiben und zu modifizieren.
+RestrictedPython is a core dependency for the Zope2 application server and therefore implicite for the content management system Plone.
+The Zope & Plone community want to continue there projects and as Python 2 is announced end of life by 2020, and will be ultimative replaced by Python 3 or higher.
+Zope and Plone should become Python 3 compatible.
+
+One of the core functionallity of Zope 2 and therefore Plone is the possibility to implement and modify Python Scripts and Templates through the web (TTW) without harming the application or server itself.
 
 
 
@@ -30,10 +32,12 @@ will be completed):
 
 .. _`security support` : https://docs.python.org/devguide/index.html#branchstatus
 
-Abhängigkeiten
---------------
+We do explicite exclude Python 3.3 and PyPy3 (which is based on the Python 3.3 specification) at the moment, because the changes from 3.4 upwords are huge and Python 3.3 is end of life by September 2017.
 
-Folgende Packete haben Abhägigkeiten zu RestrictedPython:
+Dependencies
+------------
+
+The following packages / modules have hard dependencies on RestrictedPython:
 
 * AccessControl -->
 * zope.untrustedpython --> SelectCompiler
@@ -43,5 +47,6 @@ Folgende Packete haben Abhägigkeiten zu RestrictedPython:
 * Products.PluginIndexes -->
 * five.pt (wrapping some functions and procetion for Chameleon) -->
 
-Zusätzlich sind in folgenden Add'ons Abhängigkeiten zu RestrictedPython
-*
+Additionally the folowing add ons have dependencies on RestrictedPython
+
+* None

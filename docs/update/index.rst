@@ -1,7 +1,5 @@
-Konzept für das Update auf Python 3
-===================================
-
-
+Concept for a Upgrade to Python 3
+=================================
 
 RestrictedPython is a classical approach of compiler construction to create a limited subset of an existing programming language.
 
@@ -16,32 +14,35 @@ This machine code then gets executed on the specific CPU architecture, with all 
 Produced byte code has to compatible with the execution environment, the Python Interpreter within this code is called.
 So we must not generate the byte code that has to be returned from ``compile_restricted`` and the other ``compile_restricted_*`` methods manually, as this might harm the interpreter.
 We actually don't even need that.
-The Python ``compile()`` function introduced the capability to compile ``ast.AST`` code into byte code.
+The Python ``compile()`` function introduced the capability to compile ``ast.AST`` code into byte code in Python 2.6.
+
+We do need to move from ``compiler.ast`` to ``ast.AST``.
 
 
 compiler.ast --> ast.AST
 ------------------------
 
-Aus Sicht des Compilerbaus sind die Konzepte der Module compiler und ast vergleichbar, bzw. ähnlich.
-Primär hat sich mit der Entwicklung von Python ein Styleguide gebildet wie bestimmte Sachen ausgezeichnet werden sollen.
-Während compiler eine alte CamelCase Syntax (``visitNode(self, node, walker)``) nutzt ist in AST die Python übliche ``visit_Node(self, node)`` Syntax heute üblich.
-Auch habe sich die Namen genändert, wärend compiler von ``Walker`` und ``Mutator`` redet heissen die im AST kontext ``NodeVisitor`` und ``NodeTransformator``
+From the point of view of compiler design the concepts of the compiler module and the ast module are similar.
+The ``compiler`` module seems to be a very old module of the Python history.
+There has happen several improvements of the Python development like a generall applied style guide.
+While ``compiler`` still uses the old `CamelCase`_ Syntax (``visitNode(self, node, walker)``) the ``ast.AST`` did now use the Python common ``visit_Node(self, node)`` syntax.
+Also the names has been changed, while ``compiler`` did talk about ``Walker`` and ``Mutator``the corrosponding elements in ``ast.AST`` are ``NodeVisitor`` and ``NodeTransformator``.
 
 
 ast Modul (Abstract Syntax Trees)
 ---------------------------------
 
-Das ast Modul besteht aus drei(/vier) Bereichen:
+The ast module consist of three / four areas:
 
-* AST (Basis aller Nodes) + aller Node Classen Implementierungen
-* NodeVisitor und NodeTransformer (Tools zu Ver-/Bearbeiten des AST)
-* Helper-Methoden
+* AST (Basis of all Nodes) + all node class implementation
+* NodeVisitor and NodeTransformer (tool to consume and modify the AST)
+* Helper-Methods
 
   * parse
   * walk
   * dump
 
-* Constanten
+* Constants
 
   * PyCF_ONLY_AST
 
@@ -49,9 +50,8 @@ Das ast Modul besteht aus drei(/vier) Bereichen:
 NodeVisitor & NodeTransformer
 -----------------------------
 
-Ein NodeVisitor ist eine Klasse eines Node / AST Konsumenten beim durchlaufen des AST-Baums.
-Ein Visitor liest Daten aus dem Baum verändert aber nichts am Baum, ein Transformer - vom Visitor abgeleitet - erlaubt modifikationen am Baum, bzw. den einzelnen Knoten.
-
+A NodeVisitor is a class of a node / AST consumer, it just reads the data by steping through the tree but did not modify the tree.
+In oposite a NodeTransformer which inherit from a NodeVisitor is allowed to modify the tree and nodes.
 
 
 Links
