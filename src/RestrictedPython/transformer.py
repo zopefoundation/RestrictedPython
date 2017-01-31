@@ -111,7 +111,6 @@ AST_WHITELIST = [
     ast.Continue,
     #ast.ExceptHanlder,  # We do not Support ExceptHanlders
     ast.With,
-    #ast.withitem,
     # Function and class definitions,
     ast.FunctionDef,
     ast.Lambda,
@@ -164,6 +163,7 @@ if version >= (3, 4):
         ast.Try,
         ast.ExceptHandler,
         ast.NameConstant,
+        ast.withitem
     ])
 
 if version >= (3, 5):
@@ -368,6 +368,67 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
             func=ast.Name('_unpack_sequence_', ast.Load()),
             args=[value, spec, ast.Name('_getiter_', ast.Load())],
             keywords=[])
+
+    def gen_unpack_wrapper(self, node, target, ctx='store'):
+        """Helper function to protect tuple unpacks.
+
+        node: used to copy the locations for the new nodes.
+        target: is the tuple which must be protected.
+        ctx: Defines the context of the returned temporary node.
+
+        It returns a tuple with two element.
+
+        Element 1: Is a temporary name node which must be used to
+                   replace the target.
+                   The context (store, param) is defined
+                   by the 'ctx' parameter..
+
+        Element 2: Is a try .. finally where the body performs the
+                   protected tuple unpack of the temporary variable
+                   into the original target.
+        """
+
+        # Generate a tmp name to replace the tuple with.
+        tmp_name = self.gen_tmp_name()
+
+        # Generates an expressions which protects the unpack.
+        # converter looks like 'wrapper(tmp_name)'.
+        # 'wrapper' takes care to protect sequence unpacking with _getiter_.
+        converter = self.protect_unpack_sequence(
+            target,
+            ast.Name(tmp_name, ast.Load()))
+
+        # Assign the expression to the original names.
+        # Cleanup the temporary variable.
+        # Generates:
+        # try:
+        #     # converter is 'wrapper(tmp_name)'
+        #     arg = converter
+        # finally:
+        #     del tmp_arg
+        try_body = [ast.Assign(targets=[target], value=converter)]
+        finalbody = [self.gen_del_stmt(tmp_name)]
+
+        if version.major == 2:
+            cleanup = ast.TryFinally(body=try_body, finalbody=finalbody)
+        else:
+            cleanup = ast.Try(
+                body=try_body, finalbody=finalbody, handlers=[], orelse=[])
+
+        if ctx == 'store':
+            ctx = ast.Store()
+        elif ctx == 'param':
+            ctx = ast.Param()
+        else:
+            raise Exception('Unsupported context type.')
+
+        # This node is used to catch the tuple in a tmp variable.
+        tmp_target = ast.Name(tmp_name, ctx)
+
+        copy_locations(tmp_target, node)
+        copy_locations(cleanup, node)
+
+        return (tmp_target, cleanup)
 
     def gen_none_node(self):
         if version >= (3, 4):
@@ -1309,36 +1370,36 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         if not isinstance(node.name, ast.Tuple):
             return node
 
-        # Generate a tmp name to replace the tuple with.
-        tmp_name = self.gen_tmp_name()
+        tmp_target, unpack = self.gen_unpack_wrapper(node, node.name)
 
-        # Generates an expressions which protects the unpack.
-        converter = self.protect_unpack_sequence(
-            node.name,
-            ast.Name(tmp_name, ast.Load()))
+        # Replace the tuple with the temporary variable.
+        node.name = tmp_target
 
-        # Assign the expression to the original names.
-        # Cleanup the temporary variable.
-        cleanup = ast.TryFinally(
-            body=[ast.Assign(targets=[node.name], value=converter)],
-            finalbody=[self.gen_del_stmt(tmp_name)]
-
-        )
-
-        # Repalce the tuple with the temporary variable.
-        node.name = ast.Name(tmp_name, ast.Store())
-
-        copy_locations(cleanup, node)
-        copy_locations(node.name, node)
-        node.body.insert(0, cleanup)
+        # Insert the unpack code within the body of the except clause.
+        node.body.insert(0, unpack)
 
         return node
 
     def visit_With(self, node):
-        """
+        """Protects tuple unpacking on with statements. """
 
-        """
-        return self.generic_visit(node)
+        node = self.generic_visit(node)
+
+        if version.major == 2:
+            items = [node]
+        else:
+            items = node.items
+
+        for item in reversed(items):
+            if isinstance(item.optional_vars, ast.Tuple):
+                tmp_target, unpack = self.gen_unpack_wrapper(
+                    node,
+                    item.optional_vars)
+
+                item.optional_vars = tmp_target
+                node.body.insert(0, unpack)
+
+        return node
 
     def visit_withitem(self, node):
         """
@@ -1369,32 +1430,11 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         unpacks = []
         for index, arg in enumerate(list(node.args.args)):
             if isinstance(arg, ast.Tuple):
-                tmp_name = self.gen_tmp_name()
-
-                # converter looks like wrapper(tmp_name).
-                # Wrapper takes care to protect
-                # sequence unpacking with _getiter_
-                converter = self.protect_unpack_sequence(
-                        arg,
-                        ast.Name(tmp_name, ast.Load()))
-
-                # Generates:
-                # try:
-                #     # converter is 'wrapper(tmp_name)'
-                #     arg = converter
-                # finally:
-                #     del tmp_arg
-                cleanup = ast.TryFinally(
-                    body=[ast.Assign(targets=[arg], value=converter)],
-                    finalbody=[self.gen_del_stmt(tmp_name)]
-                )
+                tmp_target, unpack = self.gen_unpack_wrapper(node, arg, 'param')
 
                 # Replace the tuple with a single (temporary) parameter.
-                node.args.args[index] = ast.Name(tmp_name, ast.Param())
-
-                copy_locations(node.args.args[index], node)
-                copy_locations(cleanup, node)
-                unpacks.append(cleanup)
+                node.args.args[index] = tmp_target
+                unpacks.append(unpack)
 
         # Add the unpacks at the front of the body.
         # Keep the order, so that tuple one is unpacked first.
