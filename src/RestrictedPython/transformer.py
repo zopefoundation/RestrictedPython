@@ -22,9 +22,13 @@ the parsed python code to create a modified AST for a byte code generation.
 # http://docs.plone.org/develop/styleguide/python.html
 
 
+from ._compat import IS_PY2
+from ._compat import IS_PY3
+from ._compat import IS_PY34_OR_GREATER
+from ._compat import IS_PY35_OR_GREATER
+
 import ast
 import contextlib
-import sys
 
 
 # if any of the ast Classes should not be whitelisted, please comment them out
@@ -144,9 +148,7 @@ IOPERATOR_TO_STR = {
     ast.FloorDiv: '//='
 }
 
-
-version = sys.version_info
-if version >= (2, 7) and version < (2, 8):
+if IS_PY2:
     AST_WHITELIST.extend([
         ast.Print,
         ast.Raise,
@@ -155,7 +157,7 @@ if version >= (2, 7) and version < (2, 8):
         ast.ExceptHandler,
     ])
 
-if version >= (3, 4):
+if IS_PY3:
     AST_WHITELIST.extend([
         ast.Bytes,
         ast.Starred,
@@ -166,7 +168,7 @@ if version >= (3, 4):
         ast.withitem
     ])
 
-if version >= (3, 5):
+if IS_PY35_OR_GREATER:
     IOPERATOR_TO_STR[ast.MatMult] = '@='
 
     AST_WHITELIST.extend([
@@ -176,10 +178,6 @@ if version >= (3, 5):
         #ast.Await,  # No Async Elements should be supported
         #ast.AsyncFor,  # No Async Elements should be supported
         #ast.AsyncWith,  # No Async Elements should be supported
-    ])
-
-if version >= (3, 6):
-    AST_WHITELIST.extend([
     ])
 
 
@@ -282,7 +280,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         return node
 
     def is_starred(self, ob):
-        if version.major == 3:
+        if IS_PY3:
             return isinstance(ob, ast.Starred)
         else:
             return False
@@ -409,7 +407,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         try_body = [ast.Assign(targets=[target], value=converter)]
         finalbody = [self.gen_del_stmt(tmp_name)]
 
-        if version.major == 2:
+        if IS_PY2:
             cleanup = ast.TryFinally(body=try_body, finalbody=finalbody)
         else:
             cleanup = ast.Try(
@@ -431,7 +429,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         return (tmp_target, cleanup)
 
     def gen_none_node(self):
-        if version >= (3, 4):
+        if IS_PY34_OR_GREATER:
             return ast.NameConstant(value=None)
         else:
             return ast.Name(id='None', ctx=ast.Load())
@@ -517,7 +515,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         # which is gone in python3.
         # See https://www.python.org/dev/peps/pep-3113/
 
-        if version.major == 2:
+        if IS_PY2:
             # Needed to handle nested 'tuple parameter unpacking'.
             # For example 'def foo((a, b, (c, (d, e)))): pass'
             to_check = list(node.args.args)
@@ -956,10 +954,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         # '*args' can be detected by 'ast.Starred' nodes.
         # '**kwargs' can be deteced by 'keyword' nodes with 'arg=None'.
 
-        if version < (3, 5):
-            if (node.starargs is not None) or (node.kwargs is not None):
-                needs_wrap = True
-        else:
+        if IS_PY35_OR_GREATER:
             for pos_arg in node.args:
                 if isinstance(pos_arg, ast.Starred):
                     needs_wrap = True
@@ -967,6 +962,9 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
             for keyword_arg in node.keywords:
                 if keyword_arg.arg is None:
                     needs_wrap = True
+        else:
+            if (node.starargs is not None) or (node.kwargs is not None):
+                needs_wrap = True
 
         node = self.generic_visit(node)
 
@@ -1364,7 +1362,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
 
         node = self.generic_visit(node)
 
-        if version.major == 3:
+        if IS_PY3:
             return node
 
         if not isinstance(node.name, ast.Tuple):
@@ -1385,7 +1383,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
 
         node = self.generic_visit(node)
 
-        if version.major == 2:
+        if IS_PY2:
             items = [node]
         else:
             items = node.items
@@ -1422,7 +1420,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
             node = self.generic_visit(node)
             self.inject_print_collector(node)
 
-        if version.major == 3:
+        if IS_PY3:
             return node
 
         # Protect 'tuple parameter unpacking' with '_getiter_'.
@@ -1447,7 +1445,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
 
         node = self.generic_visit(node)
 
-        if version.major == 3:
+        if IS_PY3:
             return node
 
         # Check for tuple parameters which need _getiter_ protection

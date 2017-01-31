@@ -1,18 +1,17 @@
 from RestrictedPython.Guards import guarded_iter_unpack_sequence
 from RestrictedPython.Guards import guarded_unpack_sequence
-
+from RestrictedPython._compat import IS_PY2, IS_PY3
+import RestrictedPython
 import contextlib
 import pytest
-import RestrictedPython
 import six
-import sys
 import types
 
 
 # Define the arguments for @pytest.mark.parametrize to be able to test both the
 # old and the new implementation to be equal:
 compile = ('compile', [RestrictedPython.compile.compile_restricted_exec])
-if sys.version_info < (3,):
+if IS_PY2:
     from RestrictedPython import RCompile
     compile[1].append(RCompile.compile_restricted_exec)
 
@@ -62,7 +61,7 @@ def no_exec():
 """
 
 
-@pytest.mark.skipif(sys.version_info >= (3, 0),
+@pytest.mark.skipif(IS_PY3,
                     reason="exec statement no longer exists in Python 3")
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__generic_visit__102(compile):
@@ -72,7 +71,7 @@ def test_transformer__RestrictingNodeTransformer__generic_visit__102(compile):
 
 
 @pytest.mark.skipif(
-    sys.version_info < (3, 0),
+    IS_PY2,
     reason="exec statement in Python 3 raises SyntaxError itself")
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__generic_visit__103(compile):
@@ -249,7 +248,7 @@ def test_transformer__RestrictingNodeTransformer__visit_Attribute__7(compile, mo
     assert ret == 2
 
 
-@pytest.mark.skipif(sys.version_info < (3, 0),
+@pytest.mark.skipif(IS_PY2,
                     reason="exec is a statement in Python 2")
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__visit_Call__1(compile):
@@ -704,7 +703,7 @@ def test_transformer__RestrictingNodeTransformer__visit_FunctionDef_1(compile):
     assert code is None
     assert errors[0] == err_msg
 
-    if sys.version_info.major == 2:
+    if IS_PY2:
         code, errors = compile("def foo((a, _bad)): pass")[:2]
         assert code is None
         assert errors[0] == err_msg
@@ -715,7 +714,7 @@ def test_transformer__RestrictingNodeTransformer__visit_FunctionDef_1(compile):
             assert code is None
             assert errors[0] == err_msg
 
-    if sys.version_info.major == 3:
+    if IS_PY3:
         code, errors = compile("def foo(good, *, _bad): pass")[:2]
         assert code is None
         assert errors[0] == err_msg
@@ -731,7 +730,7 @@ def nested_with_order((a, b), (c, d)):
 
 
 @pytest.mark.skipif(
-    sys.version_info.major == 3,
+    IS_PY3,
     reason="tuple parameter unpacking is gone in python 3")
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__visit_FunctionDef_2(compile, mocker):
@@ -798,7 +797,7 @@ def test_transformer__RestrictingNodeTransformer__visit_Lambda_1(compile):
     assert code is None
     assert errors[0] == err_msg
 
-    if sys.version_info.major == 2:
+    if IS_PY2:
         # The old one did not support tuples at all.
         if compile is RestrictedPython.compile.compile_restricted_exec:
             code, errors = compile("lambda (a, _bad): None")[:2]
@@ -809,14 +808,14 @@ def test_transformer__RestrictingNodeTransformer__visit_Lambda_1(compile):
             assert code is None
             assert errors[0] == err_msg
 
-    if sys.version_info.major == 3:
+    if IS_PY3:
         code, errors = compile("lambda good, *, _bad: None")[:2]
         assert code is None
         assert errors[0] == err_msg
 
 
 @pytest.mark.skipif(
-    sys.version_info.major == 3,
+    IS_PY3,
     reason="tuple parameter unpacking is gone in python 3")
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__visit_Lambda_2(compile, mocker):
@@ -870,7 +869,7 @@ def test_transformer__RestrictingNodeTransformer__visit_Assign(compile, mocker):
 
 
 @pytest.mark.skipif(
-    sys.version_info.major == 2,
+    IS_PY2,
     reason="starred assignments are python3 only")
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__visit_Assign2(compile, mocker):
@@ -1001,7 +1000,7 @@ def tuple_unpack(err):
 
 
 @pytest.mark.skipif(
-    sys.version_info.major == 3,
+    IS_PY3,
     reason="tuple unpacking on exceptions is gone in python3")
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__visit_ExceptHandler(compile, mocker):
