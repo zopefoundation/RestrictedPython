@@ -945,6 +945,7 @@ def try_except_else_finally(m):
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__error_handling(compile, mocker):
     code, errors = compile(TRY_EXCEPT_FINALLY)[:2]
+    assert errors == ()
     assert code is not None
 
     glb = {}
