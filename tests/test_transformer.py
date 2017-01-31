@@ -1,17 +1,17 @@
 from RestrictedPython.Guards import guarded_iter_unpack_sequence
 from RestrictedPython.Guards import guarded_unpack_sequence
-
-import pytest
+from RestrictedPython._compat import IS_PY2, IS_PY3
 import RestrictedPython
+import contextlib
+import pytest
 import six
-import sys
 import types
 
 
 # Define the arguments for @pytest.mark.parametrize to be able to test both the
 # old and the new implementation to be equal:
 compile = ('compile', [RestrictedPython.compile.compile_restricted_exec])
-if sys.version_info < (3,):
+if IS_PY2:
     from RestrictedPython import RCompile
     compile[1].append(RCompile.compile_restricted_exec)
 
@@ -61,7 +61,7 @@ def no_exec():
 """
 
 
-@pytest.mark.skipif(sys.version_info >= (3, 0),
+@pytest.mark.skipif(IS_PY3,
                     reason="exec statement no longer exists in Python 3")
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__generic_visit__102(compile):
@@ -71,7 +71,7 @@ def test_transformer__RestrictingNodeTransformer__generic_visit__102(compile):
 
 
 @pytest.mark.skipif(
-    sys.version_info < (3, 0),
+    IS_PY2,
     reason="exec statement in Python 3 raises SyntaxError itself")
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__generic_visit__103(compile):
@@ -211,7 +211,44 @@ def test_transformer__RestrictingNodeTransformer__visit_Attribute__6(compile):
                         'name because it starts with "_".'
 
 
-@pytest.mark.skipif(sys.version_info < (3, 0),
+TRANSFORM_ATTRIBUTE_ACCESS_FUNCTION_DEFAULT = """
+def func_default(x=a.a):
+    return x
+
+lambda_default = lambda x=b.b: x
+"""
+
+
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__visit_Attribute__7(compile, mocker):
+    code, errors = compile(TRANSFORM_ATTRIBUTE_ACCESS_FUNCTION_DEFAULT)[:2]
+    assert code is not None
+    assert errors == ()
+
+    _getattr_ = mocker.Mock()
+    _getattr_.side_effect = getattr
+
+    glb = {
+        '_getattr_': _getattr_,
+        'a': mocker.Mock(a=1),
+        'b': mocker.Mock(b=2)
+    }
+
+    six.exec_(code, glb)
+
+    _getattr_.assert_has_calls([
+        mocker.call(glb['a'], 'a'),
+        mocker.call(glb['b'], 'b')
+    ])
+
+    ret = glb['func_default']()
+    assert ret == 1
+
+    ret = glb['lambda_default']()
+    assert ret == 2
+
+
+@pytest.mark.skipif(IS_PY2,
                     reason="exec is a statement in Python 2")
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__visit_Call__1(compile):
@@ -244,23 +281,36 @@ def for_loop(it):
         c = c + a
     return c
 
+
+def nested_for_loop(it1, it2):
+    c = 0
+    for a in it1:
+        for b in it2:
+            c = c + a + b
+    return c
+
 def dict_comp(it):
     return {a: a + a for a in it}
 
 def list_comp(it):
     return [a + a for a in it]
 
+def nested_list_comp(it1, it2):
+    return [a + b for a in it1 if a > 1 for b in it2]
+
 def set_comp(it):
     return {a + a for a in it}
 
 def generator(it):
     return (a + a for a in it)
+
+def nested_generator(it1, it2):
+    return (a+b for a in it1 if a > 0 for b in it2)
 """
 
 
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__guard_iter(compile, mocker):
-    """It is an error if the code call the `eval` function."""
     code, errors, warnings, used_names = compile(ITERATORS)
 
     it = (1, 2, 3)
@@ -274,6 +324,14 @@ def test_transformer__RestrictingNodeTransformer__guard_iter(compile, mocker):
     _getiter_.assert_called_once_with(it)
     _getiter_.reset_mock()
 
+    ret = glb['nested_for_loop']((1, 2), (3, 4))
+    assert 20 == ret
+    _getiter_.assert_has_calls([
+        mocker.call((1, 2)),
+        mocker.call((3, 4))
+    ])
+    _getiter_.reset_mock()
+
     ret = glb['dict_comp'](it)
     assert {1: 2, 2: 4, 3: 6} == ret
     _getiter_.assert_called_once_with(it)
@@ -282,6 +340,14 @@ def test_transformer__RestrictingNodeTransformer__guard_iter(compile, mocker):
     ret = glb['list_comp'](it)
     assert [2, 4, 6] == ret
     _getiter_.assert_called_once_with(it)
+    _getiter_.reset_mock()
+
+    ret = glb['nested_list_comp']((1, 2), (3, 4))
+    assert [5, 6] == ret
+    _getiter_.assert_has_calls([
+        mocker.call((1, 2)),
+        mocker.call((3, 4))
+    ])
     _getiter_.reset_mock()
 
     ret = glb['set_comp'](it)
@@ -293,6 +359,15 @@ def test_transformer__RestrictingNodeTransformer__guard_iter(compile, mocker):
     assert isinstance(ret, types.GeneratorType)
     assert list(ret) == [2, 4, 6]
     _getiter_.assert_called_once_with(it)
+    _getiter_.reset_mock()
+
+    ret = glb['nested_generator']((0, 1, 2), (1, 2))
+    assert isinstance(ret, types.GeneratorType)
+    assert list(ret) == [2, 3, 3, 4]
+    _getiter_.assert_has_calls([
+        mocker.call((0, 1, 2)),
+        mocker.call((1, 2)),
+        mocker.call((1, 2))])
     _getiter_.reset_mock()
 
 
@@ -319,7 +394,6 @@ def generator(it):
 
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__guard_iter2(compile, mocker):
-    """It is an error if the code call the `eval` function."""
     code, errors = compile(ITERATORS_WITH_UNPACK_SEQUENCE)[:2]
 
     it = ((1, 2), (3, 4), (5, 6))
@@ -373,6 +447,9 @@ GET_SUBSCRIPTS = """
 def simple_subscript(a):
     return a['b']
 
+def tuple_subscript(a):
+    return a[1, 2]
+
 def slice_subscript_no_upper_bound(a):
     return a[1:]
 
@@ -402,6 +479,12 @@ def test_transformer__RestrictingNodeTransformer__visit_Subscript_1(compile, moc
 
     ret = glb['simple_subscript'](value)
     ref = (value, 'b')
+    assert ref == ret
+    _getitem_.assert_called_once_with(*ref)
+    _getitem_.reset_mock()
+
+    ret = glb['tuple_subscript'](value)
+    ref = (value, (1, 2))
     assert ref == ret
     _getitem_.assert_called_once_with(*ref)
     _getitem_.reset_mock()
@@ -482,8 +565,14 @@ def test_transformer__RestrictingNodeTransformer__visit_AugAssign(compile, mocke
     _inplacevar_ = mocker.stub()
     _inplacevar_.side_effect = lambda op, val, expr: val + expr
 
-    glb = {'a': 1, '_inplacevar_': _inplacevar_}
-    code, errors = compile("a += 1")[:2]
+    glb = {
+        '_inplacevar_': _inplacevar_,
+        'a': 1,
+        'x': 1,
+        'z': 0
+    }
+
+    code, errors = compile("a += x + z")[:2]
     six.exec_(code, glb)
 
     assert code is not None
@@ -502,18 +591,37 @@ def test_transformer__RestrictingNodeTransformer__visit_AugAssign(compile, mocke
     assert ('Line 1: Augmented assignment of object items and '
             'slices is not allowed.',) == errors
 
+# def f(a, b, c): pass
+# f(*two_element_sequence, **dict_with_key_c)
+#
+# makes the elements of two_element_sequence
+# visible to f via its 'a' and 'b' arguments,
+# and the dict_with_key_c['c'] value visible via its 'c' argument.
+# It is a devious way to extract values without going through security checks.
 
 FUNCTIONC_CALLS = """
-def no_star_args_no_kwargs():
+star = (3, 4)
+kwargs = {'x': 5, 'y': 6}
+
+def positional_args():
     return foo(1, 2)
 
-def star_args_no_kwargs():
-    star = (10, 20, 30)
+def star_args():
+    return foo(*star)
+
+def positional_and_star_args():
     return foo(1, 2, *star)
 
-def star_args_kwargs():
-    star = (10, 20, 30)
-    kwargs = {'x': 100, 'z': 200}
+def kw_args():
+    return foo(**kwargs)
+
+def star_and_kw():
+    return foo(*star, **kwargs)
+
+def positional_and_star_and_kw_args():
+    return foo(1, *star, **kwargs)
+
+def positional_and_star_and_keyword_and_kw_args():
     return foo(1, 2, *star, r=9, **kwargs)
 """
 
@@ -532,19 +640,43 @@ def test_transformer__RestrictingNodeTransformer__visit_Call(compile, mocker):
 
     six.exec_(code, glb)
 
-    ret = (glb['no_star_args_no_kwargs']())
+    ret = glb['positional_args']()
     assert ((1, 2), {}) == ret
     assert _apply_.called is False
     _apply_.reset_mock()
 
-    ret = (glb['star_args_no_kwargs']())
-    ref = ((1, 2, 10, 20, 30), {})
+    ret = glb['star_args']()
+    ref = ((3, 4), {})
     assert ref == ret
     _apply_.assert_called_once_with(glb['foo'], *ref[0])
     _apply_.reset_mock()
 
-    ret = (glb['star_args_kwargs']())
-    ref = ((1, 2, 10, 20, 30), {'r': 9, 'z': 200, 'x': 100})
+    ret = glb['positional_and_star_args']()
+    ref = ((1, 2, 3, 4), {})
+    assert ref == ret
+    _apply_.assert_called_once_with(glb['foo'], *ref[0])
+    _apply_.reset_mock()
+
+    ret = glb['kw_args']()
+    ref = ((), {'x': 5, 'y': 6})
+    assert ref == ret
+    _apply_.assert_called_once_with(glb['foo'], **ref[1])
+    _apply_.reset_mock()
+
+    ret = glb['star_and_kw']()
+    ref = ((3, 4), {'x': 5, 'y': 6})
+    assert ref == ret
+    _apply_.assert_called_once_with(glb['foo'], *ref[0], **ref[1])
+    _apply_.reset_mock()
+
+    ret = glb['positional_and_star_and_kw_args']()
+    ref = ((1, 3, 4), {'x': 5, 'y': 6})
+    assert ref == ret
+    _apply_.assert_called_once_with(glb['foo'], *ref[0], **ref[1])
+    _apply_.reset_mock()
+
+    ret = glb['positional_and_star_and_keyword_and_kw_args']()
+    ref = ((1, 2, 3, 4), {'x': 5, 'y': 6, 'r': 9})
     assert ref == ret
     _apply_.assert_called_once_with(glb['foo'], *ref[0], **ref[1])
     _apply_.reset_mock()
@@ -571,7 +703,7 @@ def test_transformer__RestrictingNodeTransformer__visit_FunctionDef_1(compile):
     assert code is None
     assert errors[0] == err_msg
 
-    if sys.version_info.major == 2:
+    if IS_PY2:
         code, errors = compile("def foo((a, _bad)): pass")[:2]
         assert code is None
         assert errors[0] == err_msg
@@ -582,7 +714,7 @@ def test_transformer__RestrictingNodeTransformer__visit_FunctionDef_1(compile):
             assert code is None
             assert errors[0] == err_msg
 
-    if sys.version_info.major == 3:
+    if IS_PY3:
         code, errors = compile("def foo(good, *, _bad): pass")[:2]
         assert code is None
         assert errors[0] == err_msg
@@ -598,7 +730,7 @@ def nested_with_order((a, b), (c, d)):
 
 
 @pytest.mark.skipif(
-    sys.version_info.major == 3,
+    IS_PY3,
     reason="tuple parameter unpacking is gone in python 3")
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__visit_FunctionDef_2(compile, mocker):
@@ -665,7 +797,7 @@ def test_transformer__RestrictingNodeTransformer__visit_Lambda_1(compile):
     assert code is None
     assert errors[0] == err_msg
 
-    if sys.version_info.major == 2:
+    if IS_PY2:
         # The old one did not support tuples at all.
         if compile is RestrictedPython.compile.compile_restricted_exec:
             code, errors = compile("lambda (a, _bad): None")[:2]
@@ -676,14 +808,14 @@ def test_transformer__RestrictingNodeTransformer__visit_Lambda_1(compile):
             assert code is None
             assert errors[0] == err_msg
 
-    if sys.version_info.major == 3:
+    if IS_PY3:
         code, errors = compile("lambda good, *, _bad: None")[:2]
         assert code is None
         assert errors[0] == err_msg
 
 
 @pytest.mark.skipif(
-    sys.version_info.major == 3,
+    IS_PY3,
     reason="tuple parameter unpacking is gone in python 3")
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__visit_Lambda_2(compile, mocker):
@@ -737,7 +869,7 @@ def test_transformer__RestrictingNodeTransformer__visit_Assign(compile, mocker):
 
 
 @pytest.mark.skipif(
-    sys.version_info.major == 2,
+    IS_PY2,
     reason="starred assignments are python3 only")
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__visit_Assign2(compile, mocker):
@@ -813,6 +945,7 @@ def try_except_else_finally(m):
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__error_handling(compile, mocker):
     code, errors = compile(TRY_EXCEPT_FINALLY)[:2]
+    assert errors == ()
     assert code is not None
 
     glb = {}
@@ -868,7 +1001,7 @@ def tuple_unpack(err):
 
 
 @pytest.mark.skipif(
-    sys.version_info.major == 3,
+    IS_PY3,
     reason="tuple unpacking on exceptions is gone in python3")
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__visit_ExceptHandler(compile, mocker):
@@ -943,3 +1076,276 @@ def test_transformer__RestrictingNodeTransformer__visit_ClassDef(compile):
     assert code is None
     assert errors[0] == 'Line 1: "_bad" is an invalid variable name ' \
                         'because it starts with "_"'
+
+
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__test_ternary_if(compile, mocker):
+    code, errors = compile('x.y = y.a if y.z else y.b')[:2]
+    assert code is not None
+    assert errors == ()
+
+    _getattr_ = mocker.stub()
+    _getattr_.side_effect = lambda ob, key: ob[key]
+    _write_ = mocker.stub()
+    _write_.side_effect = lambda ob: ob
+
+    glb = {
+        '_getattr_': _getattr_,
+        '_write_': _write_,
+        'x': mocker.stub(),
+        'y': {'a': 'a', 'b': 'b'},
+    }
+
+    glb['y']['z'] = True
+    six.exec_(code, glb)
+
+    assert glb['x'].y == 'a'
+    _write_.assert_called_once_with(glb['x'])
+    _getattr_.assert_has_calls([
+        mocker.call(glb['y'], 'z'),
+        mocker.call(glb['y'], 'a')])
+
+    _write_.reset_mock()
+    _getattr_.reset_mock()
+
+    glb['y']['z'] = False
+    six.exec_(code, glb)
+
+    assert glb['x'].y == 'b'
+    _write_.assert_called_once_with(glb['x'])
+    _getattr_.assert_has_calls([
+        mocker.call(glb['y'], 'z'),
+        mocker.call(glb['y'], 'b')])
+
+
+WITH_STMT_WITH_UNPACK_SEQUENCE = """
+def call(ctx):
+    with ctx() as (a, (c, b)):
+        return a, c, b
+"""
+
+
+@pytest.mark.parametrize(*compile)
+def test_transformer__with_stmt_unpack_sequence(compile, mocker):
+    code, errors = compile(WITH_STMT_WITH_UNPACK_SEQUENCE)[:2]
+
+    assert code is not None
+    assert errors == ()
+
+    @contextlib.contextmanager
+    def ctx():
+        yield (1, (2, 3))
+
+    _getiter_ = mocker.stub()
+    _getiter_.side_effect = lambda ob: ob
+
+    glb = {
+        '_getiter_': _getiter_,
+        '_unpack_sequence_': guarded_unpack_sequence
+    }
+
+    six.exec_(code, glb)
+
+    ret = glb['call'](ctx)
+
+    assert ret == (1, 2, 3)
+    _getiter_.assert_has_calls([
+        mocker.call((1, (2, 3))),
+        mocker.call((2, 3))])
+
+
+WITH_STMT_MULTI_CTX_WITH_UNPACK_SEQUENCE = """
+def call(ctx1, ctx2):
+    with ctx1() as (a, (b, c)), ctx2() as ((x, z), (s, h)):
+        return a, b, c, x, z, s, h
+"""
+
+
+@pytest.mark.parametrize(*compile)
+def test_transformer__with_stmt_multi_ctx_unpack_sequence(compile, mocker):
+    code, errors = compile(WITH_STMT_MULTI_CTX_WITH_UNPACK_SEQUENCE)[:2]
+
+    @contextlib.contextmanager
+    def ctx1():
+        yield (1, (2, 3))
+
+    @contextlib.contextmanager
+    def ctx2():
+        yield (4, 5), (6, 7)
+
+    _getiter_ = mocker.stub()
+    _getiter_.side_effect = lambda ob: ob
+
+    glb = {
+        '_getiter_': _getiter_,
+        '_unpack_sequence_': guarded_unpack_sequence
+    }
+
+    six.exec_(code, glb)
+
+    ret = glb['call'](ctx1, ctx2)
+
+    assert ret == (1, 2, 3, 4, 5, 6, 7)
+    _getiter_.assert_has_calls([
+        mocker.call((1, (2, 3))),
+        mocker.call((2, 3)),
+        mocker.call(((4, 5), (6, 7))),
+        mocker.call((4, 5)),
+        mocker.call((6, 7))
+    ])
+
+
+WITH_STMT_ATTRIBUTE_ACCESS = """
+def simple(ctx):
+    with ctx as x:
+        x.z = x.y + 1
+
+def assign_attr(ctx, x):
+    with ctx as x.y:
+        x.z = 1
+
+def load_attr(w):
+    with w.ctx as x:
+        x.z = 1
+
+"""
+
+
+@pytest.mark.parametrize(*compile)
+def test_transformer_with_stmt_attribute_access(compile, mocker):
+    code, errors = compile(WITH_STMT_ATTRIBUTE_ACCESS)[:2]
+
+    assert code is not None
+    assert errors == ()
+
+    _getattr_ = mocker.stub()
+    _getattr_.side_effect = getattr
+
+    _write_ = mocker.stub()
+    _write_.side_effect = lambda ob: ob
+
+    glb = {'_getattr_': _getattr_, '_write_': _write_}
+    six.exec_(code, glb)
+
+    # Test simple
+    ctx = mocker.MagicMock(y=1)
+    ctx.__enter__.return_value = ctx
+
+    glb['simple'](ctx)
+
+    assert ctx.z == 2
+    _write_.assert_called_once_with(ctx)
+    _getattr_.assert_called_once_with(ctx, 'y')
+
+    _write_.reset_mock()
+    _getattr_.reset_mock()
+
+    # Test assign_attr
+    x = mocker.Mock()
+    glb['assign_attr'](ctx, x)
+
+    assert x.z == 1
+    assert x.y == ctx
+    _write_.assert_has_calls([
+        mocker.call(x),
+        mocker.call(x)
+    ])
+
+    _write_.reset_mock()
+
+    # Test load_attr
+    ctx = mocker.MagicMock()
+    ctx.__enter__.return_value = ctx
+
+    w = mocker.Mock(ctx=ctx)
+
+    glb['load_attr'](w)
+
+    assert w.ctx.z == 1
+    _getattr_.assert_called_once_with(w, 'ctx')
+    _write_.assert_called_once_with(w.ctx)
+
+
+WITH_STMT_SUBSCRIPT = """
+def single_key(ctx, x):
+    with ctx as x['key']:
+        pass
+
+
+def slice_key(ctx, x):
+    with ctx as x[2:3]:
+        pass
+"""
+
+
+@pytest.mark.parametrize(*compile)
+def test_transformer_with_stmt_subscript(compile, mocker):
+    code, errors = compile(WITH_STMT_SUBSCRIPT)[:2]
+
+    assert code is not None
+    assert errors == ()
+
+    _write_ = mocker.stub()
+    _write_.side_effect = lambda ob: ob
+
+    glb = {'_write_': _write_}
+    six.exec_(code, glb)
+
+    # Test single_key
+    ctx = mocker.MagicMock()
+    ctx.__enter__.return_value = ctx
+    x = {}
+
+    glb['single_key'](ctx, x)
+
+    assert x['key'] == ctx
+    _write_.assert_called_once_with(x)
+    _write_.reset_mock()
+
+    # Test slice_key
+    ctx = mocker.MagicMock()
+    ctx.__enter__.return_value = (1, 2)
+
+    x = [0, 0, 0, 0, 0, 0]
+    glb['slice_key'](ctx, x)
+
+    assert x == [0, 0, 1, 2, 0, 0, 0]
+    _write_.assert_called_once_with(x)
+
+
+DICT_COMPREHENSION_WITH_ATTRS = """
+def call(seq):
+    return {y.k: y.v for y in seq.z if y.k}
+"""
+
+
+@pytest.mark.parametrize(*compile)
+def test_transformer_dict_comprehension_with_attrs(compile, mocker):
+    code, errors = compile(DICT_COMPREHENSION_WITH_ATTRS)[:2]
+
+    assert code is not None
+    assert errors == ()
+
+    _getattr_ = mocker.Mock()
+    _getattr_.side_effect = getattr
+
+    _getiter_ = mocker.Mock()
+    _getiter_.side_effect = lambda ob: ob
+
+    glb = {'_getattr_': _getattr_, '_getiter_': _getiter_}
+    six.exec_(code, glb)
+
+    z = [mocker.Mock(k=0, v='a'), mocker.Mock(k=1, v='b')]
+    seq = mocker.Mock(z=z)
+
+    ret = glb['call'](seq)
+    assert ret == {1: 'b'}
+
+    _getiter_.assert_called_once_with(z)
+    _getattr_.assert_has_calls([
+        mocker.call(seq, 'z'),
+        mocker.call(z[0], 'k'),
+        mocker.call(z[1], 'k'),
+        mocker.call(z[1], 'v'),
+        mocker.call(z[1], 'k')
+    ])

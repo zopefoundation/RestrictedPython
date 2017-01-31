@@ -50,8 +50,8 @@ def test_print_function__simple_prints():
     glb = {'_print_': PrintCollector, '_getattr_': None}
 
     code, errors = compiler(ALLOWED_PRINT_FUNCTION)[:2]
-    assert code is not None
     assert errors == ()
+    assert code is not None
     six.exec_(code, glb)
     assert glb['_print']() == 'Hello World!\n'
 
