@@ -9,12 +9,11 @@ As the ``compiler`` module has been declared deprecated in Python 2.6 and alread
 Goals for a rewrite
 -------------------
 
-RestrictedPython is a core dependency for the Zope2 application server and therefore implicite for the content management system Plone.
-The Zope & Plone community want to continue there projects and as Python 2 is announced end of life by 2020, and will be ultimative replaced by Python 3 or higher.
+RestrictedPython is a core dependency for the Zope2 application server and therefore implicit for the content management system Plone.
+The Zope & Plone community want to continue their projects and as Python 2 is announced end of life by 2020, and will be ultimately replaced by Python 3 or higher.
 Zope and Plone should become Python 3 compatible.
 
-One of the core functionallity of Zope 2 and therefore Plone is the possibility to implement and modify Python Scripts and Templates through the web (TTW) without harming the application or server itself.
-
+One of the core features of Zope 2 and therefore Plone is the possibility to implement and modify Python scripts and templates through the web (TTW) without harming the application or server itself.
 
 
 Targeted Versions to support
@@ -32,7 +31,7 @@ will be completed):
 
 .. _`security support` : https://docs.python.org/devguide/index.html#branchstatus
 
-We do explicite exclude Python 3.3 and PyPy3 (which is based on the Python 3.3 specification) at the moment, because the changes from 3.4 upwords are huge and Python 3.3 is end of life by September 2017.
+We explicitly exclude Python 3.3 and PyPy3 (which is based on the Python 3.3 specification) at the moment, because the changes from 3.4 upwords are huge and Python 3.3 is end of life by September 2017.
 
 Dependencies
 ------------
