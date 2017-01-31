@@ -22,6 +22,7 @@ import os
 def read(*rnames):
     return open(os.path.join(os.path.dirname(__file__), *rnames)).read()
 
+
 setup(name='RestrictedPython',
       version='4.0.0.dev0',
       url='http://pypi.python.org/pypi/RestrictedPython',
@@ -30,13 +31,24 @@ setup(name='RestrictedPython',
                   'environment for Python, e.g. for running untrusted code.',
       long_description=(read('src', 'RestrictedPython', 'README.txt') + '\n' +
                         read('CHANGES.txt')),
+      classifiers=[
+          'License :: OSI Approved :: Zope Public License',
+          'Programming Language :: Python',
+          'Operating System :: OS Independent',
+          'Programming Language :: Python :: 2.7',
+          'Programming Language :: Python :: 3.4',
+          'Programming Language :: Python :: 3.5',
+          'Programming Language :: Python :: 3.6',
+          'Programming Language :: Python :: Implementation :: CPython',
+          'Programming Language :: Python :: Implementation :: PyPy',
+          'Topic :: Security',
+      ],
       author='Zope Foundation and Contributors',
       author_email='zope-dev@zope.org',
       packages=find_packages('src'),
       package_dir={'': 'src'},
       install_requires=[
           'setuptools',
-          #'zope.deprecation',
           'six',
       ],
       extras_require={
@@ -50,8 +62,7 @@ setup(name='RestrictedPython',
               'pytest',
           ],
           'develop': [
-              'ipdb',
-              'ipython',
+              'pdbpp',
               'isort',
           ],
       },
