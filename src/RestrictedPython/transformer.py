@@ -156,17 +156,13 @@ if version >= (2, 7) and version < (2, 8):
         ast.ExceptHandler,
     ])
 
-if version >= (3, 0):
+if version >= (3, 4):
     AST_WHITELIST.extend([
         ast.Bytes,
         ast.Starred,
         ast.arg,
         ast.Try,
         ast.ExceptHandler,
-    ])
-
-if version >= (3, 4):
-    AST_WHITELIST.extend([
         ast.NameConstant,
     ])
 

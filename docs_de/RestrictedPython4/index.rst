@@ -18,13 +18,17 @@ Eine der Kernfunktionalitäten von Zope2 und damit für Plone ist die Möglichke
 Targeted Versions to support
 ----------------------------
 
-For a RestrictedPython 4.0.0+ Update we aim to support only current Python Versions (under active Security Support: https://docs.python.org/devguide/index.html#branchstatus):
+For the RestrictedPython 4 update we aim to support only current Python
+versions (the ones that will have active `security support`_ after this update
+will be completed):
 
 * 2.7
 * 3.4
 * 3.5
 * 3.6
-* pypy2
+* PyPy2.7
+
+.. _`security support` : https://docs.python.org/devguide/index.html#branchstatus
 
 Abhängigkeiten
 --------------
