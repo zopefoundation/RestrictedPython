@@ -1,19 +1,18 @@
 from RestrictedPython.PrintCollector import PrintCollector
-
-import pytest
+from RestrictedPython._compat import IS_PY2, IS_PY3
 import RestrictedPython
+import pytest
 import six
-import sys
 
 
 pytestmark = pytest.mark.skipif(
-    sys.version_info.major == 3,
+    IS_PY3,
     reason="print statement no longer exists in Python 3")
 
 
 compilers = ('compiler', [RestrictedPython.compile.compile_restricted_exec])
 
-if sys.version_info.major == 2:
+if IS_PY2:
     from RestrictedPython import RCompile
     compilers[1].append(RCompile.compile_restricted_exec)
 

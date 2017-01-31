@@ -15,7 +15,7 @@
 # AccessControl.ZopeGuards contains a large set of wrappers for builtins.
 # DocumentTemplate.DT_UTil contains a few.
 
-import sys
+from ._compat import IS_PY2
 
 
 try:
@@ -104,8 +104,7 @@ _safe_exceptions = [
     'ZeroDivisionError',
 ]
 
-version = sys.version_info
-if version >= (2, 7) and version < (2, 8):
+if IS_PY2:
     _safe_names.extend([
         'basestring',
         'cmp',
@@ -116,22 +115,6 @@ if version >= (2, 7) and version < (2, 8):
     ])
     _safe_exceptions.extend([
         'StandardError',
-    ])
-
-if version >= (3, 0):
-    _safe_names.extend([
-
-    ])
-    _safe_exceptions.extend([
-
-    ])
-
-if version >= (3, 5):
-    _safe_names.extend([
-
-    ])
-    _safe_exceptions.extend([
-
     ])
 
 
@@ -246,7 +229,7 @@ def _write_wrapper():
 def _full_write_guard():
     # Nested scope abuse!
     # safetype and Wrapper variables are used by guard()
-    safetype = {dict: True, list: True}.has_key if version < (3, 0) else {dict: True, list: True}.keys
+    safetype = {dict: True, list: True}.has_key if IS_PY2 else {dict: True, list: True}.keys
     Wrapper = _write_wrapper()
 
     def guard(ob):
