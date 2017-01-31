@@ -10,7 +10,7 @@ Goals for a rewrite
 -------------------
 
 RestrictedPython is a core dependency for the Zope2 application server and therefore implicit for the content management system Plone.
-The Zope & Plone community want to continue their projects and as Python 2 is announced end of life by 2020, and will be ultimately replaced by Python 3 or higher.
+The Zope & Plone community want to continue their projects and as Python 2 is announced end of life by 2020, and will be ultimately be replaced by Python 3 or higher.
 Zope and Plone should become Python 3 compatible.
 
 One of the core features of Zope 2 and therefore Plone is the possibility to implement and modify Python scripts and templates through the web (TTW) without harming the application or server itself.
