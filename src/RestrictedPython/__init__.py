@@ -12,6 +12,11 @@
 ##############################################################################
 """RestrictedPython package."""
 
+# This is a file to define public API in the base namespace of the package.
+# use: isor:skip to supress all isort related warnings / errors,
+# as this file should be logically grouped imports
+
+
 # Old API --> Old Import Locations
 # from RestrictedPython.RCompile import compile_restricted
 # from RestrictedPython.RCompile import compile_restricted_eval
@@ -19,16 +24,24 @@
 # from RestrictedPython.RCompile import compile_restricted_function
 
 # new API Style
-from RestrictedPython.compile import compile_restricted
-from RestrictedPython.compile import compile_restricted_eval
-from RestrictedPython.compile import compile_restricted_exec
-from RestrictedPython.compile import compile_restricted_function
-from RestrictedPython.compile import compile_restricted_single
-from RestrictedPython.compile import CompileResult
-from RestrictedPython.Guards import safe_builtins
-from RestrictedPython.Limits import limited_builtins
-from RestrictedPython.PrintCollector import PrintCollector
-from RestrictedPython.Utilities import utility_builtins
+# compile_restricted methods:
+from RestrictedPython.compile import compile_restricted  # isort:skip
+from RestrictedPython.compile import compile_restricted_eval  # isort:skip
+from RestrictedPython.compile import compile_restricted_exec  # isort:skip
+from RestrictedPython.compile import compile_restricted_function  # isort:skip
+from RestrictedPython.compile import compile_restricted_single  # isort:skip
+
+# predefined builtins
+from RestrictedPython.Guards import safe_builtins  # isort:skip
+from RestrictedPython.Limits import limited_builtins  # isort:skip
+from RestrictedPython.Utilities import utility_builtins  # isort:skip
+
+# Helper Methods
+from RestrictedPython.PrintCollector import PrintCollector  # isort:skip
+from RestrictedPython.compile import CompileResult  # isort:skip
+
+# Policy
+from RestrictedPython.transformer import RestrictingNodeTransformer  # isort:skip
 
 
 # from RestrictedPython.Eval import RestrictionCapableEval
