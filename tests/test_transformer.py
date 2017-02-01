@@ -988,6 +988,22 @@ def test_transformer__RestrictingNodeTransformer__visit_Lambda__7(compile):
     assert code is None
 
 
+BAD_ARG_IN_LAMBDA = """\
+def check_getattr_in_lambda(arg=lambda _bad=(lambda ob, name: name): _bad2):
+    42
+"""
+
+
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__visit_Lambda__8(compile):
+    """It prevents arguments starting with `_` in weird lambdas."""
+    code, errors = compile(BAD_ARG_IN_LAMBDA)[:2]
+    # RestrictedPython.compile.compile_restricted_exec finds both invalid
+    # names, while the old implementation seems to abort after the first.
+    assert lambda_err_msg in errors
+    assert code is None
+
+
 @pytest.mark.skipif(
     IS_PY3,
     reason="tuple parameter unpacking is gone in python 3")

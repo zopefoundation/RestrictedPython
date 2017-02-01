@@ -3,11 +3,6 @@
 # Each function in this module is compiled using compile_restricted().
 
 
-def check_getattr_in_lambda(arg=lambda _getattr=(lambda ob, name: name):
-                                       _getattr):
-    42
-
-
 def except_using_bad_name():
     try:
         foo
