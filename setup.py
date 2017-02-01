@@ -59,7 +59,6 @@ setup(name='RestrictedPython',
           ],
           'test': [
               'pytest',
-              'tox',
           ],
           'develop': [
               'pdbpp',
