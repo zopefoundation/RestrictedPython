@@ -3,11 +3,6 @@
 # Each function in this module is compiled using compile_restricted().
 
 
-def overrideGuardWithArgument():
-    def f(_getattr=None):
-        pass
-
-
 def check_getattr_in_lambda(arg=lambda _getattr=(lambda ob, name: name):
                                        _getattr):
     42
