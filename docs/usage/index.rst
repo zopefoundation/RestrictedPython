@@ -105,7 +105,7 @@ So you normally end up using:
 
 One common advanced usage would be to define an own restricted builtin dictionary.
 
-
+.. _sec_usage_frameworks
 
 Usage on frameworks and Zope
 ----------------------------
@@ -124,3 +124,45 @@ Those four methods return a tuple with four elements:
 * ``errors`` a tuple with error messages
 * ``warnings`` a list with warnings
 * ``used_names`` a set / dictionary with collected used names of library calls
+
+Those three information "lists" could be used to provide the user with informations about its source code.
+
+Typical uses cases for the four specialized methods:
+
+* ``compile_restricted_exec`` --> Python Modules or Scripts that should be used or called by the framework itself or from user calls
+* ``compile_restricted_eval`` --> Templates
+* ``compile_restricted_single``
+* ``compile_restricted_function``
+
+Modifying the builtins is straight forward, it is just a dictionary containing access pointer to available library elements.
+Modification is normally removing elements from existing builtins or adding allowed elements by copying from globals.
+
+For frameworks it could possibly also be useful to change handling of specific Python language elements.
+For that use case RestrictedPython provide the possibility to pass an own policy.
+A policy is basically a special ``NodeTransformer`` that could be instantiated with three params for ``errors``, ``warnings`` and ``used_names``, it should be a subclass of RestrictingNodeTransformer (that subclassing will maybe later be enforced).
+
+.. code:: Python
+
+    OwnRestrictingNodeTransformer(errors=[], warnings=[], used_names=[])
+
+One Special case (defined for non blocking other ports to Python 3 of the Zope Packages) is to actually use RestrictedPython in an unrestricted Mode, by providing a Null-Policy (None).
+
+All ``compile_restricted*`` methods do have a optional param policy, where a specific policy could be provided.
+
+.. code:: Python
+
+    source_code = """<demo code>"""
+
+    policy = OwnRestrictingNodeTransformer
+
+    byte_code = compile(source_code, filename='<inline code>', mode='exec', policy=policy)
+    exec(byte_code, { ... }, { ... })
+
+The Special case "unrestricted RestrictedPython" would be:
+
+.. code:: Python
+
+    source_code = """<demo code>"""
+
+    byte_code = compile(source_code, filename='<inline code>', mode='exec', policy=None)
+    exec(byte_code, globals(), None)
