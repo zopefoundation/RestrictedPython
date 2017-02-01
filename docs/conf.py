@@ -29,6 +29,7 @@ import os
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
+    'sphinx.ext.intersphinx',
     'sphinx.ext.todo',
 ]
 
@@ -105,6 +106,16 @@ pygments_style = 'sphinx'
 # If true, `todo` and `todoList` produce output, else they produce nothing.
 todo_include_todos = True
 
+# Intersphinx Mapping for Links between different Documentations
+intersphinx_mapping = {
+    'python2': ('https://docs.python.org/2', None),
+    'python2.7': ('https://docs.python.org/2.7', None),
+    'python3': ('https://docs.python.org/3', None),
+    'python34': ('https://docs.python.org/3.4', None),
+    'python35': ('https://docs.python.org/3.5', None),
+    'python36': ('https://docs.python.org/3.6', None),
+
+}
 
 # -- Options for HTML output ----------------------------------------------
 
