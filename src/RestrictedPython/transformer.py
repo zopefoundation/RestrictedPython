@@ -1216,7 +1216,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         return self.node_contents_visit(node)
 
     def visit_ExceptHandler(self, node):
-        """Protects tuple unpacking on exception handlers.
+        """Protect tuple unpacking on exception handlers.
 
         try:
             .....
@@ -1233,7 +1233,6 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
             finally:
                 del tmp
         """
-
         node = self.node_contents_visit(node)
 
         if IS_PY3:
