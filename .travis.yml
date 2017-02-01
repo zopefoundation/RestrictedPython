@@ -5,7 +5,7 @@ python:
     - 3.4
     - 3.5
     - 3.6
-    - pypy-dev
+    - pypy-5.4
 env:
     - ENVIRON=py
     - ENVIRON=isort
