@@ -3,22 +3,17 @@ from RestrictedPython._compat import IS_PY3
 from RestrictedPython.Guards import guarded_iter_unpack_sequence
 from RestrictedPython.Guards import guarded_unpack_sequence
 
+from RestrictedPython._compat import IS_PY2, IS_PY3
+from . import compile
+import RestrictedPython
 import contextlib
 import pytest
 import RestrictedPython
 import types
 
 
-# Define the arguments for @pytest.mark.parametrize to be able to test both the
-# old and the new implementation to be equal:
-compile = ('compile', [RestrictedPython.compile.compile_restricted_exec])
-if IS_PY2:
-    from RestrictedPython import RCompile
-    compile[1].append(RCompile.compile_restricted_exec)
-
-
 @pytest.mark.parametrize(*compile)
-def test_transformer__RestrictingNodeTransformer__generic_visit__1(compile):
+def test_transformer__RestrictingNodeTransformer__visit_Num__1(compile):
     """It compiles a number successfully."""
     code, errors, warnings, used_names = compile('42')
     assert 'code' == str(code.__class__.__name__)
@@ -28,7 +23,7 @@ def test_transformer__RestrictingNodeTransformer__generic_visit__1(compile):
 
 
 @pytest.mark.parametrize(*compile)
-def test_transformer__RestrictingNodeTransformer__generic_visit__2(compile):
+def test_transformer__RestrictingNodeTransformer__visit_Call__1(compile):
     """It compiles a function call successfully and returns the used name."""
     code, errors, warnings, used_names = compile('max([1, 2, 3])')
     assert errors == ()
@@ -48,8 +43,8 @@ def no_yield():
 
 
 @pytest.mark.parametrize(*compile)
-def test_transformer__RestrictingNodeTransformer__generic_visit__100(compile):
-    """It is an error if the code contains a `yield` statement."""
+def test_transformer__RestrictingNodeTransformer__visit_Yield__1(compile):
+    """It prevents using the `yield` statement."""
     code, errors, warnings, used_names = compile(YIELD)
     assert ("Line 2: Yield statements are not allowed.",) == errors
     assert warnings == []
@@ -65,22 +60,10 @@ def no_exec():
 @pytest.mark.skipif(IS_PY3,
                     reason="exec statement no longer exists in Python 3")
 @pytest.mark.parametrize(*compile)
-def test_transformer__RestrictingNodeTransformer__generic_visit__102(compile):
-    """It raises a SyntaxError if the code contains an `exec` statement."""
+def test_transformer__RestrictingNodeTransformer__visit_Exec__1(compile):
+    """It prevents using the `exec` statement. (Python 2 only)"""
     code, errors, warnings, used_names = compile(EXEC_STATEMENT)
     assert ('Line 2: Exec statements are not allowed.',) == errors
-
-
-@pytest.mark.skipif(
-    IS_PY2,
-    reason="exec statement in Python 3 raises SyntaxError itself")
-@pytest.mark.parametrize(*compile)
-def test_transformer__RestrictingNodeTransformer__generic_visit__103(compile):
-    """It is an error if the code contains an `exec` statement."""
-    code, errors, warnings, used_names = compile(EXEC_STATEMENT)
-    assert (
-        "Line 2: SyntaxError: Missing parentheses in call to 'exec' in on "
-        "statement: exec 'q = 1'",) == errors
 
 
 BAD_NAME_STARTING_WITH_UNDERSCORE = """\

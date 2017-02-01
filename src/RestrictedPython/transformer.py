@@ -1161,6 +1161,13 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         """
         return self.node_contents_visit(node)
 
+    def visit_Exec(self, node):
+        """Deny the usage of the exec statement.
+
+        Exists only in Python 2.
+        """
+        self.not_allowed(node)
+
     # Control flow
 
     def visit_If(self, node):
