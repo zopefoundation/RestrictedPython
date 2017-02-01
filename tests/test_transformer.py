@@ -833,7 +833,7 @@ def test_transformer__RestrictingNodeTransformer__visit_Lambda_2(compile, mocker
 
     src = "m = lambda (a, (b, c)), *ag, **kw: a+b+c+sum(ag)+sum(kw.values())"
     code, errors = compile(src)[:2]
-    exec(code, glb)
+    exec(code, glb, glb)
 
     ret = glb['m']((1, (2, 3)), 4, 5, 6, g=7, e=8)
     assert ret == 36
