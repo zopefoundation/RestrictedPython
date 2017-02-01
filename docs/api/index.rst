@@ -1,5 +1,5 @@
-API von RestrictedPython 4.0
-============================
+API of RestrictedPython 4.0
+===========================
 
 .. code:: Python
 

@@ -1,10 +1,7 @@
 Upgrade dependencies
 ====================
 
-Zope Core Packages that has RestrictedPython as dependencies
-------------------------------------------------------------
-
-The following Packages used in Zope2 for Plone depend on RestricedPython:
+The following packages used in Zope2 and Plone depend on ``RestricedPython``:
 
 * AccessControl
 * zope.untrustedpython
@@ -23,22 +20,23 @@ RestrictedPython did move some of the imports to the base namespace, so you shou
 
 * compile_restricted methods:
 
-  * ``from RestrictedPython.compile import compile_restricted``
-  * ``from RestrictedPython.compile import compile_restricted_eval``
-  * ``from RestrictedPython.compile import compile_restricted_exec``
-  * ``from RestrictedPython.compile import compile_restricted_function``
-  * ``from RestrictedPython.compile import compile_restricted_single``
+  * ``from RestrictedPython import compile_restricted``
+  * ``from RestrictedPython import compile_restricted_eval``
+  * ``from RestrictedPython import compile_restricted_exec``
+  * ``from RestrictedPython import compile_restricted_function``
+  * ``from RestrictedPython import compile_restricted_single``
 
-* predefined builtins:
+* predefined built-ins:
 
-  * ``from RestrictedPython.Guards import safe_builtins``
-  * ``from RestrictedPython.Limits import limited_builtins``
-  * ``from RestrictedPython.Utilities import utility_builtins``
+  * ``from RestrictedPython import safe_builtins``
+  * ``from RestrictedPython import limited_builtins``
+  * ``from RestrictedPython import utility_builtins``
 
-* Helper methods
+* helper methods:
 
-  * ``from RestrictedPython.PrintCollector import PrintCollector``
+  * ``from RestrictedPython import PrintCollector``
 
-Any import from ``RestrictedPython.rcompile`` indicates that there have been advanced checks implemented.
-Those advanced checks where implemented via ``MutatingWalker``'s.
-Any check needs to be reimplemented as a subclass of RestrictingNodeTransformer.
+Any import from ``RestrictedPython.RCompile`` indicates that there have been advanced checks implemented.
+Those advanced checks where implemented via a ``MutatingWalker``.
+Any checks needs to be reimplemented as a subclass of
+``RestrictingNodeTransformer``.
