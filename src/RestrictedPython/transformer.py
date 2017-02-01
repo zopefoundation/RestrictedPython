@@ -86,11 +86,11 @@ class PrintInfo(object):
 
 class RestrictingNodeTransformer(ast.NodeTransformer):
 
-    def __init__(self, errors=[], warnings=[], used_names=[]):
+    def __init__(self, errors=None, warnings=None, used_names=None):
         super(RestrictingNodeTransformer, self).__init__()
-        self.errors = errors
-        self.warnings = warnings
-        self.used_names = used_names
+        self.errors = [] if errors is None else errors
+        self.warnings = [] if warnings is None else warnings
+        self.used_names = [] if used_names is None else used_names
 
         # Global counter to construct temporary variable names.
         self._tmp_idx = 0
