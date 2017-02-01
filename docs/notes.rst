@@ -1,6 +1,9 @@
 How it works
 ============
 
+This is old documentation from RestrictedPython 3 and before.
+Information should be transferred and this file should be removed.
+
 Every time I see this code, I have to relearn it.  These notes will
 hopefully make this a little easier. :)
 
