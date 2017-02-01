@@ -12,6 +12,9 @@ Zope and Plone should become Python 3 compatible.
 
 One of the core features of Zope 2 and therefore Plone is the possibility to implement and modify Python scripts and templates through the web (TTW) without harming the application or server itself.
 
+As Python is a `Turing Complete`_ programming language programmers don't have any limitation and could potentially harm the Application and Server itself.
+
+RestrictedPython and AccessControl aims on this topic to provide a reduced subset of the Python Programming language, where all functions that could harm the system are permitted by default.
 
 Targeted Versions to support
 ----------------------------
