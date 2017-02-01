@@ -26,7 +26,7 @@ Also the names of classes have been changed, where ``compiler`` uses ``Walker`` 
 
 
 ast module (Abstract Syntax Trees)
----------------------------------
+----------------------------------
 
 The ast module consists of four areas:
 
