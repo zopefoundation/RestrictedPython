@@ -326,7 +326,7 @@ def test_transformer__RestrictingNodeTransformer__visit_Attribute__7(compile, mo
 @pytest.mark.skipif(IS_PY2,
                     reason="exec is a statement in Python 2")
 @pytest.mark.parametrize(*compile)
-def test_transformer__RestrictingNodeTransformer__visit_Call__1(compile):
+def test_transformer__RestrictingNodeTransformer__visit_Call__2(compile):
     """It is an error if the code call the `exec` function."""
     code, errors, warnings, used_names = compile(EXEC_FUNCTION)
     assert ("Line 2: Exec calls are not allowed.",) == errors
@@ -339,7 +339,7 @@ def no_eval():
 
 
 @pytest.mark.parametrize(*compile)
-def test_transformer__RestrictingNodeTransformer__visit_Call__2(compile):
+def test_transformer__RestrictingNodeTransformer__visit_Call__3(compile):
     """It is an error if the code call the `eval` function."""
     code, errors, warnings, used_names = compile(EVAL_FUNCTION)
     if compile is RestrictedPython.compile.compile_restricted_exec:
@@ -757,42 +757,94 @@ def test_transformer__RestrictingNodeTransformer__visit_Call(compile, mocker):
     _apply_.reset_mock()
 
 
+functiondef_err_msg = 'Line 1: "_bad" is an invalid variable ' \
+                      'name because it starts with "_"'
+
+
 @pytest.mark.parametrize(*compile)
-def test_transformer__RestrictingNodeTransformer__visit_FunctionDef_1(compile):
-    err_msg = 'Line 1: "_bad" is an invalid variable ' \
-              'name because it starts with "_"'
-
+def test_transformer__RestrictingNodeTransformer__visit_FunctionDef__1(
+        compile):
+    """It prevents function arguments starting with `_`."""
     code, errors = compile("def foo(_bad): pass")[:2]
+    # RestrictedPython.compile.compile_restricted_exec on Python 2 renders
+    # the error message twice. This is necessary as otherwise *_bad and **_bad
+    # would be allowed.
+    assert functiondef_err_msg in errors
     assert code is None
-    assert errors[0] == err_msg
 
+
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__visit_FunctionDef__2(
+        compile):
+    """It prevents function keyword arguments starting with `_`."""
     code, errors = compile("def foo(_bad=1): pass")[:2]
+    # RestrictedPython.compile.compile_restricted_exec on Python 2 renders
+    # the error message twice. This is necessary as otherwise *_bad and **_bad
+    # would be allowed.
+    assert functiondef_err_msg in errors
     assert code is None
-    assert errors[0] == err_msg
 
+
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__visit_FunctionDef__3(
+        compile):
+    """It prevents function * arguments starting with `_`."""
     code, errors = compile("def foo(*_bad): pass")[:2]
+    assert errors == (functiondef_err_msg,)
     assert code is None
-    assert errors[0] == err_msg
 
+
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__visit_FunctionDef__4(
+        compile):
+    """It prevents function ** arguments starting with `_`."""
     code, errors = compile("def foo(**_bad): pass")[:2]
+    assert errors == (functiondef_err_msg,)
     assert code is None
-    assert errors[0] == err_msg
 
-    if IS_PY2:
-        code, errors = compile("def foo((a, _bad)): pass")[:2]
+
+@pytest.mark.skipif(
+    IS_PY3,
+    reason="tuple parameter unpacking is gone in Python 3")
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__visit_FunctionDef__5(
+        compile):
+    """It prevents function arguments starting with `_` in tuples."""
+    code, errors = compile("def foo((a, _bad)): pass")[:2]
+    # RestrictedPython.compile.compile_restricted_exec on Python 2 renders
+    # the error message twice. This is necessary as otherwise *_bad and **_bad
+    # would be allowed.
+    assert functiondef_err_msg in errors
+    assert code is None
+
+
+@pytest.mark.skipif(
+    IS_PY3,
+    reason="tuple parameter unpacking is gone in Python 3")
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__visit_FunctionDef__6(
+        compile):
+    """It prevents function arguments starting with `_` in tuples."""
+    # The old `compile` breaks with tuples in function arguments:
+    if compile is RestrictedPython.compile.compile_restricted_exec:
+        code, errors = compile("def foo(a, (c, (_bad, c))): pass")[:2]
+        # RestrictedPython.compile.compile_restricted_exec on Python 2 renders
+        # the error message twice. This is necessary as otherwise *_bad and
+        # **_bad would be allowed.
+        assert functiondef_err_msg in errors
         assert code is None
-        assert errors[0] == err_msg
 
-        # The old one did not support nested checks.
-        if compile is RestrictedPython.compile.compile_restricted_exec:
-            code, errors = compile("def foo(a, (c, (_bad, c))): pass")[:2]
-            assert code is None
-            assert errors[0] == err_msg
 
-    if IS_PY3:
-        code, errors = compile("def foo(good, *, _bad): pass")[:2]
-        assert code is None
-        assert errors[0] == err_msg
+@pytest.mark.skipif(
+    IS_PY2,
+    reason="There is no single `*` argument in Python 2")
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__visit_FunctionDef__7(
+        compile):
+    """It prevents `_` function arguments together with a single `*`."""
+    code, errors = compile("def foo(good, *, _bad): pass")[:2]
+    assert errors == (functiondef_err_msg,)
+    assert code is None
 
 
 NESTED_SEQ_UNPACK = """
@@ -851,42 +903,105 @@ def test_transformer__RestrictingNodeTransformer__visit_FunctionDef_2(compile, m
     _getiter_.reset_mock()
 
 
+lambda_err_msg = 'Line 1: "_bad" is an invalid variable ' \
+                 'name because it starts with "_"'
+
+
 @pytest.mark.parametrize(*compile)
-def test_transformer__RestrictingNodeTransformer__visit_Lambda_1(compile):
-    err_msg = 'Line 1: "_bad" is an invalid variable ' \
-              'name because it starts with "_"'
-
+def test_transformer__RestrictingNodeTransformer__visit_Lambda__1(compile):
+    """It prevents arguments starting with `_`."""
     code, errors = compile("lambda _bad: None")[:2]
+    # RestrictedPython.compile.compile_restricted_exec on Python 2 renders
+    # the error message twice. This is necessary as otherwise *_bad and **_bad
+    # would be allowed.
+    assert lambda_err_msg in errors
     assert code is None
-    assert errors[0] == err_msg
 
+
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__visit_Lambda__2(compile):
+    """It prevents keyword arguments starting with `_`."""
     code, errors = compile("lambda _bad=1: None")[:2]
+    # RestrictedPython.compile.compile_restricted_exec on Python 2 renders
+    # the error message twice. This is necessary as otherwise *_bad and **_bad
+    # would be allowed.
+    assert lambda_err_msg in errors
     assert code is None
-    assert errors[0] == err_msg
 
+
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__visit_Lambda__3(compile):
+    """It prevents * arguments starting with `_`."""
     code, errors = compile("lambda *_bad: None")[:2]
+    assert errors == (lambda_err_msg,)
     assert code is None
-    assert errors[0] == err_msg
 
+
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__visit_Lambda__4(compile):
+    """It prevents ** arguments starting with `_`."""
     code, errors = compile("lambda **_bad: None")[:2]
+    assert errors == (lambda_err_msg,)
     assert code is None
-    assert errors[0] == err_msg
 
-    if IS_PY2:
-        # The old one did not support tuples at all.
-        if compile is RestrictedPython.compile.compile_restricted_exec:
-            code, errors = compile("lambda (a, _bad): None")[:2]
-            assert code is None
-            assert errors[0] == err_msg
 
-            code, errors = compile("lambda (a, (c, (_bad, c))): None")[:2]
-            assert code is None
-            assert errors[0] == err_msg
-
-    if IS_PY3:
-        code, errors = compile("lambda good, *, _bad: None")[:2]
+@pytest.mark.skipif(
+    IS_PY3,
+    reason="tuple parameter unpacking is gone in Python 3")
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__visit_Lambda__5(compile):
+    """It prevents arguments starting with `_` in tuple unpacking."""
+    # The old `compile` breaks with tuples in arguments:
+    if compile is RestrictedPython.compile.compile_restricted_exec:
+        code, errors = compile("lambda (a, _bad): None")[:2]
+        # RestrictedPython.compile.compile_restricted_exec on Python 2 renders
+        # the error message twice. This is necessary as otherwise *_bad and
+        # **_bad would be allowed.
+        assert lambda_err_msg in errors
         assert code is None
-        assert errors[0] == err_msg
+
+
+@pytest.mark.skipif(
+    IS_PY3,
+    reason="tuple parameter unpacking is gone in Python 3")
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__visit_Lambda__6(compile):
+    """It prevents arguments starting with `_` in nested tuple unpacking."""
+    # The old `compile` breaks with tuples in arguments:
+    if compile is RestrictedPython.compile.compile_restricted_exec:
+        code, errors = compile("lambda (a, (c, (_bad, c))): None")[:2]
+        # RestrictedPython.compile.compile_restricted_exec on Python 2 renders
+        # the error message twice. This is necessary as otherwise *_bad and
+        # **_bad would be allowed.
+        assert lambda_err_msg in errors
+        assert code is None
+
+
+@pytest.mark.skipif(
+    IS_PY2,
+    reason="There is no single `*` argument in Python 2")
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__visit_Lambda__7(compile):
+    """It prevents arguments starting with `_` together with a single `*`."""
+    code, errors = compile("lambda good, *, _bad: None")[:2]
+    assert errors == (lambda_err_msg,)
+    assert code is None
+
+
+BAD_ARG_IN_LAMBDA = """\
+def check_getattr_in_lambda(arg=lambda _bad=(lambda ob, name: name): _bad2):
+    42
+"""
+
+
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__visit_Lambda__8(compile):
+    """It prevents arguments starting with `_` in weird lambdas."""
+    code, errors = compile(BAD_ARG_IN_LAMBDA)[:2]
+    # RestrictedPython.compile.compile_restricted_exec finds both invalid
+    # names, while the old implementation seems to abort after the first.
+    assert lambda_err_msg in errors
+    assert code is None
 
 
 @pytest.mark.skipif(
