@@ -46,7 +46,7 @@ For RestrictedPython this ``compile()`` method is replaced by:
 
     compile_restricted(source, filename, mode [, flags [, dont_inherit]])
 
-The primary parameter ``source`` has to be a ASCII or ``unicode`` string (With Python 2.6 an additional option for source was added: ``ast.AST`` for :ref:`Code generation <code generation>`).
+The primary parameter ``source`` has to be a ASCII or ``unicode`` string (With Python 2.6 an additional option for source was added: ``ast.AST`` for :ref:`Code generation <_sec_code_generation>`).
 Both methods either returns compiled byte code that the interpreter could execute or raise exceptions if the provided source code is invalid.
 
 As ``compile`` and ``compile_restricted`` just compile the provided source code to byte code it is not sufficient to sandbox the environment, as all calls to libraries are still available.

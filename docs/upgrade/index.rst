@@ -6,6 +6,8 @@ RestrictedPython is a classic approach of compiler construction to create a limi
 Defining a programming language requires a regular grammar (`Chomsky 3`_ / `EBNF`_) definition.
 This grammar will be implemented in an abstract syntax tree (AST), which will be passed on to a code generator to produce a machine-readable version.
 
+.. _`_sec_code_generation`
+
 Code generation
 ---------------
 
@@ -14,15 +16,16 @@ This machine code then gets executed on the specific CPU architecture, with the 
 
 The byte code produced must be compatible with the execution environment that the Python interpreter is running in, so we do not generate the byte code directly from ``compile_restricted`` and the other ``compile_restricted_*`` methods manually, it may not match what the interpreter expects.
 
-Thankfully, the Python ``compile()`` function introduced the capability to compile ``ast.AST`` code into byte code in Python 2.6, so we can return the platform-independent AST and keep bytecode generation delegated to the interpreter.
-
-As the ``compiler`` module was deprecated in Python 2.6 and was removed before Python 3.0 was released it has never been avaliable for any Python 3 version.
-So we need to move from ``compiler.ast`` to ``ast`` to support newer Python versions.
+Thankfully, the Python ``compile()`` function introduced the capability to compile ``ast.AST`` code into byte code in Python 2.6, so we can return the platform-independent AST and keep byte code generation delegated to the interpreter.
 
 ``compiler.ast`` --> ``ast``
 ----------------------------
 
-From the point of view of compiler design, the concepts of the compiler module and the ast module are similar.
+As the ``compiler`` module was deprecated in Python 2.6 and was removed before Python 3.0 was released it has never been available for any Python 3 version.
+Instead Python 2.6 / Python 3 introduced the new ``ast`` module, that is more widly supported.
+So we need to move from ``compiler.ast`` to ``ast`` to support newer Python versions.
+
+From the point of view of compiler design, the concepts of the ``compiler`` module and the ``ast`` module are similar.
 The ``compiler`` module predates several major improvements of the Python development like a generally applied style guide.
 While ``compiler`` still uses the old `CamelCase`_ Syntax (``visitNode(self, node, walker)``) the ``ast.AST`` did now use the Python common ``visit_Node(self, node)`` syntax.
 Also the names of classes have been changed, where ``compiler`` uses ``Walker`` and ``Mutator`` the corresponding elements in ``ast.AST`` are ``NodeVisitor`` and ``NodeTransformator``.
@@ -47,10 +50,19 @@ The ``ast`` module consists of four areas:
 
 
 ``NodeVisitor`` & ``NodeTransformer``
--------------------------------------
+.....................................
 
 A ``NodeVisitor`` is a class of a node / AST consumer, it reads the data by stepping through the tree without modifying it.
 In contrast, a ``NodeTransformer`` (which inherits from a ``NodeVisitor``) is allowed to modify the tree and nodes.
+
+Modifying the AST
+-----------------
+
+
+
+
+
+
 
 
 Technical Backgrounds - Links to External Documentation
