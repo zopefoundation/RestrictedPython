@@ -1,11 +1,9 @@
+from . import compile
 from RestrictedPython._compat import IS_PY2
 from RestrictedPython._compat import IS_PY3
 from RestrictedPython.Guards import guarded_iter_unpack_sequence
 from RestrictedPython.Guards import guarded_unpack_sequence
 
-from RestrictedPython._compat import IS_PY2, IS_PY3
-from . import compile
-import RestrictedPython
 import contextlib
 import pytest
 import RestrictedPython
