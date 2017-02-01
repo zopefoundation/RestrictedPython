@@ -49,3 +49,17 @@ The following packages / modules have hard dependencies on RestrictedPython:
 Additionally the folowing add ons have dependencies on RestrictedPython
 
 * None
+
+How RestrictedPython 4+ works internal
+--------------------------------------
+
+RestrictedPython core functions is split over several files:
+
+* __init__.py --> exports API direct under Namespace, any other should never be imported directly.
+* compile.py --> holds the compile_restricted methods for internal _compile_restricted_mode is the important function
+* transformer --> Home of ``RestrictingNodeTransformer``
+
+``RestrictingNodeTransformer``
+..............................
+
+The ``RestrictingNodeTransformer`` is one of the core elements of RestrictedPython.
