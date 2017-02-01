@@ -62,4 +62,30 @@ RestrictedPython core functions is split over several files:
 ``RestrictingNodeTransformer``
 ..............................
 
-The ``RestrictingNodeTransformer`` is one of the core elements of RestrictedPython.
+The ``RestrictingNodeTransformer`` is one of the core elements of RestrictedPython, it provides the base policy used by itself.
+
+``RestrictingNodeTransformer`` is a subclass of a ``NodeTransformer`` which has as set of ``visit_<AST_Elem>`` methods and a ``generic_visit`` method.
+
+``generic_visit`` is a predefined method of any ``NodeVisitor`` which sequential visit all sub nodes, in RestrictedPython this behavior is overwritten to always call a new internal method ``not_allowed(node)``.
+This results in a implicit whitelisting of all allowed AST elements.
+Any possible new introduced AST element in Python (new language element) will implicit be blocked and not allowed in RestrictedPython.
+
+So if new elements should be introduced an explicit ``visit_<new AST elem>`` is necessary.
+
+
+``_compile_restricted_mode``
+............................
+
+``_compile_restricted_mode`` is an internal method that does the whole mapping against the used policy and compiles provided source code, with respecting the mode.
+It is wrapped by the explicit functions:
+
+* ``compile_restricted_exec``
+* ``compile_restricted_eval``
+* ``compile_restricted_single``
+* ``compile_restricted_function``
+
+They are still exposed as those are the nominal used API.
+
+For advanced usage this function is interesting as it is the point where the policy came into play.
+If ``policy`` is ``None`` it just call the Python builtin ``compile`` method.
+Else it parse the provided Python source code into an ``ast.AST`` and let it check and transform by the provided policy.
