@@ -1,5 +1,6 @@
 from . import compile
 from RestrictedPython._compat import IS_PY2
+
 import pytest
 
 

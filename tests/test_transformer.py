@@ -1,11 +1,12 @@
+from . import compile
+from RestrictedPython._compat import IS_PY2
+from RestrictedPython._compat import IS_PY3
 from RestrictedPython.Guards import guarded_iter_unpack_sequence
 from RestrictedPython.Guards import guarded_unpack_sequence
-from RestrictedPython._compat import IS_PY2, IS_PY3
-from . import compile
-import RestrictedPython
+
 import contextlib
 import pytest
-import six
+import RestrictedPython
 import types
 
 
@@ -217,7 +218,7 @@ def test_transformer__RestrictingNodeTransformer__visit_Attribute__3(compile, mo
         'b': 'b'
     }
 
-    six.exec_(code, glb)
+    exec(code, glb)
     glb['func']()
     glb['_getattr_'].assert_called_once_with([], 'b')
 
@@ -255,7 +256,7 @@ def test_transformer__RestrictingNodeTransformer__visit_Attribute__5(compile, mo
     }
     glb['_write_'].return_value = glb['a']
 
-    six.exec_(code, glb)
+    exec(code, glb)
     glb['func']()
 
     glb['_write_'].assert_called_once_with(glb['a'])
@@ -307,7 +308,7 @@ def test_transformer__RestrictingNodeTransformer__visit_Attribute__7(compile, mo
         'b': mocker.Mock(b=2)
     }
 
-    six.exec_(code, glb)
+    exec(code, glb)
 
     _getattr_.assert_has_calls([
         mocker.call(glb['a'], 'a'),
@@ -390,7 +391,7 @@ def test_transformer__RestrictingNodeTransformer__guard_iter(compile, mocker):
     _getiter_ = mocker.stub()
     _getiter_.side_effect = lambda x: x
     glb = {'_getiter_': _getiter_}
-    six.exec_(code, glb)
+    exec(code, glb)
 
     ret = glb['for_loop'](it)
     assert 6 == ret
@@ -486,7 +487,7 @@ def test_transformer__RestrictingNodeTransformer__guard_iter2(compile, mocker):
         '_iter_unpack_sequence_': guarded_iter_unpack_sequence
     }
 
-    six.exec_(code, glb)
+    exec(code, glb)
 
     ret = glb['for_loop'](it)
     assert ret == 21
@@ -548,7 +549,7 @@ def test_transformer__RestrictingNodeTransformer__visit_Subscript_1(compile, moc
     _getitem_ = mocker.stub()
     _getitem_.side_effect = lambda ob, index: (ob, index)
     glb = {'_getitem_': _getitem_}
-    six.exec_(code, glb)
+    exec(code, glb)
 
     ret = glb['simple_subscript'](value)
     ref = (value, 'b')
@@ -620,7 +621,7 @@ def test_transformer__RestrictingNodeTransformer__visit_Subscript_2(compile, moc
     _write_ = mocker.stub()
     _write_.side_effect = lambda ob: ob
     glb = {'_write_': _write_}
-    six.exec_(code, glb)
+    exec(code, glb)
 
     glb['assign_subscript'](value)
     assert value['b'] == 1
@@ -646,7 +647,7 @@ def test_transformer__RestrictingNodeTransformer__visit_AugAssign(compile, mocke
     }
 
     code, errors = compile("a += x + z")[:2]
-    six.exec_(code, glb)
+    exec(code, glb)
 
     assert code is not None
     assert errors == ()
@@ -711,7 +712,7 @@ def test_transformer__RestrictingNodeTransformer__visit_Call(compile, mocker):
         'foo': lambda *args, **kwargs: (args, kwargs)
     }
 
-    six.exec_(code, glb)
+    exec(code, glb)
 
     ret = glb['positional_args']()
     assert ((1, 2), {}) == ret
@@ -817,7 +818,7 @@ def test_transformer__RestrictingNodeTransformer__visit_FunctionDef_2(compile, m
         '_unpack_sequence_': guarded_unpack_sequence
     }
 
-    six.exec_(code, glb)
+    exec(code, glb)
 
     val = (1, 2)
     ret = glb['simple'](val)
@@ -830,7 +831,7 @@ def test_transformer__RestrictingNodeTransformer__visit_FunctionDef_2(compile, m
         return
 
     code, errors = compile(NESTED_SEQ_UNPACK)[:2]
-    six.exec_(code, glb)
+    exec(code, glb)
 
     val = (1, 2, (3, (4, 5)))
     ret = glb['nested'](val)
@@ -905,7 +906,7 @@ def test_transformer__RestrictingNodeTransformer__visit_Lambda_2(compile, mocker
 
     src = "m = lambda (a, (b, c)), *ag, **kw: a+b+c+sum(ag)+sum(kw.values())"
     code, errors = compile(src)[:2]
-    six.exec_(code, glb)
+    exec(code, glb)
 
     ret = glb['m']((1, (2, 3)), 4, 5, 6, g=7, e=8)
     assert ret == 36
@@ -928,7 +929,7 @@ def test_transformer__RestrictingNodeTransformer__visit_Assign(compile, mocker):
         'g': (1, (2, 3)),
     }
 
-    six.exec_(code, glb)
+    exec(code, glb)
     assert glb['a'] == 1
     assert glb['x'] == 2
     assert glb['z'] == 3
@@ -957,7 +958,7 @@ def test_transformer__RestrictingNodeTransformer__visit_Assign2(compile, mocker)
         '_unpack_sequence_': guarded_unpack_sequence
     }
 
-    six.exec_(code, glb)
+    exec(code, glb)
 
     assert glb['a'] == 1
     assert glb['d'] == [2, 3]
@@ -1022,7 +1023,7 @@ def test_transformer__RestrictingNodeTransformer__error_handling(compile, mocker
     assert code is not None
 
     glb = {}
-    six.exec_(code, glb)
+    exec(code, glb)
 
     trace = mocker.stub()
 
@@ -1089,7 +1090,7 @@ def test_transformer__RestrictingNodeTransformer__visit_ExceptHandler(compile, m
         '_unpack_sequence_': guarded_unpack_sequence
     }
 
-    six.exec_(code, glb)
+    exec(code, glb)
 
     err = Exception(1, (2, 3))
     ret = glb['tuple_unpack'](err)
@@ -1170,7 +1171,7 @@ def test_transformer__RestrictingNodeTransformer__test_ternary_if(compile, mocke
     }
 
     glb['y']['z'] = True
-    six.exec_(code, glb)
+    exec(code, glb)
 
     assert glb['x'].y == 'a'
     _write_.assert_called_once_with(glb['x'])
@@ -1182,7 +1183,7 @@ def test_transformer__RestrictingNodeTransformer__test_ternary_if(compile, mocke
     _getattr_.reset_mock()
 
     glb['y']['z'] = False
-    six.exec_(code, glb)
+    exec(code, glb)
 
     assert glb['x'].y == 'b'
     _write_.assert_called_once_with(glb['x'])
@@ -1217,7 +1218,7 @@ def test_transformer__with_stmt_unpack_sequence(compile, mocker):
         '_unpack_sequence_': guarded_unpack_sequence
     }
 
-    six.exec_(code, glb)
+    exec(code, glb)
 
     ret = glb['call'](ctx)
 
@@ -1254,7 +1255,7 @@ def test_transformer__with_stmt_multi_ctx_unpack_sequence(compile, mocker):
         '_unpack_sequence_': guarded_unpack_sequence
     }
 
-    six.exec_(code, glb)
+    exec(code, glb)
 
     ret = glb['call'](ctx1, ctx2)
 
@@ -1298,7 +1299,7 @@ def test_transformer_with_stmt_attribute_access(compile, mocker):
     _write_.side_effect = lambda ob: ob
 
     glb = {'_getattr_': _getattr_, '_write_': _write_}
-    six.exec_(code, glb)
+    exec(code, glb)
 
     # Test simple
     ctx = mocker.MagicMock(y=1)
@@ -1362,7 +1363,7 @@ def test_transformer_with_stmt_subscript(compile, mocker):
     _write_.side_effect = lambda ob: ob
 
     glb = {'_write_': _write_}
-    six.exec_(code, glb)
+    exec(code, glb)
 
     # Test single_key
     ctx = mocker.MagicMock()
@@ -1406,7 +1407,7 @@ def test_transformer_dict_comprehension_with_attrs(compile, mocker):
     _getiter_.side_effect = lambda ob: ob
 
     glb = {'_getattr_': _getattr_, '_getiter_': _getiter_}
-    six.exec_(code, glb)
+    exec(code, glb)
 
     z = [mocker.Mock(k=0, v='a'), mocker.Mock(k=1, v='b')]
     seq = mocker.Mock(z=z)

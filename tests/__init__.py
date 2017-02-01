@@ -1,5 +1,7 @@
 from RestrictedPython._compat import IS_PY2
+
 import RestrictedPython
+
 
 # Define the arguments for @pytest.mark.parametrize to be able to test both the
 # old and the new implementation to be equal:
