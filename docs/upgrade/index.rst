@@ -6,7 +6,7 @@ RestrictedPython is a classic approach of compiler construction to create a limi
 Defining a programming language requires a regular grammar (`Chomsky 3`_ / `EBNF`_) definition.
 This grammar will be implemented in an abstract syntax tree (AST), which will be passed on to a code generator to produce a machine-readable version.
 
-.. _`_sec_code_generation`
+.. _`_sec_code_generation`:
 
 Code generation
 ---------------

@@ -4,9 +4,9 @@ Usage of RestrictedPython
 API overview
 ------------
 
-RestrictedPython do have tree major scopes:
+RestrictedPython has tree major scopes:
 
-* ``compile_restricted`` methods
+1. ``compile_restricted`` methods:
 
   * ``compile_restricted``
   * ``compile_restricted_exec``
@@ -14,13 +14,13 @@ RestrictedPython do have tree major scopes:
   * ``compile_restricted_single``
   * ``compile_restricted_function``
 
-* restricted builtins
+2. restricted builtins
 
   * ``safe_builtins``
   * ``limited_builtins``
   * ``utility_builtins``
 
-* Helper Moduls
+3. helper modules
 
   * ``PrintCollector``
 
@@ -62,17 +62,18 @@ With that simple addition:
     from RestrictedPython import compile_restricted as compile
 
 it uses a predefined policy that checks and modify the source code and checks against a restricted subset of the Python language.
-Execution of the compiled source code is still against the full available set of library modules and methods.
+The compiled source code is still executed against the full available set of library modules and methods.
 
-The ``exec()`` :ref:`Python ``exec()`` method <python3:meth:exec>` did take three params:
+The Python :py:func:`exec` takes three parameters:
 
 * ``code`` which is the compiled byte code
 * ``globals`` which is global dictionary
 * ``locals`` which is the local dictionary
 
-By limiting the entries in globals and locals dictionary you restrict access to available library modules and methods.
+By limiting the entries in the ``globals`` and ``locals`` dictionaries you
+restrict the access to the available library modules and methods.
 
-So providing defined dictionaries for the ``exec()`` method should be used in context of RestrictedPython.
+Providing defined dictionaries for ``exec()`` should be used in context of RestrictedPython.
 
 .. code:: Python
 
@@ -80,7 +81,7 @@ So providing defined dictionaries for the ``exec()`` method should be used in co
     exec(byte_code, { ... }, { ... })
 
 Typically there is a defined set of allowed modules, methods and constants used in that context.
-RestrictedPython did provide three predefined builtins for that:
+RestrictedPython provides three predefined built-ins for that:
 
 * ``safe_builtins``
 * ``limited_builtins``
@@ -105,13 +106,13 @@ So you normally end up using:
 
 One common advanced usage would be to define an own restricted builtin dictionary.
 
-.. _sec_usage_frameworks
+.. _sec_usage_frameworks:
 
-Usage on frameworks and Zope
+Usage in frameworks and Zope
 ----------------------------
 
-One major issue with using ``compile_restricted`` directly in a framework is, that you have to use try except statements to handle problems and it might be a bit harder to provide useful information to the user.
-RestrictedPython did provide four specialized compile_restricted methods:
+One major issue with using ``compile_restricted`` directly in a framework is, that you have to use try-except statements to handle problems and it might be a bit harder to provide useful information to the user.
+RestrictedPython provides four specialized compile_restricted methods:
 
 * ``compile_restricted_exec``
 * ``compile_restricted_eval``
@@ -125,7 +126,7 @@ Those four methods return a tuple with four elements:
 * ``warnings`` a list with warnings
 * ``used_names`` a set / dictionary with collected used names of library calls
 
-Those three information "lists" could be used to provide the user with informations about its source code.
+Those three information "lists" could be used to provide the user with informations about the compiled source code.
 
 Typical uses cases for the four specialized methods:
 
@@ -134,7 +135,7 @@ Typical uses cases for the four specialized methods:
 * ``compile_restricted_single``
 * ``compile_restricted_function``
 
-Modifying the builtins is straight forward, it is just a dictionary containing access pointer to available library elements.
+Modifying the builtins is straight forward, it is just a dictionary containing access pointers to available library elements.
 Modification is normally removing elements from existing builtins or adding allowed elements by copying from globals.
 
 For frameworks it could possibly also be useful to change handling of specific Python language elements.
@@ -145,9 +146,9 @@ A policy is basically a special ``NodeTransformer`` that could be instantiated w
 
     OwnRestrictingNodeTransformer(errors=[], warnings=[], used_names=[])
 
-One Special case (defined for non blocking other ports to Python 3 of the Zope Packages) is to actually use RestrictedPython in an unrestricted Mode, by providing a Null-Policy (None).
+One special case (defined to unblock ports of Zope Packages to Python 3) is to actually use RestrictedPython in an unrestricted mode, by providing a Null-Policy (aka ``None``).
 
-All ``compile_restricted*`` methods do have a optional param policy, where a specific policy could be provided.
+All ``compile_restricted*`` methods do have a optional parameter ``policy``, where a specific policy could be provided.
 
 .. code:: Python
 
