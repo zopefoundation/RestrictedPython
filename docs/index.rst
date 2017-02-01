@@ -7,11 +7,20 @@
 Welcome to RestrictedPython's documentation!
 ============================================
 
-Contents:
+.. include:: idea.rst
+
+Contents
+========
 
 .. toctree::
    :maxdepth: 2
 
+   idea
+   basics/index
+   RestrictedPython3/index
+   RestrictedPython4/index
+   update/index
+   api/index
 
 
 Indices and tables

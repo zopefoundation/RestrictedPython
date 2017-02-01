@@ -83,7 +83,7 @@ def test_transformer__RestrictingNodeTransformer__generic_visit__103(compile):
         "statement: exec 'q = 1'",) == errors
 
 
-BAD_NAME = """\
+BAD_NAME_STARTING_WITH_UNDERSCORE = """\
 def bad_name():
     __ = 12
 """
@@ -91,10 +91,102 @@ def bad_name():
 
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__visit_Name__1(compile):
-    """It is an error if a bad variable name is used."""
-    code, errors, warnings, used_names = compile(BAD_NAME)
+    """It is an error if a variable name starts with `_`."""
+    code, errors, warnings, used_names = compile(
+        BAD_NAME_STARTING_WITH_UNDERSCORE)
     assert ('Line 2: "__" is an invalid variable name because it starts with '
             '"_"',) == errors
+
+
+BAD_NAME_OVERRIDE_GUARD_WITH_NAME = """\
+def overrideGuardWithName():
+    _getattr = None
+"""
+
+
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__visit_Name__2(compile):
+    """It is an error if a variable name ends with `__roles__`."""
+    code, errors, warnings, used_names = compile(
+        BAD_NAME_OVERRIDE_GUARD_WITH_NAME)
+    assert ('Line 2: "_getattr" is an invalid variable name because it '
+            'starts with "_"',) == errors
+
+
+BAD_NAME_OVERRIDE_OVERRIDE_GUARD_WITH_FUNCTION = """\
+def overrideGuardWithFunction():
+    def _getattr(o):
+        return o
+"""
+
+
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__visit_Name__3(compile):
+    """It is an error if a variable name ends with `__roles__`."""
+    code, errors, warnings, used_names = compile(
+        BAD_NAME_OVERRIDE_OVERRIDE_GUARD_WITH_FUNCTION)
+    assert ('Line 2: "_getattr" is an invalid variable name because it '
+            'starts with "_"',) == errors
+
+
+BAD_NAME_OVERRIDE_GUARD_WITH_CLASS = """\
+def overrideGuardWithClass():
+    class _getattr:
+        pass
+"""
+
+
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__visit_Name__4(compile):
+    """It is an error if a variable name ends with `__roles__`."""
+    code, errors, warnings, used_names = compile(
+        BAD_NAME_OVERRIDE_GUARD_WITH_CLASS)
+    assert ('Line 2: "_getattr" is an invalid variable name because it '
+            'starts with "_"',) == errors
+
+
+BAD_NAME_ENDING_WITH___ROLES__ = """\
+def bad_name():
+    myvar__roles__ = 12
+"""
+
+
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__visit_Name__5(compile):
+    """It is an error if a variable name ends with `__roles__`."""
+    code, errors, warnings, used_names = compile(
+        BAD_NAME_ENDING_WITH___ROLES__)
+    assert ('Line 2: "myvar__roles__" is an invalid variable name because it '
+            'ends with "__roles__".',) == errors
+
+
+BAD_NAME_PRINTED = """\
+def bad_name():
+    printed = 12
+"""
+
+
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__visit_Name__6(compile):
+    """It is an error if a variable is named `printed`."""
+    code, errors, warnings, used_names = compile(BAD_NAME_PRINTED)
+    assert ('Line 2: "printed" is a reserved name.',) == errors
+
+
+BAD_NAME_PRINT = """\
+def bad_name():
+    def print():
+        pass
+"""
+
+
+@pytest.mark.skipif(IS_PY2,
+                    reason="print is a statement in Python 2")
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__visit_Name__7(compile):
+    """It is an error if a variable is named `printed`."""
+    code, errors, warnings, used_names = compile(BAD_NAME_PRINT)
+    assert ('Line 2: "print" is a reserved name.',) == errors
 
 
 BAD_ATTR_UNDERSCORE = """\
