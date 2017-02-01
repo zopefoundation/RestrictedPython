@@ -1,7 +1,7 @@
 The Idea behind RestrictedPython
 ================================
 
-Python is a `Turing-complete`_ programming language.
+Python is a `Turing complete`_ programming language.
 To offer a Python interface for users in web context is a potential security risk.
 Web frameworks and Content Management Systems (CMS) want to offer their users as much extensibility as possible through the web (TTW).
 This also means to have permissions to add functionality via a Python Script.
@@ -81,6 +81,6 @@ Also RestrictedPython provides three predefined, limited versions of Python's ow
 
 Additional there exist guard functions to make attributes of Python objects immutable --> ``full_write_guard`` (write and delete protected)
 
-.. _Turing-complete: https://en.wikipedia.org/wiki/Turing_completeness
+.. _`Turing complete`: https://en.wikipedia.org/wiki/Turing_completeness
 .. _Ada Ravenscar Profile: https://en.wikipedia.org/wiki/Ravenscar_profile
 .. _EBNF: https://en.wikipedia.org/wiki/Extended_Backus%E2%80%93Naur_form
