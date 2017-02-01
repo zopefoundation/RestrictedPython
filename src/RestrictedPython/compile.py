@@ -25,6 +25,11 @@ def _compile_restricted_mode(
         # Unrestricted Source Checks
         byte_code = compile(source, filename, mode=mode, flags=flags,
                             dont_inherit=dont_inherit)
+    # TODO: Should be an elif check if policy is subclass of
+    # RestrictionNodeTransformer any other object passed in as policy might
+    # throw an error or is a NodeVisitor subclass that could be initialized with
+    # three params.
+    # elif issubclass(policy, RestrictingNodeTransformer):
     else:
         c_ast = None
         try:
@@ -149,4 +154,5 @@ def compile_restricted(
         raise TypeError('unknown mode %s', mode)
     if errors:
         raise SyntaxError(errors)
+    # TODO: logging of warnings should be discussed and considered.
     return byte_code
