@@ -1,4 +1,5 @@
 from . import compile
+from . import execute
 from RestrictedPython._compat import IS_PY2
 from RestrictedPython._compat import IS_PY3
 from RestrictedPython.Guards import guarded_iter_unpack_sequence
@@ -971,14 +972,30 @@ def test_transformer__RestrictingNodeTransformer__visit_Assign2(compile, mocker)
         mocker.call((4, 3, 4))])
 
 
-TRY_EXCEPT_FINALLY = """
+TRY_EXCEPT = """
 def try_except(m):
     try:
         m('try')
         raise IndentationError('f1')
     except IndentationError as error:
         m('except')
+"""
 
+
+@pytest.mark.parametrize(*execute)
+def test_transformer__RestrictingNodeTransformer__visit_Try__1(
+        execute, mocker):
+    """It allows try-except statements."""
+    trace = mocker.stub()
+    execute(TRY_EXCEPT)['try_except'](trace)
+
+    trace.assert_has_calls([
+        mocker.call('try'),
+        mocker.call('except')
+    ])
+
+
+TRY_EXCEPT_ELSE = """
 def try_except_else(m):
     try:
         m('try')
@@ -986,7 +1003,23 @@ def try_except_else(m):
         m('except')
     else:
         m('else')
+"""
 
+
+@pytest.mark.parametrize(*execute)
+def test_transformer__RestrictingNodeTransformer__visit_Try__2(
+        execute, mocker):
+    """It allows try-except-else statements."""
+    trace = mocker.stub()
+    execute(TRY_EXCEPT_ELSE)['try_except_else'](trace)
+
+    trace.assert_has_calls([
+        mocker.call('try'),
+        mocker.call('else')
+    ])
+
+
+TRY_FINALLY = """
 def try_finally(m):
     try:
         m('try')
@@ -994,7 +1027,23 @@ def try_finally(m):
     finally:
         m('finally')
         return
+"""
 
+
+@pytest.mark.parametrize(*execute)
+def test_transformer__RestrictingNodeTransformer__visit_TryFinally__1(
+        execute, mocker):
+    """It allows try-finally statements."""
+    trace = mocker.stub()
+    execute(TRY_FINALLY)['try_finally'](trace)
+
+    trace.assert_has_calls([
+        mocker.call('try'),
+        mocker.call('finally')
+    ])
+
+
+TRY_EXCEPT_FINALLY = """
 def try_except_finally(m):
     try:
         m('try')
@@ -1003,7 +1052,24 @@ def try_except_finally(m):
         m('except')
     finally:
         m('finally')
+"""
 
+
+@pytest.mark.parametrize(*execute)
+def test_transformer__RestrictingNodeTransformer__visit_TryFinally__2(
+        execute, mocker):
+    """It allows try-except-finally statements."""
+    trace = mocker.stub()
+    execute(TRY_EXCEPT_FINALLY)['try_except_finally'](trace)
+
+    trace.assert_has_calls([
+        mocker.call('try'),
+        mocker.call('except'),
+        mocker.call('finally')
+    ])
+
+
+TRY_EXCEPT_ELSE_FINALLY = """
 def try_except_else_finally(m):
     try:
         m('try')
@@ -1016,53 +1082,18 @@ def try_except_else_finally(m):
 """
 
 
-@pytest.mark.parametrize(*compile)
-def test_transformer__RestrictingNodeTransformer__error_handling(compile, mocker):
-    code, errors = compile(TRY_EXCEPT_FINALLY)[:2]
-    assert errors == ()
-    assert code is not None
-
-    glb = {}
-    exec(code, glb)
-
+@pytest.mark.parametrize(*execute)
+def test_transformer__RestrictingNodeTransformer__visit_TryFinally__3(
+        execute, mocker):
+    """It allows try-except-else-finally statements."""
     trace = mocker.stub()
+    execute(TRY_EXCEPT_ELSE_FINALLY)['try_except_else_finally'](trace)
 
-    glb['try_except'](trace)
-    trace.assert_has_calls([
-        mocker.call('try'),
-        mocker.call('except')
-    ])
-    trace.reset_mock()
-
-    glb['try_except_else'](trace)
-    trace.assert_has_calls([
-        mocker.call('try'),
-        mocker.call('else')
-    ])
-    trace.reset_mock()
-
-    glb['try_finally'](trace)
-    trace.assert_has_calls([
-        mocker.call('try'),
-        mocker.call('finally')
-    ])
-    trace.reset_mock()
-
-    glb['try_except_finally'](trace)
-    trace.assert_has_calls([
-        mocker.call('try'),
-        mocker.call('except'),
-        mocker.call('finally')
-    ])
-    trace.reset_mock()
-
-    glb['try_except_else_finally'](trace)
     trace.assert_has_calls([
         mocker.call('try'),
         mocker.call('else'),
         mocker.call('finally')
     ])
-    trace.reset_mock()
 
 
 EXCEPT_WITH_TUPLE_UNPACK = """
@@ -1080,6 +1111,7 @@ def tuple_unpack(err):
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__visit_ExceptHandler(compile, mocker):
     code, errors = compile(EXCEPT_WITH_TUPLE_UNPACK)[:2]
+    assert errors == ()
     assert code is not None
 
     _getiter_ = mocker.stub()

@@ -1204,30 +1204,19 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         """Allow Try without restrictions.
 
         This is Python 3 only, Python 2 uses TryExcept.
-
-        XXX This was forbidden in RestrictedPython 3.x maybe we have to revisit
-            this change in RestrictedPython 4.x.
         """
         return self.node_contents_visit(node)
 
     def visit_TryFinally(self, node):
-        """Allow Try-Finally without restrictions.
-
-        XXX This was forbidden in RestrictedPython 3.x maybe we have to revisit
-            this change in RestrictedPython 4.x.
-        """
+        """Allow Try-Finally without restrictions."""
         return self.node_contents_visit(node)
 
     def visit_TryExcept(self, node):
-        """Allow Try-Except without restrictions.
-
-        XXX This was forbidden in RestrictedPython 3.x maybe we have to revisit
-            this change in RestrictedPython 4.x.
-        """
+        """Allow Try-Except without restrictions."""
         return self.node_contents_visit(node)
 
     def visit_ExceptHandler(self, node):
-        """Protects tuple unpacking on exception handlers.
+        """Protect tuple unpacking on exception handlers.
 
         try:
             .....
@@ -1244,7 +1233,6 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
             finally:
                 del tmp
         """
-
         node = self.node_contents_visit(node)
 
         if IS_PY3:
