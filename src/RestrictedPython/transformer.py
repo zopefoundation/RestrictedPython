@@ -1313,7 +1313,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         return node
 
     def visit_Lambda(self, node):
-        """Checks a lambda definition."""
+        """Check a lambda definition."""
         self.check_function_argument_names(node)
 
         node = self.node_contents_visit(node)
