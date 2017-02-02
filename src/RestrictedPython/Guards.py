@@ -229,7 +229,8 @@ def _write_wrapper():
 def _full_write_guard():
     # Nested scope abuse!
     # safetype and Wrapper variables are used by guard()
-    safetype = {dict: True, list: True}.has_key if IS_PY2 else {dict: True, list: True}.keys
+    safetype = ({dict: True, list: True}.has_key if IS_PY2 else
+                {dict: True, list: True}.keys)
     Wrapper = _write_wrapper()
 
     def guard(ob):
@@ -240,16 +241,22 @@ def _full_write_guard():
         # Hand the object to the Wrapper instance, then return the instance.
         return Wrapper(ob)
     return guard
+
+
 full_write_guard = _full_write_guard()
 
 
 def guarded_setattr(object, name, value):
     setattr(full_write_guard(object), name, value)
+
+
 safe_builtins['setattr'] = guarded_setattr
 
 
 def guarded_delattr(object, name):
     delattr(full_write_guard(object), name)
+
+
 safe_builtins['delattr'] = guarded_delattr
 
 

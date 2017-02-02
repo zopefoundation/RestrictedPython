@@ -42,6 +42,7 @@ def stmtNode(txt):
     rmLineno(node)
     return node
 
+
 # The security checks are performed by a set of six functions that
 # must be provided by the restricted environment.
 

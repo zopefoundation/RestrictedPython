@@ -14,7 +14,6 @@
 import math
 import random
 import string
-import warnings
 
 
 # _old_filters = warnings.filters[:]
@@ -50,6 +49,8 @@ def same_type(arg1, *args):
         if getattr(arg, '__class__', type(arg)) is not t:
             return 0
     return 1
+
+
 utility_builtins['same_type'] = same_type
 
 
@@ -61,6 +62,8 @@ def test(*args):
 
     if length % 2:
         return args[-1]
+
+
 utility_builtins['test'] = test
 
 
@@ -98,4 +101,6 @@ def reorder(s, with_=None, without=()):
             del orig[key]
 
     return result
+
+
 utility_builtins['reorder'] = reorder

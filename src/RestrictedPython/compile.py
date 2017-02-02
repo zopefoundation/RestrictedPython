@@ -6,6 +6,8 @@ import ast
 
 CompileResult = namedtuple(
     'CompileResult', 'code, errors, warnings, used_names')
+syntax_error_template = (
+    'Line {lineno}: {type}: {msg} in on statement: {statement}')
 
 
 def _compile_restricted_mode(
@@ -30,7 +32,7 @@ def _compile_restricted_mode(
         except (TypeError, ValueError) as e:
             errors.append(str(e))
         except SyntaxError as v:
-            errors.append('Line {lineno}: {type}: {msg} in on statement: {statement}'.format(
+            errors.append(syntax_error_template.format(
                 lineno=v.lineno,
                 type=v.__class__.__name__,
                 msg=v.msg,
@@ -40,8 +42,8 @@ def _compile_restricted_mode(
             policy(errors, warnings, used_names).visit(c_ast)
             if not errors:
                 byte_code = compile(c_ast, filename, mode=mode  # ,
-                                    #flags=flags,
-                                    #dont_inherit=dont_inherit
+                                    # flags=flags,
+                                    # dont_inherit=dont_inherit
                                     )
     return CompileResult(byte_code, tuple(errors), warnings, used_names)
 
@@ -52,6 +54,7 @@ def compile_restricted_exec(
         flags=0,
         dont_inherit=0,
         policy=RestrictingNodeTransformer):
+    """Compile restricted for the mode `exec`."""
     return _compile_restricted_mode(
         source,
         filename=filename,
@@ -67,7 +70,7 @@ def compile_restricted_eval(
         flags=0,
         dont_inherit=0,
         policy=RestrictingNodeTransformer):
-
+    """Compile restricted for the mode `eval`."""
     return _compile_restricted_mode(
         source,
         filename=filename,
@@ -83,6 +86,7 @@ def compile_restricted_single(
         flags=0,
         dont_inherit=0,
         policy=RestrictingNodeTransformer):
+    """Compile restricted for the mode `single`."""
     return _compile_restricted_mode(
         source,
         filename=filename,
@@ -98,7 +102,7 @@ def compile_restricted_function(
         flags=0,
         dont_inherit=0,
         policy=RestrictingNodeTransformer):
-    """Compiles a restricted code object for a function.
+    """Compile a restricted code object for a function.
 
     The function can be reconstituted using the 'new' module:
 

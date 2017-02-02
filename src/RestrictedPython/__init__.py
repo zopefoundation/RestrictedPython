@@ -13,10 +13,10 @@
 """RestrictedPython package."""
 
 # Old API --> Old Import Locations
-#from RestrictedPython.RCompile import compile_restricted
-#from RestrictedPython.RCompile import compile_restricted_eval
-#from RestrictedPython.RCompile import compile_restricted_exec
-#from RestrictedPython.RCompile import compile_restricted_function
+# from RestrictedPython.RCompile import compile_restricted
+# from RestrictedPython.RCompile import compile_restricted_eval
+# from RestrictedPython.RCompile import compile_restricted_exec
+# from RestrictedPython.RCompile import compile_restricted_function
 
 # new API Style
 from RestrictedPython.compile import compile_restricted
@@ -31,4 +31,4 @@ from RestrictedPython.PrintCollector import PrintCollector
 from RestrictedPython.Utilities import utility_builtins
 
 
-#from RestrictedPython.Eval import RestrictionCapableEval
+# from RestrictedPython.Eval import RestrictionCapableEval
