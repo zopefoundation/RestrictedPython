@@ -95,7 +95,7 @@ def no_exec():
 @pytest.mark.parametrize(*compile)
 def test_compile__compile_restricted_exec__10(compile):
     """It is a SyntaxError to use the `exec` statement. (Python 3 only)"""
-    code, errors, warnings, used_names = compile(EXEC_STATEMENT)
+    result = compile(EXEC_STATEMENT)
     assert (
         "Line 2: SyntaxError: Missing parentheses in call to 'exec' in on "
-        "statement: exec 'q = 1'",) == errors
+        "statement: exec 'q = 1'",) == result.errors

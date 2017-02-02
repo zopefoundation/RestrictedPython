@@ -14,25 +14,24 @@ import types
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__visit_Num__1(compile):
     """It compiles a number successfully."""
-    code, errors, warnings, used_names = compile('42')
-    assert 'code' == str(code.__class__.__name__)
-    assert errors == ()
-    assert warnings == []
-    assert used_names == {}
+    result = compile('42')
+    assert result.errors == ()
+    assert str(result.code.__class__.__name__) == 'code'
 
 
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__visit_Call__1(compile):
     """It compiles a function call successfully and returns the used name."""
-    code, errors, warnings, used_names = compile('max([1, 2, 3])')
-    assert errors == ()
-    assert warnings == []
-    assert 'code' == str(code.__class__.__name__)
+    result = compile('a = max([1, 2, 3])')
+    assert result.errors == ()
+    loc = {}
+    exec(result.code, {}, loc)
+    assert loc['a'] == 3
     if compile is RestrictedPython.compile.compile_restricted_exec:
         # The new version not yet supports `used_names`:
-        assert used_names == {}
+        assert result.used_names == {}
     else:
-        assert used_names == {'max': True}
+        assert result.used_names == {'max': True}
 
 
 YIELD = """\
@@ -44,10 +43,8 @@ def no_yield():
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__visit_Yield__1(compile):
     """It prevents using the `yield` statement."""
-    code, errors, warnings, used_names = compile(YIELD)
-    assert ("Line 2: Yield statements are not allowed.",) == errors
-    assert warnings == []
-    assert used_names == {}
+    result = compile(YIELD)
+    assert result.errors == ("Line 2: Yield statements are not allowed.",)
 
 
 EXEC_STATEMENT = """\
@@ -61,8 +58,8 @@ def no_exec():
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__visit_Exec__1(compile):
     """It prevents using the `exec` statement. (Python 2 only)"""
-    code, errors, warnings, used_names = compile(EXEC_STATEMENT)
-    assert ('Line 2: Exec statements are not allowed.',) == errors
+    result = compile(EXEC_STATEMENT)
+    assert result.errors == ('Line 2: Exec statements are not allowed.',)
 
 
 BAD_NAME_STARTING_WITH_UNDERSCORE = """\
@@ -74,10 +71,9 @@ def bad_name():
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__visit_Name__1(compile):
     """It is an error if a variable name starts with `_`."""
-    code, errors, warnings, used_names = compile(
-        BAD_NAME_STARTING_WITH_UNDERSCORE)
-    assert ('Line 2: "__" is an invalid variable name because it starts with '
-            '"_"',) == errors
+    result = compile(BAD_NAME_STARTING_WITH_UNDERSCORE)
+    assert result.errors == (
+        'Line 2: "__" is an invalid variable name because it starts with "_"',)
 
 
 BAD_NAME_OVERRIDE_GUARD_WITH_NAME = """\
@@ -89,10 +85,10 @@ def overrideGuardWithName():
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__visit_Name__2(compile):
     """It is an error if a variable name ends with `__roles__`."""
-    code, errors, warnings, used_names = compile(
-        BAD_NAME_OVERRIDE_GUARD_WITH_NAME)
-    assert ('Line 2: "_getattr" is an invalid variable name because it '
-            'starts with "_"',) == errors
+    result = compile(BAD_NAME_OVERRIDE_GUARD_WITH_NAME)
+    assert result.errors == (
+        'Line 2: "_getattr" is an invalid variable name because '
+        'it starts with "_"',)
 
 
 BAD_NAME_OVERRIDE_OVERRIDE_GUARD_WITH_FUNCTION = """\
@@ -105,10 +101,10 @@ def overrideGuardWithFunction():
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__visit_Name__3(compile):
     """It is an error if a variable name ends with `__roles__`."""
-    code, errors, warnings, used_names = compile(
-        BAD_NAME_OVERRIDE_OVERRIDE_GUARD_WITH_FUNCTION)
-    assert ('Line 2: "_getattr" is an invalid variable name because it '
-            'starts with "_"',) == errors
+    result = compile(BAD_NAME_OVERRIDE_OVERRIDE_GUARD_WITH_FUNCTION)
+    assert result.errors == (
+        'Line 2: "_getattr" is an invalid variable name because it '
+        'starts with "_"',)
 
 
 BAD_NAME_OVERRIDE_GUARD_WITH_CLASS = """\
@@ -121,10 +117,10 @@ def overrideGuardWithClass():
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__visit_Name__4(compile):
     """It is an error if a variable name ends with `__roles__`."""
-    code, errors, warnings, used_names = compile(
-        BAD_NAME_OVERRIDE_GUARD_WITH_CLASS)
-    assert ('Line 2: "_getattr" is an invalid variable name because it '
-            'starts with "_"',) == errors
+    result = compile(BAD_NAME_OVERRIDE_GUARD_WITH_CLASS)
+    assert result.errors == (
+        'Line 2: "_getattr" is an invalid variable name because it '
+        'starts with "_"',)
 
 
 BAD_NAME_ENDING_WITH___ROLES__ = """\
@@ -136,10 +132,10 @@ def bad_name():
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__visit_Name__5(compile):
     """It is an error if a variable name ends with `__roles__`."""
-    code, errors, warnings, used_names = compile(
-        BAD_NAME_ENDING_WITH___ROLES__)
-    assert ('Line 2: "myvar__roles__" is an invalid variable name because it '
-            'ends with "__roles__".',) == errors
+    result = compile(BAD_NAME_ENDING_WITH___ROLES__)
+    assert result.errors == (
+        'Line 2: "myvar__roles__" is an invalid variable name because it '
+        'ends with "__roles__".',)
 
 
 BAD_NAME_PRINTED = """\
@@ -151,8 +147,8 @@ def bad_name():
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__visit_Name__6(compile):
     """It is an error if a variable is named `printed`."""
-    code, errors, warnings, used_names = compile(BAD_NAME_PRINTED)
-    assert ('Line 2: "printed" is a reserved name.',) == errors
+    result = compile(BAD_NAME_PRINTED)
+    assert result.errors == ('Line 2: "printed" is a reserved name.',)
 
 
 BAD_NAME_PRINT = """\
@@ -167,8 +163,8 @@ def bad_name():
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__visit_Name__7(compile):
     """It is an error if a variable is named `printed`."""
-    code, errors, warnings, used_names = compile(BAD_NAME_PRINT)
-    assert ('Line 2: "print" is a reserved name.',) == errors
+    result = compile(BAD_NAME_PRINT)
+    assert result.errors == ('Line 2: "print" is a reserved name.',)
 
 
 BAD_ATTR_UNDERSCORE = """\
@@ -181,10 +177,10 @@ def bad_attr():
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__visit_Attribute__1(compile):
     """It is an error if a bad attribute name is used."""
-    code, errors, warnings, used_names = compile(BAD_ATTR_UNDERSCORE)
-
-    assert ('Line 3: "_some_attr" is an invalid attribute name because it '
-            'starts with "_".',) == errors
+    result = compile(BAD_ATTR_UNDERSCORE)
+    assert result.errors == (
+        'Line 3: "_some_attr" is an invalid attribute name because it '
+        'starts with "_".',)
 
 
 BAD_ATTR_ROLES = """\
@@ -197,10 +193,10 @@ def bad_attr():
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__visit_Attribute__2(compile):
     """It is an error if a bad attribute name is used."""
-    code, errors, warnings, used_names = compile(BAD_ATTR_ROLES)
-
-    assert ('Line 3: "abc__roles__" is an invalid attribute name because it '
-            'ends with "__roles__".',) == errors
+    result = compile(BAD_ATTR_ROLES)
+    assert result.errors == (
+        'Line 3: "abc__roles__" is an invalid attribute name because it '
+        'ends with "__roles__".',)
 
 
 TRANSFORM_ATTRIBUTE_ACCESS = """\
@@ -211,7 +207,8 @@ def func():
 
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__visit_Attribute__3(compile, mocker):
-    code, errors, warnings, used_names = compile(TRANSFORM_ATTRIBUTE_ACCESS)
+    result = compile(TRANSFORM_ATTRIBUTE_ACCESS)
+    assert result.errors == ()
 
     glb = {
         '_getattr_': mocker.stub(),
@@ -219,7 +216,7 @@ def test_transformer__RestrictingNodeTransformer__visit_Attribute__3(compile, mo
         'b': 'b'
     }
 
-    exec(code, glb)
+    exec(result.code, glb)
     glb['func']()
     glb['_getattr_'].assert_called_once_with([], 'b')
 
@@ -234,11 +231,8 @@ def func():
 
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__visit_Attribute__4(compile, mocker):
-    code, errors, warnings, used_names = compile(ALLOW_UNDERSCORE_ONLY)
-
-    assert errors == ()
-    assert warnings == []
-    assert code is not None
+    result = compile(ALLOW_UNDERSCORE_ONLY)
+    assert result.errors == ()
 
 
 TRANSFORM_ATTRIBUTE_WRITE = """\
@@ -249,7 +243,8 @@ def func():
 
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__visit_Attribute__5(compile, mocker):
-    code, errors, warnings, used_names = compile(TRANSFORM_ATTRIBUTE_WRITE)
+    result = compile(TRANSFORM_ATTRIBUTE_WRITE)
+    assert result.errors == ()
 
     glb = {
         '_write_': mocker.stub(),
@@ -257,7 +252,7 @@ def test_transformer__RestrictingNodeTransformer__visit_Attribute__5(compile, mo
     }
     glb['_write_'].return_value = glb['a']
 
-    exec(code, glb)
+    exec(result.code, glb)
     glb['func']()
 
     glb['_write_'].assert_called_once_with(glb['a'])
@@ -280,10 +275,10 @@ except Exception as e:
 
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__visit_Attribute__6(compile):
-    code, errors = compile(DISALLOW_TRACEBACK_ACCESS)[:2]
-    assert code is None
-    assert errors[0] == 'Line 5: "__traceback__" is an invalid attribute ' \
-                        'name because it starts with "_".'
+    result = compile(DISALLOW_TRACEBACK_ACCESS)
+    assert result.errors == (
+        'Line 5: "__traceback__" is an invalid attribute name because '
+        'it starts with "_".',)
 
 
 TRANSFORM_ATTRIBUTE_ACCESS_FUNCTION_DEFAULT = """
@@ -296,9 +291,8 @@ lambda_default = lambda x=b.b: x
 
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__visit_Attribute__7(compile, mocker):
-    code, errors = compile(TRANSFORM_ATTRIBUTE_ACCESS_FUNCTION_DEFAULT)[:2]
-    assert code is not None
-    assert errors == ()
+    result = compile(TRANSFORM_ATTRIBUTE_ACCESS_FUNCTION_DEFAULT)
+    assert result.errors == ()
 
     _getattr_ = mocker.Mock()
     _getattr_.side_effect = getattr
@@ -309,7 +303,7 @@ def test_transformer__RestrictingNodeTransformer__visit_Attribute__7(compile, mo
         'b': mocker.Mock(b=2)
     }
 
-    exec(code, glb)
+    exec(result.code, glb)
 
     _getattr_.assert_has_calls([
         mocker.call(glb['a'], 'a'),
@@ -328,8 +322,8 @@ def test_transformer__RestrictingNodeTransformer__visit_Attribute__7(compile, mo
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__visit_Call__2(compile):
     """It is an error if the code call the `exec` function."""
-    code, errors, warnings, used_names = compile(EXEC_FUNCTION)
-    assert ("Line 2: Exec calls are not allowed.",) == errors
+    result = compile(EXEC_FUNCTION)
+    assert result.errors == ("Line 2: Exec calls are not allowed.",)
 
 
 EVAL_FUNCTION = """\
@@ -341,12 +335,12 @@ def no_eval():
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__visit_Call__3(compile):
     """It is an error if the code call the `eval` function."""
-    code, errors, warnings, used_names = compile(EVAL_FUNCTION)
+    result = compile(EVAL_FUNCTION)
     if compile is RestrictedPython.compile.compile_restricted_exec:
-        assert ("Line 2: Eval calls are not allowed.",) == errors
+        assert result.errors == ("Line 2: Eval calls are not allowed.",)
     else:
-        # `eval()` is allowed in the old implementation.
-        assert () == errors
+        # `eval()` is allowed in the old implementation. :-(
+        assert result.errors == ()
 
 
 ITERATORS = """
@@ -386,13 +380,14 @@ def nested_generator(it1, it2):
 
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__guard_iter(compile, mocker):
-    code, errors, warnings, used_names = compile(ITERATORS)
+    result = compile(ITERATORS)
+    assert result.errors == ()
 
     it = (1, 2, 3)
     _getiter_ = mocker.stub()
     _getiter_.side_effect = lambda x: x
     glb = {'_getiter_': _getiter_}
-    exec(code, glb)
+    exec(result.code, glb)
 
     ret = glb['for_loop'](it)
     assert 6 == ret
@@ -469,7 +464,8 @@ def generator(it):
 
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__guard_iter2(compile, mocker):
-    code, errors = compile(ITERATORS_WITH_UNPACK_SEQUENCE)[:2]
+    result = compile(ITERATORS_WITH_UNPACK_SEQUENCE)
+    assert result.errors == ()
 
     it = ((1, 2), (3, 4), (5, 6))
 
@@ -488,7 +484,7 @@ def test_transformer__RestrictingNodeTransformer__guard_iter2(compile, mocker):
         '_iter_unpack_sequence_': guarded_iter_unpack_sequence
     }
 
-    exec(code, glb)
+    exec(result.code, glb)
 
     ret = glb['for_loop'](it)
     assert ret == 21
@@ -544,13 +540,14 @@ def extended_slice_subscript(a):
 
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__visit_Subscript_1(compile, mocker):
-    code, errors, warnings, used_names = compile(GET_SUBSCRIPTS)
+    result = compile(GET_SUBSCRIPTS)
+    assert result.errors == ()
 
     value = None
     _getitem_ = mocker.stub()
     _getitem_.side_effect = lambda ob, index: (ob, index)
     glb = {'_getitem_': _getitem_}
-    exec(code, glb)
+    exec(result.code, glb)
 
     ret = glb['simple_subscript'](value)
     ref = (value, 'b')
@@ -616,13 +613,14 @@ def del_subscript(a):
 
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__visit_Subscript_2(compile, mocker):
-    code, errors, warnings, used_names = compile(WRITE_SUBSCRIPTS)
+    result = compile(WRITE_SUBSCRIPTS)
+    assert result.errors == ()
 
     value = {'b': None}
     _write_ = mocker.stub()
     _write_.side_effect = lambda ob: ob
     glb = {'_write_': _write_}
-    exec(code, glb)
+    exec(result.code, glb)
 
     glb['assign_subscript'](value)
     assert value['b'] == 1
@@ -647,24 +645,22 @@ def test_transformer__RestrictingNodeTransformer__visit_AugAssign(compile, mocke
         'z': 0
     }
 
-    code, errors = compile("a += x + z")[:2]
-    exec(code, glb)
+    result = compile("a += x + z")
+    assert result.errors == ()
+    exec(result.code, glb)
 
-    assert code is not None
-    assert errors == ()
     assert glb['a'] == 2
     _inplacevar_.assert_called_once_with('+=', 1, 1)
     _inplacevar_.reset_mock()
 
-    code, errors = compile("a.a += 1")[:2]
-    assert code is None
-    assert ('Line 1: Augmented assignment of attributes '
-            'is not allowed.',) == errors
+    result = compile("a.a += 1")
+    assert result.errors == (
+        'Line 1: Augmented assignment of attributes is not allowed.',)
 
-    code, errors = compile("a[a] += 1")[:2]
-    assert code is None
-    assert ('Line 1: Augmented assignment of object items and '
-            'slices is not allowed.',) == errors
+    result = compile("a[a] += 1")
+    assert result.errors == (
+        'Line 1: Augmented assignment of object items and slices is not '
+        'allowed.',)
 
 # def f(a, b, c): pass
 # f(*two_element_sequence, **dict_with_key_c)
@@ -703,7 +699,8 @@ def positional_and_star_and_keyword_and_kw_args():
 
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__visit_Call(compile, mocker):
-    code, errors = compile(FUNCTIONC_CALLS)[:2]
+    result = compile(FUNCTIONC_CALLS)
+    assert result.errors == ()
 
     _apply_ = mocker.stub()
     _apply_.side_effect = lambda func, *args, **kwargs: func(*args, **kwargs)
@@ -713,7 +710,7 @@ def test_transformer__RestrictingNodeTransformer__visit_Call(compile, mocker):
         'foo': lambda *args, **kwargs: (args, kwargs)
     }
 
-    exec(code, glb)
+    exec(result.code, glb)
 
     ret = glb['positional_args']()
     assert ((1, 2), {}) == ret
@@ -765,42 +762,38 @@ functiondef_err_msg = 'Line 1: "_bad" is an invalid variable ' \
 def test_transformer__RestrictingNodeTransformer__visit_FunctionDef__1(
         compile):
     """It prevents function arguments starting with `_`."""
-    code, errors = compile("def foo(_bad): pass")[:2]
+    result = compile("def foo(_bad): pass")
     # RestrictedPython.compile.compile_restricted_exec on Python 2 renders
     # the error message twice. This is necessary as otherwise *_bad and **_bad
     # would be allowed.
-    assert functiondef_err_msg in errors
-    assert code is None
+    assert functiondef_err_msg in result.errors
 
 
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__visit_FunctionDef__2(
         compile):
     """It prevents function keyword arguments starting with `_`."""
-    code, errors = compile("def foo(_bad=1): pass")[:2]
+    result = compile("def foo(_bad=1): pass")
     # RestrictedPython.compile.compile_restricted_exec on Python 2 renders
     # the error message twice. This is necessary as otherwise *_bad and **_bad
     # would be allowed.
-    assert functiondef_err_msg in errors
-    assert code is None
+    assert functiondef_err_msg in result.errors
 
 
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__visit_FunctionDef__3(
         compile):
     """It prevents function * arguments starting with `_`."""
-    code, errors = compile("def foo(*_bad): pass")[:2]
-    assert errors == (functiondef_err_msg,)
-    assert code is None
+    result = compile("def foo(*_bad): pass")
+    assert result.errors == (functiondef_err_msg,)
 
 
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__visit_FunctionDef__4(
         compile):
     """It prevents function ** arguments starting with `_`."""
-    code, errors = compile("def foo(**_bad): pass")[:2]
-    assert errors == (functiondef_err_msg,)
-    assert code is None
+    result = compile("def foo(**_bad): pass")
+    assert result.errors == (functiondef_err_msg,)
 
 
 @pytest.mark.skipif(
@@ -810,12 +803,11 @@ def test_transformer__RestrictingNodeTransformer__visit_FunctionDef__4(
 def test_transformer__RestrictingNodeTransformer__visit_FunctionDef__5(
         compile):
     """It prevents function arguments starting with `_` in tuples."""
-    code, errors = compile("def foo((a, _bad)): pass")[:2]
+    result = compile("def foo((a, _bad)): pass")
     # RestrictedPython.compile.compile_restricted_exec on Python 2 renders
     # the error message twice. This is necessary as otherwise *_bad and **_bad
     # would be allowed.
-    assert functiondef_err_msg in errors
-    assert code is None
+    assert functiondef_err_msg in result.errors
 
 
 @pytest.mark.skipif(
@@ -827,12 +819,11 @@ def test_transformer__RestrictingNodeTransformer__visit_FunctionDef__6(
     """It prevents function arguments starting with `_` in tuples."""
     # The old `compile` breaks with tuples in function arguments:
     if compile is RestrictedPython.compile.compile_restricted_exec:
-        code, errors = compile("def foo(a, (c, (_bad, c))): pass")[:2]
+        result = compile("def foo(a, (c, (_bad, c))): pass")
         # RestrictedPython.compile.compile_restricted_exec on Python 2 renders
         # the error message twice. This is necessary as otherwise *_bad and
         # **_bad would be allowed.
-        assert functiondef_err_msg in errors
-        assert code is None
+        assert functiondef_err_msg in result.errors
 
 
 @pytest.mark.skipif(
@@ -842,9 +833,8 @@ def test_transformer__RestrictingNodeTransformer__visit_FunctionDef__6(
 def test_transformer__RestrictingNodeTransformer__visit_FunctionDef__7(
         compile):
     """It prevents `_` function arguments together with a single `*`."""
-    code, errors = compile("def foo(good, *, _bad): pass")[:2]
-    assert errors == (functiondef_err_msg,)
-    assert code is None
+    result = compile("def foo(good, *, _bad): pass")
+    assert result.errors == (functiondef_err_msg,)
 
 
 NESTED_SEQ_UNPACK = """
@@ -861,7 +851,8 @@ def nested_with_order((a, b), (c, d)):
     reason="tuple parameter unpacking is gone in python 3")
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__visit_FunctionDef_2(compile, mocker):
-    code, errors = compile('def simple((a, b)): return a, b')[:2]
+    result = compile('def simple((a, b)): return a, b')
+    assert result.errors == ()
 
     _getiter_ = mocker.stub()
     _getiter_.side_effect = lambda it: it
@@ -871,7 +862,7 @@ def test_transformer__RestrictingNodeTransformer__visit_FunctionDef_2(compile, m
         '_unpack_sequence_': guarded_unpack_sequence
     }
 
-    exec(code, glb)
+    exec(result.code, glb)
 
     val = (1, 2)
     ret = glb['simple'](val)
@@ -883,8 +874,9 @@ def test_transformer__RestrictingNodeTransformer__visit_FunctionDef_2(compile, m
     if compile is RestrictedPython.RCompile.compile_restricted_exec:
         return
 
-    code, errors = compile(NESTED_SEQ_UNPACK)[:2]
-    exec(code, glb)
+    result = compile(NESTED_SEQ_UNPACK)
+    assert result.errors == ()
+    exec(result.code, glb)
 
     val = (1, 2, (3, (4, 5)))
     ret = glb['nested'](val)
@@ -910,39 +902,35 @@ lambda_err_msg = 'Line 1: "_bad" is an invalid variable ' \
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__visit_Lambda__1(compile):
     """It prevents arguments starting with `_`."""
-    code, errors = compile("lambda _bad: None")[:2]
+    result = compile("lambda _bad: None")
     # RestrictedPython.compile.compile_restricted_exec on Python 2 renders
     # the error message twice. This is necessary as otherwise *_bad and **_bad
     # would be allowed.
-    assert lambda_err_msg in errors
-    assert code is None
+    assert lambda_err_msg in result.errors
 
 
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__visit_Lambda__2(compile):
     """It prevents keyword arguments starting with `_`."""
-    code, errors = compile("lambda _bad=1: None")[:2]
+    result = compile("lambda _bad=1: None")
     # RestrictedPython.compile.compile_restricted_exec on Python 2 renders
     # the error message twice. This is necessary as otherwise *_bad and **_bad
     # would be allowed.
-    assert lambda_err_msg in errors
-    assert code is None
+    assert lambda_err_msg in result.errors
 
 
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__visit_Lambda__3(compile):
     """It prevents * arguments starting with `_`."""
-    code, errors = compile("lambda *_bad: None")[:2]
-    assert errors == (lambda_err_msg,)
-    assert code is None
+    result = compile("lambda *_bad: None")
+    assert result.errors == (lambda_err_msg,)
 
 
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__visit_Lambda__4(compile):
     """It prevents ** arguments starting with `_`."""
-    code, errors = compile("lambda **_bad: None")[:2]
-    assert errors == (lambda_err_msg,)
-    assert code is None
+    result = compile("lambda **_bad: None")
+    assert result.errors == (lambda_err_msg,)
 
 
 @pytest.mark.skipif(
@@ -953,12 +941,11 @@ def test_transformer__RestrictingNodeTransformer__visit_Lambda__5(compile):
     """It prevents arguments starting with `_` in tuple unpacking."""
     # The old `compile` breaks with tuples in arguments:
     if compile is RestrictedPython.compile.compile_restricted_exec:
-        code, errors = compile("lambda (a, _bad): None")[:2]
+        result = compile("lambda (a, _bad): None")
         # RestrictedPython.compile.compile_restricted_exec on Python 2 renders
         # the error message twice. This is necessary as otherwise *_bad and
         # **_bad would be allowed.
-        assert lambda_err_msg in errors
-        assert code is None
+        assert lambda_err_msg in result.errors
 
 
 @pytest.mark.skipif(
@@ -969,12 +956,11 @@ def test_transformer__RestrictingNodeTransformer__visit_Lambda__6(compile):
     """It prevents arguments starting with `_` in nested tuple unpacking."""
     # The old `compile` breaks with tuples in arguments:
     if compile is RestrictedPython.compile.compile_restricted_exec:
-        code, errors = compile("lambda (a, (c, (_bad, c))): None")[:2]
+        result = compile("lambda (a, (c, (_bad, c))): None")
         # RestrictedPython.compile.compile_restricted_exec on Python 2 renders
         # the error message twice. This is necessary as otherwise *_bad and
         # **_bad would be allowed.
-        assert lambda_err_msg in errors
-        assert code is None
+        assert lambda_err_msg in result.errors
 
 
 @pytest.mark.skipif(
@@ -983,9 +969,8 @@ def test_transformer__RestrictingNodeTransformer__visit_Lambda__6(compile):
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__visit_Lambda__7(compile):
     """It prevents arguments starting with `_` together with a single `*`."""
-    code, errors = compile("lambda good, *, _bad: None")[:2]
-    assert errors == (lambda_err_msg,)
-    assert code is None
+    result = compile("lambda good, *, _bad: None")
+    assert result.errors == (lambda_err_msg,)
 
 
 BAD_ARG_IN_LAMBDA = """\
@@ -997,11 +982,10 @@ def check_getattr_in_lambda(arg=lambda _bad=(lambda ob, name: name): _bad2):
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__visit_Lambda__8(compile):
     """It prevents arguments starting with `_` in weird lambdas."""
-    code, errors = compile(BAD_ARG_IN_LAMBDA)[:2]
+    result = compile(BAD_ARG_IN_LAMBDA)
     # RestrictedPython.compile.compile_restricted_exec finds both invalid
     # names, while the old implementation seems to abort after the first.
-    assert lambda_err_msg in errors
-    assert code is None
+    assert lambda_err_msg in result.errors
 
 
 @pytest.mark.skipif(
@@ -1021,8 +1005,9 @@ def test_transformer__RestrictingNodeTransformer__visit_Lambda_2(compile, mocker
     }
 
     src = "m = lambda (a, (b, c)), *ag, **kw: a+b+c+sum(ag)+sum(kw.values())"
-    code, errors = compile(src)[:2]
-    exec(code, glb)
+    result = compile(src)
+    assert result.errors == ()
+    exec(result.code, glb)
 
     ret = glb['m']((1, (2, 3)), 4, 5, 6, g=7, e=8)
     assert ret == 36
@@ -1034,7 +1019,8 @@ def test_transformer__RestrictingNodeTransformer__visit_Lambda_2(compile, mocker
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__visit_Assign(compile, mocker):
     src = "orig = (a, (x, z)) = (c, d) = g"
-    code, errors = compile(src)[:2]
+    result = compile(src)
+    assert result.errors == ()
 
     _getiter_ = mocker.stub()
     _getiter_.side_effect = lambda it: it
@@ -1045,7 +1031,7 @@ def test_transformer__RestrictingNodeTransformer__visit_Assign(compile, mocker):
         'g': (1, (2, 3)),
     }
 
-    exec(code, glb)
+    exec(result.code, glb)
     assert glb['a'] == 1
     assert glb['x'] == 2
     assert glb['z'] == 3
@@ -1064,7 +1050,8 @@ def test_transformer__RestrictingNodeTransformer__visit_Assign(compile, mocker):
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__visit_Assign2(compile, mocker):
     src = "a, *d, (c, *e), x  = (1, 2, 3, (4, 3, 4), 5)"
-    code, errors = compile(src)[:2]
+    result = compile(src)
+    assert result.errors == ()
 
     _getiter_ = mocker.stub()
     _getiter_.side_effect = lambda it: it
@@ -1074,7 +1061,7 @@ def test_transformer__RestrictingNodeTransformer__visit_Assign2(compile, mocker)
         '_unpack_sequence_': guarded_unpack_sequence
     }
 
-    exec(code, glb)
+    exec(result.code, glb)
 
     assert glb['a'] == 1
     assert glb['d'] == [2, 3]
@@ -1225,9 +1212,8 @@ def tuple_unpack(err):
     reason="tuple unpacking on exceptions is gone in python3")
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__visit_ExceptHandler(compile, mocker):
-    code, errors = compile(EXCEPT_WITH_TUPLE_UNPACK)[:2]
-    assert errors == ()
-    assert code is not None
+    result = compile(EXCEPT_WITH_TUPLE_UNPACK)
+    assert result.errors == ()
 
     _getiter_ = mocker.stub()
     _getiter_.side_effect = lambda it: it
@@ -1237,7 +1223,7 @@ def test_transformer__RestrictingNodeTransformer__visit_ExceptHandler(compile, m
         '_unpack_sequence_': guarded_unpack_sequence
     }
 
-    exec(code, glb)
+    exec(result.code, glb)
 
     err = Exception(1, (2, 3))
     ret = glb['tuple_unpack'](err)
@@ -1253,57 +1239,51 @@ def test_transformer__RestrictingNodeTransformer__visit_Import(compile):
     errmsg = 'Line 1: "%s" is an invalid variable name ' \
              'because it starts with "_"'
 
-    code, errors = compile('import a')[:2]
-    assert code is not None
-    assert errors == ()
+    result = compile('import a')
+    assert result.errors == ()
+    assert result.code is not None
 
-    code, errors = compile('import _a')[:2]
-    assert code is None
-    assert errors[0] == (errmsg % '_a')
+    result = compile('import _a')
+    assert result.errors == (errmsg % '_a',)
 
-    code, errors = compile('import _a as m')[:2]
-    assert code is None
-    assert errors[0] == (errmsg % '_a')
+    result = compile('import _a as m')
+    assert result.errors == (errmsg % '_a',)
 
-    code, errors = compile('import a as _m')[:2]
-    assert code is None
-    assert errors[0] == (errmsg % '_m')
+    result = compile('import a as _m')
+    assert result.errors == (errmsg % '_m',)
 
-    code, errors = compile('from a import m')[:2]
-    assert code is not None
-    assert errors == ()
+    result = compile('from a import m')
+    assert result.errors == ()
+    assert result.code is not None
 
-    code, errors = compile('from _a import m')[:2]
-    assert code is not None
-    assert errors == ()
+    result = compile('from _a import m')
+    assert result.errors == ()
+    assert result.code is not None
 
-    code, errors = compile('from a import m as _n')[:2]
-    assert code is None
-    assert errors[0] == (errmsg % '_n')
+    result = compile('from a import m as _n')
+    assert result.errors == (errmsg % '_n',)
 
-    code, errors = compile('from a import _m as n')[:2]
-    assert code is None
-    assert errors[0] == (errmsg % '_m')
+    result = compile('from a import _m as n')
+    assert result.errors == (errmsg % '_m',)
 
 
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__visit_ClassDef(compile):
-    code, errors = compile('class Good: pass')[:2]
-    assert code is not None
-    assert errors == ()
+    result = compile('class Good: pass')
+    assert result.errors == ()
+    assert result.code is not None
 
     # Do not allow class names which start with an underscore.
-    code, errors = compile('class _bad: pass')[:2]
-    assert code is None
-    assert errors[0] == 'Line 1: "_bad" is an invalid variable name ' \
-                        'because it starts with "_"'
+    result = compile('class _bad: pass')
+    assert result.errors == (
+        'Line 1: "_bad" is an invalid variable name '
+        'because it starts with "_"',)
 
 
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__test_ternary_if(compile, mocker):
-    code, errors = compile('x.y = y.a if y.z else y.b')[:2]
-    assert code is not None
-    assert errors == ()
+    result = compile('x.y = y.a if y.z else y.b')
+    assert result.errors == ()
 
     _getattr_ = mocker.stub()
     _getattr_.side_effect = lambda ob, key: ob[key]
@@ -1318,7 +1298,7 @@ def test_transformer__RestrictingNodeTransformer__test_ternary_if(compile, mocke
     }
 
     glb['y']['z'] = True
-    exec(code, glb)
+    exec(result.code, glb)
 
     assert glb['x'].y == 'a'
     _write_.assert_called_once_with(glb['x'])
@@ -1330,7 +1310,7 @@ def test_transformer__RestrictingNodeTransformer__test_ternary_if(compile, mocke
     _getattr_.reset_mock()
 
     glb['y']['z'] = False
-    exec(code, glb)
+    exec(result.code, glb)
 
     assert glb['x'].y == 'b'
     _write_.assert_called_once_with(glb['x'])
@@ -1348,10 +1328,8 @@ def call(ctx):
 
 @pytest.mark.parametrize(*compile)
 def test_transformer__with_stmt_unpack_sequence(compile, mocker):
-    code, errors = compile(WITH_STMT_WITH_UNPACK_SEQUENCE)[:2]
-
-    assert code is not None
-    assert errors == ()
+    result = compile(WITH_STMT_WITH_UNPACK_SEQUENCE)
+    assert result.errors == ()
 
     @contextlib.contextmanager
     def ctx():
@@ -1365,7 +1343,7 @@ def test_transformer__with_stmt_unpack_sequence(compile, mocker):
         '_unpack_sequence_': guarded_unpack_sequence
     }
 
-    exec(code, glb)
+    exec(result.code, glb)
 
     ret = glb['call'](ctx)
 
@@ -1384,7 +1362,8 @@ def call(ctx1, ctx2):
 
 @pytest.mark.parametrize(*compile)
 def test_transformer__with_stmt_multi_ctx_unpack_sequence(compile, mocker):
-    code, errors = compile(WITH_STMT_MULTI_CTX_WITH_UNPACK_SEQUENCE)[:2]
+    result = compile(WITH_STMT_MULTI_CTX_WITH_UNPACK_SEQUENCE)
+    assert result.errors == ()
 
     @contextlib.contextmanager
     def ctx1():
@@ -1402,7 +1381,7 @@ def test_transformer__with_stmt_multi_ctx_unpack_sequence(compile, mocker):
         '_unpack_sequence_': guarded_unpack_sequence
     }
 
-    exec(code, glb)
+    exec(result.code, glb)
 
     ret = glb['call'](ctx1, ctx2)
 
@@ -1434,10 +1413,8 @@ def load_attr(w):
 
 @pytest.mark.parametrize(*compile)
 def test_transformer_with_stmt_attribute_access(compile, mocker):
-    code, errors = compile(WITH_STMT_ATTRIBUTE_ACCESS)[:2]
-
-    assert code is not None
-    assert errors == ()
+    result = compile(WITH_STMT_ATTRIBUTE_ACCESS)
+    assert result.errors == ()
 
     _getattr_ = mocker.stub()
     _getattr_.side_effect = getattr
@@ -1446,7 +1423,7 @@ def test_transformer_with_stmt_attribute_access(compile, mocker):
     _write_.side_effect = lambda ob: ob
 
     glb = {'_getattr_': _getattr_, '_write_': _write_}
-    exec(code, glb)
+    exec(result.code, glb)
 
     # Test simple
     ctx = mocker.MagicMock(y=1)
@@ -1501,16 +1478,14 @@ def slice_key(ctx, x):
 
 @pytest.mark.parametrize(*compile)
 def test_transformer_with_stmt_subscript(compile, mocker):
-    code, errors = compile(WITH_STMT_SUBSCRIPT)[:2]
-
-    assert code is not None
-    assert errors == ()
+    result = compile(WITH_STMT_SUBSCRIPT)
+    assert result.errors == ()
 
     _write_ = mocker.stub()
     _write_.side_effect = lambda ob: ob
 
     glb = {'_write_': _write_}
-    exec(code, glb)
+    exec(result.code, glb)
 
     # Test single_key
     ctx = mocker.MagicMock()
@@ -1542,10 +1517,8 @@ def call(seq):
 
 @pytest.mark.parametrize(*compile)
 def test_transformer_dict_comprehension_with_attrs(compile, mocker):
-    code, errors = compile(DICT_COMPREHENSION_WITH_ATTRS)[:2]
-
-    assert code is not None
-    assert errors == ()
+    result = compile(DICT_COMPREHENSION_WITH_ATTRS)
+    assert result.errors == ()
 
     _getattr_ = mocker.Mock()
     _getattr_.side_effect = getattr
@@ -1554,7 +1527,7 @@ def test_transformer_dict_comprehension_with_attrs(compile, mocker):
     _getiter_.side_effect = lambda ob: ob
 
     glb = {'_getattr_': _getattr_, '_getiter_': _getiter_}
-    exec(code, glb)
+    exec(result.code, glb)
 
     z = [mocker.Mock(k=0, v='a'), mocker.Mock(k=1, v='b')]
     seq = mocker.Mock(z=z)
