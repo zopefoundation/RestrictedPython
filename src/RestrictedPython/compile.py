@@ -27,28 +27,22 @@ def _compile_restricted_mode(
         c_ast = None
         try:
             c_ast = ast.parse(source, filename, mode)
+        except (TypeError, ValueError) as e:
+            errors.append(str(e))
         except SyntaxError as v:
-            c_ast = None
             errors.append('Line {lineno}: {type}: {msg} in on statement: {statement}'.format(
                 lineno=v.lineno,
                 type=v.__class__.__name__,
                 msg=v.msg,
                 statement=v.text.strip()
             ))
-        try:
-            if c_ast:
-                policy(errors, warnings, used_names).visit(c_ast)
-                if not errors:
-                    byte_code = compile(c_ast, filename, mode=mode  # ,
-                                        #flags=flags,
-                                        #dont_inherit=dont_inherit
-                                        )
-        except SyntaxError as v:
-            byte_code = None
-            errors.append(v)
-        except TypeError as v:
-            byte_code = None
-            errors.append(v)
+        if c_ast:
+            policy(errors, warnings, used_names).visit(c_ast)
+            if not errors:
+                byte_code = compile(c_ast, filename, mode=mode  # ,
+                                    #flags=flags,
+                                    #dont_inherit=dont_inherit
+                                    )
     return CompileResult(byte_code, tuple(errors), warnings, used_names)
 
 

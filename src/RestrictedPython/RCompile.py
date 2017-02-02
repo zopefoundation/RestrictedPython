@@ -83,6 +83,9 @@ class RestrictedCompileMode(AbstractCompileMode):
 def _compileAndTuplize(gen):
     try:
         gen.compile()
+    except TypeError as v:
+        return CompileResult(
+            None, (str(v),), gen.rm.warnings, gen.rm.used_names)
     except SyntaxError as v:
         return CompileResult(
             None, (str(v),), gen.rm.warnings, gen.rm.used_names)
