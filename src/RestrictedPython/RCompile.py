@@ -26,6 +26,7 @@ from compiler.pycodegen import FunctionCodeGenerator
 from compiler.pycodegen import Interactive
 from compiler.pycodegen import Module
 from compiler.pycodegen import ModuleCodeGenerator
+from RestrictedPython import CompileResult
 from RestrictedPython import MutatingWalker
 from RestrictedPython.RestrictionMutator import RestrictionMutator
 
@@ -83,8 +84,9 @@ def _compileAndTuplize(gen):
     try:
         gen.compile()
     except SyntaxError as v:
-        return None, (str(v),), gen.rm.warnings, gen.rm.used_names
-    return gen.getCode(), (), gen.rm.warnings, gen.rm.used_names
+        return CompileResult(
+            None, (str(v),), gen.rm.warnings, gen.rm.used_names)
+    return CompileResult(gen.getCode(), (), gen.rm.warnings, gen.rm.used_names)
 
 
 def compile_restricted_function(p, body, name, filename, globalize=None):

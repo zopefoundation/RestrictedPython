@@ -1,7 +1,21 @@
 from . import compile
+from RestrictedPython import CompileResult
 from RestrictedPython._compat import IS_PY2
 
 import pytest
+
+
+@pytest.mark.parametrize(*compile)
+def test_compile__compile_restricted_exec__1(compile):
+    """It returns a CompileResult on success."""
+    result = compile('a = 42')
+    assert result.__class__ == CompileResult
+    assert result.errors == ()
+    assert result.warnings == []
+    assert result.used_names == {}
+    glob = {}
+    exec(result.code, glob)
+    assert glob['a'] == 42
 
 
 EXEC_STATEMENT = """\

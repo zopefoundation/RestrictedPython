@@ -1,6 +1,11 @@
+from collections import namedtuple
 from RestrictedPython.transformer import RestrictingNodeTransformer
 
 import ast
+
+
+CompileResult = namedtuple(
+    'CompileResult', 'code, errors, warnings, used_names')
 
 
 def _compile_restricted_mode(
@@ -44,7 +49,7 @@ def _compile_restricted_mode(
         except TypeError as v:
             byte_code = None
             errors.append(v)
-    return byte_code, tuple(errors), warnings, used_names
+    return CompileResult(byte_code, tuple(errors), warnings, used_names)
 
 
 def compile_restricted_exec(

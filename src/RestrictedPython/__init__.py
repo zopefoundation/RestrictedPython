@@ -24,6 +24,7 @@ from RestrictedPython.compile import compile_restricted_eval
 from RestrictedPython.compile import compile_restricted_exec
 from RestrictedPython.compile import compile_restricted_function
 from RestrictedPython.compile import compile_restricted_single
+from RestrictedPython.compile import CompileResult
 from RestrictedPython.Guards import safe_builtins
 from RestrictedPython.Limits import limited_builtins
 from RestrictedPython.PrintCollector import PrintCollector

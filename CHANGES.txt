@@ -9,6 +9,10 @@ Changes
 
 - switch to pytest
 
+- The ``compile_restricted*`` functions now return a
+  ``namedtuple CompileResult`` instead of a simple ``tuple``.
+
+
 3.6.0 (2010-07-09)
 ------------------
 
