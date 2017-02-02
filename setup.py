@@ -29,8 +29,8 @@ setup(name='RestrictedPython',
       license='ZPL 2.1',
       description='RestrictedPython provides a restricted execution '
                   'environment for Python, e.g. for running untrusted code.',
-      long_description=(read('src', 'RestrictedPython', 'README.txt') + '\n' +
-                        read('CHANGES.txt')),
+      long_description=(read('src', 'RestrictedPython', 'README.rst') + '\n' +
+                        read('CHANGES.rst')),
       classifiers=[
           'License :: OSI Approved :: Zope Public License',
           'Programming Language :: Python',
