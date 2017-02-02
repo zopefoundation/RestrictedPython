@@ -86,11 +86,11 @@ class PrintInfo(object):
 
 class RestrictingNodeTransformer(ast.NodeTransformer):
 
-    def __init__(self, errors=[], warnings=[], used_names=[]):
+    def __init__(self, errors=None, warnings=None, used_names=None):
         super(RestrictingNodeTransformer, self).__init__()
-        self.errors = errors
-        self.warnings = warnings
-        self.used_names = used_names
+        self.errors = [] if errors is None else errors
+        self.warnings = [] if warnings is None else warnings
+        self.used_names = [] if used_names is None else used_names
 
         # Global counter to construct temporary variable names.
         self._tmp_idx = 0
@@ -1161,6 +1161,13 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         """
         return self.node_contents_visit(node)
 
+    def visit_Exec(self, node):
+        """Deny the usage of the exec statement.
+
+        Exists only in Python 2.
+        """
+        self.not_allowed(node)
+
     # Control flow
 
     def visit_If(self, node):
@@ -1197,30 +1204,19 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         """Allow Try without restrictions.
 
         This is Python 3 only, Python 2 uses TryExcept.
-
-        XXX This was forbidden in RestrictedPython 3.x maybe we have to revisit
-            this change in RestrictedPython 4.x.
         """
         return self.node_contents_visit(node)
 
     def visit_TryFinally(self, node):
-        """Allow Try-Finally without restrictions.
-
-        XXX This was forbidden in RestrictedPython 3.x maybe we have to revisit
-            this change in RestrictedPython 4.x.
-        """
+        """Allow Try-Finally without restrictions."""
         return self.node_contents_visit(node)
 
     def visit_TryExcept(self, node):
-        """Allow Try-Except without restrictions.
-
-        XXX This was forbidden in RestrictedPython 3.x maybe we have to revisit
-            this change in RestrictedPython 4.x.
-        """
+        """Allow Try-Except without restrictions."""
         return self.node_contents_visit(node)
 
     def visit_ExceptHandler(self, node):
-        """Protects tuple unpacking on exception handlers.
+        """Protect tuple unpacking on exception handlers.
 
         try:
             .....
@@ -1237,7 +1233,6 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
             finally:
                 del tmp
         """
-
         node = self.node_contents_visit(node)
 
         if IS_PY3:
@@ -1318,7 +1313,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         return node
 
     def visit_Lambda(self, node):
-        """Checks a lambda definition."""
+        """Check a lambda definition."""
         self.check_function_argument_names(node)
 
         node = self.node_contents_visit(node)

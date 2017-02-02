@@ -49,7 +49,6 @@ setup(name='RestrictedPython',
       package_dir={'': 'src'},
       install_requires=[
           'setuptools',
-          'six',
       ],
       extras_require={
           'docs': [
