@@ -1,5 +1,6 @@
 from . import compile
 from . import execute
+
 from RestrictedPython._compat import IS_PY2
 from RestrictedPython._compat import IS_PY3
 from RestrictedPython.Guards import guarded_iter_unpack_sequence
