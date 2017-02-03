@@ -756,6 +756,12 @@ def test_transformer__RestrictingNodeTransformer__visit_AugAssign__5(compile):
         'allowed.',)
 
 
+@pytest.mark.parametrize(*execute)
+def test_transformer__RestrictingNodeTransformer__visit_Assert__1(execute):
+    """It allows assert statements."""
+    execute('assert 1')
+
+
 # def f(a, b, c): pass
 # f(*two_element_sequence, **dict_with_key_c)
 #

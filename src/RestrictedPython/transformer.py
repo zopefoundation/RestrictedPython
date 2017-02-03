@@ -1134,10 +1134,8 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         return self.node_contents_visit(node)
 
     def visit_Assert(self, node):
-        """
-
-        """
-        self.not_allowed(node)
+        """Allow assert statements without restrictions."""
+        return self.node_contents_visit(node)
 
     def visit_Delete(self, node):
         """
