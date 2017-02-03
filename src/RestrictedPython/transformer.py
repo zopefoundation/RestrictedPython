@@ -608,6 +608,11 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         return self.node_contents_visit(node)
 
     # Expressions
+    def visit_Expression(self, node):
+        """Allow Expression statements without restrictions.
+        Python 2 only AST Element.
+        """
+        return self.node_contents_visit(node)
 
     def visit_Expr(self, node):
         """Allow Expr statements without restrictions."""
