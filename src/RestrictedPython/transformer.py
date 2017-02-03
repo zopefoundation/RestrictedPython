@@ -542,8 +542,9 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         return self.node_contents_visit(node)
 
     def visit_Ellipsis(self, node):
-        """
+        """Deny using `...`.
 
+        Ellipsis is exists only in Python 3.
         """
         self.not_allowed(node)
 
