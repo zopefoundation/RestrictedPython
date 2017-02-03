@@ -40,7 +40,7 @@ def test_DateTime_in_utility_builtins_if_importable():
         pass
     else:
         from RestrictedPython.Utilities import utility_builtins
-        assert 'DateTime' in utility_builtins
+        assert DateTime.__name__ in utility_builtins
 
 
 def test_same_type_in_utility_builtins():
