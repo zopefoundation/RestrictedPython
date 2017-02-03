@@ -1372,6 +1372,13 @@ def test_transformer__RestrictingNodeTransformer__visit_Import__8(compile):
 
 
 @pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__visit_Import__9(compile):
+    """It denies relative from importing as something starting with `_`."""
+    result = compile('from .x import y as _leading_underscore')
+    assert result.errors == (import_errmsg % '_leading_underscore',)
+
+
+@pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__visit_ClassDef(compile):
     result = compile('class Good: pass')
     assert result.errors == ()
