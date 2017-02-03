@@ -3,10 +3,6 @@
 # Each function in this module is compiled using compile_restricted().
 
 
-def with_as_bad_name():
-    with x as _leading_underscore:
-        pass
-
 
 def relative_import_as_bad_name():
     from .x import y as _leading_underscore
