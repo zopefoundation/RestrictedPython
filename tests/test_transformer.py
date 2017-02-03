@@ -1707,3 +1707,73 @@ def test_transformer_dict_comprehension_with_attrs(compile, mocker):
         mocker.call(z[1], 'v'),
         mocker.call(z[1], 'k')
     ])
+
+
+@pytest.mark.parametrize(*execute)
+def test_transformer__RestrictingNodeTransformer__visit_Eq__1(execute):
+    """It allows == expressions."""
+    glb = execute('a = (1 == int("1"))')
+    assert glb['a'] is True
+
+
+@pytest.mark.parametrize(*execute)
+def test_transformer__RestrictingNodeTransformer__visit_NotEq__1(execute):
+    """It allows != expressions."""
+    glb = execute('a = (1 != int("1"))')
+    assert glb['a'] is False
+
+
+@pytest.mark.parametrize(*execute)
+def test_transformer__RestrictingNodeTransformer__visit_Lt__1(execute):
+    """It allows < expressions."""
+    glb = execute('a = (1 < 3)')
+    assert glb['a'] is True
+
+
+@pytest.mark.parametrize(*execute)
+def test_transformer__RestrictingNodeTransformer__visit_LtE__1(execute):
+    """It allows < expressions."""
+    glb = execute('a = (1 <= 3)')
+    assert glb['a'] is True
+
+
+@pytest.mark.parametrize(*execute)
+def test_transformer__RestrictingNodeTransformer__visit_Gt__1(execute):
+    """It allows > expressions."""
+    glb = execute('a = (1 > 3)')
+    assert glb['a'] is False
+
+
+@pytest.mark.parametrize(*execute)
+def test_transformer__RestrictingNodeTransformer__visit_GtE__1(execute):
+    """It allows >= expressions."""
+    glb = execute('a = (1 >= 3)')
+    assert glb['a'] is False
+
+
+@pytest.mark.parametrize(*execute)
+def test_transformer__RestrictingNodeTransformer__visit_Is__1(execute):
+    """It allows `is` expressions."""
+    glb = execute('a = (None is None)')
+    assert glb['a'] is True
+
+
+@pytest.mark.parametrize(*execute)
+def test_transformer__RestrictingNodeTransformer__visit_IsNot__1(execute):
+    """It allows `is not` expressions."""
+    glb = execute('a = (2 is not None)')
+    assert glb['a'] is True
+
+
+@pytest.mark.parametrize(*execute)
+def test_transformer__RestrictingNodeTransformer__visit_In__1(execute):
+    """It allows `in` expressions."""
+    glb = execute('a = (2 in [1, 2, 3])')
+    assert glb['a'] is True
+
+
+@pytest.mark.parametrize(*execute)
+def test_transformer__RestrictingNodeTransformer__visit_NotIn__1(execute):
+    """It allows `in` expressions."""
+    glb = execute('a = (2 not in [1, 2, 3])')
+    assert glb['a'] is False

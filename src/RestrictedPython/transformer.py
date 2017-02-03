@@ -734,70 +734,48 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         self.not_allowed(node)
 
     def visit_Compare(self, node):
-        """
-
-        """
+        """Allow comparison expressions without restrictions."""
         return self.node_contents_visit(node)
 
     def visit_Eq(self, node):
-        """
-
-        """
-        self.not_allowed(node)
+        """Allow == expressions."""
+        return self.node_contents_visit(node)
 
     def visit_NotEq(self, node):
-        """
-
-        """
-        self.not_allowed(node)
+        """Allow != expressions."""
+        return self.node_contents_visit(node)
 
     def visit_Lt(self, node):
-        """
-
-        """
-        self.not_allowed(node)
+        """Allow < expressions."""
+        return self.node_contents_visit(node)
 
     def visit_LtE(self, node):
-        """
-
-        """
-        self.not_allowed(node)
+        """Allow <= expressions."""
+        return self.node_contents_visit(node)
 
     def visit_Gt(self, node):
-        """
-
-        """
+        """Allow > expressions."""
         return self.node_contents_visit(node)
 
     def visit_GtE(self, node):
-        """
-
-        """
-        self.not_allowed(node)
+        """Allow >= expressions."""
+        return self.node_contents_visit(node)
 
     def visit_Is(self, node):
-        """
-
-        """
+        """Allow `is` expressions."""
         return self.node_contents_visit(node)
 
     def visit_IsNot(self, node):
-        """
-
-        """
-        self.not_allowed(node)
+        """Allow `is not` expressions."""
+        return self.node_contents_visit(node)
 
     def visit_In(self, node):
-        """
-
-        """
-        self.not_allowed(node)
+        """Allow `in` expressions."""
+        return self.node_contents_visit(node)
 
     def visit_NotIn(self, node):
-        """
-
-        """
-        self.not_allowed(node)
+        """Allow `not in` expressions."""
+        return self.node_contents_visit(node)
 
     def visit_Call(self, node):
         """Checks calls with '*args' and '**kwargs'.
