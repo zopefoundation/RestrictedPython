@@ -70,7 +70,7 @@ def bad_name():
 
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__visit_Name__1(compile):
-    """It is an error if a variable name starts with `__`."""
+    """It denies a variable name starting in `__`."""
     result = compile(BAD_NAME_STARTING_WITH_UNDERSCORE)
     assert result.errors == (
         'Line 2: "__" is an invalid variable name because it starts with "_"',)
@@ -84,7 +84,7 @@ def overrideGuardWithName():
 
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__visit_Name__2(compile):
-    """It is an error if a variable name starts with `_`."""
+    """It denies a variable name starting in `_`."""
     result = compile(BAD_NAME_OVERRIDE_GUARD_WITH_NAME)
     assert result.errors == (
         'Line 2: "_getattr" is an invalid variable name because '
@@ -100,7 +100,7 @@ def overrideGuardWithFunction():
 
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__visit_Name__3(compile):
-    """It is an error if a function name starts with `_`."""
+    """It denies a function name starting in `_`."""
     result = compile(BAD_NAME_OVERRIDE_OVERRIDE_GUARD_WITH_FUNCTION)
     assert result.errors == (
         'Line 2: "_getattr" is an invalid variable name because it '
@@ -116,7 +116,7 @@ def overrideGuardWithClass():
 
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__visit_Name__4(compile):
-    """It is an error if a class name starts with `_`."""
+    """It denies a class name starting in `_`."""
     result = compile(BAD_NAME_OVERRIDE_GUARD_WITH_CLASS)
     assert result.errors == (
         'Line 2: "_getattr" is an invalid variable name because it '
@@ -131,11 +131,57 @@ def with_as_bad_name():
 
 
 @pytest.mark.parametrize(*compile)
-def test_transformer__RestrictingNodeTransformer__visit_Name__4_5(compile):
-    """It is an error if a variable in with starts with `_`."""
+def test_transformer__RestrictingNodeTransformer__visit_Name__4_4(compile):
+    """It denies a variable name in with starting in `_`."""
     result = compile(BAD_NAME_IN_WITH)
     assert result.errors == (
         'Line 2: "_leading_underscore" is an invalid variable name because '
+        'it starts with "_"',)
+
+
+BAD_NAME_IN_COMPOUND_WITH = """\
+def compound_with_bad_name():
+    with a as b, c as _restricted_name:
+        pass
+"""
+
+
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__visit_Name__4_5(compile):
+    """It denies a variable name in with starting in `_`."""
+    result = compile(BAD_NAME_IN_COMPOUND_WITH)
+    assert result.errors == (
+        'Line 2: "_restricted_name" is an invalid variable name because '
+        'it starts with "_"',)
+
+
+BAD_NAME_DICT_COMP = """\
+def dict_comp_bad_name():
+    {y: y for _restricted_name in x}
+"""
+
+
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__visit_Name__4_6(compile):
+    """It denies a variable name starting in `_` in a dict comprehension."""
+    result = compile(BAD_NAME_DICT_COMP)
+    assert result.errors == (
+        'Line 2: "_restricted_name" is an invalid variable name because '
+        'it starts with "_"',)
+
+
+BAD_NAME_SET_COMP = """\
+def set_comp_bad_name():
+    {y for _restricted_name in x}
+"""
+
+
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__visit_Name__4_7(compile):
+    """It denies a variable name starting in `_` in a dict comprehension."""
+    result = compile(BAD_NAME_SET_COMP)
+    assert result.errors == (
+        'Line 2: "_restricted_name" is an invalid variable name because '
         'it starts with "_"',)
 
 
@@ -147,7 +193,7 @@ def bad_name():
 
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__visit_Name__5(compile):
-    """It is an error if a variable name ends with `__roles__`."""
+    """It denies a variable name ending in `__roles__`."""
     result = compile(BAD_NAME_ENDING_WITH___ROLES__)
     assert result.errors == (
         'Line 2: "myvar__roles__" is an invalid variable name because it '
@@ -162,7 +208,7 @@ def bad_name():
 
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__visit_Name__6(compile):
-    """It is an error if a variable is named `printed`."""
+    """It denies a variable named `printed`."""
     result = compile(BAD_NAME_PRINTED)
     assert result.errors == ('Line 2: "printed" is a reserved name.',)
 
@@ -178,7 +224,7 @@ def bad_name():
                     reason="print is a statement in Python 2")
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__visit_Name__7(compile):
-    """It is an error if a variable is named `printed`."""
+    """It denies a variable named `print`."""
     result = compile(BAD_NAME_PRINT)
     assert result.errors == ('Line 2: "print" is a reserved name.',)
 
@@ -708,6 +754,12 @@ def test_transformer__RestrictingNodeTransformer__visit_AugAssign__5(compile):
     assert result.errors == (
         'Line 1: Augmented assignment of object items and slices is not '
         'allowed.',)
+
+
+@pytest.mark.parametrize(*execute)
+def test_transformer__RestrictingNodeTransformer__visit_Assert__1(execute):
+    """It allows assert statements."""
+    execute('assert 1')
 
 
 # def f(a, b, c): pass
@@ -1431,6 +1483,53 @@ def test_transformer__RestrictingNodeTransformer__test_ternary_if(
         mocker.call(glb['y'], 'b')])
 
 
+WHILE = """\
+a = 5
+while a < 7:
+    a = a + 3
+"""
+
+
+@pytest.mark.parametrize(*execute)
+def test_transformer__RestrictingNodeTransformer__visit_While__1(execute):
+    """It allows `while` statements."""
+    glb = execute(WHILE)
+    assert glb['a'] == 8
+
+
+BREAK = """\
+a = 5
+while True:
+    a = a + 3
+    if a >= 7:
+        break
+"""
+
+
+@pytest.mark.parametrize(*execute)
+def test_transformer__RestrictingNodeTransformer__visit_Break__1(execute):
+    """It allows `break` statements."""
+    glb = execute(BREAK)
+    assert glb['a'] == 8
+
+
+CONTINUE = """\
+a = 3
+while a < 10:
+    if a < 5:
+        a = a + 1
+        continue
+    a = a + 10
+"""
+
+
+@pytest.mark.parametrize(*execute)
+def test_transformer__RestrictingNodeTransformer__visit_Continue__1(execute):
+    """It allows `continue` statements."""
+    glb = execute(CONTINUE)
+    assert glb['a'] == 15
+
+
 WITH_STMT_WITH_UNPACK_SEQUENCE = """
 def call(ctx):
     with ctx() as (a, (c, b)):
@@ -1655,3 +1754,73 @@ def test_transformer_dict_comprehension_with_attrs(compile, mocker):
         mocker.call(z[1], 'v'),
         mocker.call(z[1], 'k')
     ])
+
+
+@pytest.mark.parametrize(*execute)
+def test_transformer__RestrictingNodeTransformer__visit_Eq__1(execute):
+    """It allows == expressions."""
+    glb = execute('a = (1 == int("1"))')
+    assert glb['a'] is True
+
+
+@pytest.mark.parametrize(*execute)
+def test_transformer__RestrictingNodeTransformer__visit_NotEq__1(execute):
+    """It allows != expressions."""
+    glb = execute('a = (1 != int("1"))')
+    assert glb['a'] is False
+
+
+@pytest.mark.parametrize(*execute)
+def test_transformer__RestrictingNodeTransformer__visit_Lt__1(execute):
+    """It allows < expressions."""
+    glb = execute('a = (1 < 3)')
+    assert glb['a'] is True
+
+
+@pytest.mark.parametrize(*execute)
+def test_transformer__RestrictingNodeTransformer__visit_LtE__1(execute):
+    """It allows < expressions."""
+    glb = execute('a = (1 <= 3)')
+    assert glb['a'] is True
+
+
+@pytest.mark.parametrize(*execute)
+def test_transformer__RestrictingNodeTransformer__visit_Gt__1(execute):
+    """It allows > expressions."""
+    glb = execute('a = (1 > 3)')
+    assert glb['a'] is False
+
+
+@pytest.mark.parametrize(*execute)
+def test_transformer__RestrictingNodeTransformer__visit_GtE__1(execute):
+    """It allows >= expressions."""
+    glb = execute('a = (1 >= 3)')
+    assert glb['a'] is False
+
+
+@pytest.mark.parametrize(*execute)
+def test_transformer__RestrictingNodeTransformer__visit_Is__1(execute):
+    """It allows `is` expressions."""
+    glb = execute('a = (None is None)')
+    assert glb['a'] is True
+
+
+@pytest.mark.parametrize(*execute)
+def test_transformer__RestrictingNodeTransformer__visit_IsNot__1(execute):
+    """It allows `is not` expressions."""
+    glb = execute('a = (2 is not None)')
+    assert glb['a'] is True
+
+
+@pytest.mark.parametrize(*execute)
+def test_transformer__RestrictingNodeTransformer__visit_In__1(execute):
+    """It allows `in` expressions."""
+    glb = execute('a = (2 in [1, 2, 3])')
+    assert glb['a'] is True
+
+
+@pytest.mark.parametrize(*execute)
+def test_transformer__RestrictingNodeTransformer__visit_NotIn__1(execute):
+    """It allows `in` expressions."""
+    glb = execute('a = (2 not in [1, 2, 3])')
+    assert glb['a'] is False
