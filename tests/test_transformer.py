@@ -1234,6 +1234,27 @@ def test_transformer__RestrictingNodeTransformer__visit_ExceptHandler(compile, m
         mocker.call((2, 3))])
 
 
+BAD_TRY_EXCEPT = """
+def except_using_bad_name():
+    try:
+        foo
+    except NameError as _leading_underscore:
+        # The name of choice (say, _write) is now assigned to an exception
+        # object.  Hard to exploit, but conceivable.
+        pass
+"""
+
+
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__visit_ExceptHandler__2(
+        compile):
+    """It denies bad names in the except as statement."""
+    result = compile(BAD_TRY_EXCEPT)
+    assert result.errors == (
+        'Line 5: "_leading_underscore" is an invalid variable name because '
+        'it starts with "_"',)
+
+
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__visit_Import(compile):
     errmsg = 'Line 1: "%s" is an invalid variable name ' \

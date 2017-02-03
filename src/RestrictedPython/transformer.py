@@ -1242,6 +1242,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         node = self.node_contents_visit(node)
 
         if IS_PY3:
+            self.check_name(node, node.name)
             return node
 
         if not isinstance(node.name, ast.Tuple):
