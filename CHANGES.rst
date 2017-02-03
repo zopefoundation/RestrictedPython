@@ -5,7 +5,7 @@ Changes
 ------------------
 
 - Mostly complete rewrite based on Python AST module.
-  [loechel (Alexander Loechel), icemac (Michael Howitz), stephan-hof (Stephan Hof), tlotze (Thomas Lotze)]
+  [loechel (Alexander Loechel), icemac (Michael Howitz), stephan-hof (Stephan Hofmockel), tlotze (Thomas Lotze)]
 
 - switch to pytest
 
