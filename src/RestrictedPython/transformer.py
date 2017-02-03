@@ -1259,8 +1259,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         return node
 
     def visit_With(self, node):
-        """Protects tuple unpacking on with statements. """
-
+        """Protect tuple unpacking on with statements. """
         node = self.node_contents_visit(node)
 
         if IS_PY2:

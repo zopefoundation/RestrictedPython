@@ -70,7 +70,7 @@ def bad_name():
 
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__visit_Name__1(compile):
-    """It is an error if a variable name starts with `_`."""
+    """It is an error if a variable name starts with `__`."""
     result = compile(BAD_NAME_STARTING_WITH_UNDERSCORE)
     assert result.errors == (
         'Line 2: "__" is an invalid variable name because it starts with "_"',)
@@ -84,7 +84,7 @@ def overrideGuardWithName():
 
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__visit_Name__2(compile):
-    """It is an error if a variable name ends with `__roles__`."""
+    """It is an error if a variable name starts with `_`."""
     result = compile(BAD_NAME_OVERRIDE_GUARD_WITH_NAME)
     assert result.errors == (
         'Line 2: "_getattr" is an invalid variable name because '
@@ -100,7 +100,7 @@ def overrideGuardWithFunction():
 
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__visit_Name__3(compile):
-    """It is an error if a variable name ends with `__roles__`."""
+    """It is an error if a function name starts with `_`."""
     result = compile(BAD_NAME_OVERRIDE_OVERRIDE_GUARD_WITH_FUNCTION)
     assert result.errors == (
         'Line 2: "_getattr" is an invalid variable name because it '
@@ -116,11 +116,27 @@ def overrideGuardWithClass():
 
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__visit_Name__4(compile):
-    """It is an error if a variable name ends with `__roles__`."""
+    """It is an error if a class name starts with `_`."""
     result = compile(BAD_NAME_OVERRIDE_GUARD_WITH_CLASS)
     assert result.errors == (
         'Line 2: "_getattr" is an invalid variable name because it '
         'starts with "_"',)
+
+
+BAD_NAME_IN_WITH = """\
+def with_as_bad_name():
+    with x as _leading_underscore:
+        pass
+"""
+
+
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__visit_Name__4_5(compile):
+    """It is an error if a variable in with starts with `_`."""
+    result = compile(BAD_NAME_IN_WITH)
+    assert result.errors == (
+        'Line 2: "_leading_underscore" is an invalid variable name because '
+        'it starts with "_"',)
 
 
 BAD_NAME_ENDING_WITH___ROLES__ = """\
@@ -639,9 +655,10 @@ def test_transformer__RestrictingNodeTransformer__visit_Subscript_2(
     _write_.reset_mock()
 
 
-@pytest.mark.parametrize(*compile)
-def test_transformer__RestrictingNodeTransformer__visit_AugAssign(
-        compile, mocker):
+@pytest.mark.parametrize(*execute)
+def test_transformer__RestrictingNodeTransformer__visit_AugAssign__1(
+        execute, mocker):
+    """It allows augmented assign for variables."""
     _inplacevar_ = mocker.stub()
     _inplacevar_.side_effect = lambda op, val, expr: val + expr
 
@@ -652,19 +669,42 @@ def test_transformer__RestrictingNodeTransformer__visit_AugAssign(
         'z': 0
     }
 
-    result = compile("a += x + z")
-    assert result.errors == ()
-    exec(result.code, glb)
-
+    execute("a += x + z", glb)
     assert glb['a'] == 2
     _inplacevar_.assert_called_once_with('+=', 1, 1)
     _inplacevar_.reset_mock()
 
+
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__visit_AugAssign__2(compile):
+    """It forbids augmented assign of attributes."""
     result = compile("a.a += 1")
     assert result.errors == (
         'Line 1: Augmented assignment of attributes is not allowed.',)
 
+
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__visit_AugAssign__3(compile):
+    """It forbids augmented assign of subscripts."""
     result = compile("a[a] += 1")
+    assert result.errors == (
+        'Line 1: Augmented assignment of object items and slices is not '
+        'allowed.',)
+
+
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__visit_AugAssign__4(compile):
+    """It forbids augmented assign of slices."""
+    result = compile("a[x:y] += 1")
+    assert result.errors == (
+        'Line 1: Augmented assignment of object items and slices is not '
+        'allowed.',)
+
+
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__visit_AugAssign__5(compile):
+    """It forbids augmented assign of slices with steps."""
+    result = compile("a[x:y:z] += 1")
     assert result.errors == (
         'Line 1: Augmented assignment of object items and slices is not '
         'allowed.',)
@@ -1268,37 +1308,74 @@ def test_transformer__RestrictingNodeTransformer__visit_ExceptHandler__2(
         'it starts with "_"',)
 
 
-@pytest.mark.parametrize(*compile)
-def test_transformer__RestrictingNodeTransformer__visit_Import(compile):
-    errmsg = 'Line 1: "%s" is an invalid variable name ' \
-             'because it starts with "_"'
+import_errmsg = (
+    'Line 1: "%s" is an invalid variable name because it starts with "_"')
 
+
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__visit_Import__1(compile):
+    """It allows importing a module."""
     result = compile('import a')
     assert result.errors == ()
     assert result.code is not None
 
+
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__visit_Import__2(compile):
+    """It denies importing a module starting with `_`."""
     result = compile('import _a')
-    assert result.errors == (errmsg % '_a',)
+    assert result.errors == (import_errmsg % '_a',)
 
+
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__visit_Import__3(compile):
+    """It denies importing a module starting with `_` as something."""
     result = compile('import _a as m')
-    assert result.errors == (errmsg % '_a',)
+    assert result.errors == (import_errmsg % '_a',)
 
+
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__visit_Import__4(compile):
+    """It denies importing a module as something starting with `_`."""
     result = compile('import a as _m')
-    assert result.errors == (errmsg % '_m',)
+    assert result.errors == (import_errmsg % '_m',)
 
+
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__visit_Import__5(compile):
+    """It allows importing from a module."""
     result = compile('from a import m')
     assert result.errors == ()
     assert result.code is not None
 
+
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__visit_Import_6(compile):
+    """It allows importing from a module starting with `_`."""
     result = compile('from _a import m')
     assert result.errors == ()
     assert result.code is not None
 
-    result = compile('from a import m as _n')
-    assert result.errors == (errmsg % '_n',)
 
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__visit_Import__7(compile):
+    """It denies importing from a module as something starting with `_`."""
+    result = compile('from a import m as _n')
+    assert result.errors == (import_errmsg % '_n',)
+
+
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__visit_Import__8(compile):
+    """It denies as-importing something starting with `_` from a module."""
     result = compile('from a import _m as n')
-    assert result.errors == (errmsg % '_m',)
+    assert result.errors == (import_errmsg % '_m',)
+
+
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__visit_Import__9(compile):
+    """It denies relative from importing as something starting with `_`."""
+    result = compile('from .x import y as _leading_underscore')
+    assert result.errors == (import_errmsg % '_leading_underscore',)
 
 
 @pytest.mark.parametrize(*compile)

@@ -5,12 +5,13 @@ import RestrictedPython
 
 def _execute(compile_func):
     """Factory to create an execute function."""
-    def _execute(source):
-        code, errors = compile_func(source)[:2]
-        assert errors == (), errors
-        assert code is not None
-        glb = {}
-        exec(code, glb)
+    def _execute(source, glb=None):
+        result = compile_func(source)
+        assert result.errors == (), result.errors
+        assert result.code is not None
+        if glb is None:
+            glb = {}
+        exec(result.code, glb)
         return glb
     return _execute
 
