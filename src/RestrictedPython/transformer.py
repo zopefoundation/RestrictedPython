@@ -487,12 +487,14 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         """
         import warnings
         warnings.warn(
-            '{o.__class__.__name__} statement is not known to RestrictedPython'.format(node),
+            '{o.__class__.__name__}'
+            ' statement is not known to RestrictedPython'.format(node),
             SyntaxWarning
         )
         self.warn(
             node,
-            '{o.__class__.__name__} statement is not known to RestrictedPython'.format(node)
+            '{o.__class__.__name__}'
+            ' statement is not known to RestrictedPython'.format(node)
         )
         self.not_allowed(node)
 

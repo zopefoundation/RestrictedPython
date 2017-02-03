@@ -1,9 +1,15 @@
 from . import compile
+from RestrictedPython import compile_restricted
 from RestrictedPython import CompileResult
 from RestrictedPython._compat import IS_PY2
 
 import pytest
 import RestrictedPython.compile
+
+
+def test_compile__compile_restricted_invalid_code_input():
+    with pytest.raises(TypeError):
+        compile_restricted(object(), '<string>', 'eval')
 
 
 @pytest.mark.parametrize(*compile)

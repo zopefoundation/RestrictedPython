@@ -1,7 +1,9 @@
 from collections import namedtuple
+from RestrictedPython._compat import IS_PY2
 from RestrictedPython.transformer import RestrictingNodeTransformer
 
 import ast
+import warnings
 
 
 CompileResult = namedtuple(
@@ -25,13 +27,14 @@ def _compile_restricted_mode(
         # Unrestricted Source Checks
         byte_code = compile(source, filename, mode=mode, flags=flags,
                             dont_inherit=dont_inherit)
-    # TODO: Should be an elif check if policy is subclass of
-    # RestrictionNodeTransformer any other object passed in as policy might
-    # throw an error or is a NodeVisitor subclass that could be initialized
-    # with three parameters.
-    # elif issubclass(policy, RestrictingNodeTransformer):
-    else:
+    elif issubclass(policy, RestrictingNodeTransformer):
         c_ast = None
+        allowed_source_types = [str]
+        if IS_PY2:
+            allowed_source_types.append(unicode)
+        if not issubclass(type(source), tuple(allowed_source_types)):
+            raise TypeError('Not allowed source type: '
+                            '"{0.__class__.__name__}".'.format(source))
         try:
             c_ast = ast.parse(source, filename, mode)
         except (TypeError, ValueError) as e:
@@ -141,7 +144,6 @@ def compile_restricted(
     policy ... `ast.NodeTransformer` class defining the restrictions.
 
     """
-    byte_code, errors, warnings, used_names = None, None, None, None
     if mode in ['exec', 'eval', 'single', 'function']:
         result = _compile_restricted_mode(
             source,
@@ -157,6 +159,6 @@ def compile_restricted(
             warning,
             SyntaxWarning
         )
-    if errors:
+    if result.errors:
         raise SyntaxError(result.errors)
     return result.code
