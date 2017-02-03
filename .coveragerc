@@ -3,4 +3,4 @@ branch = True
 source = RestrictedPython
 
 [report]
-precision = 2
+precision = 3
