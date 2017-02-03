@@ -70,7 +70,7 @@ def bad_name():
 
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__visit_Name__1(compile):
-    """It is an error if a variable name starts with `__`."""
+    """It denies a variable name starting in `__`."""
     result = compile(BAD_NAME_STARTING_WITH_UNDERSCORE)
     assert result.errors == (
         'Line 2: "__" is an invalid variable name because it starts with "_"',)
@@ -84,7 +84,7 @@ def overrideGuardWithName():
 
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__visit_Name__2(compile):
-    """It is an error if a variable name starts with `_`."""
+    """It denies a variable name starting in `_`."""
     result = compile(BAD_NAME_OVERRIDE_GUARD_WITH_NAME)
     assert result.errors == (
         'Line 2: "_getattr" is an invalid variable name because '
@@ -100,7 +100,7 @@ def overrideGuardWithFunction():
 
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__visit_Name__3(compile):
-    """It is an error if a function name starts with `_`."""
+    """It denies a function name starting in `_`."""
     result = compile(BAD_NAME_OVERRIDE_OVERRIDE_GUARD_WITH_FUNCTION)
     assert result.errors == (
         'Line 2: "_getattr" is an invalid variable name because it '
@@ -116,7 +116,7 @@ def overrideGuardWithClass():
 
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__visit_Name__4(compile):
-    """It is an error if a class name starts with `_`."""
+    """It denies a class name starting in `_`."""
     result = compile(BAD_NAME_OVERRIDE_GUARD_WITH_CLASS)
     assert result.errors == (
         'Line 2: "_getattr" is an invalid variable name because it '
@@ -132,7 +132,7 @@ def with_as_bad_name():
 
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__visit_Name__4_5(compile):
-    """It is an error if a variable in with starts with `_`."""
+    """It denies a variable name in with starting in `_`."""
     result = compile(BAD_NAME_IN_WITH)
     assert result.errors == (
         'Line 2: "_leading_underscore" is an invalid variable name because '
@@ -147,7 +147,7 @@ def bad_name():
 
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__visit_Name__5(compile):
-    """It is an error if a variable name ends with `__roles__`."""
+    """It denies a variable name ending in `__roles__`."""
     result = compile(BAD_NAME_ENDING_WITH___ROLES__)
     assert result.errors == (
         'Line 2: "myvar__roles__" is an invalid variable name because it '
@@ -162,7 +162,7 @@ def bad_name():
 
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__visit_Name__6(compile):
-    """It is an error if a variable is named `printed`."""
+    """It denies a variable named `printed`."""
     result = compile(BAD_NAME_PRINTED)
     assert result.errors == ('Line 2: "printed" is a reserved name.',)
 
@@ -178,7 +178,7 @@ def bad_name():
                     reason="print is a statement in Python 2")
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__visit_Name__7(compile):
-    """It is an error if a variable is named `printed`."""
+    """It denies a variable named `print`."""
     result = compile(BAD_NAME_PRINT)
     assert result.errors == ('Line 2: "print" is a reserved name.',)
 
