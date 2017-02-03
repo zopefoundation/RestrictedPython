@@ -22,6 +22,8 @@ def test_transformer__RestrictingNodeTransformer__generic_visit__1():
     transformer.visit(MyFancyNode())
     assert transformer.errors == [
         'Line None: MyFancyNode statements are not allowed.']
+    assert transformer.warnings == [
+        'Line None: MyFancyNode statement is not known to RestrictedPython']
 
 
 @pytest.mark.parametrize(*execute)

@@ -494,7 +494,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         # )
         self.warn(
             node,
-            '{o.__class__.__name__}'
+            '{0.__class__.__name__}'
             ' statement is not known to RestrictedPython'.format(node)
         )
         self.not_allowed(node)
