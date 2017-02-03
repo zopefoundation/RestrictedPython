@@ -13,7 +13,6 @@
 """Restricted Python Expressions."""
 
 from RestrictedPython.RCompile import compile_restricted_eval
-#from RestrictedPython.compile import compile_restricted_eval
 from string import strip
 from string import translate
 
@@ -28,6 +27,7 @@ default_guarded_getattr = getattr  # No restrictions.
 def default_guarded_getitem(ob, index):
     # No restrictions.
     return ob[index]
+
 
 PROFILE = 0
 

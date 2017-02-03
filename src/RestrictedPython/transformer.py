@@ -107,17 +107,20 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
     def error(self, node, info):
         """Record a security error discovered during transformation."""
         lineno = getattr(node, 'lineno', None)
-        self.errors.append('Line {lineno}: {info}'.format(lineno=lineno, info=info))
+        self.errors.append(
+            'Line {lineno}: {info}'.format(lineno=lineno, info=info))
 
     def warn(self, node, info):
         """Record a security error discovered during transformation."""
         lineno = getattr(node, 'lineno', None)
-        self.warnings.append('Line {lineno}: {info}'.format(lineno=lineno, info=info))
+        self.warnings.append(
+            'Line {lineno}: {info}'.format(lineno=lineno, info=info))
 
     def use_name(self, node, info):
         """Record a security error discovered during transformation."""
         lineno = getattr(node, 'lineno', None)
-        self.used_names.append('Line {lineno}: {info}'.format(lineno=lineno, info=info))
+        self.used_names.append(
+            'Line {lineno}: {info}'.format(lineno=lineno, info=info))
 
     def guard_iter(self, node):
         """
@@ -161,7 +164,8 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
 
         This spec is used to protect sequence unpacking.
         The primary goal of this spec is to tell which elements in a sequence
-        are sequences again. These 'child' sequences have to be protected again.
+        are sequences again. These 'child' sequences have to be protected
+        again.
 
         For example there is a sequence like this:
             (a, (b, c), (d, (e, f))) = g
@@ -307,14 +311,15 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
 
     def gen_lambda(self, args, body):
         return ast.Lambda(
-            args=ast.arguments(args=args, vararg=None, kwarg=None, defaults=[]),
+            args=ast.arguments(
+                args=args, vararg=None, kwarg=None, defaults=[]),
             body=body)
 
     def gen_del_stmt(self, name_to_del):
         return ast.Delete(targets=[ast.Name(name_to_del, ast.Del())])
 
     def transform_slice(self, slice_):
-        """Transforms slices into function parameters.
+        """Transform slices into function parameters.
 
         ast.Slice nodes are only allowed within a ast.Subscript node.
         To use a slice as an argument of ast.Call it has to be converted.
@@ -433,7 +438,8 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         printed_used = self.print_info.printed_used
 
         if print_used or printed_used:
-            # Add '_print = _print_(_getattr_)' add the top of a function/module.
+            # Add '_print = _print_(_getattr_)' add the top of a
+            # function/module.
             _print = ast.Assign(
                 targets=[ast.Name('_print', ast.Store())],
                 value=ast.Call(
@@ -1281,7 +1287,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
     # Function and class definitions
 
     def visit_FunctionDef(self, node):
-        """Checks a function defintion.
+        """Check a function defintion.
 
         Checks the name of the function and the arguments.
         """
@@ -1301,7 +1307,8 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         unpacks = []
         for index, arg in enumerate(list(node.args.args)):
             if isinstance(arg, ast.Tuple):
-                tmp_target, unpack = self.gen_unpack_wrapper(node, arg, 'param')
+                tmp_target, unpack = self.gen_unpack_wrapper(
+                    node, arg, 'param')
 
                 # Replace the tuple with a single (temporary) parameter.
                 node.args.args[index] = tmp_target

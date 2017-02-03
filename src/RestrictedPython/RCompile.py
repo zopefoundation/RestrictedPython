@@ -22,7 +22,7 @@ from compiler import pycodegen
 from compiler.pycodegen import AbstractCompileMode
 from compiler.pycodegen import Expression
 from compiler.pycodegen import findOp
-from compiler.pycodegen import FunctionCodeGenerator
+from compiler.pycodegen import FunctionCodeGenerator  # noqa
 from compiler.pycodegen import Interactive
 from compiler.pycodegen import Module
 from compiler.pycodegen import ModuleCodeGenerator
@@ -259,13 +259,13 @@ class RFunction(RModule):
         if len(f.code.nodes) > 0:
             stmt1 = f.code.nodes[0]
             if (isinstance(stmt1, c_ast.Discard) and
-                isinstance(stmt1.expr, c_ast.Const) and
-                isinstance(stmt1.expr.value, str)):
+                    isinstance(stmt1.expr, c_ast.Const) and
+                    isinstance(stmt1.expr.value, str)):
                 f.doc = stmt1.expr.value
         # The caller may specify that certain variables are globals
         # so that they can be referenced before a local assignment.
         # The only known example is the variables context, container,
         # script, traverse_subpath in PythonScripts.
         if self.globals:
-            f.code.nodes.insert(0, ast.Global(self.globals))
+            f.code.nodes.insert(0, c_ast.Global(self.globals))
         return tree
