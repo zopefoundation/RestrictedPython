@@ -143,7 +143,7 @@ def compile_restricted(
     """
     byte_code, errors, warnings, used_names = None, None, None, None
     if mode in ['exec', 'eval', 'single', 'function']:
-        byte_code, errors, warnings, used_names = _compile_restricted_mode(
+        result = _compile_restricted_mode(
             source,
             filename=filename,
             mode=mode,
@@ -152,7 +152,11 @@ def compile_restricted(
             policy=policy)
     else:
         raise TypeError('unknown mode %s', mode)
+    for warning in result.warnings:
+        warnings.warn(
+            warning,
+            SyntaxWarning
+        )
     if errors:
-        raise SyntaxError(errors)
-    # TODO: logging of warnings should be discussed and considered.
-    return byte_code
+        raise SyntaxError(result.errors)
+    return result.code
