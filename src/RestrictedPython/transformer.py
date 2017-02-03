@@ -515,38 +515,30 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         return self.node_contents_visit(node)
 
     def visit_Str(self, node):
-        """Allow strings without restrictions."""
+        """Allow string literals without restrictions."""
         return self.node_contents_visit(node)
 
     def visit_Bytes(self, node):
-        """Allow bytes without restrictions.
+        """Allow bytes literals without restrictions.
 
         Bytes is Python 3 only.
         """
-        self.not_allowed(node)
+        return self.node_contents_visit(node)
 
     def visit_List(self, node):
-        """
-
-        """
+        """Allow list literals without restrictions."""
         return self.node_contents_visit(node)
 
     def visit_Tuple(self, node):
-        """
-
-        """
+        """Allow tuple literals without restrictions."""
         return self.node_contents_visit(node)
 
     def visit_Set(self, node):
-        """
-
-        """
-        self.not_allowed(node)
+        """Allow set literals without restrictions."""
+        return self.node_contents_visit(node)
 
     def visit_Dict(self, node):
-        """
-
-        """
+        """Allow dict literals without restrictions."""
         return self.node_contents_visit(node)
 
     def visit_Ellipsis(self, node):

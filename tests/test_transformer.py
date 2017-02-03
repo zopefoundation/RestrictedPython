@@ -24,12 +24,30 @@ def test_transformer__RestrictingNodeTransformer__generic_visit__1():
         'Line None: MyFancyNode statements are not allowed.']
 
 
+@pytest.mark.parametrize(*execute)
+def test_transformer__RestrictingNodeTransformer__visit_Num__1(execute):
+    """It allows to use number literals."""
+    glb = execute('a = 42')
+    assert glb['a'] == 42
+
+
+@pytest.mark.parametrize(*execute)
+def test_transformer__RestrictingNodeTransformer__visit_Bytes__1(execute):
+    """It allows to use bytes literals."""
+    glb = execute('a = b"code"')
+    assert glb['a'] == b"code"
+
+
+@pytest.mark.parametrize(*execute)
+def test_transformer__RestrictingNodeTransformer__visit_Set__1(execute):
+    """It allows to use bytes literals."""
+    glb = execute('a = {1, 2, 3}')
+    assert glb['a'] == set([1, 2, 3])
+
+
+@pytest.mark.skipif(IS_PY2,
+                    reason="Ellipsis is new in Python 3")
 @pytest.mark.parametrize(*compile)
-def test_transformer__RestrictingNodeTransformer__visit_Num__1(compile):
-    """It compiles a number successfully."""
-    result = compile('42')
-    assert result.errors == ()
-    assert str(result.code.__class__.__name__) == 'code'
 
 
 @pytest.mark.parametrize(*compile)
