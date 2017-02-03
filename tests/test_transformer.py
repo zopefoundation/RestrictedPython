@@ -639,9 +639,10 @@ def test_transformer__RestrictingNodeTransformer__visit_Subscript_2(
     _write_.reset_mock()
 
 
-@pytest.mark.parametrize(*compile)
-def test_transformer__RestrictingNodeTransformer__visit_AugAssign(
-        compile, mocker):
+@pytest.mark.parametrize(*execute)
+def test_transformer__RestrictingNodeTransformer__visit_AugAssign__1(
+        execute, mocker):
+    """It allows augmented assign for variables."""
     _inplacevar_ = mocker.stub()
     _inplacevar_.side_effect = lambda op, val, expr: val + expr
 
@@ -652,19 +653,42 @@ def test_transformer__RestrictingNodeTransformer__visit_AugAssign(
         'z': 0
     }
 
-    result = compile("a += x + z")
-    assert result.errors == ()
-    exec(result.code, glb)
-
+    execute("a += x + z", glb)
     assert glb['a'] == 2
     _inplacevar_.assert_called_once_with('+=', 1, 1)
     _inplacevar_.reset_mock()
 
+
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__visit_AugAssign__2(compile):
+    """It forbids augmented assign of attributes."""
     result = compile("a.a += 1")
     assert result.errors == (
         'Line 1: Augmented assignment of attributes is not allowed.',)
 
+
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__visit_AugAssign__3(compile):
+    """It forbids augmented assign of subscripts."""
     result = compile("a[a] += 1")
+    assert result.errors == (
+        'Line 1: Augmented assignment of object items and slices is not '
+        'allowed.',)
+
+
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__visit_AugAssign__4(compile):
+    """It forbids augmented assign of slices."""
+    result = compile("a[x:y] += 1")
+    assert result.errors == (
+        'Line 1: Augmented assignment of object items and slices is not '
+        'allowed.',)
+
+
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__visit_AugAssign__5(compile):
+    """It forbids augmented assign of slices with steps."""
+    result = compile("a[x:y:z] += 1")
     assert result.errors == (
         'Line 1: Augmented assignment of object items and slices is not '
         'allowed.',)
