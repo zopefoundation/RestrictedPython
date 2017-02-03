@@ -17,11 +17,13 @@ Contents
 
    idea
    basics/index
-   RestrictedPython3/index
-   RestrictedPython4/index
-   update/index
+   usage/index
    api/index
 
+   RestrictedPython3/index
+   RestrictedPython4/index
+   upgrade/index
+   upgrade_dependencies/index
 
 Indices and tables
 ==================
