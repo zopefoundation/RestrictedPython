@@ -53,6 +53,8 @@ def _compile_restricted_mode(
                                     # flags=flags,
                                     # dont_inherit=dont_inherit
                                     )
+    else:
+        raise TypeError('Unallowed policy provided for RestrictedPython')
     return CompileResult(byte_code, tuple(errors), warnings, used_names)
 
 
