@@ -451,10 +451,6 @@ class RestrictionTests(unittest.TestCase):
                          ["set", "set", "get", "state", "get", "state"])
         self.assertEqual(setattr_calls, ["MyClass", "MyClass"])
 
-    def test_Lambda(self):
-        co = self._compile_file("lambda.py")
-        exec(co, {}, {})
-
     def test_Empty(self):
         rf = RFunction("", "", "issue945", "empty.py", {})
         rf.parse()
