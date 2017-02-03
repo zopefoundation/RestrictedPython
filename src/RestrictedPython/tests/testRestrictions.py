@@ -295,33 +295,6 @@ class RestrictionTests(unittest.TestCase):
                 else:
                     self.fail('%s() did not trip security' % k)
 
-    def test_SyntaxSecurity(self):
-        if sys.version_info >= (2, 7):
-            self._test_SyntaxSecurity('security_in_syntax27.py')
-
-    def _test_SyntaxSecurity(self, mod_name):
-        # Ensures that each of the functions in security_in_syntax.py
-        # throws a SyntaxError when using compile_restricted.
-        fn = os.path.join(_HERE, mod_name)
-        f = open(fn, 'r')
-        source = f.read()
-        f.close()
-        # Unrestricted compile.
-        code = compile(source, fn, 'exec')
-        m = {'__builtins__': {'__import__': minimal_import}}
-        exec(code, m)
-        for k, v in m.items():
-            if hasattr(v, 'func_code'):
-                filename, source = find_source(fn, v.func_code)
-                # Now compile it with restrictions
-                try:
-                    code = compile_restricted(source, filename, 'exec')
-                except SyntaxError:
-                    # Passed the test.
-                    pass
-                else:
-                    self.fail('%s should not have compiled' % k)
-
     def test_OrderOfOperations(self):
         res = self.execFunc('order_of_operations')
         self.assertEqual(res, 0)

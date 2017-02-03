@@ -131,11 +131,27 @@ def with_as_bad_name():
 
 
 @pytest.mark.parametrize(*compile)
-def test_transformer__RestrictingNodeTransformer__visit_Name__4_5(compile):
+def test_transformer__RestrictingNodeTransformer__visit_Name__4_4(compile):
     """It denies a variable name in with starting in `_`."""
     result = compile(BAD_NAME_IN_WITH)
     assert result.errors == (
         'Line 2: "_leading_underscore" is an invalid variable name because '
+        'it starts with "_"',)
+
+
+BAD_NAME_IN_COMPOUND_WITH = """\
+def compound_with_bad_name():
+    with a as b, c as _restricted_name:
+        pass
+"""
+
+
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__visit_Name__4_5(compile):
+    """It denies a variable name in with starting in `_`."""
+    result = compile(BAD_NAME_IN_COMPOUND_WITH)
+    assert result.errors == (
+        'Line 2: "_restricted_name" is an invalid variable name because '
         'it starts with "_"',)
 
 
