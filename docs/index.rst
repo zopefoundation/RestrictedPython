@@ -25,6 +25,11 @@ Contents
    upgrade/index
    upgrade_dependencies/index
 
+   roadmap/index
+   contributing/index
+
+   CHANGES
+
 Indices and tables
 ==================
 
