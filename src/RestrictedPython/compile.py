@@ -27,8 +27,8 @@ def _compile_restricted_mode(
                             dont_inherit=dont_inherit)
     # TODO: Should be an elif check if policy is subclass of
     # RestrictionNodeTransformer any other object passed in as policy might
-    # throw an error or is a NodeVisitor subclass that could be initialized with
-    # three params.
+    # throw an error or is a NodeVisitor subclass that could be initialized
+    # with three parameters.
     # elif issubclass(policy, RestrictingNodeTransformer):
     else:
         c_ast = None
