@@ -23,4 +23,4 @@ __docformat__ = "reStructuredText"
 
 def test_suite():
     return unittest.TestSuite([
-        DocFileSuite('README.txt', package='RestrictedPython'), ])
+        DocFileSuite('README.rst', package='RestrictedPython'), ])
