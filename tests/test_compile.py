@@ -1,9 +1,24 @@
 from . import compile
+from RestrictedPython import compile_restricted
 from RestrictedPython import CompileResult
 from RestrictedPython._compat import IS_PY2
 
 import pytest
 import RestrictedPython.compile
+
+
+def test_compile__compile_restricted_invalid_code_input():
+    with pytest.raises(TypeError):
+        compile_restricted(object(), '<string>', 'exec')
+    with pytest.raises(TypeError):
+        compile_restricted(object(), '<string>', 'eval')
+    with pytest.raises(TypeError):
+        compile_restricted(object(), '<string>', 'single')
+
+
+def test_compile__compile_restricted_invalid_policy_input():
+    with pytest.raises(TypeError):
+        compile_restricted("pass", '<string>', 'exec', policy=object())
 
 
 @pytest.mark.parametrize(*compile)

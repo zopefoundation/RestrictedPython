@@ -485,6 +485,18 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
 
         To access `generic_visit` on the super class use `node_contents_visit`.
         """
+        # TODO: To be discussed - For whom that info is relevant
+        # import warnings
+        # warnings.warn(
+        #     '{o.__class__.__name__}'
+        #     ' statement is not known to RestrictedPython'.format(node),
+        #     SyntaxWarning
+        # )
+        self.warn(
+            node,
+            '{o.__class__.__name__}'
+            ' statement is not known to RestrictedPython'.format(node)
+        )
         self.not_allowed(node)
 
     def not_allowed(self, node):
@@ -608,9 +620,15 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         return self.node_contents_visit(node)
 
     # Expressions
+    def visit_Expression(self, node):
+        """Allow Expression statements without restrictions.
+        Python 2 only AST Element.
+        """
+        return self.node_contents_visit(node)
 
     def visit_Expr(self, node):
-        """Allow Expr statements without restrictions."""
+        """Allow Expr statements without restrictions.
+        Python 3+ AST Element."""
         return self.node_contents_visit(node)
 
     def visit_UnaryOp(self, node):
@@ -660,6 +678,12 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
 
         """
         self.not_allowed(node)
+
+    def visit_Mult(self, node):
+        """
+
+        """
+        return self.node_contents_visit(node)
 
     def visit_Div(self, node):
         """
