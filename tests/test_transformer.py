@@ -1308,37 +1308,67 @@ def test_transformer__RestrictingNodeTransformer__visit_ExceptHandler__2(
         'it starts with "_"',)
 
 
-@pytest.mark.parametrize(*compile)
-def test_transformer__RestrictingNodeTransformer__visit_Import(compile):
-    errmsg = 'Line 1: "%s" is an invalid variable name ' \
-             'because it starts with "_"'
+import_errmsg = (
+    'Line 1: "%s" is an invalid variable name because it starts with "_"')
 
+
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__visit_Import__1(compile):
+    """It allows importing a module."""
     result = compile('import a')
     assert result.errors == ()
     assert result.code is not None
 
+
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__visit_Import__2(compile):
+    """It denies importing a module starting with `_`."""
     result = compile('import _a')
-    assert result.errors == (errmsg % '_a',)
+    assert result.errors == (import_errmsg % '_a',)
 
+
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__visit_Import__3(compile):
+    """It denies importing a module starting with `_` as something."""
     result = compile('import _a as m')
-    assert result.errors == (errmsg % '_a',)
+    assert result.errors == (import_errmsg % '_a',)
 
+
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__visit_Import__4(compile):
+    """It denies importing a module as something starting with `_`."""
     result = compile('import a as _m')
-    assert result.errors == (errmsg % '_m',)
+    assert result.errors == (import_errmsg % '_m',)
 
+
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__visit_Import__5(compile):
+    """It allows importing from a module."""
     result = compile('from a import m')
     assert result.errors == ()
     assert result.code is not None
 
+
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__visit_Import_6(compile):
+    """It allows importing from a module starting with `_`."""
     result = compile('from _a import m')
     assert result.errors == ()
     assert result.code is not None
 
-    result = compile('from a import m as _n')
-    assert result.errors == (errmsg % '_n',)
 
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__visit_Import__7(compile):
+    """It denies importing from a module as something starting with `_`."""
+    result = compile('from a import m as _n')
+    assert result.errors == (import_errmsg % '_n',)
+
+
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__visit_Import__8(compile):
+    """It denies as-importing something starting with `_` from a module."""
     result = compile('from a import _m as n')
-    assert result.errors == (errmsg % '_m',)
+    assert result.errors == (import_errmsg % '_m',)
 
 
 @pytest.mark.parametrize(*compile)
