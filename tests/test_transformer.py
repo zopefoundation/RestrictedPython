@@ -206,7 +206,8 @@ def func():
 
 
 @pytest.mark.parametrize(*compile)
-def test_transformer__RestrictingNodeTransformer__visit_Attribute__3(compile, mocker):
+def test_transformer__RestrictingNodeTransformer__visit_Attribute__3(
+        compile, mocker):
     result = compile(TRANSFORM_ATTRIBUTE_ACCESS)
     assert result.errors == ()
 
@@ -230,7 +231,8 @@ def func():
 
 
 @pytest.mark.parametrize(*compile)
-def test_transformer__RestrictingNodeTransformer__visit_Attribute__4(compile, mocker):
+def test_transformer__RestrictingNodeTransformer__visit_Attribute__4(
+        compile, mocker):
     result = compile(ALLOW_UNDERSCORE_ONLY)
     assert result.errors == ()
 
@@ -242,7 +244,8 @@ def func():
 
 
 @pytest.mark.parametrize(*compile)
-def test_transformer__RestrictingNodeTransformer__visit_Attribute__5(compile, mocker):
+def test_transformer__RestrictingNodeTransformer__visit_Attribute__5(
+        compile, mocker):
     result = compile(TRANSFORM_ATTRIBUTE_WRITE)
     assert result.errors == ()
 
@@ -290,7 +293,8 @@ lambda_default = lambda x=b.b: x
 
 
 @pytest.mark.parametrize(*compile)
-def test_transformer__RestrictingNodeTransformer__visit_Attribute__7(compile, mocker):
+def test_transformer__RestrictingNodeTransformer__visit_Attribute__7(
+        compile, mocker):
     result = compile(TRANSFORM_ATTRIBUTE_ACCESS_FUNCTION_DEFAULT)
     assert result.errors == ()
 
@@ -539,7 +543,8 @@ def extended_slice_subscript(a):
 
 
 @pytest.mark.parametrize(*compile)
-def test_transformer__RestrictingNodeTransformer__visit_Subscript_1(compile, mocker):
+def test_transformer__RestrictingNodeTransformer__visit_Subscript_1(
+        compile, mocker):
     result = compile(GET_SUBSCRIPTS)
     assert result.errors == ()
 
@@ -612,7 +617,8 @@ def del_subscript(a):
 
 
 @pytest.mark.parametrize(*compile)
-def test_transformer__RestrictingNodeTransformer__visit_Subscript_2(compile, mocker):
+def test_transformer__RestrictingNodeTransformer__visit_Subscript_2(
+        compile, mocker):
     result = compile(WRITE_SUBSCRIPTS)
     assert result.errors == ()
 
@@ -634,7 +640,8 @@ def test_transformer__RestrictingNodeTransformer__visit_Subscript_2(compile, moc
 
 
 @pytest.mark.parametrize(*compile)
-def test_transformer__RestrictingNodeTransformer__visit_AugAssign(compile, mocker):
+def test_transformer__RestrictingNodeTransformer__visit_AugAssign(
+        compile, mocker):
     _inplacevar_ = mocker.stub()
     _inplacevar_.side_effect = lambda op, val, expr: val + expr
 
@@ -661,6 +668,7 @@ def test_transformer__RestrictingNodeTransformer__visit_AugAssign(compile, mocke
     assert result.errors == (
         'Line 1: Augmented assignment of object items and slices is not '
         'allowed.',)
+
 
 # def f(a, b, c): pass
 # f(*two_element_sequence, **dict_with_key_c)
@@ -850,7 +858,8 @@ def nested_with_order((a, b), (c, d)):
     IS_PY3,
     reason="tuple parameter unpacking is gone in python 3")
 @pytest.mark.parametrize(*compile)
-def test_transformer__RestrictingNodeTransformer__visit_FunctionDef_2(compile, mocker):
+def test_transformer__RestrictingNodeTransformer__visit_FunctionDef_2(
+        compile, mocker):
     result = compile('def simple((a, b)): return a, b')
     assert result.errors == ()
 
@@ -992,7 +1001,8 @@ def test_transformer__RestrictingNodeTransformer__visit_Lambda__8(compile):
     IS_PY3,
     reason="tuple parameter unpacking is gone in python 3")
 @pytest.mark.parametrize(*compile)
-def test_transformer__RestrictingNodeTransformer__visit_Lambda_2(compile, mocker):
+def test_transformer__RestrictingNodeTransformer__visit_Lambda_2(
+        compile, mocker):
     if compile is not RestrictedPython.compile.compile_restricted_exec:
         return
 
@@ -1017,7 +1027,8 @@ def test_transformer__RestrictingNodeTransformer__visit_Lambda_2(compile, mocker
 
 
 @pytest.mark.parametrize(*compile)
-def test_transformer__RestrictingNodeTransformer__visit_Assign(compile, mocker):
+def test_transformer__RestrictingNodeTransformer__visit_Assign(
+        compile, mocker):
     src = "orig = (a, (x, z)) = (c, d) = g"
     result = compile(src)
     assert result.errors == ()
@@ -1048,7 +1059,8 @@ def test_transformer__RestrictingNodeTransformer__visit_Assign(compile, mocker):
     IS_PY2,
     reason="starred assignments are python3 only")
 @pytest.mark.parametrize(*compile)
-def test_transformer__RestrictingNodeTransformer__visit_Assign2(compile, mocker):
+def test_transformer__RestrictingNodeTransformer__visit_Assign2(
+        compile, mocker):
     src = "a, *d, (c, *e), x  = (1, 2, 3, (4, 3, 4), 5)"
     result = compile(src)
     assert result.errors == ()
@@ -1211,7 +1223,8 @@ def tuple_unpack(err):
     IS_PY3,
     reason="tuple unpacking on exceptions is gone in python3")
 @pytest.mark.parametrize(*compile)
-def test_transformer__RestrictingNodeTransformer__visit_ExceptHandler(compile, mocker):
+def test_transformer__RestrictingNodeTransformer__visit_ExceptHandler(
+        compile, mocker):
     result = compile(EXCEPT_WITH_TUPLE_UNPACK)
     assert result.errors == ()
 
@@ -1302,7 +1315,8 @@ def test_transformer__RestrictingNodeTransformer__visit_ClassDef(compile):
 
 
 @pytest.mark.parametrize(*compile)
-def test_transformer__RestrictingNodeTransformer__test_ternary_if(compile, mocker):
+def test_transformer__RestrictingNodeTransformer__test_ternary_if(
+        compile, mocker):
     result = compile('x.y = y.a if y.z else y.b')
     assert result.errors == ()
 
