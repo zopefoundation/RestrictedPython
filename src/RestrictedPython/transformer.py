@@ -1153,34 +1153,24 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
     # Control flow
 
     def visit_If(self, node):
-        """
-
-        """
+        """Allow `if` statements without restrictions."""
         return self.node_contents_visit(node)
 
     def visit_For(self, node):
-        """
-
-        """
+        """Allow `for` statements with some restrictions."""
         return self.guard_iter(node)
 
     def visit_While(self, node):
-        """
-
-        """
-        self.not_allowed(node)
+        """Allow `while` statements."""
+        return self.node_contents_visit(node)
 
     def visit_Break(self, node):
-        """
-
-        """
+        """Allow `break` statements without restrictions."""
         return self.node_contents_visit(node)
 
     def visit_Continue(self, node):
-        """
-
-        """
-        self.not_allowed(node)
+        """Allow `continue` statements without restrictions."""
+        return self.node_contents_visit(node)
 
     def visit_Try(self, node):
         """Allow Try without restrictions.

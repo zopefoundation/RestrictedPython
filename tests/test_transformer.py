@@ -1483,6 +1483,53 @@ def test_transformer__RestrictingNodeTransformer__test_ternary_if(
         mocker.call(glb['y'], 'b')])
 
 
+WHILE = """\
+a = 5
+while a < 7:
+    a = a + 3
+"""
+
+
+@pytest.mark.parametrize(*execute)
+def test_transformer__RestrictingNodeTransformer__visit_While__1(execute):
+    """It allows `while` statements."""
+    glb = execute(WHILE)
+    assert glb['a'] == 8
+
+
+BREAK = """\
+a = 5
+while True:
+    a = a + 3
+    if a >= 7:
+        break
+"""
+
+
+@pytest.mark.parametrize(*execute)
+def test_transformer__RestrictingNodeTransformer__visit_Break__1(execute):
+    """It allows `break` statements."""
+    glb = execute(BREAK)
+    assert glb['a'] == 8
+
+
+CONTINUE = """\
+a = 3
+while a < 10:
+    if a < 5:
+        a = a + 1
+        continue
+    a = a + 10
+"""
+
+
+@pytest.mark.parametrize(*execute)
+def test_transformer__RestrictingNodeTransformer__visit_Continue__1(execute):
+    """It allows `continue` statements."""
+    glb = execute(CONTINUE)
+    assert glb['a'] == 15
+
+
 WITH_STMT_WITH_UNPACK_SEQUENCE = """
 def call(ctx):
     with ctx() as (a, (c, b)):
