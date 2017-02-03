@@ -1,14 +1,27 @@
 from . import compile
 from . import execute
+from RestrictedPython import RestrictingNodeTransformer
 from RestrictedPython._compat import IS_PY2
 from RestrictedPython._compat import IS_PY3
 from RestrictedPython.Guards import guarded_iter_unpack_sequence
 from RestrictedPython.Guards import guarded_unpack_sequence
 
+import ast
 import contextlib
 import pytest
 import RestrictedPython
 import types
+
+
+def test_transformer__RestrictingNodeTransformer__generic_visit__1():
+    """It log an error if there is an unknown ast node visited."""
+    class MyFancyNode(ast.AST):
+        pass
+
+    transformer = RestrictingNodeTransformer()
+    transformer.visit(MyFancyNode())
+    assert transformer.errors == [
+        'Line None: MyFancyNode statements are not allowed.']
 
 
 @pytest.mark.parametrize(*compile)
