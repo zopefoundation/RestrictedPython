@@ -139,6 +139,36 @@ def test_transformer__RestrictingNodeTransformer__visit_Name__4_5(compile):
         'it starts with "_"',)
 
 
+BAD_NAME_DICT_COMP = """\
+def dict_comp_bad_name():
+    {y: y for _restricted_name in x}
+"""
+
+
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__visit_Name__4_6(compile):
+    """It denies a variable name starting in `_` in a dict comprehension."""
+    result = compile(BAD_NAME_DICT_COMP)
+    assert result.errors == (
+        'Line 2: "_restricted_name" is an invalid variable name because '
+        'it starts with "_"',)
+
+
+BAD_NAME_SET_COMP = """\
+def set_comp_bad_name():
+    {y for _restricted_name in x}
+"""
+
+
+@pytest.mark.parametrize(*compile)
+def test_transformer__RestrictingNodeTransformer__visit_Name__4_7(compile):
+    """It denies a variable name starting in `_` in a dict comprehension."""
+    result = compile(BAD_NAME_SET_COMP)
+    assert result.errors == (
+        'Line 2: "_restricted_name" is an invalid variable name because '
+        'it starts with "_"',)
+
+
 BAD_NAME_ENDING_WITH___ROLES__ = """\
 def bad_name():
     myvar__roles__ = 12
