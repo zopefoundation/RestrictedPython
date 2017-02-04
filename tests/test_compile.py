@@ -1,5 +1,6 @@
 from . import compile
 from . import compile_eval
+from . import r_eval
 from RestrictedPython import compile_restricted
 from RestrictedPython import CompileResult
 from RestrictedPython._compat import IS_PY2
@@ -135,3 +136,9 @@ def test_compile__compile_restricted_eval__1(compile_eval):
             'Line 1: SyntaxError: invalid syntax in on statement: def a():',)
     else:
         assert result.errors == ('invalid syntax (<string>, line 1)',)
+
+
+@pytest.mark.parametrize(*r_eval)
+def test_compile__compile_restricted_eval__2(r_eval):
+    """It compiles code as an Expression."""
+    assert r_eval('4 * 6') == 24
