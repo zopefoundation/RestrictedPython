@@ -1,4 +1,5 @@
 from . import c_exec
+from . import e_eval
 from . import e_exec
 from RestrictedPython import RestrictingNodeTransformer
 from RestrictedPython._compat import IS_PY2
@@ -26,25 +27,22 @@ def test_transformer__RestrictingNodeTransformer__generic_visit__1():
         'Line None: MyFancyNode statement is not known to RestrictedPython']
 
 
-@pytest.mark.parametrize(*e_exec)
-def test_transformer__RestrictingNodeTransformer__visit_Num__1(e_exec):
+@pytest.mark.parametrize(*e_eval)
+def test_transformer__RestrictingNodeTransformer__visit_Num__1(e_eval):
     """It allows to use number literals."""
-    glb = e_exec('a = 42')
-    assert glb['a'] == 42
+    assert e_eval('42') == 42
 
 
-@pytest.mark.parametrize(*e_exec)
-def test_transformer__RestrictingNodeTransformer__visit_Bytes__1(e_exec):
+@pytest.mark.parametrize(*e_eval)
+def test_transformer__RestrictingNodeTransformer__visit_Bytes__1(e_eval):
     """It allows to use bytes literals."""
-    glb = e_exec('a = b"code"')
-    assert glb['a'] == b"code"
+    assert e_eval('b"code"') == b"code"
 
 
-@pytest.mark.parametrize(*e_exec)
-def test_transformer__RestrictingNodeTransformer__visit_Set__1(e_exec):
-    """It allows to use bytes literals."""
-    glb = e_exec('a = {1, 2, 3}')
-    assert glb['a'] == set([1, 2, 3])
+@pytest.mark.parametrize(*e_eval)
+def test_transformer__RestrictingNodeTransformer__visit_Set__1(e_eval):
+    """It allows to use set literals."""
+    assert e_eval('{1, 2, 3}') == set([1, 2, 3])
 
 
 @pytest.mark.skipif(IS_PY2,
@@ -126,6 +124,13 @@ def test_transformer__RestrictingNodeTransformer__visit_Name__2(c_exec):
     assert result.errors == (
         'Line 2: "_getattr" is an invalid variable name because '
         'it starts with "_"',)
+
+
+@pytest.mark.parametrize(*e_exec)
+def test_transformer__RestrictingNodeTransformer__visit_Name__2_5(e_exec):
+    """It allows `_` as variable name."""
+    glb = e_exec('_ = 2411')
+    assert glb['_'] == 2411
 
 
 BAD_NAME_OVERRIDE_OVERRIDE_GUARD_WITH_FUNCTION = """\
@@ -304,19 +309,16 @@ def func():
 """
 
 
-@pytest.mark.parametrize(*c_exec)
+@pytest.mark.parametrize(*e_exec)
 def test_transformer__RestrictingNodeTransformer__visit_Attribute__3(
-        c_exec, mocker):
-    result = c_exec(TRANSFORM_ATTRIBUTE_ACCESS)
-    assert result.errors == ()
-
+        e_exec, mocker):
+    """It transforms the attribute access to `_getattr_`."""
     glb = {
         '_getattr_': mocker.stub(),
         'a': [],
         'b': 'b'
     }
-
-    exec(result.code, glb)
+    e_exec(TRANSFORM_ATTRIBUTE_ACCESS, glb)
     glb['func']()
     glb['_getattr_'].assert_called_once_with([], 'b')
 
@@ -325,46 +327,30 @@ ALLOW_UNDERSCORE_ONLY = """\
 def func():
     some_ob = object()
     some_ob._
-    _ = some_ob
 """
 
 
 @pytest.mark.parametrize(*c_exec)
-def test_transformer__RestrictingNodeTransformer__visit_Attribute__4(
-        c_exec, mocker):
+def test_transformer__RestrictingNodeTransformer__visit_Attribute__4(c_exec):
+    """It allows `_` as attribute name."""
     result = c_exec(ALLOW_UNDERSCORE_ONLY)
     assert result.errors == ()
 
 
-TRANSFORM_ATTRIBUTE_WRITE = """\
-def func():
-    a.b = 'it works'
-"""
-
-
-@pytest.mark.parametrize(*c_exec)
+@pytest.mark.parametrize(*e_exec)
 def test_transformer__RestrictingNodeTransformer__visit_Attribute__5(
-        c_exec, mocker):
-    result = c_exec(TRANSFORM_ATTRIBUTE_WRITE)
-    assert result.errors == ()
-
+        e_exec, mocker):
+    """It transforms writing to an attribute to `_write_`."""
     glb = {
         '_write_': mocker.stub(),
         'a': mocker.stub(),
     }
     glb['_write_'].return_value = glb['a']
 
-    exec(result.code, glb)
-    glb['func']()
+    e_exec("a.b = 'it works'", glb)
 
     glb['_write_'].assert_called_once_with(glb['a'])
     assert glb['a'].b == 'it works'
-
-
-EXEC_FUNCTION = """\
-def no_exec():
-    exec('q = 1')
-"""
 
 
 DISALLOW_TRACEBACK_ACCESS = """
@@ -377,6 +363,7 @@ except Exception as e:
 
 @pytest.mark.parametrize(*c_exec)
 def test_transformer__RestrictingNodeTransformer__visit_Attribute__6(c_exec):
+    """It denies access to the __traceback__ attribute."""
     result = c_exec(DISALLOW_TRACEBACK_ACCESS)
     assert result.errors == (
         'Line 5: "__traceback__" is an invalid attribute name because '
@@ -386,38 +373,49 @@ def test_transformer__RestrictingNodeTransformer__visit_Attribute__6(c_exec):
 TRANSFORM_ATTRIBUTE_ACCESS_FUNCTION_DEFAULT = """
 def func_default(x=a.a):
     return x
-
-lambda_default = lambda x=b.b: x
 """
 
 
-@pytest.mark.parametrize(*c_exec)
+@pytest.mark.parametrize(*e_exec)
 def test_transformer__RestrictingNodeTransformer__visit_Attribute__7(
-        c_exec, mocker):
-    result = c_exec(TRANSFORM_ATTRIBUTE_ACCESS_FUNCTION_DEFAULT)
-    assert result.errors == ()
-
+        e_exec, mocker):
+    """It transforms attribute access in function default kw to `_write_`."""
     _getattr_ = mocker.Mock()
     _getattr_.side_effect = getattr
 
     glb = {
         '_getattr_': _getattr_,
         'a': mocker.Mock(a=1),
+    }
+
+    e_exec(TRANSFORM_ATTRIBUTE_ACCESS_FUNCTION_DEFAULT, glb)
+
+    _getattr_.assert_has_calls([mocker.call(glb['a'], 'a')])
+    assert glb['func_default']() == 1
+
+
+@pytest.mark.parametrize(*e_exec)
+def test_transformer__RestrictingNodeTransformer__visit_Attribute__8(
+        e_exec, mocker):
+    """It transforms attribute access in lamda default kw to `_write_`."""
+    _getattr_ = mocker.Mock()
+    _getattr_.side_effect = getattr
+
+    glb = {
+        '_getattr_': _getattr_,
         'b': mocker.Mock(b=2)
     }
 
-    exec(result.code, glb)
+    e_exec('lambda_default = lambda x=b.b: x', glb)
 
-    _getattr_.assert_has_calls([
-        mocker.call(glb['a'], 'a'),
-        mocker.call(glb['b'], 'b')
-    ])
+    _getattr_.assert_has_calls([mocker.call(glb['b'], 'b')])
+    assert glb['lambda_default']() == 2
 
-    ret = glb['func_default']()
-    assert ret == 1
 
-    ret = glb['lambda_default']()
-    assert ret == 2
+EXEC_FUNCTION = """\
+def no_exec():
+    exec('q = 1')
+"""
 
 
 @pytest.mark.skipif(IS_PY2,
@@ -481,16 +479,13 @@ def nested_generator(it1, it2):
 """
 
 
-@pytest.mark.parametrize(*c_exec)
-def test_transformer__RestrictingNodeTransformer__guard_iter(c_exec, mocker):
-    result = c_exec(ITERATORS)
-    assert result.errors == ()
-
+@pytest.mark.parametrize(*e_exec)
+def test_transformer__RestrictingNodeTransformer__guard_iter(e_exec, mocker):
     it = (1, 2, 3)
     _getiter_ = mocker.stub()
     _getiter_.side_effect = lambda x: x
     glb = {'_getiter_': _getiter_}
-    exec(result.code, glb)
+    e_exec(ITERATORS, glb)
 
     ret = glb['for_loop'](it)
     assert 6 == ret
@@ -565,11 +560,8 @@ def generator(it):
 """
 
 
-@pytest.mark.parametrize(*c_exec)
-def test_transformer__RestrictingNodeTransformer__guard_iter2(c_exec, mocker):
-    result = c_exec(ITERATORS_WITH_UNPACK_SEQUENCE)
-    assert result.errors == ()
-
+@pytest.mark.parametrize(*e_exec)
+def test_transformer__RestrictingNodeTransformer__guard_iter2(e_exec, mocker):
     it = ((1, 2), (3, 4), (5, 6))
 
     call_ref = [
@@ -587,7 +579,7 @@ def test_transformer__RestrictingNodeTransformer__guard_iter2(c_exec, mocker):
         '_iter_unpack_sequence_': guarded_iter_unpack_sequence
     }
 
-    exec(result.code, glb)
+    e_exec(ITERATORS_WITH_UNPACK_SEQUENCE, glb)
 
     ret = glb['for_loop'](it)
     assert ret == 21
@@ -641,17 +633,14 @@ def extended_slice_subscript(a):
 """
 
 
-@pytest.mark.parametrize(*c_exec)
+@pytest.mark.parametrize(*e_exec)
 def test_transformer__RestrictingNodeTransformer__visit_Subscript_1(
-        c_exec, mocker):
-    result = c_exec(GET_SUBSCRIPTS)
-    assert result.errors == ()
-
+        e_exec, mocker):
     value = None
     _getitem_ = mocker.stub()
     _getitem_.side_effect = lambda ob, index: (ob, index)
     glb = {'_getitem_': _getitem_}
-    exec(result.code, glb)
+    e_exec(GET_SUBSCRIPTS, glb)
 
     ret = glb['simple_subscript'](value)
     ref = (value, 'b')
@@ -715,17 +704,14 @@ def del_subscript(a):
 """
 
 
-@pytest.mark.parametrize(*c_exec)
+@pytest.mark.parametrize(*e_exec)
 def test_transformer__RestrictingNodeTransformer__visit_Subscript_2(
-        c_exec, mocker):
-    result = c_exec(WRITE_SUBSCRIPTS)
-    assert result.errors == ()
-
+        e_exec, mocker):
     value = {'b': None}
     _write_ = mocker.stub()
     _write_.side_effect = lambda ob: ob
     glb = {'_write_': _write_}
-    exec(result.code, glb)
+    e_exec(WRITE_SUBSCRIPTS, glb)
 
     glb['assign_subscript'](value)
     assert value['b'] == 1
@@ -834,11 +820,8 @@ def positional_and_star_and_keyword_and_kw_args():
 """
 
 
-@pytest.mark.parametrize(*c_exec)
-def test_transformer__RestrictingNodeTransformer__visit_Call(c_exec, mocker):
-    result = c_exec(FUNCTIONC_CALLS)
-    assert result.errors == ()
-
+@pytest.mark.parametrize(*e_exec)
+def test_transformer__RestrictingNodeTransformer__visit_Call(e_exec, mocker):
     _apply_ = mocker.stub()
     _apply_.side_effect = lambda func, *args, **kwargs: func(*args, **kwargs)
 
@@ -847,7 +830,7 @@ def test_transformer__RestrictingNodeTransformer__visit_Call(c_exec, mocker):
         'foo': lambda *args, **kwargs: (args, kwargs)
     }
 
-    exec(result.code, glb)
+    e_exec(FUNCTIONC_CALLS, glb)
 
     ret = glb['positional_args']()
     assert ((1, 2), {}) == ret
@@ -986,12 +969,9 @@ def nested_with_order((a, b), (c, d)):
 @pytest.mark.skipif(
     IS_PY3,
     reason="tuple parameter unpacking is gone in python 3")
-@pytest.mark.parametrize(*c_exec)
+@pytest.mark.parametrize(*e_exec)
 def test_transformer__RestrictingNodeTransformer__visit_FunctionDef_2(
-        c_exec, mocker):
-    result = c_exec('def simple((a, b)): return a, b')
-    assert result.errors == ()
-
+        e_exec, mocker):
     _getiter_ = mocker.stub()
     _getiter_.side_effect = lambda it: it
 
@@ -1000,7 +980,7 @@ def test_transformer__RestrictingNodeTransformer__visit_FunctionDef_2(
         '_unpack_sequence_': guarded_unpack_sequence
     }
 
-    exec(result.code, glb)
+    e_exec('def simple((a, b)): return a, b', glb)
 
     val = (1, 2)
     ret = glb['simple'](val)
@@ -1008,13 +988,11 @@ def test_transformer__RestrictingNodeTransformer__visit_FunctionDef_2(
     _getiter_.assert_called_once_with(val)
     _getiter_.reset_mock()
 
-    # The old RCompile did not support nested.
-    if c_exec is RestrictedPython.RCompile.compile_restricted_exec:
+    try:
+        e_exec(NESTED_SEQ_UNPACK, glb)
+    except AttributeError:
+        # The old RCompile did not support nested.
         return
-
-    result = c_exec(NESTED_SEQ_UNPACK)
-    assert result.errors == ()
-    exec(result.code, glb)
 
     val = (1, 2, (3, (4, 5)))
     ret = glb['nested'](val)
@@ -1129,12 +1107,9 @@ def test_transformer__RestrictingNodeTransformer__visit_Lambda__8(c_exec):
 @pytest.mark.skipif(
     IS_PY3,
     reason="tuple parameter unpacking is gone in python 3")
-@pytest.mark.parametrize(*c_exec)
+@pytest.mark.parametrize(*e_exec)
 def test_transformer__RestrictingNodeTransformer__visit_Lambda_2(
-        c_exec, mocker):
-    if c_exec is not RestrictedPython.compile.compile_restricted_exec:
-        return
-
+        e_exec, mocker):
     _getiter_ = mocker.stub()
     _getiter_.side_effect = lambda it: it
     glb = {
@@ -1144,9 +1119,11 @@ def test_transformer__RestrictingNodeTransformer__visit_Lambda_2(
     }
 
     src = "m = lambda (a, (b, c)), *ag, **kw: a+b+c+sum(ag)+sum(kw.values())"
-    result = c_exec(src)
-    assert result.errors == ()
-    exec(result.code, glb)
+    try:
+        e_exec(src, glb)
+    except AttributeError:
+        # Old implementation does not support tuple unpacking
+        return
 
     ret = glb['m']((1, (2, 3)), 4, 5, 6, g=7, e=8)
     assert ret == 36
@@ -1155,12 +1132,9 @@ def test_transformer__RestrictingNodeTransformer__visit_Lambda_2(
     _getiter_.assert_any_call((2, 3))
 
 
-@pytest.mark.parametrize(*c_exec)
-def test_transformer__RestrictingNodeTransformer__visit_Assign(
-        c_exec, mocker):
+@pytest.mark.parametrize(*e_exec)
+def test_transformer__RestrictingNodeTransformer__visit_Assign(e_exec, mocker):
     src = "orig = (a, (x, z)) = (c, d) = g"
-    result = c_exec(src)
-    assert result.errors == ()
 
     _getiter_ = mocker.stub()
     _getiter_.side_effect = lambda it: it
@@ -1171,7 +1145,7 @@ def test_transformer__RestrictingNodeTransformer__visit_Assign(
         'g': (1, (2, 3)),
     }
 
-    exec(result.code, glb)
+    e_exec(src, glb)
     assert glb['a'] == 1
     assert glb['x'] == 2
     assert glb['z'] == 3
@@ -1187,12 +1161,10 @@ def test_transformer__RestrictingNodeTransformer__visit_Assign(
 @pytest.mark.skipif(
     IS_PY2,
     reason="starred assignments are python3 only")
-@pytest.mark.parametrize(*c_exec)
+@pytest.mark.parametrize(*e_exec)
 def test_transformer__RestrictingNodeTransformer__visit_Assign2(
-        c_exec, mocker):
+        e_exec, mocker):
     src = "a, *d, (c, *e), x  = (1, 2, 3, (4, 3, 4), 5)"
-    result = c_exec(src)
-    assert result.errors == ()
 
     _getiter_ = mocker.stub()
     _getiter_.side_effect = lambda it: it
@@ -1202,8 +1174,7 @@ def test_transformer__RestrictingNodeTransformer__visit_Assign2(
         '_unpack_sequence_': guarded_unpack_sequence
     }
 
-    exec(result.code, glb)
-
+    e_exec(src, glb)
     assert glb['a'] == 1
     assert glb['d'] == [2, 3]
     assert glb['c'] == 4
@@ -1351,12 +1322,9 @@ def tuple_unpack(err):
 @pytest.mark.skipif(
     IS_PY3,
     reason="tuple unpacking on exceptions is gone in python3")
-@pytest.mark.parametrize(*c_exec)
+@pytest.mark.parametrize(*e_exec)
 def test_transformer__RestrictingNodeTransformer__visit_ExceptHandler(
-        c_exec, mocker):
-    result = c_exec(EXCEPT_WITH_TUPLE_UNPACK)
-    assert result.errors == ()
-
+        e_exec, mocker):
     _getiter_ = mocker.stub()
     _getiter_.side_effect = lambda it: it
 
@@ -1365,8 +1333,7 @@ def test_transformer__RestrictingNodeTransformer__visit_ExceptHandler(
         '_unpack_sequence_': guarded_unpack_sequence
     }
 
-    exec(result.code, glb)
-
+    e_exec(EXCEPT_WITH_TUPLE_UNPACK, glb)
     err = Exception(1, (2, 3))
     ret = glb['tuple_unpack'](err)
     assert ret == 6
@@ -1480,12 +1447,10 @@ def test_transformer__RestrictingNodeTransformer__visit_ClassDef(c_exec):
         'because it starts with "_"',)
 
 
-@pytest.mark.parametrize(*c_exec)
+@pytest.mark.parametrize(*e_exec)
 def test_transformer__RestrictingNodeTransformer__test_ternary_if(
-        c_exec, mocker):
-    result = c_exec('x.y = y.a if y.z else y.b')
-    assert result.errors == ()
-
+        e_exec, mocker):
+    src = 'x.y = y.a if y.z else y.b'
     _getattr_ = mocker.stub()
     _getattr_.side_effect = lambda ob, key: ob[key]
     _write_ = mocker.stub()
@@ -1499,7 +1464,7 @@ def test_transformer__RestrictingNodeTransformer__test_ternary_if(
     }
 
     glb['y']['z'] = True
-    exec(result.code, glb)
+    e_exec(src, glb)
 
     assert glb['x'].y == 'a'
     _write_.assert_called_once_with(glb['x'])
@@ -1511,7 +1476,7 @@ def test_transformer__RestrictingNodeTransformer__test_ternary_if(
     _getattr_.reset_mock()
 
     glb['y']['z'] = False
-    exec(result.code, glb)
+    e_exec(src, glb)
 
     assert glb['x'].y == 'b'
     _write_.assert_called_once_with(glb['x'])
@@ -1574,11 +1539,8 @@ def call(ctx):
 """
 
 
-@pytest.mark.parametrize(*c_exec)
-def test_transformer__with_stmt_unpack_sequence(c_exec, mocker):
-    result = c_exec(WITH_STMT_WITH_UNPACK_SEQUENCE)
-    assert result.errors == ()
-
+@pytest.mark.parametrize(*e_exec)
+def test_transformer__with_stmt_unpack_sequence(e_exec, mocker):
     @contextlib.contextmanager
     def ctx():
         yield (1, (2, 3))
@@ -1591,7 +1553,7 @@ def test_transformer__with_stmt_unpack_sequence(c_exec, mocker):
         '_unpack_sequence_': guarded_unpack_sequence
     }
 
-    exec(result.code, glb)
+    e_exec(WITH_STMT_WITH_UNPACK_SEQUENCE, glb)
 
     ret = glb['call'](ctx)
 
@@ -1659,11 +1621,8 @@ def load_attr(w):
 """
 
 
-@pytest.mark.parametrize(*c_exec)
-def test_transformer_with_stmt_attribute_access(c_exec, mocker):
-    result = c_exec(WITH_STMT_ATTRIBUTE_ACCESS)
-    assert result.errors == ()
-
+@pytest.mark.parametrize(*e_exec)
+def test_transformer_with_stmt_attribute_access(e_exec, mocker):
     _getattr_ = mocker.stub()
     _getattr_.side_effect = getattr
 
@@ -1671,7 +1630,7 @@ def test_transformer_with_stmt_attribute_access(c_exec, mocker):
     _write_.side_effect = lambda ob: ob
 
     glb = {'_getattr_': _getattr_, '_write_': _write_}
-    exec(result.code, glb)
+    e_exec(WITH_STMT_ATTRIBUTE_ACCESS, glb)
 
     # Test simple
     ctx = mocker.MagicMock(y=1)
@@ -1724,16 +1683,13 @@ def slice_key(ctx, x):
 """
 
 
-@pytest.mark.parametrize(*c_exec)
-def test_transformer_with_stmt_subscript(c_exec, mocker):
-    result = c_exec(WITH_STMT_SUBSCRIPT)
-    assert result.errors == ()
-
+@pytest.mark.parametrize(*e_exec)
+def test_transformer_with_stmt_subscript(e_exec, mocker):
     _write_ = mocker.stub()
     _write_.side_effect = lambda ob: ob
 
     glb = {'_write_': _write_}
-    exec(result.code, glb)
+    e_exec(WITH_STMT_SUBSCRIPT, glb)
 
     # Test single_key
     ctx = mocker.MagicMock()
@@ -1763,11 +1719,8 @@ def call(seq):
 """
 
 
-@pytest.mark.parametrize(*c_exec)
-def test_transformer_dict_comprehension_with_attrs(c_exec, mocker):
-    result = c_exec(DICT_COMPREHENSION_WITH_ATTRS)
-    assert result.errors == ()
-
+@pytest.mark.parametrize(*e_exec)
+def test_transformer_dict_comprehension_with_attrs(e_exec, mocker):
     _getattr_ = mocker.Mock()
     _getattr_.side_effect = getattr
 
@@ -1775,7 +1728,7 @@ def test_transformer_dict_comprehension_with_attrs(c_exec, mocker):
     _getiter_.side_effect = lambda ob: ob
 
     glb = {'_getattr_': _getattr_, '_getiter_': _getiter_}
-    exec(result.code, glb)
+    e_exec(DICT_COMPREHENSION_WITH_ATTRS, glb)
 
     z = [mocker.Mock(k=0, v='a'), mocker.Mock(k=1, v='b')]
     seq = mocker.Mock(z=z)
@@ -1793,71 +1746,61 @@ def test_transformer_dict_comprehension_with_attrs(c_exec, mocker):
     ])
 
 
-@pytest.mark.parametrize(*e_exec)
-def test_transformer__RestrictingNodeTransformer__visit_Eq__1(e_exec):
+@pytest.mark.parametrize(*e_eval)
+def test_transformer__RestrictingNodeTransformer__visit_Eq__1(e_eval):
     """It allows == expressions."""
-    glb = e_exec('a = (1 == int("1"))')
-    assert glb['a'] is True
+    assert e_eval('1 == int("1")') is True
 
 
-@pytest.mark.parametrize(*e_exec)
-def test_transformer__RestrictingNodeTransformer__visit_NotEq__1(e_exec):
+@pytest.mark.parametrize(*e_eval)
+def test_transformer__RestrictingNodeTransformer__visit_NotEq__1(e_eval):
     """It allows != expressions."""
-    glb = e_exec('a = (1 != int("1"))')
-    assert glb['a'] is False
+    assert e_eval('1 != int("1")') is False
 
 
-@pytest.mark.parametrize(*e_exec)
-def test_transformer__RestrictingNodeTransformer__visit_Lt__1(e_exec):
+@pytest.mark.parametrize(*e_eval)
+def test_transformer__RestrictingNodeTransformer__visit_Lt__1(e_eval):
     """It allows < expressions."""
-    glb = e_exec('a = (1 < 3)')
-    assert glb['a'] is True
+    assert e_eval('1 < 3') is True
 
 
-@pytest.mark.parametrize(*e_exec)
-def test_transformer__RestrictingNodeTransformer__visit_LtE__1(e_exec):
+@pytest.mark.parametrize(*e_eval)
+def test_transformer__RestrictingNodeTransformer__visit_LtE__1(e_eval):
     """It allows < expressions."""
-    glb = e_exec('a = (1 <= 3)')
-    assert glb['a'] is True
+    assert e_eval('1 <= 3') is True
 
 
-@pytest.mark.parametrize(*e_exec)
-def test_transformer__RestrictingNodeTransformer__visit_Gt__1(e_exec):
+@pytest.mark.parametrize(*e_eval)
+def test_transformer__RestrictingNodeTransformer__visit_Gt__1(e_eval):
     """It allows > expressions."""
-    glb = e_exec('a = (1 > 3)')
-    assert glb['a'] is False
+    assert e_eval('1 > 3') is False
 
 
-@pytest.mark.parametrize(*e_exec)
-def test_transformer__RestrictingNodeTransformer__visit_GtE__1(e_exec):
+@pytest.mark.parametrize(*e_eval)
+def test_transformer__RestrictingNodeTransformer__visit_GtE__1(e_eval):
     """It allows >= expressions."""
-    glb = e_exec('a = (1 >= 3)')
-    assert glb['a'] is False
+    assert e_eval('1 >= 3') is False
 
 
-@pytest.mark.parametrize(*e_exec)
-def test_transformer__RestrictingNodeTransformer__visit_Is__1(e_exec):
+@pytest.mark.parametrize(*e_eval)
+def test_transformer__RestrictingNodeTransformer__visit_Is__1(e_eval):
     """It allows `is` expressions."""
-    glb = e_exec('a = (None is None)')
-    assert glb['a'] is True
+    assert e_eval('None is None') is True
 
 
-@pytest.mark.parametrize(*e_exec)
-def test_transformer__RestrictingNodeTransformer__visit_IsNot__1(e_exec):
+@pytest.mark.parametrize(*e_eval)
+def test_transformer__RestrictingNodeTransformer__visit_IsNot__1(e_eval):
     """It allows `is not` expressions."""
-    glb = e_exec('a = (2 is not None)')
-    assert glb['a'] is True
+    assert e_eval('2 is not None') is True
 
 
-@pytest.mark.parametrize(*e_exec)
-def test_transformer__RestrictingNodeTransformer__visit_In__1(e_exec):
+@pytest.mark.parametrize(*e_eval)
+def test_transformer__RestrictingNodeTransformer__visit_In__1(e_eval):
     """It allows `in` expressions."""
-    glb = e_exec('a = (2 in [1, 2, 3])')
-    assert glb['a'] is True
+    assert e_eval('2 in [1, 2, 3]') is True
 
 
-@pytest.mark.parametrize(*e_exec)
-def test_transformer__RestrictingNodeTransformer__visit_NotIn__1(e_exec):
+@pytest.mark.parametrize(*e_eval)
+def test_transformer__RestrictingNodeTransformer__visit_NotIn__1(e_eval):
     """It allows `in` expressions."""
-    glb = e_exec('a = (2 not in [1, 2, 3])')
-    assert glb['a'] is False
+    assert e_eval('2 not in [1, 2, 3]') is False
