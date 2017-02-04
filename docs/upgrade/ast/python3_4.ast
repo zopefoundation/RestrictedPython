@@ -15,36 +15,38 @@ module Python version "3.4"
                        stmt* body,
                        expr* decorator_list,
                        expr? returns)
-          | ClassDef(identifier name,
-                     expr* bases,
-                     keyword* keywords,
-                     expr? starargs,
-                     expr? kwargs,
-                     stmt* body,
-                     expr* decorator_list)
-          | Return(expr? value)
+         | ClassDef(identifier name,
+                    expr* bases,
+                    keyword* keywords,
+                    expr? starargs,
+                    expr? kwargs,
+                    stmt* body,
+                    expr* decorator_list)
+         | Return(expr? value)
 
-          | Delete(expr* targets)
-          | Assign(expr* targets, expr value)
-          | AugAssign(expr target, operator op, expr value)
+         | Delete(expr* targets)
+         | Assign(expr* targets, expr value)
+         | AugAssign(expr target, operator op, expr value)
 
-          -- use 'orelse' because else is a keyword in target languages
-          | For(expr target, expr iter, stmt* body, stmt* orelse)
-          | While(expr test, stmt* body, stmt* orelse)
-          | If(expr test, stmt* body, stmt* orelse)
-          | With(withitem* items, stmt* body)
+         -- use 'orelse' because else is a keyword in target languages
+         | For(expr target, expr iter, stmt* body, stmt* orelse)
+         | While(expr test, stmt* body, stmt* orelse)
+         | If(expr test, stmt* body, stmt* orelse)
+         | With(withitem* items, stmt* body)
 
-          | Raise(expr? exc, expr? cause)
-          | Try(stmt* body, excepthandler* handlers, stmt* orelse, stmt* finalbody)
-          | Assert(expr test, expr? msg)
+         | Raise(expr? exc, expr? cause)
+         | Try(stmt* body, excepthandler* handlers, stmt* orelse, stmt* finalbody)
+         | Assert(expr test, expr? msg)
 
-          | Import(alias* names)
-          | ImportFrom(identifier? module, alias* names, int? level)
+         | Import(alias* names)
+         | ImportFrom(identifier? module, alias* names, int? level)
 
-          | Global(identifier* names)
-          | Nonlocal(identifier* names)
-          | Expr(expr value)
-          | Pass | Break | Continue
+         | Global(identifier* names)
+         | Nonlocal(identifier* names)
+         | Expr(expr value)
+         | Pass
+         | Break
+         | Continue
 
           -- XXX Jython will be different
           -- col_offset is the byte offset in the utf8 string the parser uses
@@ -69,7 +71,7 @@ module Python version "3.4"
          -- x < 4 < 3 and (x < 4) < 3
          | Compare(expr left, cmpop* ops, expr* comparators)
          | Call(expr func, expr* args, keyword* keywords,
-             expr? starargs, expr? kwargs)
+                expr? starargs, expr? kwargs)
          | Num(object n) -- a number as a PyObject.
          | Str(string s) -- need to specify raw, unicode, etc?
          | Bytes(bytes s)
@@ -98,7 +100,8 @@ module Python version "3.4"
           | ExtSlice(slice* dims)
           | Index(expr value)
 
-    boolop = And | Or
+    boolop = And
+           | Or
 
     operator = Add
              | Sub
