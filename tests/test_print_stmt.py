@@ -1,4 +1,4 @@
-from RestrictedPython._compat import IS_PY2
+from . import c_exec
 from RestrictedPython._compat import IS_PY3
 from RestrictedPython.PrintCollector import PrintCollector
 
@@ -9,13 +9,6 @@ import RestrictedPython
 pytestmark = pytest.mark.skipif(
     IS_PY3,
     reason="print statement no longer exists in Python 3")
-
-
-compilers = ('compiler', [RestrictedPython.compile.compile_restricted_exec])
-
-if IS_PY2:
-    from RestrictedPython import RCompile
-    compilers[1].append(RCompile.compile_restricted_exec)
 
 
 ALLOWED_PRINT_STATEMENT = """
@@ -41,44 +34,44 @@ print('Hello World!', 'Hello Earth!')
 """
 
 
-@pytest.mark.parametrize(*compilers)
-def test_print_stmt__simple_prints(compiler):
+@pytest.mark.parametrize(*c_exec)
+def test_print_stmt__simple_prints(c_exec):
     glb = {'_print_': PrintCollector, '_getattr_': None}
 
-    code, errors = compiler(ALLOWED_PRINT_STATEMENT)[:2]
+    code, errors = c_exec(ALLOWED_PRINT_STATEMENT)[:2]
     assert code is not None
     assert errors == ()
     exec(code, glb)
     assert glb['_print']() == 'Hello World!\n'
 
-    code, errors = compiler(ALLOWED_PRINT_STATEMENT_WITH_NO_NL)[:2]
+    code, errors = c_exec(ALLOWED_PRINT_STATEMENT_WITH_NO_NL)[:2]
     assert code is not None
     assert errors == ()
     exec(code, glb)
     assert glb['_print']() == 'Hello World!'
 
-    code, errors = compiler(ALLOWED_MULTI_PRINT_STATEMENT)[:2]
+    code, errors = c_exec(ALLOWED_MULTI_PRINT_STATEMENT)[:2]
     assert code is not None
     assert errors == ()
     exec(code, glb)
     assert glb['_print']() == 'Hello World! Hello Earth!\n'
 
-    code, errors = compiler(ALLOWED_PRINT_TUPLE)[:2]
+    code, errors = c_exec(ALLOWED_PRINT_TUPLE)[:2]
     assert code is not None
     assert errors == ()
     exec(code, glb)
     assert glb['_print']() == "Hello World!\n"
 
-    code, errors = compiler(ALLOWED_PRINT_MULTI_TUPLE)[:2]
+    code, errors = c_exec(ALLOWED_PRINT_MULTI_TUPLE)[:2]
     assert code is not None
     assert errors == ()
     exec(code, glb)
     assert glb['_print']() == "('Hello World!', 'Hello Earth!')\n"
 
 
-@pytest.mark.parametrize(*compilers)
-def test_print_stmt__fail_with_none_target(compiler, mocker):
-    code, errors = compiler('print >> None, "test"')[:2]
+@pytest.mark.parametrize(*c_exec)
+def test_print_stmt__fail_with_none_target(c_exec, mocker):
+    code, errors = c_exec('print >> None, "test"')[:2]
 
     assert code is not None
     assert errors == ()
@@ -97,9 +90,9 @@ def print_into_stream(stream):
 """
 
 
-@pytest.mark.parametrize(*compilers)
-def test_print_stmt__protect_chevron_print(compiler, mocker):
-    code, errors = compiler(PROTECT_PRINT_STATEMENT_WITH_CHEVRON)[:2]
+@pytest.mark.parametrize(*c_exec)
+def test_print_stmt__protect_chevron_print(c_exec, mocker):
+    code, errors = c_exec(PROTECT_PRINT_STATEMENT_WITH_CHEVRON)[:2]
 
     _getattr_ = mocker.stub()
     _getattr_.side_effect = getattr
@@ -140,9 +133,9 @@ def main():
 """
 
 
-@pytest.mark.parametrize(*compilers)
-def test_print_stmt__nested_print_collector(compiler, mocker):
-    code, errors = compiler(INJECT_PRINT_COLLECTOR_NESTED)[:2]
+@pytest.mark.parametrize(*c_exec)
+def test_print_stmt__nested_print_collector(c_exec, mocker):
+    code, errors = c_exec(INJECT_PRINT_COLLECTOR_NESTED)[:2]
 
     glb = {"_print_": PrintCollector, '_getattr_': None}
     exec(code, glb)
@@ -157,18 +150,18 @@ def foo():
 """
 
 
-@pytest.mark.parametrize(*compilers)
-def test_print_stmt__with_printed_no_print(compiler):
-    code, errors, warnings = compiler(WARN_PRINTED_NO_PRINT)[:3]
+@pytest.mark.parametrize(*c_exec)
+def test_print_stmt__with_printed_no_print(c_exec):
+    code, errors, warnings = c_exec(WARN_PRINTED_NO_PRINT)[:3]
 
     assert code is not None
     assert errors == ()
 
-    if compiler is RestrictedPython.compile.compile_restricted_exec:
+    if c_exec is RestrictedPython.compile.compile_restricted_exec:
         assert warnings == [
             "Line 2: Doesn't print, but reads 'printed' variable."]
 
-    if compiler is RestrictedPython.RCompile.compile_restricted_exec:
+    if c_exec is RestrictedPython.RCompile.compile_restricted_exec:
         assert warnings == ["Doesn't print, but reads 'printed' variable."]
 
 
@@ -180,18 +173,18 @@ printed
 """
 
 
-@pytest.mark.parametrize(*compilers)
-def test_print_stmt__with_printed_no_print_nested(compiler):
-    code, errors, warnings = compiler(WARN_PRINTED_NO_PRINT_NESTED)[:3]
+@pytest.mark.parametrize(*c_exec)
+def test_print_stmt__with_printed_no_print_nested(c_exec):
+    code, errors, warnings = c_exec(WARN_PRINTED_NO_PRINT_NESTED)[:3]
 
     assert code is not None
     assert errors == ()
 
-    if compiler is RestrictedPython.compile.compile_restricted_exec:
+    if c_exec is RestrictedPython.compile.compile_restricted_exec:
         assert warnings == [
             "Line 3: Doesn't print, but reads 'printed' variable."]
 
-    if compiler is RestrictedPython.RCompile.compile_restricted_exec:
+    if c_exec is RestrictedPython.RCompile.compile_restricted_exec:
         assert warnings == ["Doesn't print, but reads 'printed' variable."]
 
 
@@ -201,18 +194,18 @@ def foo():
 """
 
 
-@pytest.mark.parametrize(*compilers)
-def test_print_stmt__with_print_no_printed(compiler):
-    code, errors, warnings = compiler(WARN_PRINT_NO_PRINTED)[:3]
+@pytest.mark.parametrize(*c_exec)
+def test_print_stmt__with_print_no_printed(c_exec):
+    code, errors, warnings = c_exec(WARN_PRINT_NO_PRINTED)[:3]
 
     assert code is not None
     assert errors == ()
 
-    if compiler is RestrictedPython.compile.compile_restricted_exec:
+    if c_exec is RestrictedPython.compile.compile_restricted_exec:
         assert warnings == [
             "Line 2: Prints, but never reads 'printed' variable."]
 
-    if compiler is RestrictedPython.RCompile.compile_restricted_exec:
+    if c_exec is RestrictedPython.RCompile.compile_restricted_exec:
         assert warnings == ["Prints, but never reads 'printed' variable."]
 
 
@@ -224,18 +217,18 @@ printed
 """
 
 
-@pytest.mark.parametrize(*compilers)
-def test_print_stmt__with_print_no_printed_nested(compiler):
-    code, errors, warnings = compiler(WARN_PRINT_NO_PRINTED_NESTED)[:3]
+@pytest.mark.parametrize(*c_exec)
+def test_print_stmt__with_print_no_printed_nested(c_exec):
+    code, errors, warnings = c_exec(WARN_PRINT_NO_PRINTED_NESTED)[:3]
 
     assert code is not None
     assert errors == ()
 
-    if compiler is RestrictedPython.compile.compile_restricted_exec:
+    if c_exec is RestrictedPython.compile.compile_restricted_exec:
         assert warnings == [
             "Line 3: Prints, but never reads 'printed' variable."]
 
-    if compiler is RestrictedPython.RCompile.compile_restricted_exec:
+    if c_exec is RestrictedPython.RCompile.compile_restricted_exec:
         assert warnings == ["Prints, but never reads 'printed' variable."]
 
 
@@ -252,9 +245,9 @@ def class_scope():
 """
 
 
-@pytest.mark.parametrize(*compilers)
-def test_print_stmt_no_new_scope(compiler):
-    code, errors = compiler(NO_PRINT_SCOPES)[:2]
+@pytest.mark.parametrize(*c_exec)
+def test_print_stmt_no_new_scope(c_exec):
+    code, errors = c_exec(NO_PRINT_SCOPES)[:2]
     glb = {'_print_': PrintCollector, '_getattr_': None}
     exec(code, glb)
 
@@ -270,9 +263,9 @@ def func(cond):
 """
 
 
-@pytest.mark.parametrize(*compilers)
-def test_print_stmt_conditional_print(compiler):
-    code, errors = compiler(CONDITIONAL_PRINT)[:2]
+@pytest.mark.parametrize(*c_exec)
+def test_print_stmt_conditional_print(c_exec):
+    code, errors = c_exec(CONDITIONAL_PRINT)[:2]
     glb = {'_print_': PrintCollector, '_getattr_': None}
     exec(code, glb)
 
