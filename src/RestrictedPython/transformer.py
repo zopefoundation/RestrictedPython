@@ -494,7 +494,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         # )
         self.warn(
             node,
-            '{o.__class__.__name__}'
+            '{0.__class__.__name__}'
             ' statement is not known to RestrictedPython'.format(node)
         )
         self.not_allowed(node)
@@ -515,43 +515,36 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         return self.node_contents_visit(node)
 
     def visit_Str(self, node):
-        """Allow strings without restrictions."""
+        """Allow string literals without restrictions."""
         return self.node_contents_visit(node)
 
     def visit_Bytes(self, node):
-        """Allow bytes without restrictions.
+        """Allow bytes literals without restrictions.
 
         Bytes is Python 3 only.
         """
-        self.not_allowed(node)
+        return self.node_contents_visit(node)
 
     def visit_List(self, node):
-        """
-
-        """
+        """Allow list literals without restrictions."""
         return self.node_contents_visit(node)
 
     def visit_Tuple(self, node):
-        """
-
-        """
+        """Allow tuple literals without restrictions."""
         return self.node_contents_visit(node)
 
     def visit_Set(self, node):
-        """
-
-        """
-        self.not_allowed(node)
+        """Allow set literals without restrictions."""
+        return self.node_contents_visit(node)
 
     def visit_Dict(self, node):
-        """
-
-        """
+        """Allow dict literals without restrictions."""
         return self.node_contents_visit(node)
 
     def visit_Ellipsis(self, node):
-        """
+        """Deny using `...`.
 
+        Ellipsis is exists only in Python 3.
         """
         self.not_allowed(node)
 
@@ -620,15 +613,16 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         return self.node_contents_visit(node)
 
     # Expressions
+
     def visit_Expression(self, node):
         """Allow Expression statements without restrictions.
-        Python 2 only AST Element.
+
+        They are in the AST when using the `eval` compile mode.
         """
         return self.node_contents_visit(node)
 
     def visit_Expr(self, node):
-        """Allow Expr statements without restrictions.
-        Python 3+ AST Element."""
+        """Allow Expr statements (any expression) without restrictions."""
         return self.node_contents_visit(node)
 
     def visit_UnaryOp(self, node):
