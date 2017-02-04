@@ -48,7 +48,7 @@ def test_transformer__RestrictingNodeTransformer__visit_Set__1(execute):
 
 
 @pytest.mark.skipif(IS_PY2,
-                    reason="Ellipsis is new in Python 3")
+                    reason="... is new in Python 3")
 @pytest.mark.parametrize(*compile)
 def test_transformer__RestrictingNodeTransformer__visit_Ellipsis__1(compile):
     """It prevents using the `ellipsis` statement."""
