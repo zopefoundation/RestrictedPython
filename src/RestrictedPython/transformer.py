@@ -629,7 +629,8 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         """
 
         """
-        self.not_allowed(node)
+        return self.node_contents_visit(node)
+        # self.not_allowed(node)
 
     def visit_UAdd(self, node):
         """
@@ -647,7 +648,8 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         """
 
         """
-        self.not_allowed(node)
+        return self.node_contents_visit(node)
+        # self.not_allowed(node)
 
     def visit_Invert(self, node):
         """
