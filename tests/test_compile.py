@@ -20,7 +20,12 @@ def test_compile__compile_restricted_invalid_code_input():
 
 def test_compile__compile_restricted_invalid_policy_input():
     with pytest.raises(TypeError):
-        compile_restricted("pass", '<string>', 'exec', policy=object())
+        compile_restricted("pass", '<string>', 'exec', policy=object)
+
+
+def test_compile__compile_restricted_invalid_mode_input():
+    with pytest.raises(TypeError):
+        compile_restricted("pass", '<string>', 'invalid')
 
 
 @pytest.mark.parametrize(*c_exec)
