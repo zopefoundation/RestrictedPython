@@ -1,9 +1,9 @@
-from . import c_eval
-from . import c_exec
-from . import e_eval
 from RestrictedPython import compile_restricted
 from RestrictedPython import CompileResult
 from RestrictedPython._compat import IS_PY2
+from tests import c_eval
+from tests import c_exec
+from tests import e_eval
 
 import pytest
 import RestrictedPython.compile
