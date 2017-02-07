@@ -107,10 +107,11 @@ def compile_restricted_single(
 
 
 def compile_restricted_function(
-        source,
+        p,
+        body,
+        name,
         filename='<string>',
-        flags=0,
-        dont_inherit=0,
+        globalize=None,
         policy=RestrictingNodeTransformer):
     """Compile a restricted code object for a function.
 
@@ -121,17 +122,16 @@ def compile_restricted_function(
     The globalize argument, if specified, is a list of variable names to be
     treated as globals (code is generated as if each name in the list
     appeared in a global statement at the top of the function).
-
-    TODO: Special function not comparable with the other restricted_compile_*
-    functions.
     """
-    return _compile_restricted_mode(
-        source,
-        filename=filename,
-        mode='function',
-        flags=flags,
-        dont_inherit=dont_inherit,
-        policy=policy)
+    # TODO: Special function not comparable with the other restricted_compile_* functions.  # NOQA
+    return None
+    # return _compile_restricted_mode(
+    #    source,
+    #    filename=filename,
+    #    mode='function',
+    #    flags=flags,
+    #    dont_inherit=dont_inherit,
+    #    policy=policy)
 
 
 def compile_restricted(
