@@ -49,7 +49,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'RestrictedPython'
-copyright = u'2016, Zope Foundation'
+copyright = u'2017, Zope Foundation and Contributors'
 author = u'Alexander Loechel'
 
 # The version info for the project you're documenting, acts as replacement for
