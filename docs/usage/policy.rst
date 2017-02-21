@@ -23,7 +23,7 @@ Predefined builtins
 
 * ``safe_builtins`` a safe set of builtin modules and functions,
 * ``limited_builtins`` which provides restricted sequence types,
-* ``utilities_builtins`` which provides access for standard modules math, random, string and for sets.
+* ``utility_builtins`` which provides access for standard modules math, random, string and for sets.
 
 Guards
 ......

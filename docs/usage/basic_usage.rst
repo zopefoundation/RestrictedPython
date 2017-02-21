@@ -41,7 +41,6 @@ With RestrictedPython that workflow should be as straight forward as possible:
     exec(byte_code)
     do_something()
 
-
 .. doctest::
     :hide:
 
@@ -84,7 +83,7 @@ RestrictedPython provides three predefined built-ins for that (see :ref:`predefi
 
 * ``safe_builtins``
 * ``limited_builtins``
-* ``utilities_builtins``
+* ``utility_builtins``
 
 So you normally end up using:
 
@@ -93,7 +92,7 @@ So you normally end up using:
     #from RestrictedPython import ..._builtins
     from RestrictedPython import safe_builtins
     from RestrictedPython import limited_builtins
-    from RestrictedPython import utilities_builtins
+    from RestrictedPython import utility_builtins
     from RestrictedPython import compile_restricted
 
     source_code = """<demo code>"""
@@ -103,8 +102,30 @@ So you normally end up using:
 
         #used_builtins = ..._builtins + { <additionl elems> } # Whitelisting additional elements
         used_builtins = safe_builtins
-        exec(byte_code, used_buildins, None)
+        exec(byte_code, used_builtins, None)
     except SyntaxError as e:
         ...
+
+.. doctest::
+    :hide:
+
+    >>> #from RestrictedPython import ..._builtins
+    >>> from RestrictedPython import safe_builtins
+    >>> from RestrictedPython import limited_builtins
+    >>> from RestrictedPython import utility_builtins
+    >>> from RestrictedPython import compile_restricted
+
+    >>> source_code = """
+    ... def do_something():
+    ...     pass
+    ... """
+
+    >>> try:
+    ...     byte_code = compile_restricted(source_code, filename='<name>', mode='exec')
+    ...     #used_builtins = ..._builtins + { <additionl elems> } # Whitelisting additional elements
+    ...     used_builtins = safe_builtins
+    ...     exec(byte_code, used_builtins, None)
+    ... except SyntaxError as e:
+    ...     pass
 
 One common advanced usage would be to define an own restricted builtin dictionary.
