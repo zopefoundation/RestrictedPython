@@ -39,10 +39,13 @@ A policy is basically a special ``NodeTransformer`` that could be instantiated w
 
     from RestrictedPython import compile_restricted
     from RestrictedPython import RestrictingNodeTransformer
+
     class OwnRestrictingNodeTransformer(RestrictingNodeTransformer):
         pass
 
-    policy = OwnRestrictingNodeTransformer(errors=[], warnings=[], used_names=[])
+    policy_instance = OwnRestrictingNodeTransformer(errors=[],
+                                                    warnings=[],
+                                                    used_names=[])
 
 All ``compile_restricted*`` methods do have a optional parameter ``policy``, where a specific policy could be provided.
 
@@ -55,7 +58,11 @@ All ``compile_restricted*`` methods do have a optional parameter ``policy``, whe
 
     policy = OwnRestrictingNodeTransformer
 
-    byte_code = compile_restricted(source_code, filename='<inline code>', mode='exec', policy=policy)
+    byte_code = compile_restricted(source_code,
+                                   filename='<inline code>',
+                                   mode='exec',
+                                   policy=policy # Policy Class
+                                   )
     # exec(byte_code, { ... }, { ... })
     exec(byte_code, globals(), None)
 
@@ -69,5 +76,9 @@ That special case would be written as:
         pass
     """
 
-    byte_code = compile_restricted(source_code, filename='<inline code>', mode='exec', policy=None)
+    byte_code = compile_restricted(source_code,
+                                   filename='<inline code>',
+                                   mode='exec',
+                                   policy=None # Null-Policy -> unrestricted
+                                   )
     exec(byte_code, globals(), None)

@@ -25,7 +25,9 @@ With RestrictedPython that workflow should be as straight forward as possible:
         pass
     """
 
-    byte_code = compile_restricted(source_code, filename='<inline code>', mode='exec')
+    byte_code = compile_restricted(source_code,
+                                   filename='<inline code>',
+                                   mode='exec')
     exec(byte_code)
     do_something()
 
@@ -78,9 +80,12 @@ So you normally end up using:
     """
 
     try:
-        byte_code = compile_restricted(source_code, filename='<inline code>', mode='exec')
+        byte_code = compile_restricted(source_code,
+                                       filename='<inline code>',
+                                       mode='exec')
 
-        # used_builtins = ..._builtins + { <additionl elems> } # Whitelisting additional elements
+        # Whitelisting additional elements (modules and methods) if needed:
+        # used_builtins = ..._builtins + { <additional elements> }
         used_builtins = safe_builtins
         exec(byte_code, used_builtins, None)
     except SyntaxError as e:
