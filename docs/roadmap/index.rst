@@ -1,10 +1,6 @@
 Roadmap for RestrictedPython
 ============================
 
-A few of the action items currently worked on is on our `Trello Board`_.
-
-.. _`Trello Board`: https://trello.com/b/pKaXJIlT/restrictedpython
-
 RestrictedPython 4.0
 --------------------
 

@@ -30,8 +30,6 @@ setup(name='RestrictedPython',
       description='RestrictedPython provides a restricted execution '
                   'environment for Python, e.g. for running untrusted code.',
       long_description=(read('README.rst') + '\n' +
-                        read('docs', 'install', 'index.rst') + '\n' +
-                        read('docs', 'usage', 'basic_usage.rst') + '\n' +
                         read('docs', 'CHANGES.rst')),
       classifiers=[
           'License :: OSI Approved :: Zope Public License',
