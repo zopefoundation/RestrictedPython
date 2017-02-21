@@ -16,7 +16,7 @@ The general workflow to execute Python code that is loaded within a Python progr
 
 With RestrictedPython that workflow should be as straight forward as possible:
 
-.. testcode:: Python
+.. testcode::
 
     from RestrictedPython import compile_restricted
 
@@ -33,7 +33,7 @@ With RestrictedPython that workflow should be as straight forward as possible:
 
 You might also use the replacement import:
 
-.. testcode:: Python
+.. testcode::
 
     from RestrictedPython import compile_restricted as compile
 

@@ -35,7 +35,7 @@ For that use case RestrictedPython provides the possibility to pass an own polic
 
 A policy is basically a special ``NodeTransformer`` that could be instantiated with three params for ``errors``, ``warnings`` and ``used_names``, it should be a subclass of RestrictedPython.RestrictingNodeTransformer.
 
-.. testcode:: Python
+.. testcode:: own_policy
 
     from RestrictedPython import compile_restricted
     from RestrictedPython import RestrictingNodeTransformer
@@ -49,7 +49,7 @@ A policy is basically a special ``NodeTransformer`` that could be instantiated w
 
 All ``compile_restricted*`` methods do have a optional parameter ``policy``, where a specific policy could be provided.
 
-.. testcode:: Python
+.. testcode:: own_policy
 
     source_code = """
     def do_something():
@@ -69,7 +69,9 @@ All ``compile_restricted*`` methods do have a optional parameter ``policy``, whe
 One special case "unrestricted RestrictedPython" (defined to unblock ports of Zope Packages to Python 3) is to actually use RestrictedPython in an unrestricted mode, by providing a Null-Policy (aka ``None``).
 That special case would be written as:
 
-.. testcode:: Python
+.. testcode::
+
+    from RestrictedPython import compile_restricted
 
     source_code = """
     def do_something():
