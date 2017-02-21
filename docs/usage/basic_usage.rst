@@ -3,7 +3,7 @@ Basic usage
 
 The general workflow to execute Python code that is loaded within a Python program is:
 
-.. code:: Python
+.. testcode::
 
     source_code = """
     def do_something():
@@ -14,21 +14,9 @@ The general workflow to execute Python code that is loaded within a Python progr
     exec(byte_code)
     do_something()
 
-.. doctest::
-    :hide:
-
-    >>> source_code = """
-    ... def do_something():
-    ...     pass
-    ... """
-    >>> byte_code = compile(source_code, filename='<inline code>', mode='exec')
-    >>> exec(byte_code)
-    >>> do_something()
-
-
 With RestrictedPython that workflow should be as straight forward as possible:
 
-.. code:: Python
+.. testcode:: Python
 
     from RestrictedPython import compile_restricted
 
@@ -41,21 +29,9 @@ With RestrictedPython that workflow should be as straight forward as possible:
     exec(byte_code)
     do_something()
 
-.. doctest::
-    :hide:
-
-    >>> from RestrictedPython import compile_restricted
-    >>> source_code = """
-    ... def do_something():
-    ...     pass
-    ... """
-    >>> byte_code = compile_restricted(source_code, filename='<inline code>', mode='exec')
-    >>> exec(byte_code)
-    >>> do_something()
-
 You might also use the replacement import:
 
-.. code:: Python
+.. testcode:: Python
 
     from RestrictedPython import compile_restricted as compile
 
@@ -87,45 +63,27 @@ RestrictedPython provides three predefined built-ins for that (see :ref:`predefi
 
 So you normally end up using:
 
-.. code:: Python
+.. testcode::
 
-    #from RestrictedPython import ..._builtins
+    from RestrictedPython import compile_restricted
+
+    # from RestrictedPython import ..._builtins
     from RestrictedPython import safe_builtins
     from RestrictedPython import limited_builtins
     from RestrictedPython import utility_builtins
-    from RestrictedPython import compile_restricted
 
-    source_code = """<demo code>"""
+    source_code = """
+    def do_something():
+        pass
+    """
 
     try:
-        byte_code = compile_restricted(source_code, filename='<name>', mode='exec')
+        byte_code = compile_restricted(source_code, filename='<inline code>', mode='exec')
 
-        #used_builtins = ..._builtins + { <additionl elems> } # Whitelisting additional elements
+        # used_builtins = ..._builtins + { <additionl elems> } # Whitelisting additional elements
         used_builtins = safe_builtins
         exec(byte_code, used_builtins, None)
     except SyntaxError as e:
-        ...
-
-.. doctest::
-    :hide:
-
-    >>> #from RestrictedPython import ..._builtins
-    >>> from RestrictedPython import safe_builtins
-    >>> from RestrictedPython import limited_builtins
-    >>> from RestrictedPython import utility_builtins
-    >>> from RestrictedPython import compile_restricted
-
-    >>> source_code = """
-    ... def do_something():
-    ...     pass
-    ... """
-
-    >>> try:
-    ...     byte_code = compile_restricted(source_code, filename='<name>', mode='exec')
-    ...     #used_builtins = ..._builtins + { <additionl elems> } # Whitelisting additional elements
-    ...     used_builtins = safe_builtins
-    ...     exec(byte_code, used_builtins, None)
-    ... except SyntaxError as e:
-    ...     pass
+        pass
 
 One common advanced usage would be to define an own restricted builtin dictionary.
