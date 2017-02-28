@@ -14,13 +14,16 @@
 
 import ast
 from RestrictedPython.RCompile import compile_restricted_eval
-from string import strip
-from string import translate
 
-import string
+from ._compat import IS_PY2
+
+if IS_PY2:
+    from string import maketrans
+else:
+    maketrans = str.maketrans
 
 
-nltosp = string.maketrans('\r\n', '  ')
+nltosp = maketrans('\r\n', '  ')
 
 default_guarded_getattr = getattr  # No restrictions.
 
@@ -45,9 +48,9 @@ class RestrictionCapableEval(object):
 
           expr -- a string containing the expression to be evaluated.
         """
-        expr = strip(expr)
+        expr = expr.strip()
         self.__name__ = expr
-        expr = translate(expr, nltosp)
+        expr = expr.translate(nltosp)
         self.expr = expr
         self.prepUnrestrictedCode()  # Catch syntax errors.
 
