@@ -13,8 +13,8 @@
 """Restricted Python Expressions."""
 
 import ast
-from RestrictedPython.RCompile import compile_restricted_eval
 
+from .compile import compile_restricted_eval
 from ._compat import IS_PY2
 
 if IS_PY2:
