@@ -33,6 +33,11 @@ def try_map():
     print map(inc, x),
     return printed
 
+def try_set():
+    x = [1, 1, 2, 3]
+    print set(x)
+    return printed
+
 def try_apply():
     def f(x, y, z):
         return x + y + z
