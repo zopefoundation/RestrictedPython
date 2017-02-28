@@ -25,7 +25,8 @@ else:
 
 nltosp = maketrans('\r\n', '  ')
 
-default_guarded_getattr = getattr  # No restrictions.
+# No restrictions.
+default_guarded_getattr = getattr
 
 
 def default_guarded_getitem(ob, index):
@@ -37,8 +38,13 @@ class RestrictionCapableEval(object):
     """A base class for restricted code."""
 
     globals = {'__builtins__': None}
-    rcode = None  # restricted
-    ucode = None  # unrestricted
+    # restricted
+    rcode = None
+
+    # unrestricted
+    ucode = None
+
+    # Names used by the expression
     used = None
 
     def __init__(self, expr):
@@ -52,14 +58,15 @@ class RestrictionCapableEval(object):
         self.__name__ = expr
         expr = expr.translate(nltosp)
         self.expr = expr
-        self.prepUnrestrictedCode()  # Catch syntax errors.
+        # Catch syntax errors.
+        self.prepUnrestrictedCode()
 
     def prepRestrictedCode(self):
         if self.rcode is None:
             co, err, warn, used = compile_restricted_eval(self.expr, '<string>')
             if err:
                 raise SyntaxError(err[0])
-            self.used = tuple(used.keys())
+            self.used = tuple(used)
             self.rcode = co
 
     def prepUnrestrictedCode(self):
@@ -83,21 +90,19 @@ class RestrictionCapableEval(object):
         # This default implementation is probably not very useful. :-(
         # This is meant to be overridden.
         self.prepRestrictedCode()
-        code = self.rcode
-        d = {'_getattr_': default_guarded_getattr,
-             '_getitem_': default_guarded_getitem}
-        d.update(self.globals)
-        has_key = d.has_key
+
+        global_scope = {
+            '_getattr_': default_guarded_getattr,
+            '_getitem_': default_guarded_getitem
+        }
+
+        global_scope.update(self.globals)
+
         for name in self.used:
-            try:
-                if not has_key(name):
-                    d[name] = mapping[name]
-            except KeyError:
-                # Swallow KeyErrors since the expression
-                # might not actually need the name.  If it
-                # does need the name, a NameError will occur.
-                pass
-        return eval(code, d)
+            if (name not in global_scope) and (name in mapping):
+                global_scope[name] = mapping[name]
+
+        return eval(self.rcode, global_scope)
 
     def __call__(self, **kw):
         return self.eval(kw)
