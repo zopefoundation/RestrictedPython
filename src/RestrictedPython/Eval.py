@@ -30,9 +30,6 @@ def default_guarded_getitem(ob, index):
     return ob[index]
 
 
-PROFILE = 0
-
-
 class RestrictionCapableEval(object):
     """A base class for restricted code."""
 
@@ -56,15 +53,7 @@ class RestrictionCapableEval(object):
 
     def prepRestrictedCode(self):
         if self.rcode is None:
-            if PROFILE:
-                from time import clock
-                start = clock()
-            co, err, warn, used = compile_restricted_eval(
-                self.expr, '<string>')
-            if PROFILE:
-                end = clock()
-                print('prepRestrictedCode: %d ms for %s' % (
-                    (end - start) * 1000, repr(self.expr)))
+            co, err, warn, used = compile_restricted_eval(self.expr, '<string>')
             if err:
                 raise SyntaxError(err[0])
             self.used = tuple(used.keys())
