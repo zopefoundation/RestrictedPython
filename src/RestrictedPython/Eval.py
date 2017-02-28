@@ -12,6 +12,7 @@
 ##############################################################################
 """Restricted Python Expressions."""
 
+import ast
 from RestrictedPython.RCompile import compile_restricted_eval
 from string import strip
 from string import translate
@@ -71,29 +72,19 @@ class RestrictionCapableEval(object):
 
     def prepUnrestrictedCode(self):
         if self.ucode is None:
-            # Use the standard compiler.
-            co = compile(self.expr, '<string>', 'eval')
+            exp_node = compile(self.expr, '<string>', 'eval', ast.PyCF_ONLY_AST)
+            co = compile(exp_node, '<string>', 'eval')
+
+            # Examine the ast to discover which names the expression needs.
             if self.used is None:
-                # Examine the code object, discovering which names
-                # the expression needs.
-                names = list(co.co_names)
-                used = {}
-                i = 0
-                code = co.co_code
-                l = len(code)
-                LOAD_NAME = 101
-                HAVE_ARGUMENT = 90
-                while(i < l):
-                    c = ord(code[i])
-                    if c == LOAD_NAME:
-                        name = names[ord(code[i + 1]) + 256 * ord(code[i + 2])]
-                        used[name] = 1
-                        i = i + 3
-                    elif c >= HAVE_ARGUMENT:
-                        i = i + 3
-                    else:
-                        i = i + 1
-                self.used = tuple(used.keys())
+                used = set()
+                for node in ast.walk(exp_node):
+                    if isinstance(node, ast.Name):
+                        if isinstance(node.ctx, ast.Load):
+                            used.add(node.id)
+
+                self.used = tuple(used)
+
             self.ucode = co
 
     def eval(self, mapping):
