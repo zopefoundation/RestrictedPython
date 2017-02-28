@@ -64,9 +64,6 @@ setup(name='RestrictedPython',
           'release': [
               'zest.releaser',
           ],
-          'test': [
-              'pytest',
-          ],
           'develop': [
               'pdbpp',
               'isort',

@@ -627,10 +627,12 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
 
     def visit_UnaryOp(self, node):
         """
-
+        UnaryOp (Unary Operations) is the overall element for:
+        * Not --> which should be allowed
+        * UAdd
+        * USub
         """
         return self.node_contents_visit(node)
-        # self.not_allowed(node)
 
     def visit_UAdd(self, node):
         """
@@ -646,10 +648,9 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
 
     def visit_Not(self, node):
         """
-
+        The Not Operator should be allowed.
         """
         return self.node_contents_visit(node)
-        # self.not_allowed(node)
 
     def visit_Invert(self, node):
         """

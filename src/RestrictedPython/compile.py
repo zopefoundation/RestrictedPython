@@ -125,13 +125,6 @@ def compile_restricted_function(
     """
     # TODO: Special function not comparable with the other restricted_compile_* functions.  # NOQA
     return None
-    # return _compile_restricted_mode(
-    #    source,
-    #    filename=filename,
-    #    mode='function',
-    #    flags=flags,
-    #    dont_inherit=dont_inherit,
-    #    policy=policy)
 
 
 def compile_restricted(
