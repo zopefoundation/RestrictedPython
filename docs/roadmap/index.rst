@@ -11,6 +11,21 @@ A detailed documentation that support usage and further development.
 
 Full code coverage tests.
 
+.. todo::
+
+    Complete documentation of all public API elements with docstyle comments
+    https://www.python.org/dev/peps/pep-0257/
+    http://thomas-cokelaer.info/tutorials/sphinx/docstring_python.html
+
+.. todo::
+
+    Resolve Discussion in https://github.com/zopefoundation/RestrictedPython/pull/39#issuecomment-283074699
+
+    compile_restricted optional params flags and dont_inherit will not work as expected with the current implementation.
+
+    stephan-hof did propose a solution, should be discussed and if approved implemented.
+
+
 RestrictedPython 4.1+
 ---------------------
 

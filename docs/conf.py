@@ -119,7 +119,7 @@ intersphinx_mapping = {
 }
 
 # Options for sphinx.ext.todo:
-todo_include_todos = False
+todo_include_todos = True
 todo_emit_warnings = True
 
 # -- Options for HTML output ----------------------------------------------
