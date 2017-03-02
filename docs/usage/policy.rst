@@ -32,4 +32,15 @@ Guards
 
     Describe Guards and predefined guard methods in details
 
-There is also a guard function for making attributes immutable --> ``full_write_guard`` (write and delete protected)
+RestrictedPython predefines several guarded access and manipulation methods:
+
+* ``guarded_setattr``
+* ``guarded_delattr``
+* ``guarded_iter_unpack_sequence``
+* ``guarded_unpack_sequence``
+
+Those and additional methods rely on a helper construct ``full_write_guard``, which is intended to help implement immutable and semi mutable objects and attributes.
+
+.. todo::
+
+    Describe full_write_guard more in detail and how it works.

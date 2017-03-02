@@ -63,7 +63,6 @@ All ``compile_restricted*`` methods do have a optional parameter ``policy``, whe
                                    mode='exec',
                                    policy=policy # Policy Class
                                    )
-    # exec(byte_code, { ... }, { ... })
     exec(byte_code, globals(), None)
 
 One special case "unrestricted RestrictedPython" (defined to unblock ports of Zope Packages to Python 3) is to actually use RestrictedPython in an unrestricted mode, by providing a Null-Policy (aka ``None``).

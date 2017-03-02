@@ -69,7 +69,6 @@ So you normally end up using:
 
     from RestrictedPython import compile_restricted
 
-    # from RestrictedPython import ..._builtins
     from RestrictedPython import safe_builtins
     from RestrictedPython import limited_builtins
     from RestrictedPython import utility_builtins
@@ -84,10 +83,7 @@ So you normally end up using:
                                        filename='<inline code>',
                                        mode='exec')
 
-        # Whitelisting additional elements (modules and methods) if needed:
-        # used_builtins = ..._builtins + { <additional elements> }
-        used_builtins = safe_builtins
-        exec(byte_code, used_builtins, None)
+        exec(byte_code, safe_builtins, None)
     except SyntaxError as e:
         pass
 
