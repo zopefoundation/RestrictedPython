@@ -1,0 +1,13 @@
+*.egg-info
+*.py?
+.installed.cfg
+.mr.developer.cfg
+bin/
+build/
+develop/
+develop-eggs/
+dist/
+eggs/
+include/
+lib/
+parts/
