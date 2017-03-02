@@ -1,6 +1,11 @@
 Changes
 =======
 
+3.7.0a1 (unreleased)
+--------------------
+
+- Add support for built-in ``set`` types.
+
 3.6.0 (2010-07-09)
 ------------------
 
