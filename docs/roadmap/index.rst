@@ -15,6 +15,7 @@ Full code coverage tests.
 
     Complete documentation of all public API elements with docstyle comments
     https://www.python.org/dev/peps/pep-0257/
+    http://www.sphinx-doc.org/en/stable/ext/autodoc.html
     http://thomas-cokelaer.info/tutorials/sphinx/docstring_python.html
 
 .. todo::
