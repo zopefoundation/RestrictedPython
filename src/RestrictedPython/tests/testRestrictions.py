@@ -6,7 +6,6 @@
 # here instead.
 
 from RestrictedPython import PrintCollector
-from RestrictedPython.Eval import RestrictionCapableEval
 from RestrictedPython.RCompile import compile_restricted
 from RestrictedPython.RCompile import RFunction
 from RestrictedPython.RCompile import RModule
@@ -306,17 +305,6 @@ class RestrictionTests(unittest.TestCase):
     def test_NestedScopes1(self):
         res = self.execFunc('nested_scopes_1')
         self.assertEqual(res, 2)
-
-    def test_UnrestrictedEval(self):
-        expr = RestrictionCapableEval("{'a':[m.pop()]}['a'] + [m[0]]")
-        v = [12, 34]
-        expect = v[:]
-        expect.reverse()
-        res = expr.eval({'m': v})
-        self.assertEqual(res, expect)
-        v = [12, 34]
-        res = expr(m=v)
-        self.assertEqual(res, expect)
 
     def test_StackSize(self):
         for k, rfunc in rmodule.items():
