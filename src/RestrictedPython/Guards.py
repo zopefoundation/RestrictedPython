@@ -23,7 +23,7 @@ safe_builtins = {}
 for name in ['False', 'None', 'True', 'abs', 'basestring', 'bool', 'callable',
              'chr', 'cmp', 'complex', 'divmod', 'float', 'hash',
              'hex', 'id', 'int', 'isinstance', 'issubclass', 'len',
-             'long', 'oct', 'ord', 'pow', 'range', 'repr', 'round', 'set',
+             'long', 'oct', 'ord', 'pow', 'range', 'repr', 'round',
              'str', 'tuple', 'unichr', 'unicode', 'xrange', 'zip']:
 
     safe_builtins[name] = __builtins__[name]

@@ -251,10 +251,6 @@ class RestrictionTests(unittest.TestCase):
         res = self.execFunc('try_map')
         self.assertEqual(res, "[2, 3, 4]")
 
-    def checkTrySet(self):
-        res = self.execFunc('try_set')
-        self.assertEqual(res, "set([1, 2, 3])")
-
     def checkApply(self):
         del apply_wrapper_called[:]
         res = self.execFunc('try_apply')
