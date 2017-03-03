@@ -1,10 +1,13 @@
-import pytest
 from RestrictedPython.Eval import RestrictionCapableEval
+
+import pytest
+
 
 exp = """
     {'a':[m.pop()]}['a'] \
         + [m[0]]
 """
+
 
 def test_init():
     ob = RestrictionCapableEval(exp)

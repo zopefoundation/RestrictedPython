@@ -12,10 +12,11 @@
 ##############################################################################
 """Restricted Python Expressions."""
 
+from ._compat import IS_PY2
+from .compile import compile_restricted_eval
+
 import ast
 
-from .compile import compile_restricted_eval
-from ._compat import IS_PY2
 
 if IS_PY2:
     from string import maketrans
@@ -63,15 +64,20 @@ class RestrictionCapableEval(object):
 
     def prepRestrictedCode(self):
         if self.rcode is None:
-            co, err, warn, used = compile_restricted_eval(self.expr, '<string>')
-            if err:
-                raise SyntaxError(err[0])
-            self.used = tuple(used)
-            self.rcode = co
+            result = compile_restricted_eval(self.expr, '<string>')
+            if result.errors:
+                raise SyntaxError(result.errors[0])
+            self.used = tuple(result.used_names)
+            self.rcode = result.code
 
     def prepUnrestrictedCode(self):
         if self.ucode is None:
-            exp_node = compile(self.expr, '<string>', 'eval', ast.PyCF_ONLY_AST)
+            exp_node = compile(
+                self.expr,
+                '<string>',
+                'eval',
+                ast.PyCF_ONLY_AST)
+
             co = compile(exp_node, '<string>', 'eval')
 
             # Examine the ast to discover which names the expression needs.
