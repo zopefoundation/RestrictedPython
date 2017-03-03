@@ -5,6 +5,7 @@ pip-selfcheck.json
 pyvenv.cfg
 /.python-version
 /*.egg-info
+/.eggs/
 /.Python
 /.cache
 /.installed.cfg
@@ -20,6 +21,7 @@ pyvenv.cfg
 /eggs
 /fake-eggs
 /htmlcov
+/report-*.html
 /include
 /lib
 /share

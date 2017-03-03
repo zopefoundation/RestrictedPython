@@ -49,6 +49,13 @@ setup(name='RestrictedPython',
       package_dir={'': 'src'},
       install_requires=[
           'setuptools',
+
+      ],
+      setup_requires=[
+          'pytest-runner',
+      ],
+      test_requires=[
+          'pytest',
       ],
       extras_require={
           'docs': [
@@ -56,9 +63,6 @@ setup(name='RestrictedPython',
           ],
           'release': [
               'zest.releaser',
-          ],
-          'test': [
-              'pytest',
           ],
           'develop': [
               'pdbpp',
