@@ -90,7 +90,13 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         super(RestrictingNodeTransformer, self).__init__()
         self.errors = [] if errors is None else errors
         self.warnings = [] if warnings is None else warnings
-        self.used_names = [] if used_names is None else used_names
+
+        # All the variables used by the incoming source.
+        # Internal names/variables, like the ones from 'gen_tmp_name', don't
+        # have to be added.
+        # 'used_names' is for example needed by 'RestrictionCapableEval' to
+        # know wich names it has to supply when calling the final code.
+        self.used_names = {} if used_names is None else used_names
 
         # Global counter to construct temporary variable names.
         self._tmp_idx = 0
@@ -114,12 +120,6 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         """Record a security error discovered during transformation."""
         lineno = getattr(node, 'lineno', None)
         self.warnings.append(
-            'Line {lineno}: {info}'.format(lineno=lineno, info=info))
-
-    def use_name(self, node, info):
-        """Record a security error discovered during transformation."""
-        lineno = getattr(node, 'lineno', None)
-        self.used_names.append(
             'Line {lineno}: {info}'.format(lineno=lineno, info=info))
 
     def guard_iter(self, node):
@@ -584,6 +584,8 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
 
                 copy_locations(new_node, node)
                 return new_node
+
+            self.used_names[node.id] = True
 
         self.check_name(node, node.id)
         return node
