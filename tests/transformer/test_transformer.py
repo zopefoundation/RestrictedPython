@@ -1,11 +1,11 @@
-from . import c_exec
-from . import e_eval
-from . import e_exec
 from RestrictedPython import RestrictingNodeTransformer
 from RestrictedPython._compat import IS_PY2
 from RestrictedPython._compat import IS_PY3
 from RestrictedPython.Guards import guarded_iter_unpack_sequence
 from RestrictedPython.Guards import guarded_unpack_sequence
+from tests import c_exec
+from tests import e_eval
+from tests import e_exec
 
 import ast
 import contextlib

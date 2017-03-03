@@ -1,6 +1,11 @@
 [run]
 branch = True
 source = RestrictedPython
+omit =
+    src/RestrictedPython/tests
+    src/RestrictedPython/tests/*.py
+    tests/*.py
+    bootstrap.py
 
 [report]
 precision = 3
