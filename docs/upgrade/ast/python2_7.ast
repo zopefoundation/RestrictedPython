@@ -11,7 +11,7 @@ module Python version "2.7"
       | Suite(stmt* body)
 
   stmt = FunctionDef(identifier name, arguments args,
-                            stmt* body, expr* decorator_list)
+                     stmt* body, expr* decorator_list)
         | ClassDef(identifier name, expr* bases, stmt* body, expr* decorator_list)
         | Return(expr? value)
 
@@ -84,20 +84,48 @@ module Python version "2.7"
         -- col_offset is the byte offset in the utf8 string the parser uses
         attributes (int lineno, int col_offset)
 
-  expr_context = Load | Store | Del | AugLoad | AugStore | Param
+  expr_context = Load
+               | Store
+               | Del
+               | AugLoad
+               | AugStore
+               | Param
 
-  slice = Ellipsis | Slice(expr? lower, expr? upper, expr? step)
+  slice = Ellipsis
+        | Slice(expr? lower, expr? upper, expr? step)
         | ExtSlice(slice* dims)
         | Index(expr value)
 
   boolop = And | Or
 
-  operator = Add | Sub | Mult | Div | Mod | Pow | LShift
-                 | RShift | BitOr | BitXor | BitAnd | FloorDiv
+  operator = Add
+           | Sub
+           | Mult
+           | Div
+           | Mod
+           | Pow
+           | LShift
+           | RShift
+           | BitOr
+           | BitXor
+           | BitAnd
+           | FloorDiv
 
-  unaryop = Invert | Not | UAdd | USub
+  unaryop = Invert
+          | Not
+          | UAdd
+          | USub
 
-  cmpop = Eq | NotEq | Lt | LtE | Gt | GtE | Is | IsNot | In | NotIn
+  cmpop = Eq
+        | NotEq
+        | Lt
+        | LtE
+        | Gt
+        | GtE
+        | Is
+        | IsNot
+        | In
+        | NotIn
 
   comprehension = (expr target, expr iter, expr* ifs)
 
@@ -106,11 +134,11 @@ module Python version "2.7"
                   attributes (int lineno, int col_offset)
 
   arguments = (expr* args, identifier? vararg,
-         identifier? kwarg, expr* defaults)
+               identifier? kwarg, expr* defaults)
 
-        -- keyword arguments supplied to call
-        keyword = (identifier arg, expr value)
+  -- keyword arguments supplied to call
+  keyword = (identifier arg, expr value)
 
-        -- import name with optional 'as' alias.
-        alias = (identifier name, identifier? asname)
+  -- import name with optional 'as' alias.
+  alias = (identifier name, identifier? asname)
 }

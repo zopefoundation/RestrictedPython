@@ -29,8 +29,10 @@ import os
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
+    'sphinx.ext.autodoc',
     'sphinx.ext.intersphinx',
     'sphinx.ext.todo',
+    'sphinx.ext.doctest',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -116,6 +118,10 @@ intersphinx_mapping = {
     'python36': ('https://docs.python.org/3.6', None),
 
 }
+
+# Options for sphinx.ext.todo:
+todo_include_todos = True
+todo_emit_warnings = True
 
 # -- Options for HTML output ----------------------------------------------
 
