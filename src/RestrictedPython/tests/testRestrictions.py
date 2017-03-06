@@ -73,7 +73,7 @@ def create_rmodule():
                                '__name__': 'restricted_module'}}
     builtins = getattr(__builtins__, '__dict__', __builtins__)
     for name in ('map', 'reduce', 'int', 'pow', 'range', 'filter',
-                 'len', 'chr', 'ord',
+                 'len', 'chr', 'ord', 'set',
                  ):
         rmodule[name] = builtins[name]
     exec code in rmodule
@@ -250,6 +250,10 @@ class RestrictionTests(unittest.TestCase):
     def checkTryMap(self):
         res = self.execFunc('try_map')
         self.assertEqual(res, "[2, 3, 4]")
+
+    def checkTrySet(self):
+        res = self.execFunc('try_set')
+        self.assertEqual(res, "set([1, 2, 3])")
 
     def checkApply(self):
         del apply_wrapper_called[:]
