@@ -35,7 +35,7 @@ def try_map():
 
 def try_set():
     x = [1, 1, 2, 3]
-    print set(x)
+    print set(x),
     return printed
 
 def try_apply():

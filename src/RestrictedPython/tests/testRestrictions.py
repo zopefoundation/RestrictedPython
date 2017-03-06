@@ -73,7 +73,7 @@ def create_rmodule():
                                '__name__': 'restricted_module'}}
     builtins = getattr(__builtins__, '__dict__', __builtins__)
     for name in ('map', 'reduce', 'int', 'pow', 'range', 'filter',
-                 'len', 'chr', 'ord',
+                 'len', 'chr', 'ord', 'set',
                  ):
         rmodule[name] = builtins[name]
     exec code in rmodule
