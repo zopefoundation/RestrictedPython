@@ -147,3 +147,11 @@ def test_compile__compile_restricted_eval__1(c_eval):
 def test_compile__compile_restricted_eval__2(e_eval):
     """It compiles code as an Expression."""
     assert e_eval('4 * 6') == 24
+
+
+@pytest.mark.parametrize(*c_eval)
+def test_compile__compile_restricted_eval__used_names(c_eval):
+    result = c_eval("a + b + func(x)")
+    assert result.errors == ()
+    assert result.warnings == []
+    assert result.used_names == {'a': True, 'b': True, 'x': True, 'func': True}

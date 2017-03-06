@@ -12,16 +12,22 @@
 ##############################################################################
 """Restricted Python Expressions."""
 
-from RestrictedPython.RCompile import compile_restricted_eval
-from string import strip
-from string import translate
+from ._compat import IS_PY2
+from .compile import compile_restricted_eval
 
-import string
+import ast
 
 
-nltosp = string.maketrans('\r\n', '  ')
+if IS_PY2:
+    from string import maketrans
+else:
+    maketrans = str.maketrans
 
-default_guarded_getattr = getattr  # No restrictions.
+
+nltosp = maketrans('\r\n', '  ')
+
+# No restrictions.
+default_guarded_getattr = getattr
 
 
 def default_guarded_getitem(ob, index):
@@ -29,15 +35,17 @@ def default_guarded_getitem(ob, index):
     return ob[index]
 
 
-PROFILE = 0
-
-
 class RestrictionCapableEval(object):
     """A base class for restricted code."""
 
     globals = {'__builtins__': None}
-    rcode = None  # restricted
-    ucode = None  # unrestricted
+    # restricted
+    rcode = None
+
+    # unrestricted
+    ucode = None
+
+    # Names used by the expression
     used = None
 
     def __init__(self, expr):
@@ -47,74 +55,60 @@ class RestrictionCapableEval(object):
 
           expr -- a string containing the expression to be evaluated.
         """
-        expr = strip(expr)
+        expr = expr.strip()
         self.__name__ = expr
-        expr = translate(expr, nltosp)
+        expr = expr.translate(nltosp)
         self.expr = expr
-        self.prepUnrestrictedCode()  # Catch syntax errors.
+        # Catch syntax errors.
+        self.prepUnrestrictedCode()
 
     def prepRestrictedCode(self):
         if self.rcode is None:
-            if PROFILE:
-                from time import clock
-                start = clock()
-            co, err, warn, used = compile_restricted_eval(
-                self.expr, '<string>')
-            if PROFILE:
-                end = clock()
-                print('prepRestrictedCode: %d ms for %s' % (
-                    (end - start) * 1000, repr(self.expr)))
-            if err:
-                raise SyntaxError(err[0])
-            self.used = tuple(used.keys())
-            self.rcode = co
+            result = compile_restricted_eval(self.expr, '<string>')
+            if result.errors:
+                raise SyntaxError(result.errors[0])
+            self.used = tuple(result.used_names)
+            self.rcode = result.code
 
     def prepUnrestrictedCode(self):
         if self.ucode is None:
-            # Use the standard compiler.
-            co = compile(self.expr, '<string>', 'eval')
+            exp_node = compile(
+                self.expr,
+                '<string>',
+                'eval',
+                ast.PyCF_ONLY_AST)
+
+            co = compile(exp_node, '<string>', 'eval')
+
+            # Examine the ast to discover which names the expression needs.
             if self.used is None:
-                # Examine the code object, discovering which names
-                # the expression needs.
-                names = list(co.co_names)
-                used = {}
-                i = 0
-                code = co.co_code
-                l = len(code)
-                LOAD_NAME = 101
-                HAVE_ARGUMENT = 90
-                while(i < l):
-                    c = ord(code[i])
-                    if c == LOAD_NAME:
-                        name = names[ord(code[i + 1]) + 256 * ord(code[i + 2])]
-                        used[name] = 1
-                        i = i + 3
-                    elif c >= HAVE_ARGUMENT:
-                        i = i + 3
-                    else:
-                        i = i + 1
-                self.used = tuple(used.keys())
+                used = set()
+                for node in ast.walk(exp_node):
+                    if isinstance(node, ast.Name):
+                        if isinstance(node.ctx, ast.Load):
+                            used.add(node.id)
+
+                self.used = tuple(used)
+
             self.ucode = co
 
     def eval(self, mapping):
         # This default implementation is probably not very useful. :-(
         # This is meant to be overridden.
         self.prepRestrictedCode()
-        code = self.rcode
-        d = {'_getattr_': default_guarded_getattr,
-             '_getitem_': default_guarded_getitem}
-        d.update(self.globals)
-        has_key = d.has_key
+
+        global_scope = {
+            '_getattr_': default_guarded_getattr,
+            '_getitem_': default_guarded_getitem
+        }
+
+        global_scope.update(self.globals)
+
         for name in self.used:
-            try:
-                if not has_key(name):
-                    d[name] = mapping[name]
-            except KeyError:
-                # Swallow KeyErrors since the expression
-                # might not actually need the name.  If it
-                # does need the name, a NameError will occur.
-                pass
-        return eval(code, d)
+            if (name not in global_scope) and (name in mapping):
+                global_scope[name] = mapping[name]
+
+        return eval(self.rcode, global_scope)
 
     def __call__(self, **kw):
         return self.eval(kw)

@@ -62,11 +62,7 @@ def test_transformer__RestrictingNodeTransformer__visit_Call__1(c_exec):
     loc = {}
     exec(result.code, {}, loc)
     assert loc['a'] == 3
-    if c_exec is RestrictedPython.compile.compile_restricted_exec:
-        # The new version not yet supports `used_names`:
-        assert result.used_names == {}
-    else:
-        assert result.used_names == {'max': True}
+    assert result.used_names == {'max': True}
 
 
 YIELD = """\
