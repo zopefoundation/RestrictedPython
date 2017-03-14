@@ -229,8 +229,7 @@ def _write_wrapper():
 def _full_write_guard():
     # Nested scope abuse!
     # safetype and Wrapper variables are used by guard()
-    safetype = ({dict: True, list: True}.has_key if IS_PY2 else
-                {dict: True, list: True}.keys)
+    safetype = {dict: True, list: True}.__contains__
     Wrapper = _write_wrapper()
 
     def guard(ob):
