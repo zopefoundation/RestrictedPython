@@ -14,11 +14,12 @@
 Python standard library.
 """
 
-from compiler import ast as c_ast
-from compiler import misc as c_misc
-from compiler import parse as c_parse
-from compiler import syntax as c_syntax
+from compile import CompileResult
+from compiler import ast
+from compiler import misc
+from compiler import parse
 from compiler import pycodegen
+from compiler import syntax
 from compiler.pycodegen import AbstractCompileMode
 from compiler.pycodegen import Expression
 from compiler.pycodegen import findOp
@@ -26,20 +27,18 @@ from compiler.pycodegen import FunctionCodeGenerator  # noqa
 from compiler.pycodegen import Interactive
 from compiler.pycodegen import Module
 from compiler.pycodegen import ModuleCodeGenerator
-from RestrictedPython import CompileResult
-from RestrictedPython import MutatingWalker
-from RestrictedPython.RestrictionMutator import RestrictionMutator
+from RestrictionMutator import RestrictionMutator
+
+import MutatingWalker
 
 
-def _niceParse(source, filename, mode):
+def niceParse(source, filename, mode):
     if isinstance(source, unicode):
         # Use the utf-8-sig BOM so the compiler
         # detects this as a UTF-8 encoded string.
         source = '\xef\xbb\xbf' + source.encode('utf-8')
     try:
-        compiler_code = c_parse(source, mode)
-        # ast_code = ast.parse(source, filename, mode)
-        return compiler_code
+        return parse(source, mode)
     except:
         # Try to make a clean error message using
         # the builtin Python compiler.
@@ -62,17 +61,16 @@ class RestrictedCompileMode(AbstractCompileMode):
         AbstractCompileMode.__init__(self, source, filename)
 
     def parse(self):
-        code = _niceParse(self.source, self.filename, self.mode)
-        return code
+        return niceParse(self.source, self.filename, self.mode)
 
     def _get_tree(self):
-        c_tree = self.parse()
-        MutatingWalker.walk(c_tree, self.rm)
+        tree = self.parse()
+        MutatingWalker.walk(tree, self.rm)
         if self.rm.errors:
             raise SyntaxError(self.rm.errors[0])
-        c_misc.set_filename(self.filename, c_tree)
-        c_syntax.check(c_tree)
-        return c_tree
+        misc.set_filename(self.filename, tree)
+        syntax.check(tree)
+        return tree
 
     def compile(self):
         tree = self._get_tree()
@@ -80,7 +78,7 @@ class RestrictedCompileMode(AbstractCompileMode):
         self.code = gen.getCode()
 
 
-def _compileAndTuplize(gen):
+def compileAndTuplize(gen):
     try:
         gen.compile()
     except TypeError as v:
@@ -104,22 +102,22 @@ def compile_restricted_function(p, body, name, filename, globalize=None):
     appeared in a global statement at the top of the function).
     """
     gen = RFunction(p, body, name, filename, globalize)
-    return _compileAndTuplize(gen)
+    return compileAndTuplize(gen)
 
 
 def compile_restricted_exec(source, filename='<string>'):
     """Compiles a restricted code suite."""
     gen = RModule(source, filename)
-    return _compileAndTuplize(gen)
+    return compileAndTuplize(gen)
 
 
 def compile_restricted_eval(source, filename='<string>'):
     """Compiles a restricted expression."""
     gen = RExpression(source, filename)
-    return _compileAndTuplize(gen)
+    return compileAndTuplize(gen)
 
 
-def compile_restricted(source, filename, mode):  # OLD
+def compile_restricted(source, filename, mode):
     """Replacement for the builtin compile() function."""
     if mode == "single":
         gen = RInteractive(source, filename)
@@ -249,17 +247,17 @@ class RFunction(RModule):
     def parse(self):
         # Parse the parameters and body, then combine them.
         firstline = 'def f(%s): pass' % self.params
-        tree = _niceParse(firstline, '<function parameters>', 'exec')
+        tree = niceParse(firstline, '<function parameters>', 'exec')
         f = tree.node.nodes[0]
-        body_code = _niceParse(self.body, self.filename, 'exec')
+        body_code = niceParse(self.body, self.filename, 'exec')
         # Stitch the body code into the function.
         f.code.nodes = body_code.node.nodes
         f.name = self.name
         # Look for a docstring, if there are any nodes at all
         if len(f.code.nodes) > 0:
             stmt1 = f.code.nodes[0]
-            if (isinstance(stmt1, c_ast.Discard) and
-                    isinstance(stmt1.expr, c_ast.Const) and
+            if (isinstance(stmt1, ast.Discard) and
+                    isinstance(stmt1.expr, ast.Const) and
                     isinstance(stmt1.expr.value, str)):
                 f.doc = stmt1.expr.value
         # The caller may specify that certain variables are globals
@@ -267,5 +265,5 @@ class RFunction(RModule):
         # The only known example is the variables context, container,
         # script, traverse_subpath in PythonScripts.
         if self.globals:
-            f.code.nodes.insert(0, c_ast.Global(self.globals))
+            f.code.nodes.insert(0, ast.Global(self.globals))
         return tree
