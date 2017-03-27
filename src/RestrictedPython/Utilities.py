@@ -26,6 +26,12 @@ utility_builtins['set'] = set
 utility_builtins['frozenset'] = frozenset
 
 try:
+    import sets
+    utility_builtins['sets'] = sets
+except ImportError:
+    pass
+
+try:
     import DateTime
     utility_builtins['DateTime'] = DateTime.DateTime
 except ImportError:
