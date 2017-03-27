@@ -224,15 +224,14 @@ def _write_wrapper():
 
 def _full_write_guard():
     # Nested scope abuse!
-    # safetype and Wrapper variables are used by guard()
-    safetype = ({dict: True, list: True}.has_key if IS_PY2 else
-                {dict: True, list: True}.keys)
+    # safetypes and Wrapper variables are used by guard()
+    safetypes = {dict, list}
     Wrapper = _write_wrapper()
 
     def guard(ob):
         # Don't bother wrapping simple types, or objects that claim to
         # handle their own write security.
-        if safetype(type(ob)) or hasattr(ob, '_guarded_writes'):
+        if type(ob) in safetypes or hasattr(ob, '_guarded_writes'):
             return ob
         # Hand the object to the Wrapper instance, then return the instance.
         return Wrapper(ob)
