@@ -16,16 +16,6 @@ import random
 import string
 
 
-# _old_filters = warnings.filters[:]
-# warnings.filterwarnings('ignore', category=DeprecationWarning)
-# try:
-#     try:
-#         import sets
-#     except ImportError:
-#         sets = None
-# finally:
-#     warnings.filters[:] = _old_filters
-
 utility_builtins = {}
 
 utility_builtins['string'] = string

@@ -316,32 +316,6 @@ class RestrictionTests(unittest.TestCase):
                     'should have been at least %d, but was only %d'
                     % (k, ss, rss))
 
-    def _test_BeforeAndAfter(self, mod):
-            from RestrictedPython.RCompile import RModule
-            from compiler import parse
-
-            defre = re.compile(r'def ([_A-Za-z0-9]+)_(after|before)\(')
-
-            beforel = [name for name in mod.__dict__
-                       if name.endswith("_before")]
-
-            for name in beforel:
-                before = getattr(mod, name)
-                before_src = get_source(before)
-                before_src = re.sub(defre, r'def \1(', before_src)
-                rm = RModule(before_src, '')
-                tree_before = rm._get_tree()
-
-                after = getattr(mod, name[:-6] + 'after')
-                after_src = get_source(after)
-                after_src = re.sub(defre, r'def \1(', after_src)
-                tree_after = parse(after_src)
-
-                self.assertEqual(str(tree_before), str(tree_after))
-
-                rm.compile()
-                verify(rm.getCode())
-
     def _compile_file(self, name):
         path = os.path.join(_HERE, name)
         f = open(path, "r")
