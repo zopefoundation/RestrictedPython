@@ -14,7 +14,7 @@
 limited_builtins = {}
 
 
-def _limited_range(iFirst, *args):
+def limited_range(iFirst, *args):
     # limited range function from Martijn Pieters
     RANGELIMIT = 1000
     if not len(args):
@@ -35,22 +35,22 @@ def _limited_range(iFirst, *args):
     return range(iStart, iEnd, iStep)
 
 
-limited_builtins['range'] = _limited_range
+limited_builtins['range'] = limited_range
 
 
-def _limited_list(seq):
+def limited_list(seq):
     if isinstance(seq, str):
         raise TypeError('cannot convert string to list')
     return list(seq)
 
 
-limited_builtins['list'] = _limited_list
+limited_builtins['list'] = limited_list
 
 
-def _limited_tuple(seq):
+def limited_tuple(seq):
     if isinstance(seq, str):
         raise TypeError('cannot convert string to tuple')
     return tuple(seq)
 
 
-limited_builtins['tuple'] = _limited_tuple
+limited_builtins['tuple'] = limited_tuple

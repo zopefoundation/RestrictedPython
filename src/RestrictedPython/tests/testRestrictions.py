@@ -9,8 +9,8 @@ from RestrictedPython import PrintCollector
 from RestrictedPython.RCompile import compile_restricted
 from RestrictedPython.RCompile import RFunction
 from RestrictedPython.RCompile import RModule
-from RestrictedPython.test_helper import verify
 from RestrictedPython.tests import restricted_module
+from RestrictedPython.tests import verify
 
 import os
 import re
@@ -92,7 +92,7 @@ def create_rmodule():
                  'len', 'chr', 'ord',
                  ):
         rmodule[name] = builtins[name]
-    exec(code, rmodule)
+    exec code in rmodule
 
 
 class AccessDenied (Exception):
@@ -218,12 +218,18 @@ def inplacevar_wrapper(op, x, y):
 class RestrictionTests(unittest.TestCase):
     def execFunc(self, name, *args, **kw):
         func = rmodule[name]
-        verify(func.func_code)
+        verify.verify(func.func_code)
         func.func_globals.update({'_getattr_': guarded_getattr,
                                   '_getitem_': guarded_getitem,
                                   '_write_': TestGuard,
                                   '_print_': PrintCollector,
-                                  '_getiter_': iter,
+        # I don't want to write something as involved as ZopeGuard's
+        # SafeIter just for these tests.  Using the builtin list() function
+        # worked OK for everything the tests did at the time this was added,
+        # but may fail in the future.  If Python 2.1 is no longer an
+        # interesting platform then, using 2.2's builtin iter() here should
+        # work for everything.
+                                  '_getiter_': list,
                                   '_apply_': apply_wrapper,
                                   '_inplacevar_': inplacevar_wrapper,
                                   })
@@ -323,7 +329,7 @@ class RestrictionTests(unittest.TestCase):
         f.close()
 
         co = compile_restricted(source, path, "exec")
-        verify(co)
+        verify.verify(co)
         return co
 
     def test_UnpackSequence(self):
@@ -367,7 +373,7 @@ class RestrictionTests(unittest.TestCase):
 
     def test_UnpackSequenceExpression(self):
         co = compile_restricted("[x for x, y in [(1, 2)]]", "<string>", "eval")
-        verify(co)
+        verify.verify(co)
         calls = []
 
         def getiter(s):
@@ -379,7 +385,7 @@ class RestrictionTests(unittest.TestCase):
 
     def test_UnpackSequenceSingle(self):
         co = compile_restricted("x, y = 1, 2", "<string>", "single")
-        verify(co)
+        verify.verify(co)
         calls = []
 
         def getiter(s):
