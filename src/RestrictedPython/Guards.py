@@ -183,10 +183,6 @@ for name in _safe_exceptions:
 # super
 # type
 
-# for name in dir(exceptions):
-#    if name[0] != "_":
-#        safe_builtins[name] = getattr(exceptions, name)
-
 
 def _write_wrapper():
     # Construct the write wrapper class
@@ -266,7 +262,6 @@ def guarded_iter_unpack_sequence(it, spec, _getiter_):
     For example "for a, b in it"
     => Each object from the iterator needs guarded sequence unpacking.
     """
-
     # The iteration itself needs to be protected as well.
     for ob in _getiter_(it):
         yield guarded_unpack_sequence(ob, spec, _getiter_)
