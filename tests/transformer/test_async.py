@@ -1,0 +1,90 @@
+from RestrictedPython._compat import IS_PY35_OR_GREATER
+from tests import c_exec
+
+import pytest
+
+pytestmark = pytest.mark.skipif(
+    not IS_PY35_OR_GREATER,
+    reason="async statement was first introduced in Python 3")
+
+
+# Example from https://docs.python.org/3/library/asyncio-task.html
+ASYNC_DEF_EXMAPLE = """
+import asyncio
+
+async def hello_world():
+    print()
+
+loop = asyncio.get_event_loop()
+# Blocking call which returns when the hello_world() coroutine is done
+loop.run_until_complete(hello_world())
+loop.close()
+"""
+
+
+@pytest.mark.parametrize(*c_exec)
+def test_async_def(c_exec):
+    """It compiles a function call successfully and returns the used name."""
+    result = c_exec(ASYNC_DEF_EXMAPLE)
+    assert result.code is None
+    assert result.errors == (
+        'Line 4: AsyncFunctionDef statements are not allowed.',
+        )
+    assert result.warnings == []
+    assert result.used_names == {
+        'asyncio': True,
+        'hello_world': True,
+        'loop': True,
+        }
+
+
+# Modified example from https://docs.python.org/3/library/asyncio-task.html
+AWAIT_EXAMPLE = """
+import asyncio
+import datetime
+
+for i in range(100):
+    print(datetime.datetime.now())
+    await asyncio.sleep(1)
+"""
+
+
+@pytest.mark.parametrize(*c_exec)
+def test_await(c_exec):
+    """It compiles a function call successfully and returns the used name."""
+    result = c_exec(AWAIT_EXAMPLE)
+    assert result.code is None
+    assert result.errors == (
+        'Line 7: Await statements are not allowed.',
+        )
+    assert result.warnings == []
+    assert result.used_names == {
+        'asyncio': True,
+        'datetime': True,
+        'display_date': True,
+        'loop': True,
+        }
+
+
+# Modified Example from http://stackabuse.com/python-async-await-tutorial/
+YIELD_FORM_EXAMPLE = """
+import asyncio
+
+@asyncio.coroutine
+def get_json(client, url):
+    file_content = yield from load_file('data.ini')
+"""
+
+
+@pytest.mark.parametrize(*c_exec)
+def test_yield_from(c_exec):
+    """It compiles a function call successfully and returns the used name."""
+    result = c_exec(YIELD_FORM_EXAMPLE)
+    assert result.code is None
+    assert result.errors == (
+        'Line 6: YieldFrom statements are not allowed.',
+        )
+    assert result.warnings == []
+    assert result.used_names == {
+        'asyncio': True,
+        }
