@@ -676,7 +676,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         """
 
         """
-        self.not_allowed(node)
+        return self.node_contents_visit(node)
 
     def visit_Mult(self, node):
         """
@@ -745,22 +745,16 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         self.not_allowed(node)
 
     def visit_BoolOp(self, node):
-        """
-
-        """
-        self.not_allowed(node)
+        """Allow bool operator without restrictions."""
+        return self.node_contents_visit(node)
 
     def visit_And(self, node):
-        """
-
-        """
-        self.not_allowed(node)
+        """Allow bool operator without restrictions."""
+        return self.node_contents_visit(node)
 
     def visit_Or(self, node):
-        """
-
-        """
-        self.not_allowed(node)
+        """Allow bool operator without restrictions."""
+        return self.node_contents_visit(node)
 
     def visit_Compare(self, node):
         """Allow comparison expressions without restrictions."""
