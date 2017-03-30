@@ -1,4 +1,6 @@
+from RestrictedPython import compile_restricted_exec
 from RestrictedPython._compat import IS_PY35_OR_GREATER
+from RestrictedPython.transformer import RestrictingNodeTransformer
 from tests import c_exec
 
 import pytest
@@ -38,34 +40,6 @@ def test_async_def(c_exec):
         }
 
 
-# Modified example from https://docs.python.org/3/library/asyncio-task.html
-AWAIT_EXAMPLE = """
-import asyncio
-import datetime
-
-for i in range(100):
-    print(datetime.datetime.now())
-    await asyncio.sleep(1)
-"""
-
-
-@pytest.mark.parametrize(*c_exec)
-def test_await(c_exec):
-    """It compiles a function call successfully and returns the used name."""
-    result = c_exec(AWAIT_EXAMPLE)
-    assert result.code is None
-    assert result.errors == (
-        'Line 7: Await statements are not allowed.',
-        )
-    assert result.warnings == []
-    assert result.used_names == {
-        'asyncio': True,
-        'datetime': True,
-        'display_date': True,
-        'loop': True,
-        }
-
-
 # Modified Example from http://stackabuse.com/python-async-await-tutorial/
 YIELD_FORM_EXAMPLE = """
 import asyncio
@@ -87,4 +61,55 @@ def test_yield_from(c_exec):
     assert result.warnings == []
     assert result.used_names == {
         'asyncio': True,
+        }
+
+# special efford to test await, async for and async with
+
+class RestrictingAsyncNodeTransformer(RestrictingNodeTransformer):
+
+    def visit_AsyncFunctionDef(self, node):
+        """
+        AsyncFunctionDef needs to be allowed for await, async for and async with
+        """
+        return self.node_contents_visit(node)
+
+# Modified example from https://docs.python.org/3/library/asyncio-task.html
+AWAIT_EXAMPLE = """
+import asyncio
+import datetime
+
+async def display_date(loop):
+    end_time = loop.time() + 5.0
+    while True:
+        print(datetime.datetime.now())
+        if (loop.time() + 1.0) >= end_time:
+            break
+        await asyncio.sleep(1)
+
+loop = asyncio.get_event_loop()
+# Blocking call which returns when the display_date() coroutine is done
+loop.run_until_complete(display_date(loop))
+loop.close()
+"""
+
+
+@pytest.mark.parametrize(*c_exec)
+def test_await(c_exec):
+    """It compiles a function call successfully and returns the used name."""
+    result = compile_restricted_exec(
+        AWAIT_EXAMPLE,
+        policy=RestrictingAsyncNodeTransformer)
+    assert result.code is None
+    assert result.errors == (
+        'Line 11: Await statements are not allowed.',
+        )
+    assert result.warnings == [
+        "Line None: Prints, but never reads 'printed' variable.",
+    ]
+    assert result.used_names == {
+        'asyncio': True,
+        'datetime': True,
+        'display_date': True,
+        'end_time': True,
+        'loop': True,
         }
