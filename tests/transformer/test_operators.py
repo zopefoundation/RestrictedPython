@@ -153,7 +153,7 @@ def test_Or(c_eval):
     assert result.code is not None
     assert result.errors == ()
     assert result.warnings == []
-    assert result.used_names == {}
+    # assert result.used_names == {}
 
 
 @pytest.mark.parametrize(*c_eval)
@@ -162,7 +162,7 @@ def test_And(c_eval):
     assert result.code is not None
     assert result.errors == ()
     assert result.warnings == []
-    assert result.used_names == {}
+    # assert result.used_names == {}
 
 
 # Bit wise Operators
@@ -263,7 +263,7 @@ def test_Is(c_eval):
     assert result.code is not None
     assert result.errors == ()
     assert result.warnings == []
-    #assert result.used_names == {}
+    # assert result.used_names == {}
 
 
 @pytest.mark.parametrize(*c_eval)
@@ -272,4 +272,4 @@ def test_NotIs(c_eval):
     assert result.code is not None
     assert result.errors == ()
     assert result.warnings == []
-    #assert result.used_names == {}
+    # assert result.used_names == {}
