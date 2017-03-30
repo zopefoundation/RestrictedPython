@@ -631,27 +631,21 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         """
         UnaryOp (Unary Operations) is the overall element for:
         * Not --> which should be allowed
-        * UAdd
-        * USub
+        * UAdd --> Positive Number notation
+        * USub --> Negative Number notation
         """
         return self.node_contents_visit(node)
 
     def visit_UAdd(self, node):
-        """
-
-        """
-        self.not_allowed(node)
+        """Positive Numbers notation should be allowed."""
+        return self.node_contents_visit(node)
 
     def visit_USub(self, node):
-        """
-
-        """
-        self.not_allowed(node)
+        """Negativ Numbers notation should be allowed."""
+        return self.node_contents_visit(node)
 
     def visit_Not(self, node):
-        """
-        The Not Operator should be allowed.
-        """
+        """The Not Operator should be allowed."""
         return self.node_contents_visit(node)
 
     def visit_Invert(self, node):
@@ -661,9 +655,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         self.not_allowed(node)
 
     def visit_BinOp(self, node):
-        """
-
-        """
+        """Binary Operations should be allowed."""
         return self.node_contents_visit(node)
 
     def visit_Add(self, node):
@@ -739,8 +731,9 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         self.not_allowed(node)
 
     def visit_MatMult(self, node):
-        """
+        """Matrix Multiplication should not be allowed.
 
+        Matrix Multiplication (@) is a Python 3.5+ Feature.
         """
         self.not_allowed(node)
 

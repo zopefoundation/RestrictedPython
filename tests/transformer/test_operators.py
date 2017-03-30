@@ -15,6 +15,9 @@ def test_Add(c_eval):
     assert result.warnings == []
     assert result.used_names == {}
 
+    eval_result = eval(result.code)
+    assert eval_result == 2
+
 
 @pytest.mark.parametrize(*c_eval)
 def test_Sub(c_eval):
@@ -23,6 +26,9 @@ def test_Sub(c_eval):
     assert result.errors == ()
     assert result.warnings == []
     assert result.used_names == {}
+
+    eval_result = eval(result.code)
+    assert eval_result == 1
 
 
 @pytest.mark.parametrize(*c_eval)
@@ -33,6 +39,9 @@ def test_Mult(c_eval):
     assert result.warnings == []
     assert result.used_names == {}
 
+    eval_result = eval(result.code)
+    assert eval_result == 4
+
 
 @pytest.mark.parametrize(*c_eval)
 def test_Div(c_eval):
@@ -42,12 +51,17 @@ def test_Div(c_eval):
     assert result.warnings == []
     assert result.used_names == {}
 
+    eval_result = eval(result.code)
+    assert eval_result == 5
+
 
 @pytest.mark.parametrize(*c_eval)
 def test_Mod(c_eval):
-    result = c_eval('10 / 2')
-    assert result.code is not None
-    assert result.errors == ()
+    result = c_eval('10 % 2')
+    assert result.code is None
+    assert result.errors == (
+        'Line None: Mod statements are not allowed.',
+    )
     assert result.warnings == []
     assert result.used_names == {}
 
@@ -98,6 +112,9 @@ def test_Eq(c_eval):
     assert result.warnings == []
     assert result.used_names == {}
 
+    eval_result = eval(result.code)
+    assert eval_result is True
+
 
 @pytest.mark.parametrize(*c_eval)
 def test_NotEq(c_eval):
@@ -106,6 +123,9 @@ def test_NotEq(c_eval):
     assert result.errors == ()
     assert result.warnings == []
     assert result.used_names == {}
+
+    eval_result = eval(result.code)
+    assert eval_result is True
 
 
 @pytest.mark.parametrize(*c_eval)
@@ -116,6 +136,9 @@ def test_Gt(c_eval):
     assert result.warnings == []
     assert result.used_names == {}
 
+    eval_result = eval(result.code)
+    assert eval_result is True
+
 
 @pytest.mark.parametrize(*c_eval)
 def test_Lt(c_eval):
@@ -124,6 +147,9 @@ def test_Lt(c_eval):
     assert result.errors == ()
     assert result.warnings == []
     assert result.used_names == {}
+
+    eval_result = eval(result.code)
+    assert eval_result is True
 
 
 @pytest.mark.parametrize(*c_eval)
@@ -134,6 +160,9 @@ def test_GtE(c_eval):
     assert result.warnings == []
     assert result.used_names == {}
 
+    eval_result = eval(result.code)
+    assert eval_result is True
+
 
 @pytest.mark.parametrize(*c_eval)
 def test_LtE(c_eval):
@@ -142,6 +171,9 @@ def test_LtE(c_eval):
     assert result.errors == ()
     assert result.warnings == []
     assert result.used_names == {}
+
+    eval_result = eval(result.code)
+    assert eval_result is True
 
 
 # Bool Operators
@@ -155,6 +187,9 @@ def test_Or(c_eval):
     assert result.warnings == []
     # assert result.used_names == {}
 
+    eval_result = eval(result.code)
+    assert eval_result is True
+
 
 @pytest.mark.parametrize(*c_eval)
 def test_And(c_eval):
@@ -163,6 +198,21 @@ def test_And(c_eval):
     assert result.errors == ()
     assert result.warnings == []
     # assert result.used_names == {}
+
+    eval_result = eval(result.code)
+    assert eval_result is True
+
+
+@pytest.mark.parametrize(*c_eval)
+def test_Not(c_eval):
+    result = c_eval('not False')
+    assert result.code is not None
+    assert result.errors == ()
+    assert result.warnings == []
+    # assert result.used_names == {}
+
+    eval_result = eval(result.code)
+    assert eval_result is True
 
 
 # Bit wise Operators
@@ -244,6 +294,9 @@ def test_In(c_eval):
     assert result.warnings == []
     assert result.used_names == {}
 
+    eval_result = eval(result.code)
+    assert eval_result is True
+
 
 @pytest.mark.parametrize(*c_eval)
 def test_NotIn(c_eval):
@@ -252,6 +305,9 @@ def test_NotIn(c_eval):
     assert result.errors == ()
     assert result.warnings == []
     assert result.used_names == {}
+
+    eval_result = eval(result.code)
+    assert eval_result is True
 
 
 # Identity Operator
@@ -265,6 +321,9 @@ def test_Is(c_eval):
     assert result.warnings == []
     # assert result.used_names == {}
 
+    eval_result = eval(result.code)
+    assert eval_result is True
+
 
 @pytest.mark.parametrize(*c_eval)
 def test_NotIs(c_eval):
@@ -273,3 +332,33 @@ def test_NotIs(c_eval):
     assert result.errors == ()
     assert result.warnings == []
     # assert result.used_names == {}
+
+    eval_result = eval(result.code)
+    assert eval_result is True
+
+
+# Unary Operators
+
+
+@pytest.mark.parametrize(*c_eval)
+def test_UAdd(c_eval):
+    result = c_eval('+1')
+    assert result.code is not None
+    assert result.errors == ()
+    assert result.warnings == []
+    # assert result.used_names == {}
+
+    eval_result = eval(result.code)
+    assert eval_result == 1
+
+
+@pytest.mark.parametrize(*c_eval)
+def test_USub(c_eval):
+    result = c_eval('-1')
+    assert result.code is not None
+    assert result.errors == ()
+    assert result.warnings == []
+    # assert result.used_names == {}
+
+    eval_result = eval(result.code)
+    assert eval_result == -1
