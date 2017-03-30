@@ -26,18 +26,17 @@ loop.close()
 
 @pytest.mark.parametrize(*c_exec)
 def test_async_def(c_exec):
-    """It compiles a function call successfully and returns the used name."""
     result = c_exec(ASYNC_DEF_EXMAPLE)
     assert result.code is None
     assert result.errors == (
         'Line 4: AsyncFunctionDef statements are not allowed.',
-        )
+    )
     assert result.warnings == []
     assert result.used_names == {
         'asyncio': True,
         'hello_world': True,
         'loop': True,
-        }
+    }
 
 
 # Modified Example from http://stackabuse.com/python-async-await-tutorial/
@@ -52,26 +51,28 @@ def get_json(client, url):
 
 @pytest.mark.parametrize(*c_exec)
 def test_yield_from(c_exec):
-    """It compiles a function call successfully and returns the used name."""
     result = c_exec(YIELD_FORM_EXAMPLE)
     assert result.code is None
     assert result.errors == (
         'Line 6: YieldFrom statements are not allowed.',
-        )
+    )
     assert result.warnings == []
     assert result.used_names == {
         'asyncio': True,
-        }
+    }
 
 # special efford to test await, async for and async with
+
 
 class RestrictingAsyncNodeTransformer(RestrictingNodeTransformer):
 
     def visit_AsyncFunctionDef(self, node):
         """
-        AsyncFunctionDef needs to be allowed for await, async for and async with
+        AsyncFunctionDef needs to be allowed for await,
+        async for and async with
         """
         return self.node_contents_visit(node)
+
 
 # Modified example from https://docs.python.org/3/library/asyncio-task.html
 AWAIT_EXAMPLE = """
@@ -95,14 +96,13 @@ loop.close()
 
 @pytest.mark.parametrize(*c_exec)
 def test_await(c_exec):
-    """It compiles a function call successfully and returns the used name."""
     result = compile_restricted_exec(
         AWAIT_EXAMPLE,
         policy=RestrictingAsyncNodeTransformer)
     assert result.code is None
     assert result.errors == (
         'Line 11: Await statements are not allowed.',
-        )
+    )
     assert result.warnings == [
         "Line None: Prints, but never reads 'printed' variable.",
     ]
@@ -112,4 +112,46 @@ def test_await(c_exec):
         'display_date': True,
         'end_time': True,
         'loop': True,
-        }
+    }
+
+
+# Modified example https://www.python.org/dev/peps/pep-0525/
+ASYNC_WITH_EXAMPLE = """
+async def square_series(con, to):
+    async with con.transaction():
+        print(con)
+"""
+
+
+@pytest.mark.parametrize(*c_exec)
+def test_async_with(c_exec):
+    result = compile_restricted_exec(
+        ASYNC_WITH_EXAMPLE,
+        policy=RestrictingAsyncNodeTransformer)
+    assert result.code is None
+    assert result.errors == (
+        'Line 3: AsyncWith statements are not allowed.',
+    )
+    assert result.warnings == []
+    assert result.used_names == {}
+
+
+# Modified example https://www.python.org/dev/peps/pep-0525/
+ASYNC_FOR_EXAMPLE = """
+async def read_rows(rows):
+    async for row in rows:
+        yield row
+"""
+
+
+@pytest.mark.parametrize(*c_exec)
+def test_async_for(c_exec):
+    result = compile_restricted_exec(
+        ASYNC_FOR_EXAMPLE,
+        policy=RestrictingAsyncNodeTransformer)
+    assert result.code is None
+    assert result.errors == (
+        'Line 3: AsyncFor statements are not allowed.',
+    )
+    assert result.warnings == []
+    assert result.used_names == {}

@@ -726,6 +726,12 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         """
         self.not_allowed(node)
 
+    def visit_BitXor(self, node):
+        """
+
+        """
+        self.not_allowed(node)
+
     def visit_BitAnd(self, node):
         """
 
