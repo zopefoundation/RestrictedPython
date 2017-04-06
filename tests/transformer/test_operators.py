@@ -57,35 +57,38 @@ def test_Div(c_eval):
 
 @pytest.mark.parametrize(*c_eval)
 def test_Mod(c_eval):
-    result = c_eval('10 % 2')
-    assert result.code is None
-    assert result.errors == (
-        'Line None: Mod statements are not allowed.',
-    )
+    result = c_eval('10 % 3')
+    assert result.code is not None
+    assert result.errors == ()
     assert result.warnings == []
     assert result.used_names == {}
+
+    eval_result = eval(result.code)
+    assert eval_result == 1
 
 
 @pytest.mark.parametrize(*c_eval)
 def test_Pow(c_eval):
     result = c_eval('2 ** 8')
-    assert result.code is None
-    assert result.errors == (
-        'Line None: Pow statements are not allowed.',
-    )
+    assert result.code is not None
+    assert result.errors == ()
     assert result.warnings == []
     assert result.used_names == {}
+
+    eval_result = eval(result.code)
+    assert eval_result == 256
 
 
 @pytest.mark.parametrize(*c_eval)
 def test_FloorDiv(c_eval):
     result = c_eval('8 // 2')
-    assert result.code is None
-    assert result.errors == (
-        'Line None: FloorDiv statements are not allowed.',
-    )
+    assert result.code is not None
+    assert result.errors == ()
     assert result.warnings == []
     assert result.used_names == {}
+
+    eval_result = eval(result.code)
+    assert eval_result == 4
 
 
 @pytest.mark.skipif(
@@ -221,9 +224,8 @@ def test_Not(c_eval):
 @pytest.mark.parametrize(*c_eval)
 def test_BitAnd(c_eval):
     result = c_eval('60 & 13')
-    assert result.code is None
-    assert result.errors == (
-        'Line None: BitAnd statements are not allowed.',)
+    assert result.code is not None
+    assert result.errors == ()
     assert result.warnings == []
     assert result.used_names == {}
 
@@ -231,10 +233,8 @@ def test_BitAnd(c_eval):
 @pytest.mark.parametrize(*c_eval)
 def test_BitOr(c_eval):
     result = c_eval('60 | 13')
-    assert result.code is None
-    assert result.errors == (
-        'Line None: BitOr statements are not allowed.',
-    )
+    assert result.code is not None
+    assert result.errors == ()
     assert result.warnings == []
     assert result.used_names == {}
 
@@ -242,10 +242,8 @@ def test_BitOr(c_eval):
 @pytest.mark.parametrize(*c_eval)
 def test_BitXor(c_eval):
     result = c_eval('60 ^ 13')
-    assert result.code is None
-    assert result.errors == (
-        'Line None: BitXor statements are not allowed.',
-    )
+    assert result.code is not None
+    assert result.errors == ()
     assert result.warnings == []
     assert result.used_names == {}
 
@@ -253,10 +251,8 @@ def test_BitXor(c_eval):
 @pytest.mark.parametrize(*c_eval)
 def test_Invert(c_eval):
     result = c_eval('~60')
-    assert result.code is None
-    assert result.errors == (
-        'Line None: Invert statements are not allowed.',
-    )
+    assert result.code is not None
+    assert result.errors == ()
     assert result.warnings == []
     assert result.used_names == {}
 
@@ -264,10 +260,8 @@ def test_Invert(c_eval):
 @pytest.mark.parametrize(*c_eval)
 def test_LShift(c_eval):
     result = c_eval('60 << 2')
-    assert result.code is None
-    assert result.errors == (
-        'Line None: LShift statements are not allowed.',
-    )
+    assert result.code is not None
+    assert result.errors == ()
     assert result.warnings == []
     assert result.used_names == {}
 
@@ -275,10 +269,8 @@ def test_LShift(c_eval):
 @pytest.mark.parametrize(*c_eval)
 def test_RShift(c_eval):
     result = c_eval('60 >> 2')
-    assert result.code is None
-    assert result.errors == (
-        'Line None: RShift statements are not allowed.',
-    )
+    assert result.code is not None
+    assert result.errors == ()
     assert result.warnings == []
     assert result.used_names == {}
 

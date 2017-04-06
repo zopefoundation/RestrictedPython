@@ -652,7 +652,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         """
 
         """
-        self.not_allowed(node)
+        return self.node_contents_visit(node)
 
     def visit_BinOp(self, node):
         """Binary Operations should be allowed."""
@@ -686,49 +686,49 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         """
 
         """
-        self.not_allowed(node)
+        return self.node_contents_visit(node)
 
     def visit_Mod(self, node):
         """
 
         """
-        self.not_allowed(node)
+        return self.node_contents_visit(node)
 
     def visit_Pow(self, node):
         """
 
         """
-        self.not_allowed(node)
+        return self.node_contents_visit(node)
 
     def visit_LShift(self, node):
         """
 
         """
-        self.not_allowed(node)
+        return self.node_contents_visit(node)
 
     def visit_RShift(self, node):
         """
 
         """
-        self.not_allowed(node)
+        return self.node_contents_visit(node)
 
     def visit_BitOr(self, node):
         """
 
         """
-        self.not_allowed(node)
+        return self.node_contents_visit(node)
 
     def visit_BitXor(self, node):
         """
 
         """
-        self.not_allowed(node)
+        return self.node_contents_visit(node)
 
     def visit_BitAnd(self, node):
         """
 
         """
-        self.not_allowed(node)
+        return self.node_contents_visit(node)
 
     def visit_MatMult(self, node):
         """Matrix Multiplication should not be allowed.
@@ -1379,6 +1379,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         """
 
         """
+        return self.node_contents_visit(node)
         self.not_allowed(node)
 
     def visit_Nonlocal(self, node):
