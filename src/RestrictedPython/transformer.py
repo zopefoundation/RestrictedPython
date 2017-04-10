@@ -645,13 +645,11 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         return self.node_contents_visit(node)
 
     def visit_Not(self, node):
-        """The Not Operator should be allowed."""
+        """The `not` Operator should be allowed."""
         return self.node_contents_visit(node)
 
     def visit_Invert(self, node):
-        """
-
-        """
+        """Allow `~` expressions."""
         return self.node_contents_visit(node)
 
     def visit_BinOp(self, node):
@@ -659,75 +657,51 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         return self.node_contents_visit(node)
 
     def visit_Add(self, node):
-        """
-
-        """
+        """Allow `+` expressions."""
         return self.node_contents_visit(node)
 
     def visit_Sub(self, node):
-        """
-
-        """
+        """Allow `-` expressions."""
         return self.node_contents_visit(node)
 
     def visit_Mult(self, node):
-        """
-
-        """
+        """Allow `*` expressions."""
         return self.node_contents_visit(node)
 
     def visit_Div(self, node):
-        """
-
-        """
+        """Allow `/` expressions."""
         return self.node_contents_visit(node)
 
     def visit_FloorDiv(self, node):
-        """
-
-        """
+        """Allow `//` expressions."""
         return self.node_contents_visit(node)
 
     def visit_Mod(self, node):
-        """
-
-        """
+        """Allow `%` expressions."""
         return self.node_contents_visit(node)
 
     def visit_Pow(self, node):
-        """
-
-        """
+        """Allow `**` expressions."""
         return self.node_contents_visit(node)
 
     def visit_LShift(self, node):
-        """
-
-        """
+        """Allow `<<` expressions."""
         return self.node_contents_visit(node)
 
     def visit_RShift(self, node):
-        """
-
-        """
+        """Allow `>>` expressions."""
         return self.node_contents_visit(node)
 
     def visit_BitOr(self, node):
-        """
-
-        """
+        """Allow `|` expressions."""
         return self.node_contents_visit(node)
 
     def visit_BitXor(self, node):
-        """
-
-        """
+        """Allow `^` expressions."""
         return self.node_contents_visit(node)
 
     def visit_BitAnd(self, node):
-        """
-
-        """
+        """Allow `&` expressions."""
         return self.node_contents_visit(node)
 
     def visit_MatMult(self, node):
@@ -853,9 +827,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         return self.node_contents_visit(node)
 
     def visit_IfExp(self, node):
-        """
-
-        """
+        """Allow `if` expressions without restrictions."""
         return self.node_contents_visit(node)
 
     def visit_Attribute(self, node):
@@ -1122,9 +1094,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         return node
 
     def visit_Raise(self, node):
-        """
-
-        """
+        """Allow `raise` statements without restrictions."""
         return self.node_contents_visit(node)
 
     def visit_Assert(self, node):
@@ -1132,31 +1102,25 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         return self.node_contents_visit(node)
 
     def visit_Delete(self, node):
-        """
-
-        """
+        """Allow `del` statements without restrictions."""
         return self.node_contents_visit(node)
 
     def visit_Pass(self, node):
-        """
-
-        """
+        """Allow `pass` statements without restrictions."""
         return self.node_contents_visit(node)
 
     # Imports
 
     def visit_Import(self, node):
-        """ """
+        """Allow `import` statements without restrictions."""
         return self.check_import_names(node)
 
     def visit_ImportFrom(self, node):
-        """ """
+        """Allow `import from` statements without restrictions."""
         return self.check_import_names(node)
 
     def visit_alias(self, node):
-        """
-
-        """
+        """ """
         return self.node_contents_visit(node)
 
     def visit_Exec(self, node):
@@ -1189,7 +1153,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         return self.node_contents_visit(node)
 
     def visit_Try(self, node):
-        """Allow Try without restrictions.
+        """Allow `Try` without restrictions.
 
         This is Python 3 only, Python 2 uses TryExcept.
         """
@@ -1200,7 +1164,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         return self.node_contents_visit(node)
 
     def visit_TryExcept(self, node):
-        """Allow Try-Except without restrictions."""
+        """Allow `Try-Except` without restrictions."""
         return self.node_contents_visit(node)
 
     def visit_ExceptHandler(self, node):
@@ -1261,9 +1225,8 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         return node
 
     def visit_withitem(self, node):
-        """
-
-        """
+        """Allow usage of `with` statements (context managers)
+        without restrictions."""
         return self.node_contents_visit(node)
 
     # Function and class definitions
@@ -1360,9 +1323,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         return self.node_contents_visit(node)
 
     def visit_Return(self, node):
-        """
-
-        """
+        """Allow `return` statements without restrictions."""
         return self.node_contents_visit(node)
 
     def visit_Yield(self, node):
@@ -1370,23 +1331,16 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         self.not_allowed(node)
 
     def visit_YieldFrom(self, node):
-        """
-
-        """
+        """All Async Functionality should be denied by default."""
         self.not_allowed(node)
 
     def visit_Global(self, node):
-        """
-
-        """
+        """Make Global Statements allowed."""
         return self.node_contents_visit(node)
-        self.not_allowed(node)
 
     def visit_Nonlocal(self, node):
-        """
-
-        """
-        self.not_allowed(node)
+        """Allow Nonlocal Statements."""
+        return self.node_contents_visit(node)
 
     def visit_ClassDef(self, node):
         """Check the name of a class definition."""
@@ -1418,25 +1372,17 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
     # Async und await
 
     def visit_AsyncFunctionDef(self, node):
-        """
-
-        """
+        """All Async Functions should be denied by default."""
         self.not_allowed(node)
 
     def visit_Await(self, node):
-        """
-
-        """
+        """All Async Functionality should be denied by default."""
         self.not_allowed(node)
 
     def visit_AsyncFor(self, node):
-        """
-
-        """
+        """All Async Functionality should be denied by default."""
         self.not_allowed(node)
 
     def visit_AsyncWith(self, node):
-        """
-
-        """
+        """All Async Functionality should be denied by default."""
         self.not_allowed(node)
