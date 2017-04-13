@@ -631,17 +631,17 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         """
         UnaryOp (Unary Operations) is the overall element for:
         * Not --> which should be allowed
-        * UAdd --> Positive Number notation
-        * USub --> Negative Number notation
+        * UAdd --> Positive Notation of Variables (e.g. +var)
+        * USub --> Negative Notation of Variables (e.g. -var)
         """
         return self.node_contents_visit(node)
 
     def visit_UAdd(self, node):
-        """Positive Numbers notation should be allowed."""
+        """Positive Notation of Variables should be allowed. (e.g. +var)"""
         return self.node_contents_visit(node)
 
     def visit_USub(self, node):
-        """Negativ Numbers notation should be allowed."""
+        """Negativ Notation of Variables should be allowed. (e.g. -var)"""
         return self.node_contents_visit(node)
 
     def visit_Not(self, node):
@@ -716,11 +716,11 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         return self.node_contents_visit(node)
 
     def visit_And(self, node):
-        """Allow bool operator without restrictions."""
+        """Allow bool operator `and` without restrictions."""
         return self.node_contents_visit(node)
 
     def visit_Or(self, node):
-        """Allow bool operator without restrictions."""
+        """Allow bool operator `or` without restrictions."""
         return self.node_contents_visit(node)
 
     def visit_Compare(self, node):
@@ -1112,15 +1112,17 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
     # Imports
 
     def visit_Import(self, node):
-        """Allow `import` statements without restrictions."""
+        """Allow `import` statements with restrictions.
+        See check_import_names."""
         return self.check_import_names(node)
 
     def visit_ImportFrom(self, node):
-        """Allow `import from` statements without restrictions."""
+        """Allow `import from` statements with restrictions.
+        See check_import_names."""
         return self.check_import_names(node)
 
     def visit_alias(self, node):
-        """ """
+        """Allow `as` statements in import and import from statements."""
         return self.node_contents_visit(node)
 
     def visit_Exec(self, node):
@@ -1327,20 +1329,23 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         return self.node_contents_visit(node)
 
     def visit_Yield(self, node):
-        """Deny Yield unconditionally."""
+        """Deny `yield` unconditionally."""
         self.not_allowed(node)
 
     def visit_YieldFrom(self, node):
-        """All Async Functionality should be denied by default."""
+        """Deny Yield From unconditionally."""
         self.not_allowed(node)
 
     def visit_Global(self, node):
-        """Make Global Statements allowed."""
+        """Make `global` Statements allowed."""
         return self.node_contents_visit(node)
 
     def visit_Nonlocal(self, node):
-        """Allow Nonlocal Statements."""
-        return self.node_contents_visit(node)
+        """Allow `nonlocal` Statements.
+        This statement was introduced in Python 3."""
+        self.not_allowed(node)
+        # TODO: Review
+        # return self.node_contents_visit(node)
 
     def visit_ClassDef(self, node):
         """Check the name of a class definition."""
@@ -1372,17 +1377,17 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
     # Async und await
 
     def visit_AsyncFunctionDef(self, node):
-        """All Async Functions should be denied by default."""
+        """All async functions are denied by default."""
         self.not_allowed(node)
 
     def visit_Await(self, node):
-        """All Async Functionality should be denied by default."""
+        """All async functionality are denied by default."""
         self.not_allowed(node)
 
     def visit_AsyncFor(self, node):
-        """All Async Functionality should be denied by default."""
+        """All async functionality are denied by default."""
         self.not_allowed(node)
 
     def visit_AsyncWith(self, node):
-        """All Async Functionality should be denied by default."""
+        """All async functionality are denied by default."""
         self.not_allowed(node)

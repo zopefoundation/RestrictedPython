@@ -36,13 +36,13 @@ outside()
 
 @pytest.mark.skipif(
     not IS_PY3,
-    reason="Nonlocal Statement was introducted on Python 3.0 but never in Python 2")  # NOQA: E501
+    reason="Nonlocal Statement was introducted on Python 3.0.")
 @pytest.mark.parametrize(*c_exec)
 def test_Nonlocal(c_exec):
     result = c_exec(NONLOCAL_EXAMPLE)
-    assert result.code is not None
+    assert result.code is None
     assert result.errors == (
-        # 'Line 5: Nonlocal statements are not allowed.',
+        'Line 5: Nonlocal statements are not allowed.',
     )
     assert result.warnings == [
         "Line 4: Prints, but never reads 'printed' variable.",
