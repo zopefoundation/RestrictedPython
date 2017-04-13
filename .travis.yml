@@ -13,7 +13,7 @@ env:
 matrix:
     exclude:
         - env: ENVIRON=isort,flake8,docs
-        - env: ENVIRON=py27-rp3
+        - env: ENVIRON=py27-rp3,py27-datetime,py36-datetime
     include:
         - python: "3.6"
           env: ENVIRON=py36-datetime,isort,flake8,docs
