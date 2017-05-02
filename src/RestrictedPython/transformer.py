@@ -631,130 +631,97 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         """
         UnaryOp (Unary Operations) is the overall element for:
         * Not --> which should be allowed
-        * UAdd
-        * USub
+        * UAdd --> Positive notation of variables (e.g. +var)
+        * USub --> Negative notation of variables (e.g. -var)
         """
         return self.node_contents_visit(node)
 
     def visit_UAdd(self, node):
-        """
-
-        """
-        self.not_allowed(node)
+        """Allow positive notation of variables. (e.g. +var)"""
+        return self.node_contents_visit(node)
 
     def visit_USub(self, node):
-        """
-
-        """
-        self.not_allowed(node)
+        """Allow negative notation of variables. (e.g. -var)"""
+        return self.node_contents_visit(node)
 
     def visit_Not(self, node):
-        """
-        The Not Operator should be allowed.
-        """
+        """Allow the `not` operator."""
         return self.node_contents_visit(node)
 
     def visit_Invert(self, node):
-        """
-
-        """
-        self.not_allowed(node)
+        """Allow `~` expressions."""
+        return self.node_contents_visit(node)
 
     def visit_BinOp(self, node):
-        """
-
-        """
+        """Allow binary operations."""
         return self.node_contents_visit(node)
 
     def visit_Add(self, node):
-        """
-
-        """
+        """Allow `+` expressions."""
         return self.node_contents_visit(node)
 
     def visit_Sub(self, node):
-        """
-
-        """
-        self.not_allowed(node)
+        """Allow `-` expressions."""
+        return self.node_contents_visit(node)
 
     def visit_Mult(self, node):
-        """
-
-        """
+        """Allow `*` expressions."""
         return self.node_contents_visit(node)
 
     def visit_Div(self, node):
-        """
-
-        """
+        """Allow `/` expressions."""
         return self.node_contents_visit(node)
 
     def visit_FloorDiv(self, node):
-        """
-
-        """
-        self.not_allowed(node)
+        """Allow `//` expressions."""
+        return self.node_contents_visit(node)
 
     def visit_Mod(self, node):
-        """
-
-        """
-        self.not_allowed(node)
+        """Allow `%` expressions."""
+        return self.node_contents_visit(node)
 
     def visit_Pow(self, node):
-        """
-
-        """
-        self.not_allowed(node)
+        """Allow `**` expressions."""
+        return self.node_contents_visit(node)
 
     def visit_LShift(self, node):
-        """
-
-        """
-        self.not_allowed(node)
+        """Allow `<<` expressions."""
+        return self.node_contents_visit(node)
 
     def visit_RShift(self, node):
-        """
-
-        """
-        self.not_allowed(node)
+        """Allow `>>` expressions."""
+        return self.node_contents_visit(node)
 
     def visit_BitOr(self, node):
-        """
+        """Allow `|` expressions."""
+        return self.node_contents_visit(node)
 
-        """
-        self.not_allowed(node)
+    def visit_BitXor(self, node):
+        """Allow `^` expressions."""
+        return self.node_contents_visit(node)
 
     def visit_BitAnd(self, node):
-        """
-
-        """
-        self.not_allowed(node)
+        """Allow `&` expressions."""
+        return self.node_contents_visit(node)
 
     def visit_MatMult(self, node):
-        """
+        """Matrix multiplication (`@`) is currently not allowed.
 
+        Matrix multiplication is a Python 3.5+ feature.
         """
         self.not_allowed(node)
 
     def visit_BoolOp(self, node):
-        """
-
-        """
-        self.not_allowed(node)
+        """Allow bool operator without restrictions."""
+        return self.node_contents_visit(node)
 
     def visit_And(self, node):
-        """
-
-        """
-        self.not_allowed(node)
+        """Allow bool operator `and` without restrictions."""
+        return self.node_contents_visit(node)
 
     def visit_Or(self, node):
-        """
-
-        """
-        self.not_allowed(node)
+        """Allow bool operator `or` without restrictions."""
+        return self.node_contents_visit(node)
 
     def visit_Compare(self, node):
         """Allow comparison expressions without restrictions."""
@@ -860,9 +827,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         return self.node_contents_visit(node)
 
     def visit_IfExp(self, node):
-        """
-
-        """
+        """Allow `if` expressions without restrictions."""
         return self.node_contents_visit(node)
 
     def visit_Attribute(self, node):
@@ -1129,9 +1094,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         return node
 
     def visit_Raise(self, node):
-        """
-
-        """
+        """Allow `raise` statements without restrictions."""
         return self.node_contents_visit(node)
 
     def visit_Assert(self, node):
@@ -1139,31 +1102,27 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         return self.node_contents_visit(node)
 
     def visit_Delete(self, node):
-        """
-
-        """
+        """Allow `del` statements without restrictions."""
         return self.node_contents_visit(node)
 
     def visit_Pass(self, node):
-        """
-
-        """
+        """Allow `pass` statements without restrictions."""
         return self.node_contents_visit(node)
 
     # Imports
 
     def visit_Import(self, node):
-        """ """
+        """Allow `import` statements with restrictions.
+        See check_import_names."""
         return self.check_import_names(node)
 
     def visit_ImportFrom(self, node):
-        """ """
+        """Allow `import from` statements with restrictions.
+        See check_import_names."""
         return self.check_import_names(node)
 
     def visit_alias(self, node):
-        """
-
-        """
+        """Allow `as` statements in import and import from statements."""
         return self.node_contents_visit(node)
 
     def visit_Exec(self, node):
@@ -1196,18 +1155,18 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         return self.node_contents_visit(node)
 
     def visit_Try(self, node):
-        """Allow Try without restrictions.
+        """Allow `try` without restrictions.
 
         This is Python 3 only, Python 2 uses TryExcept.
         """
         return self.node_contents_visit(node)
 
     def visit_TryFinally(self, node):
-        """Allow Try-Finally without restrictions."""
+        """Allow `try ... finally` without restrictions."""
         return self.node_contents_visit(node)
 
     def visit_TryExcept(self, node):
-        """Allow Try-Except without restrictions."""
+        """Allow `try ... except` without restrictions."""
         return self.node_contents_visit(node)
 
     def visit_ExceptHandler(self, node):
@@ -1248,7 +1207,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         return node
 
     def visit_With(self, node):
-        """Protect tuple unpacking on with statements. """
+        """Protect tuple unpacking on with statements."""
         node = self.node_contents_visit(node)
 
         if IS_PY2:
@@ -1268,19 +1227,13 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         return node
 
     def visit_withitem(self, node):
-        """
-
-        """
+        """Allow `with` statements (context managers) without restrictions."""
         return self.node_contents_visit(node)
 
     # Function and class definitions
 
     def visit_FunctionDef(self, node):
-        """Check a function defintion.
-
-        Checks the name of the function and the arguments.
-        """
-
+        """Allow function definitions (`def`) with some restrictions."""
         self.check_name(node, node.name)
         self.check_function_argument_names(node)
 
@@ -1309,7 +1262,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         return node
 
     def visit_Lambda(self, node):
-        """Check a lambda definition."""
+        """Allow lambda with some restrictions."""
         self.check_function_argument_names(node)
 
         node = self.node_contents_visit(node)
@@ -1367,42 +1320,36 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         return self.node_contents_visit(node)
 
     def visit_Return(self, node):
-        """
-
-        """
+        """Allow `return` statements without restrictions."""
         return self.node_contents_visit(node)
 
     def visit_Yield(self, node):
-        """Deny Yield unconditionally."""
+        """Deny `yield` unconditionally."""
         self.not_allowed(node)
 
     def visit_YieldFrom(self, node):
-        """
-
-        """
+        """Deny `yield from` unconditionally."""
         self.not_allowed(node)
 
     def visit_Global(self, node):
-        """
-
-        """
-        self.not_allowed(node)
+        """Allow `global` statements without restrictions."""
+        return self.node_contents_visit(node)
 
     def visit_Nonlocal(self, node):
-        """
+        """Deny `nonlocal` statements.
 
+        This statement was introduced in Python 3.
         """
+        # TODO: Review if we want to allow it later
         self.not_allowed(node)
 
     def visit_ClassDef(self, node):
         """Check the name of a class definition."""
-
         self.check_name(node, node.name)
         return self.node_contents_visit(node)
 
     def visit_Module(self, node):
-        """Adds the print_collector (only if print is used) at the top."""
-
+        """Add the print_collector (only if print is used) at the top."""
         node = self.node_contents_visit(node)
 
         # Inject the print collector after 'from __future__ import ....'
@@ -1418,31 +1365,23 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         return node
 
     def visit_Param(self, node):
-        """Allow Param without restrictions."""
+        """Allow parameters without restrictions."""
         return self.node_contents_visit(node)
 
     # Async und await
 
     def visit_AsyncFunctionDef(self, node):
-        """
-
-        """
+        """Deny async functions."""
         self.not_allowed(node)
 
     def visit_Await(self, node):
-        """
-
-        """
+        """Deny async functionality."""
         self.not_allowed(node)
 
     def visit_AsyncFor(self, node):
-        """
-
-        """
+        """Deny async functionality."""
         self.not_allowed(node)
 
     def visit_AsyncWith(self, node):
-        """
-
-        """
+        """Deny async functionality."""
         self.not_allowed(node)

@@ -27,33 +27,6 @@ def test_transformer__RestrictingNodeTransformer__generic_visit__1():
         'Line None: MyFancyNode statement is not known to RestrictedPython']
 
 
-@pytest.mark.parametrize(*e_eval)
-def test_transformer__RestrictingNodeTransformer__visit_Num__1(e_eval):
-    """It allows to use number literals."""
-    assert e_eval('42') == 42
-
-
-@pytest.mark.parametrize(*e_eval)
-def test_transformer__RestrictingNodeTransformer__visit_Bytes__1(e_eval):
-    """It allows to use bytes literals."""
-    assert e_eval('b"code"') == b"code"
-
-
-@pytest.mark.parametrize(*e_eval)
-def test_transformer__RestrictingNodeTransformer__visit_Set__1(e_eval):
-    """It allows to use set literals."""
-    assert e_eval('{1, 2, 3}') == set([1, 2, 3])
-
-
-@pytest.mark.skipif(IS_PY2,
-                    reason="... is new in Python 3")
-@pytest.mark.parametrize(*c_exec)
-def test_transformer__RestrictingNodeTransformer__visit_Ellipsis__1(c_exec):
-    """It prevents using the `ellipsis` statement."""
-    result = c_exec('...')
-    assert result.errors == ('Line 1: Ellipsis statements are not allowed.',)
-
-
 @pytest.mark.parametrize(*c_exec)
 def test_transformer__RestrictingNodeTransformer__visit_Call__1(c_exec):
     """It compiles a function call successfully and returns the used name."""
@@ -63,19 +36,6 @@ def test_transformer__RestrictingNodeTransformer__visit_Call__1(c_exec):
     exec(result.code, {}, loc)
     assert loc['a'] == 3
     assert result.used_names == {'max': True}
-
-
-YIELD = """\
-def no_yield():
-    yield 42
-"""
-
-
-@pytest.mark.parametrize(*c_exec)
-def test_transformer__RestrictingNodeTransformer__visit_Yield__1(c_exec):
-    """It prevents using the `yield` statement."""
-    result = c_exec(YIELD)
-    assert result.errors == ("Line 2: Yield statements are not allowed.",)
 
 
 EXEC_STATEMENT = """\
