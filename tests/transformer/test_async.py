@@ -33,15 +33,14 @@ def test_async_def(c_exec):
     assert result.code is None
 
 
-# special efford to test await, async for and async with
-
-
 class RestrictingAsyncNodeTransformer(RestrictingNodeTransformer):
+    """Transformer which allows `async def` for the tests."""
 
     def visit_AsyncFunctionDef(self, node):
-        """
-        AsyncFunctionDef needs to be allowed for await,
-        async for and async with
+        """Allow `async def`.
+
+        This is needed to get the function body to be parsed thus allowing
+        to catch `await`, `async for` and `async with`.
         """
         return self.node_contents_visit(node)
 

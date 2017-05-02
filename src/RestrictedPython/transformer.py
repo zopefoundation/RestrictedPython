@@ -705,9 +705,9 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         return self.node_contents_visit(node)
 
     def visit_MatMult(self, node):
-        """Matrix Multiplication should not be allowed.
+        """Matrix multiplication (`@`) is currently not allowed.
 
-        Matrix Multiplication (@) is a Python 3.5+ Feature.
+        Matrix multiplication is a Python 3.5+ feature.
         """
         self.not_allowed(node)
 
@@ -1155,18 +1155,18 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         return self.node_contents_visit(node)
 
     def visit_Try(self, node):
-        """Allow `Try` without restrictions.
+        """Allow `try` without restrictions.
 
         This is Python 3 only, Python 2 uses TryExcept.
         """
         return self.node_contents_visit(node)
 
     def visit_TryFinally(self, node):
-        """Allow Try-Finally without restrictions."""
+        """Allow `try ... finally` without restrictions."""
         return self.node_contents_visit(node)
 
     def visit_TryExcept(self, node):
-        """Allow `Try-Except` without restrictions."""
+        """Allow `try ... except` without restrictions."""
         return self.node_contents_visit(node)
 
     def visit_ExceptHandler(self, node):
@@ -1207,7 +1207,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         return node
 
     def visit_With(self, node):
-        """Protect tuple unpacking on with statements. """
+        """Protect tuple unpacking on with statements."""
         node = self.node_contents_visit(node)
 
         if IS_PY2:
@@ -1227,18 +1227,13 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         return node
 
     def visit_withitem(self, node):
-        """Allow usage of `with` statements (context managers)
-        without restrictions."""
+        """Allow `with` statements (context managers) without restrictions."""
         return self.node_contents_visit(node)
 
     # Function and class definitions
 
     def visit_FunctionDef(self, node):
-        """Check a function defintion.
-
-        Checks the name of the function and the arguments.
-        """
-
+        """Allow function definitions (`def`) with some restrictions."""
         self.check_name(node, node.name)
         self.check_function_argument_names(node)
 
@@ -1267,7 +1262,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         return node
 
     def visit_Lambda(self, node):
-        """Check a lambda definition."""
+        """Allow lambda with some restrictions."""
         self.check_function_argument_names(node)
 
         node = self.node_contents_visit(node)
@@ -1337,12 +1332,14 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         self.not_allowed(node)
 
     def visit_Global(self, node):
-        """Make `global` statements allowed."""
+        """Allow `global` statements without restrictions."""
         return self.node_contents_visit(node)
 
     def visit_Nonlocal(self, node):
         """Deny `nonlocal` statements.
-        This statement was introduced in Python 3."""
+
+        This statement was introduced in Python 3.
+        """
         # TODO: Review if we want to allow it later
         self.not_allowed(node)
 
@@ -1352,7 +1349,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         return self.node_contents_visit(node)
 
     def visit_Module(self, node):
-        """Adds the print_collector (only if print is used) at the top."""
+        """Add the print_collector (only if print is used) at the top."""
         node = self.node_contents_visit(node)
 
         # Inject the print collector after 'from __future__ import ....'
@@ -1368,23 +1365,23 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         return node
 
     def visit_Param(self, node):
-        """Allow Param without restrictions."""
+        """Allow parameters without restrictions."""
         return self.node_contents_visit(node)
 
     # Async und await
 
     def visit_AsyncFunctionDef(self, node):
-        """All async functions are denied by default."""
+        """Deny async functions."""
         self.not_allowed(node)
 
     def visit_Await(self, node):
-        """All async functionality are denied by default."""
+        """Deny async functionality."""
         self.not_allowed(node)
 
     def visit_AsyncFor(self, node):
-        """All async functionality are denied by default."""
+        """Deny async functionality."""
         self.not_allowed(node)
 
     def visit_AsyncWith(self, node):
-        """All async functionality are denied by default."""
+        """Deny async functionality."""
         self.not_allowed(node)

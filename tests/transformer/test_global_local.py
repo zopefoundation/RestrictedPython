@@ -34,7 +34,7 @@ outside()
 
 @pytest.mark.skipif(
     not IS_PY3,
-    reason="Nonlocal Statement was introducted on Python 3.0.")
+    reason="The `nonlocal` statement was introduced in Python 3.0.")
 @pytest.mark.parametrize(*c_exec)
 def test_Nonlocal(c_exec):
     result = c_exec(NONLOCAL_EXAMPLE)
