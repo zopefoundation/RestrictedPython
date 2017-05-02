@@ -14,12 +14,8 @@ def no_yield():
 def test_yield(c_exec):
     """It prevents using the `yield` statement."""
     result = c_exec(YIELD_EXAMPLE)
+    assert result.errors == ("Line 2: Yield statements are not allowed.",)
     assert result.code is None
-    assert result.errors == (
-        "Line 2: Yield statements are not allowed.",
-    )
-    assert result.warnings == []
-    assert result.used_names == {}
 
 
 # Modified Example from http://stackabuse.com/python-async-await-tutorial/
@@ -38,11 +34,5 @@ def get_json(client, url):
 @pytest.mark.parametrize(*c_exec)
 def test_yield_from(c_exec):
     result = c_exec(YIELD_FORM_EXAMPLE)
+    assert result.errors == ('Line 6: YieldFrom statements are not allowed.',)
     assert result.code is None
-    assert result.errors == (
-        'Line 6: YieldFrom statements are not allowed.',
-    )
-    assert result.warnings == []
-    assert result.used_names == {
-        'asyncio': True,
-    }

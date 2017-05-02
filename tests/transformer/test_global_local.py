@@ -38,7 +38,5 @@ outside()
 @pytest.mark.parametrize(*c_exec)
 def test_Nonlocal(c_exec):
     result = c_exec(NONLOCAL_EXAMPLE)
-    assert result.errors == (
-        'Line 5: Nonlocal statements are not allowed.',
-    )
+    assert result.errors == ('Line 5: Nonlocal statements are not allowed.',)
     assert result.code is None
