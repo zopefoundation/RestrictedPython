@@ -6,10 +6,10 @@ import pytest
 
 
 @pytest.mark.parametrize(*e_eval)
-def test_UAdd(c_eval, e_eval):
+def test_UAdd(e_eval):
     assert e_eval('+1') == 1
 
 
 @pytest.mark.parametrize(*e_eval)
-def test_USub(c_eval, e_eval):
+def test_USub(e_eval):
     assert e_eval('-1') == -1
