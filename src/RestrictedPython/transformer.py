@@ -631,17 +631,17 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         """
         UnaryOp (Unary Operations) is the overall element for:
         * Not --> which should be allowed
-        * UAdd --> Positive Notation of Variables (e.g. +var)
-        * USub --> Negative Notation of Variables (e.g. -var)
+        * UAdd --> Positive notation of Variables (e.g. +var)
+        * USub --> Negative notation of Variables (e.g. -var)
         """
         return self.node_contents_visit(node)
 
     def visit_UAdd(self, node):
-        """Positive Notation of Variables should be allowed. (e.g. +var)"""
+        """Positive notation of Variables should be allowed. (e.g. +var)"""
         return self.node_contents_visit(node)
 
     def visit_USub(self, node):
-        """Negativ Notation of Variables should be allowed. (e.g. -var)"""
+        """Negativ notation of Variables should be allowed. (e.g. -var)"""
         return self.node_contents_visit(node)
 
     def visit_Not(self, node):
