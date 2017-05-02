@@ -4,7 +4,6 @@ from tests import c_exec
 import pytest
 
 
-
 YIELD_EXAMPLE = """\
 def no_yield():
     yield 42
