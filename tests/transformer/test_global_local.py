@@ -13,10 +13,8 @@ a = 1
 @pytest.mark.parametrize(*c_exec)
 def test_Global(c_exec):
     result = c_exec(GLOBAL_EXAMPLE)
-    assert result.code is not None
     assert result.errors == ()
-    assert result.warnings == []
-    assert result.used_names == {}
+    assert result.code is not None
 
 
 # Example from:
@@ -40,16 +38,7 @@ outside()
 @pytest.mark.parametrize(*c_exec)
 def test_Nonlocal(c_exec):
     result = c_exec(NONLOCAL_EXAMPLE)
-    assert result.code is None
     assert result.errors == (
         'Line 5: Nonlocal statements are not allowed.',
     )
-    assert result.warnings == [
-        "Line 4: Prints, but never reads 'printed' variable.",
-        "Line 2: Prints, but never reads 'printed' variable."
-    ]
-    assert result.used_names == {
-        'msg': True,
-        'inside': True,
-        'outside': True
-    }
+    assert result.code is None

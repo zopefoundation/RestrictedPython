@@ -631,21 +631,21 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         """
         UnaryOp (Unary Operations) is the overall element for:
         * Not --> which should be allowed
-        * UAdd --> Positive notation of Variables (e.g. +var)
-        * USub --> Negative notation of Variables (e.g. -var)
+        * UAdd --> Positive notation of variables (e.g. +var)
+        * USub --> Negative notation of variables (e.g. -var)
         """
         return self.node_contents_visit(node)
 
     def visit_UAdd(self, node):
-        """Positive notation of Variables should be allowed. (e.g. +var)"""
+        """Allow positive notation of variables. (e.g. +var)"""
         return self.node_contents_visit(node)
 
     def visit_USub(self, node):
-        """Negativ notation of Variables should be allowed. (e.g. -var)"""
+        """Allow negative notation of variables. (e.g. -var)"""
         return self.node_contents_visit(node)
 
     def visit_Not(self, node):
-        """The `not` Operator should be allowed."""
+        """Allow the `not` operator."""
         return self.node_contents_visit(node)
 
     def visit_Invert(self, node):
@@ -653,7 +653,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         return self.node_contents_visit(node)
 
     def visit_BinOp(self, node):
-        """Binary Operations should be allowed."""
+        """Allow binary operations."""
         return self.node_contents_visit(node)
 
     def visit_Add(self, node):
@@ -1333,29 +1333,26 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         self.not_allowed(node)
 
     def visit_YieldFrom(self, node):
-        """Deny Yield From unconditionally."""
+        """Deny `yield from` unconditionally."""
         self.not_allowed(node)
 
     def visit_Global(self, node):
-        """Make `global` Statements allowed."""
+        """Make `global` statements allowed."""
         return self.node_contents_visit(node)
 
     def visit_Nonlocal(self, node):
-        """Allow `nonlocal` Statements.
+        """Deny `nonlocal` statements.
         This statement was introduced in Python 3."""
+        # TODO: Review if we want to allow it later
         self.not_allowed(node)
-        # TODO: Review
-        # return self.node_contents_visit(node)
 
     def visit_ClassDef(self, node):
         """Check the name of a class definition."""
-
         self.check_name(node, node.name)
         return self.node_contents_visit(node)
 
     def visit_Module(self, node):
         """Adds the print_collector (only if print is used) at the top."""
-
         node = self.node_contents_visit(node)
 
         # Inject the print collector after 'from __future__ import ....'
