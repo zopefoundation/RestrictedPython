@@ -1,20 +1,23 @@
 from RestrictedPython._compat import IS_PY3
 from tests import c_exec
+from tests import e_exec
 
 import pytest
 
 
 GLOBAL_EXAMPLE = """
-global a
-a = 1
+def x():
+    global a
+    a = 11
+x()
 """
 
 
-@pytest.mark.parametrize(*c_exec)
-def test_Global(c_exec):
-    result = c_exec(GLOBAL_EXAMPLE)
-    assert result.errors == ()
-    assert result.code is not None
+@pytest.mark.parametrize(*e_exec)
+def test_Global(e_exec):
+    glb = {'a': None}
+    e_exec(GLOBAL_EXAMPLE, glb)
+    assert glb['a'] == 11
 
 
 # Example from:
