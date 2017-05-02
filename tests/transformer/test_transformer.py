@@ -65,19 +65,6 @@ def test_transformer__RestrictingNodeTransformer__visit_Call__1(c_exec):
     assert result.used_names == {'max': True}
 
 
-YIELD = """\
-def no_yield():
-    yield 42
-"""
-
-
-@pytest.mark.parametrize(*c_exec)
-def test_transformer__RestrictingNodeTransformer__visit_Yield__1(c_exec):
-    """It prevents using the `yield` statement."""
-    result = c_exec(YIELD)
-    assert result.errors == ("Line 2: Yield statements are not allowed.",)
-
-
 EXEC_STATEMENT = """\
 def no_exec():
     exec 'q = 1'
