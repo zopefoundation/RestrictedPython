@@ -35,17 +35,21 @@ def _compile_restricted_mode(
         if not issubclass(type(source), tuple(allowed_source_types)):
             raise TypeError('Not allowed source type: '
                             '"{0.__class__.__name__}".'.format(source))
-        try:
-            c_ast = ast.parse(source, filename, mode)
-        except (TypeError, ValueError) as e:
-            errors.append(str(e))
-        except SyntaxError as v:
-            errors.append(syntax_error_template.format(
-                lineno=v.lineno,
-                type=v.__class__.__name__,
-                msg=v.msg,
-                statement=v.text.strip()
-            ))
+        c_ast = None
+        if isinstance(source, ast.Module):
+            c_ast = source
+        else:
+            try:
+                c_ast = ast.parse(source, filename, mode)
+            except (TypeError, ValueError) as e:
+                errors.append(str(e))
+            except SyntaxError as v:
+                errors.append(syntax_error_template.format(
+                    lineno=v.lineno,
+                    type=v.__class__.__name__,
+                    msg=v.msg,
+                    statement=v.text.strip()
+                ))
         if c_ast:
             policy(errors, warnings, used_names).visit(c_ast)
             if not errors:
@@ -128,10 +132,9 @@ def compile_restricted_function(
     treated as globals (code is generated as if each name in the list
     appeared in a global statement at the top of the function).
     """
-    # TODO: Special function not comparable with the other restricted_compile_* functions.  # NOQA
-
     # Parse the parameters and body, then combine them.
-    wrapper_ast = ast.parse('def %s(%s): pass' % (name, p), '<func wrapper>', 'exec')
+    wrapper_ast = ast.parse('def %s(%s): pass' % (name, p),
+                            '<func wrapper>', 'exec')
 
     body_ast = ast.parse(body, '<func code>', 'exec')
     wrapper_ast.body[0].body = body_ast.body

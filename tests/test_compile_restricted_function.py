@@ -1,11 +1,9 @@
-from RestrictedPython import safe_builtins
 from RestrictedPython import PrintCollector
+from RestrictedPython import safe_builtins
 from tests import c_function
-import operator
+from types import FunctionType
 
 import pytest
-
-from types import FunctionType
 
 
 @pytest.mark.parametrize(*c_function)
@@ -28,8 +26,12 @@ return printed
 
     assert result.code is not None
     assert result.errors == ()
-    # import pdb; pdb.set_trace()
-    safe_globals = {'__name__': 'script', '_getattr_': getattr, '_print_': PrintCollector}
+
+    safe_globals = {
+        '__name__': 'script',
+        '_getattr_': getattr,
+        '_print_': PrintCollector
+    }
     safe_globals.update(safe_builtins)
     safe_locals = {}
     exec(result.code, safe_globals, safe_locals)
@@ -93,13 +95,18 @@ return printed
     assert result.code is not None
     assert result.errors == ()
 
-    safe_globals = {'__name__': 'script', '_getattr_': getattr, '_print_': PrintCollector}
+    safe_globals = {
+        '__name__': 'script',
+        '_getattr_': getattr,
+        '_print_': PrintCollector
+    }
     safe_globals.update(safe_builtins)
     safe_locals = {}
     exec(result.code, safe_globals, safe_locals)
     hello_world = safe_locals['hello_world']
     assert type(hello_world) == FunctionType
     assert hello_world('Hello World!') == 'Hello World!\n'
+
 
 @pytest.mark.parametrize(*c_function)
 def test_compile_restricted_function_with_global_variables(c_function):
