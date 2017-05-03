@@ -17,7 +17,7 @@ def _compile_restricted_mode(
         filename='<string>',
         mode="exec",
         flags=0,
-        dont_inherit=0,
+        dont_inherit=False,
         policy=RestrictingNodeTransformer):
     byte_code = None
     errors = []
@@ -62,7 +62,7 @@ def compile_restricted_exec(
         source,
         filename='<string>',
         flags=0,
-        dont_inherit=0,
+        dont_inherit=False,
         policy=RestrictingNodeTransformer):
     """Compile restricted for the mode `exec`."""
     return _compile_restricted_mode(
@@ -78,7 +78,7 @@ def compile_restricted_eval(
         source,
         filename='<string>',
         flags=0,
-        dont_inherit=0,
+        dont_inherit=False,
         policy=RestrictingNodeTransformer):
     """Compile restricted for the mode `eval`."""
     return _compile_restricted_mode(
@@ -94,7 +94,7 @@ def compile_restricted_single(
         source,
         filename='<string>',
         flags=0,
-        dont_inherit=0,
+        dont_inherit=False,
         policy=RestrictingNodeTransformer):
     """Compile restricted for the mode `single`."""
     return _compile_restricted_mode(
@@ -112,6 +112,8 @@ def compile_restricted_function(
         name,
         filename='<string>',
         globalize=None,  # List of globals (e.g. )
+        flags=0,
+        dont_inherit=False,
         policy=RestrictingNodeTransformer):
     """Compile a restricted code object for a function.
 
@@ -129,14 +131,14 @@ def compile_restricted_function(
     # TODO: Special function not comparable with the other restricted_compile_* functions.  # NOQA
 
     result = _compile_restricted_mode(
-        source,
+        body,
         filename=filename,
         mode='exec',
         flags=flags,
         dont_inherit=dont_inherit,
         policy=policy)
 
-    return None
+    return result
 
 
 def compile_restricted(
@@ -144,7 +146,7 @@ def compile_restricted(
         filename='<unknown>',
         mode='exec',
         flags=0,
-        dont_inherit=0,
+        dont_inherit=False,
         policy=RestrictingNodeTransformer):
     """Replacement for the built-in compile() function.
 
