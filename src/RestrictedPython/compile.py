@@ -29,7 +29,7 @@ def _compile_restricted_mode(
                             dont_inherit=dont_inherit)
     elif issubclass(policy, RestrictingNodeTransformer):
         c_ast = None
-        allowed_source_types = [str]
+        allowed_source_types = [str, ast.Module]
         if IS_PY2:
             allowed_source_types.append(unicode)
         if not issubclass(type(source), tuple(allowed_source_types)):
@@ -130,8 +130,14 @@ def compile_restricted_function(
     """
     # TODO: Special function not comparable with the other restricted_compile_* functions.  # NOQA
 
+    # Parse the parameters and body, then combine them.
+    wrapper_ast = ast.parse('def %s(%s): pass' % (name, p), '<func wrapper>', 'exec')
+
+    body_ast = ast.parse(body, '<func code>', 'exec')
+    wrapper_ast.body[0].body = body_ast.body
+
     result = _compile_restricted_mode(
-        body,
+        wrapper_ast,
         filename=filename,
         mode='exec',
         flags=flags,
