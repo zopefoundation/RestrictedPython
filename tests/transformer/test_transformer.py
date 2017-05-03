@@ -1275,14 +1275,30 @@ def test_transformer__RestrictingNodeTransformer__visit_Import__9(c_exec):
     assert result.errors == (import_errmsg % '_leading_underscore',)
 
 
+GOOD_CLASS = '''
+class Good:
+    pass
+'''
+
+
 @pytest.mark.parametrize(*c_exec)
-def test_transformer__RestrictingNodeTransformer__visit_ClassDef(c_exec):
-    result = c_exec('class Good: pass')
+def test_transformer__RestrictingNodeTransformer__visit_ClassDef__1(c_exec):
+    """It allows to define an class."""
+    result = c_exec(GOOD_CLASS)
     assert result.errors == ()
     assert result.code is not None
 
-    # Do not allow class names which start with an underscore.
-    result = c_exec('class _bad: pass')
+
+BAD_CLASS = '''\
+class _bad:
+    pass
+'''
+
+
+@pytest.mark.parametrize(*c_exec)
+def test_transformer__RestrictingNodeTransformer__visit_ClassDef__2(c_exec):
+    """It does not allow class names which start with an underscore."""
+    result = c_exec(BAD_CLASS)
     assert result.errors == (
         'Line 1: "_bad" is an invalid variable name '
         'because it starts with "_"',)
