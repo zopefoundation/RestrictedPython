@@ -107,23 +107,35 @@ def compile_restricted_single(
 
 
 def compile_restricted_function(
-        p,
+        p,  # parameters
         body,
         name,
         filename='<string>',
-        globalize=None,
+        globalize=None,  # List of globals (e.g. )
         policy=RestrictingNodeTransformer):
     """Compile a restricted code object for a function.
 
     The function can be reconstituted using the 'new' module:
 
-    new.function(<code>, <globals>)
+    new.function(<code>, <globals>)  --> in Python 2 up to Python 2.7
+    types.FunctionType(<code>, <globals> [, name [argdefs[, closure]]])  -->
+    in Python 3 and Python 2.7
+    it has the same signature.
 
     The globalize argument, if specified, is a list of variable names to be
     treated as globals (code is generated as if each name in the list
     appeared in a global statement at the top of the function).
     """
     # TODO: Special function not comparable with the other restricted_compile_* functions.  # NOQA
+
+    result = _compile_restricted_mode(
+        source,
+        filename=filename,
+        mode='exec',
+        flags=flags,
+        dont_inherit=dont_inherit,
+        policy=policy)
+
     return None
 
 
