@@ -18,10 +18,12 @@
 from ._compat import IS_PY2
 
 
-try:
-    import builtins
-except ImportError:
+if IS_PY2:
     import __builtin__ as builtins
+else:
+    # Do not attempt to use this package on Python2.7 as there
+    # might be backports for this package such as future.
+    import builtins
 
 safe_builtins = {}
 
