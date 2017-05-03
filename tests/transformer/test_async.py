@@ -5,6 +5,7 @@ from tests import c_exec
 
 import pytest
 
+
 pytestmark = pytest.mark.skipif(
     not IS_PY35_OR_GREATER,
     reason="async statement was first introduced in Python 3.5")
