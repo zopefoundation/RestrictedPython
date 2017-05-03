@@ -49,6 +49,7 @@ _safe_names = [
     'range',
     'repr',
     'round',
+    'slice',
     'str',
     'tuple',
     'zip'
@@ -178,7 +179,6 @@ for name in _safe_exceptions:
 # object
 # property
 # reload
-# slice
 # staticmethod
 # super
 # type

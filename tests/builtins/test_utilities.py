@@ -1,4 +1,5 @@
 from RestrictedPython._compat import IS_PY3
+
 import pytest
 
 
