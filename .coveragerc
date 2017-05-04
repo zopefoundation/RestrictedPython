@@ -2,10 +2,15 @@
 branch = True
 source = RestrictedPython
 omit =
+    bootstrap.py
+    tests/*.py
     src/RestrictedPython/tests
     src/RestrictedPython/tests/*.py
-    tests/*.py
-    bootstrap.py
+    # Explicit exclude old implementation for the moment.
+    # should be removed when those files have gone.
+    src/RestrictedPython/SelectCompiler.py
+    src/RestrictedPython/MutatingWalker.py
+    src/RestrictedPython/RestrictionMutator.py
 
 [report]
 precision = 3
