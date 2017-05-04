@@ -25,3 +25,12 @@ from RCompile import compile_restricted_function
 
 # Use the compiler from the standard library.
 import compiler
+import warnings
+
+
+warnings.warn(
+    "This Module (RestrictedPython.SelectCompiler) is deprecated"
+    "and will be gone soon.",
+    category=PendingDeprecationWarning,
+    stacklevel=1
+)

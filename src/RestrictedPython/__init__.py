@@ -17,7 +17,7 @@
 # as this file should be logically grouped imports
 
 
-# Old API --> Old Import Locations
+# Old API --> Old Import Locations (Deprecated)
 # from RestrictedPython.RCompile import compile_restricted
 # from RestrictedPython.RCompile import compile_restricted_eval
 # from RestrictedPython.RCompile import compile_restricted_exec
@@ -43,5 +43,5 @@ from RestrictedPython.compile import CompileResult  # isort:skip
 # Policy
 from RestrictedPython.transformer import RestrictingNodeTransformer  # isort:skip
 
-
-# from RestrictedPython.Eval import RestrictionCapableEval
+#
+from RestrictedPython.Eval import RestrictionCapableEval
