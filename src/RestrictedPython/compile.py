@@ -165,7 +165,7 @@ def compile_restricted_function(
     # We don't want the user to need to understand this.
     if globalize:
         body_ast.body.insert(0, ast.Global(globalize))
-    wrapper_ast = ast.parse('def irrelevant(%s): pass' % p,
+    wrapper_ast = ast.parse('def masked_function_name(%s): pass' % p,
                             '<func wrapper>', 'exec')
     # In case the name you chose for your generated function is not a valid python identifier
     # we set it after the fact

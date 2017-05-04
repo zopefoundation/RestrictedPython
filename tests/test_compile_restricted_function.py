@@ -172,3 +172,33 @@ def test_compile_restricted_function_pretends_the_code_is_executed_in_a_global_s
     assert type(hello_world) == FunctionType
     hello_world()
     assert safe_globals['output'] == 'foobar'
+
+@pytest.mark.parametrize(*c_function)
+def test_compile_restricted_function_allows_invalid_python_identifiers_as_function_name(c_function):  # NOQA: E501
+    p = ''
+    body = """output = output + 'bar'"""
+    name = "<foo>.bar.__baz__"
+    global_symbols = ['output']
+
+    result = c_function(
+        p,  # parameters
+        body,
+        name,
+        filename='<string>',
+        globalize=global_symbols
+    )
+
+    assert result.code is not None
+    assert result.errors == ()
+
+    safe_globals = {
+        '__name__': 'script',
+        'output': 'foo',
+    }
+    # safe_globals.update(safe_builtins)
+    safe_locals = {}
+    exec(result.code, safe_globals, safe_locals)
+    generated_function = tuple(safe_locals.values())[0]
+    assert type(generated_function) == FunctionType
+    generated_function()
+    assert safe_globals['output'] == 'foobar'
