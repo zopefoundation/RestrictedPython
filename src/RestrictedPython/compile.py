@@ -36,6 +36,7 @@ def _compile_restricted_mode(
             raise TypeError('Not allowed source type: '
                             '"{0.__class__.__name__}".'.format(source))
         c_ast = None
+        # workaround for pypy issue https://bitbucket.org/pypy/pypy/issues/2552
         if isinstance(source, ast.Module):
             c_ast = source
         else:
