@@ -165,8 +165,13 @@ def compile_restricted_function(
     # We don't want the user to need to understand this.
     if globalize:
         body_ast.body.insert(0, ast.Global(globalize))
-    wrapper_ast = ast.parse('def %s(%s): pass' % (name, p),
+    wrapper_ast = ast.parse('def irrelevant(%s): pass' % p,
                             '<func wrapper>', 'exec')
+    # In case the name you chose for your generated function is not a valid python identifier
+    # we set it after the fact
+    function_ast = wrapper_ast.body[0]
+    assert isinstance(function_ast, ast.FunctionDef)
+    function_ast.name = name
 
     wrapper_ast.body[0].body = body_ast.body
     wrapper_ast = ast.fix_missing_locations(wrapper_ast)
@@ -178,7 +183,7 @@ def compile_restricted_function(
         flags=flags,
         dont_inherit=dont_inherit,
         policy=policy)
-
+    
     return result
 
 
