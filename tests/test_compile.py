@@ -181,6 +181,24 @@ def a():
     reason="Print statement is gone in Python 3."
            "Test Deprecation Warming in Python 2")
 def test_compile_restricted():
-    with pytest.warns(SyntaxWarning):
+    with pytest.warns(SyntaxWarning) as record:
         result = compile_restricted(PRINT_EXAMPLE, '<string>', 'exec')
         assert isinstance(result, types.CodeType)
+        assert len(record) == 2
+        assert record[0].message.args[0] == \
+            'Line 3: Print statement is deprecated ' \
+            'and not avaliable anymore in Python 3.'
+        assert record[1].message.args[0] == \
+            "Line 2: Prints, but never reads 'printed' variable."
+
+
+EVAL_EXAMPLE = """
+def a():
+    eval('2 + 2')
+"""
+
+
+def test_compile_restricted_eval():
+    with pytest.raises(SyntaxError,
+                       message="Line 3: Eval calls are not allowed."):
+        compile_restricted(EVAL_EXAMPLE, '<string>', 'exec')
