@@ -13,6 +13,16 @@
 
 from compiler import ast
 
+import warnings
+
+
+warnings.warn(
+    "This Module (RestrictedPython.MutatingWalker) is deprecated"
+    "and will be gone soon.",
+    category=PendingDeprecationWarning,
+    stacklevel=1
+)
+
 
 ListType = type([])
 TupleType = type(())

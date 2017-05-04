@@ -23,6 +23,7 @@ function.
 
 import dis
 import types
+import warnings
 
 
 def verify(code):
@@ -31,6 +32,13 @@ def verify(code):
     In particular, traverse into contained code objects in the
     co_consts table.
     """
+    warnings.warn(
+        "RestrictedPython.test.verify is deprecated and will be gone soon."
+        "verify(<code>) tests on byte code level, which did not make sense"
+        "with new implementation which is Python Implementation independend.",
+        category=PendingDeprecationWarning,
+        stacklevel=1
+    )
     verifycode(code)
     for ob in code.co_consts:
         if isinstance(ob, types.CodeType):
