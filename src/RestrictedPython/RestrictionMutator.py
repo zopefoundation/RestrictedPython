@@ -23,6 +23,16 @@ from compiler.consts import OP_ASSIGN
 from compiler.consts import OP_DELETE
 from compiler.transformer import parse
 
+import warnings
+
+
+warnings.warn(
+    "This Module (RestrictedPython.RestrictionMutator) is deprecated"
+    "and will be gone soon.",
+    category=PendingDeprecationWarning,
+    stacklevel=1
+)
+
 
 # These utility functions allow us to generate AST subtrees without
 # line number attributes.  These trees can then be inserted into other
