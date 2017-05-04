@@ -142,8 +142,9 @@ return printed
     assert type(hello_world) == FunctionType
     assert hello_world() == 'Hello World!\n'
 
+
 @pytest.mark.parametrize(*c_function)
-def test_compile_restricted_function_pretends_the_code_is_executed_in_a_global_scope(c_function):
+def test_compile_restricted_function_pretends_the_code_is_executed_in_a_global_scope(c_function):  # NOQA: E501
     p = ''
     body = """output = output + 'bar'"""
     name = "hello_world"
@@ -156,7 +157,7 @@ def test_compile_restricted_function_pretends_the_code_is_executed_in_a_global_s
         filename='<string>',
         globalize=global_symbols
     )
-    
+
     assert result.code is not None
     assert result.errors == ()
 

@@ -1,6 +1,7 @@
 from RestrictedPython import compile_restricted
 from RestrictedPython import CompileResult
 from RestrictedPython._compat import IS_PY2
+from RestrictedPython._compat import IS_PY3
 from tests import c_eval
 from tests import c_exec
 from tests import c_single
@@ -8,6 +9,7 @@ from tests import e_eval
 
 import pytest
 import RestrictedPython.compile
+import types
 
 
 def test_compile__compile_restricted_invalid_code_input():
@@ -166,3 +168,19 @@ def test_compile__compile_restricted_csingle(c_single):
     assert result.errors == (
         'Line None: Interactive statements are not allowed.',
     )
+
+
+PRINT_EXAMPLE = """
+def a():
+    print 'Hello World!'
+"""
+
+
+@pytest.mark.skipif(
+    IS_PY3,
+    reason="Print statement is gone in Python 3."
+           "Test Deprecation Warming in Python 2")
+def test_compile_restricted():
+    with pytest.warns(SyntaxWarning):
+        result = compile_restricted(PRINT_EXAMPLE, '<string>', 'exec')
+        assert isinstance(result, types.CodeType)
