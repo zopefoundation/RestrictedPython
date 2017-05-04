@@ -19,6 +19,8 @@ def _exec(compile_func):
             glb = {}
         exec(code, glb)
         return glb
+    # The next line can be dropped after the old implementation was dropped.
+    _exec.compile_func = compile_func
     return _exec
 
 

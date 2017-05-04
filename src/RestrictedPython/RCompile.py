@@ -30,6 +30,15 @@ from compiler.pycodegen import ModuleCodeGenerator
 from RestrictionMutator import RestrictionMutator
 
 import MutatingWalker
+import warnings
+
+
+warnings.warn(
+    "This Module (RestrictedPython.RCompile) is deprecated"
+    "and will be gone soon.",
+    category=PendingDeprecationWarning,
+    stacklevel=1
+)
 
 
 def niceParse(source, filename, mode):
@@ -101,24 +110,48 @@ def compile_restricted_function(p, body, name, filename, globalize=None):
     treated as globals (code is generated as if each name in the list
     appeared in a global statement at the top of the function).
     """
+    warnings.warn(
+        "RestrictedPython.RCompile.compile_restricted_function is deprecated"
+        "use RestrictedPython.compile_restricted_function instead.",
+        category=PendingDeprecationWarning,
+        stacklevel=1
+    )
     gen = RFunction(p, body, name, filename, globalize)
     return compileAndTuplize(gen)
 
 
 def compile_restricted_exec(source, filename='<string>'):
     """Compiles a restricted code suite."""
+    warnings.warn(
+        "RestrictedPython.RCompile.compile_restricted_exec is deprecated"
+        "use RestrictedPython.compile_restricted_exec instead.",
+        category=PendingDeprecationWarning,
+        stacklevel=1
+    )
     gen = RModule(source, filename)
     return compileAndTuplize(gen)
 
 
 def compile_restricted_eval(source, filename='<string>'):
     """Compiles a restricted expression."""
+    warnings.warn(
+        "RestrictedPython.RCompile.compile_restricted_eval is deprecated"
+        "use RestrictedPython.compile_restricted_eval instead.",
+        category=PendingDeprecationWarning,
+        stacklevel=1
+    )
     gen = RExpression(source, filename)
     return compileAndTuplize(gen)
 
 
 def compile_restricted(source, filename, mode):
     """Replacement for the builtin compile() function."""
+    warnings.warn(
+        "RestrictedPython.RCompile.compile_restricted is deprecated"
+        "use RestrictedPython.compile_restricted instead.",
+        category=PendingDeprecationWarning,
+        stacklevel=1
+    )
     if mode == "single":
         gen = RInteractive(source, filename)
     elif mode == "exec":

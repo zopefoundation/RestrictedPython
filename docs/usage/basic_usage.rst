@@ -88,3 +88,17 @@ So you normally end up using:
         pass
 
 One common advanced usage would be to define an own restricted builtin dictionary.
+
+Necessary setup
+---------------
+
+`RestrictedPython` requires some predefined names in globals in order to work
+properly.
+
+To use classes in Python 3
+    ``__metaclass__`` must be set. Set it to ``type`` to use no custom metaclass.
+
+To use ``for`` statements and comprehensions
+    ``_iter_unpack_sequence_`` must point to :func:`RestrictedPython.Guards.guarded_iter_unpack_sequence`.
+
+The usage of `RestrictedPython` in :mod:`AccessControl.ZopeGuards` can serve as example.
