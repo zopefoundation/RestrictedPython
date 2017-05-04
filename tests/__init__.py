@@ -40,7 +40,8 @@ def _single(compile_func):
         code = _compile(compile_func, source)
         if glb is None:
             glb = {}
-        return exec(code, glb)
+        exec(code, glb)
+        return glb
     return _single
 
 
@@ -76,10 +77,10 @@ if IS_PY2:
     from RestrictedPython import RCompile
     c_exec[1].append(RCompile.compile_restricted_exec)
     c_eval[1].append(RCompile.compile_restricted_eval)
-    c_single[1].append(RCompile.compile_restricted_single)
+    # c_single[1].append(lambda source, filename: RCompile.compile_restricted(source, filename, 'single'))  # NOQA: E501
     c_function[1].append(RCompile.compile_restricted_function)
 
     e_exec[1].append(_exec(RCompile.compile_restricted_exec))
     e_eval[1].append(_eval(RCompile.compile_restricted_eval))
-    e_single[1].append(_single(RCompile.compile_restricted_single))
+    # e_single[1].append(_single(lambda source, filename: RCompile.compile_restricted(source, filename, 'single')))  # NOQA: E501
     e_function[1].append(_function(RCompile.compile_restricted_function))
