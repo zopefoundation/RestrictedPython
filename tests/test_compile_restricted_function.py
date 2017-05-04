@@ -109,7 +109,7 @@ return printed
 
 
 @pytest.mark.parametrize(*c_function)
-def test_compile_restricted_function_with_global_variables(c_function):
+def test_compile_restricted_function_can_access_global_variables(c_function):
     p = ''
     body = """
 print(input)
@@ -141,3 +141,33 @@ return printed
     hello_world = safe_locals['hello_world']
     assert type(hello_world) == FunctionType
     assert hello_world() == 'Hello World!\n'
+
+@pytest.mark.parametrize(*c_function)
+def test_compile_restricted_function_pretends_the_code_is_executed_in_a_global_scope(c_function):
+    p = ''
+    body = """output = output + 'bar'"""
+    name = "hello_world"
+    global_symbols = ['output']
+
+    result = c_function(
+        p,  # parameters
+        body,
+        name,
+        filename='<string>',
+        globalize=global_symbols
+    )
+    
+    assert result.code is not None
+    assert result.errors == ()
+
+    safe_globals = {
+        '__name__': 'script',
+        'output': 'foo',
+    }
+    # safe_globals.update(safe_builtins)
+    safe_locals = {}
+    exec(result.code, safe_globals, safe_locals)
+    hello_world = safe_locals.values()[0] # there can only be one
+    assert type(hello_world) == FunctionType
+    hello_world()
+    assert safe_globals['output'] == 'foobar'

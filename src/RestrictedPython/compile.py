@@ -121,25 +121,49 @@ def compile_restricted_function(
         dont_inherit=False,
         policy=RestrictingNodeTransformer):
     """Compile a restricted code object for a function.
-
-    The function can be reconstituted using the 'new' module:
-
-    new.function(<code>, <globals>)  --> in Python 2 up to Python 2.7
-    types.FunctionType(<code>, <globals> [, name [argdefs[, closure]]])  -->
-    in Python 3 and Python 2.7
-    it has the same signature.
-
+    
     The globalize argument, if specified, is a list of variable names to be
     treated as globals (code is generated as if each name in the list
-    appeared in a global statement at the top of the function).
+    appeared in a global statement at the top of the function). This allows to inject 
+    global variables into the generated function that feel like they are local variables,
+    so the programmer who uses this doesn't have to understand that his code is executed 
+    inside a function scope instead of the global scope of a module.
+    
+    To actually get an executable function, you need to execute this code and 
+    pull out the defined function out of the locals like this:
+    
+    >>> compiled = compile_restricted_function('', 'pass', 'function_name')
+    >>> safe_locals = {}
+    >>> safe_globals = {}
+    >>> exec(compiled.code, safe_globals, safe_locals)
+    >>> compiled_function = safe_locals.values()[0]
+    >>> result = compiled_function(*[], **{})
+    
+    Then if you want to controll the globals for a specific call to this function, you 
+    can regenerate the function like this:
+    
+    >>> my_call_specific_global_bindings = dict(foo='bar')
+    >>> safe_globals = safe_globals.copy()
+    >>> safe_globals.update(my_call_specific_global_bindings)
+    >>> import types
+    >>> new_function = types.FunctionType(compiled_function.func_code, safe_globals, \
+            '<function_name>', compiled_function.func_defaults or ())
+    >>> result = new_function(*[], **{})
     """
     # Parse the parameters and body, then combine them.
-    wrapper_ast = ast.parse('def %s(%s): pass' % (name, p),
-                            '<func wrapper>', 'exec')
-
     body_ast = ast.parse(body, '<func code>', 'exec')
+    
+    # The compiled code is actually executed inside a function (that is called when the 
+    # code is called) so reading and assigning to a global variable like this 
+    # `printed += 'foo'` would throw an UnboundLocalError.
+    # We don't want the user to need to understand this.
+    if globalize is not None:
+        body_ast.body.insert(0, ast.Global(globalize))
+    wrapper_ast = ast.parse('def %s(%s): pass' % (name, p), '<func wrapper>', 'exec')
+    
     wrapper_ast.body[0].body = body_ast.body
-
+    wrapper_ast = ast.fix_missing_locations(wrapper_ast)
+    
     result = _compile_restricted_mode(
         wrapper_ast,
         filename=filename,
@@ -147,7 +171,7 @@ def compile_restricted_function(
         flags=flags,
         dont_inherit=dont_inherit,
         policy=policy)
-
+    
     return result
 
 
