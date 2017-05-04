@@ -98,7 +98,7 @@ def test_print_stmt__protect_chevron_print(c_exec, mocker):
     _getattr_.side_effect = getattr
     glb = {'_getattr_': _getattr_, '_print_': PrintCollector}
 
-    exec(code,  glb)
+    exec(code, glb)
 
     stream = mocker.stub()
     stream.write = mocker.stub()

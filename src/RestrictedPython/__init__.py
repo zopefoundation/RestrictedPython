@@ -12,6 +12,8 @@
 ##############################################################################
 """RestrictedPython package."""
 
+# flake8: NOQA: E401
+
 # This is a file to define public API in the base namespace of the package.
 # use: isor:skip to supress all isort related warnings / errors,
 # as this file should be logically grouped imports
