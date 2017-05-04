@@ -3,6 +3,7 @@ from RestrictedPython import CompileResult
 from RestrictedPython._compat import IS_PY2
 from tests import c_eval
 from tests import c_exec
+from tests import c_single
 from tests import e_eval
 
 import pytest
@@ -155,3 +156,13 @@ def test_compile__compile_restricted_eval__used_names(c_eval):
     assert result.errors == ()
     assert result.warnings == []
     assert result.used_names == {'a': True, 'b': True, 'x': True, 'func': True}
+
+
+@pytest.mark.parametrize(*c_single)
+def test_compile__compile_restricted_csingle(c_single):
+    """It compiles code as an Expression."""
+    result = c_single('4 * 6')
+    assert result.code is None
+    assert result.errors == (
+        'Line None: Interactive statements are not allowed.',
+    )
