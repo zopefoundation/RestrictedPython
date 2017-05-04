@@ -167,7 +167,7 @@ def test_compile_restricted_function_pretends_the_code_is_executed_in_a_global_s
     # safe_globals.update(safe_builtins)
     safe_locals = {}
     exec(result.code, safe_globals, safe_locals)
-    hello_world = safe_locals.values()[0] # there can only be one
+    hello_world = safe_locals['hello_world']
     assert type(hello_world) == FunctionType
     hello_world()
     assert safe_globals['output'] == 'foobar'

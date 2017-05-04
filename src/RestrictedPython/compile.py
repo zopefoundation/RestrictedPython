@@ -157,7 +157,7 @@ def compile_restricted_function(
     # code is called) so reading and assigning to a global variable like this 
     # `printed += 'foo'` would throw an UnboundLocalError.
     # We don't want the user to need to understand this.
-    if globalize is not None:
+    if globalize:
         body_ast.body.insert(0, ast.Global(globalize))
     wrapper_ast = ast.parse('def %s(%s): pass' % (name, p), '<func wrapper>', 'exec')
     
