@@ -119,7 +119,10 @@ if IS_PY2:
     _safe_exceptions.extend([
         'StandardError',
     ])
-
+else:
+    _safe_names.extend([
+        '__build_class__',  # needed to define new classes
+    ])
 
 for name in _safe_names:
     safe_builtins[name] = getattr(builtins, name)
