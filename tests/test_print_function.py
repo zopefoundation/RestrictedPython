@@ -305,6 +305,7 @@ def test_print_function_no_new_scope():
     code, errors = compiler(NO_PRINT_SCOPES)[:2]
     glb = {
         '_print_': PrintCollector,
+        '__metaclass__': type,
         '_getattr_': None,
         '_getiter_': lambda ob: ob
     }

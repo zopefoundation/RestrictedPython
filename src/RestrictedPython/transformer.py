@@ -29,6 +29,7 @@ from ._compat import IS_PY35_OR_GREATER
 
 import ast
 import contextlib
+import textwrap
 
 
 # For AugAssign the operator must be converted to a string.
@@ -1346,7 +1347,22 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
     def visit_ClassDef(self, node):
         """Check the name of a class definition."""
         self.check_name(node, node.name)
-        return self.node_contents_visit(node)
+        node = self.node_contents_visit(node)
+        if IS_PY2:
+            new_class_node = node
+        else:
+            if any(keyword.arg == 'metaclass' for keyword in node.keywords):
+                self.error(
+                    node, 'The keyword argument "metaclass" is not allowed.')
+            CLASS_DEF = textwrap.dedent('''\
+                class {0.name}(metaclass=__metaclass__):
+                    pass
+            '''.format(node))
+            new_class_node = ast.parse(CLASS_DEF).body[0]
+            new_class_node.body = node.body
+            new_class_node.bases = node.bases
+            new_class_node.decorator_list = node.decorator_list
+        return new_class_node
 
     def visit_Module(self, node):
         """Add the print_collector (only if print is used) at the top."""

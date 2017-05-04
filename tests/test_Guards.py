@@ -33,6 +33,7 @@ def test_Guards__safe_builtins__2(e_exec):
     restricted_globals = dict(
         __builtins__=safe_builtins, b=None,
         __name__='restricted_module',
+        __metaclass__=type,
         _write_=lambda x: x,
         _getattr_=getattr)
 
