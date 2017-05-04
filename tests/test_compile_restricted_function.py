@@ -173,6 +173,7 @@ def test_compile_restricted_function_pretends_the_code_is_executed_in_a_global_s
     hello_world()
     assert safe_globals['output'] == 'foobar'
 
+
 @pytest.mark.parametrize(*c_function)
 def test_compile_restricted_function_allows_invalid_python_identifiers_as_function_name(c_function):  # NOQA: E501
     p = ''
