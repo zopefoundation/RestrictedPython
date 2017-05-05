@@ -10,23 +10,126 @@
 # FOR A PARTICULAR PURPOSE
 #
 ##############################################################################
-__version__ = '$Revision: 1.14 $'[11:-2]
-
-import exceptions
 
 # This tiny set of safe builtins is extended by users of the module.
 # AccessControl.ZopeGuards contains a large set of wrappers for builtins.
 # DocumentTemplate.DT_UTil contains a few.
 
+from ._compat import IS_PY2
+
+
+if IS_PY2:
+    import __builtin__ as builtins
+else:
+    # Do not attempt to use this package on Python2.7 as there
+    # might be backports for this package such as future.
+    import builtins
+
 safe_builtins = {}
 
-for name in ['False', 'None', 'True', 'abs', 'basestring', 'bool', 'callable',
-             'chr', 'cmp', 'complex', 'divmod', 'float', 'hash',
-             'hex', 'id', 'int', 'isinstance', 'issubclass', 'len',
-             'long', 'oct', 'ord', 'pow', 'range', 'repr', 'round',
-             'str', 'tuple', 'unichr', 'unicode', 'xrange', 'zip']:
+_safe_names = [
+    'None',
+    'False',
+    'True',
+    'abs',
+    'bool',
+    'callable',
+    'chr',
+    'complex',
+    'divmod',
+    'float',
+    'hash',
+    'hex',
+    'id',
+    'int',
+    'isinstance',
+    'issubclass',
+    'len',
+    'oct',
+    'ord',
+    'pow',
+    'range',
+    'repr',
+    'round',
+    'slice',
+    'str',
+    'tuple',
+    'zip'
+]
 
-    safe_builtins[name] = __builtins__[name]
+_safe_exceptions = [
+    'ArithmeticError',
+    'AssertionError',
+    'AttributeError',
+    'BaseException',
+    'BufferError',
+    'BytesWarning',
+    'DeprecationWarning',
+    'EOFError',
+    'EnvironmentError',
+    'Exception',
+    'FloatingPointError',
+    'FutureWarning',
+    'GeneratorExit',
+    'IOError',
+    'ImportError',
+    'ImportWarning',
+    'IndentationError',
+    'IndexError',
+    'KeyError',
+    'KeyboardInterrupt',
+    'LookupError',
+    'MemoryError',
+    'NameError',
+    'NotImplementedError',
+    'OSError',
+    'OverflowError',
+    'PendingDeprecationWarning',
+    'ReferenceError',
+    'RuntimeError',
+    'RuntimeWarning',
+    'StopIteration',
+    'SyntaxError',
+    'SyntaxWarning',
+    'SystemError',
+    'SystemExit',
+    'TabError',
+    'TypeError',
+    'UnboundLocalError',
+    'UnicodeDecodeError',
+    'UnicodeEncodeError',
+    'UnicodeError',
+    'UnicodeTranslateError',
+    'UnicodeWarning',
+    'UserWarning',
+    'ValueError',
+    'Warning',
+    'ZeroDivisionError',
+]
+
+if IS_PY2:
+    _safe_names.extend([
+        'basestring',
+        'cmp',
+        'long',
+        'unichr',
+        'unicode',
+        'xrange',
+    ])
+    _safe_exceptions.extend([
+        'StandardError',
+    ])
+else:
+    _safe_names.extend([
+        '__build_class__',  # needed to define new classes
+    ])
+
+for name in _safe_names:
+    safe_builtins[name] = getattr(builtins, name)
+
+for name in _safe_exceptions:
+    safe_builtins[name] = getattr(builtins, name)
+
 
 # Wrappers provided by this module:
 # delattr
@@ -81,14 +184,10 @@ for name in ['False', 'None', 'True', 'abs', 'basestring', 'bool', 'callable',
 # object
 # property
 # reload
-# slice
 # staticmethod
 # super
 # type
 
-for name in dir(exceptions):
-    if name[0] != "_":
-        safe_builtins[name] = getattr(exceptions, name)
 
 def _write_wrapper():
     # Construct the write wrapper class
@@ -98,44 +197,102 @@ def _write_wrapper():
             try:
                 f = getattr(self.ob, secattr)
             except AttributeError:
-                raise TypeError, error_msg
+                raise TypeError(error_msg)
             f(*args)
         return handler
-    class Wrapper:
+
+    class Wrapper(object):
         def __len__(self):
             # Required for slices with negative bounds.
             return len(self.ob)
+
         def __init__(self, ob):
             self.__dict__['ob'] = ob
-        __setitem__ = _handler('__guarded_setitem__',
-          'object does not support item or slice assignment')
-        __delitem__ = _handler('__guarded_delitem__',
-          'object does not support item or slice assignment')
-        __setattr__ = _handler('__guarded_setattr__',
-          'attribute-less object (assign or del)')
-        __delattr__ = _handler('__guarded_delattr__',
-          'attribute-less object (assign or del)')
+
+        __setitem__ = _handler(
+            '__guarded_setitem__',
+            'object does not support item or slice assignment')
+
+        __delitem__ = _handler(
+            '__guarded_delitem__',
+            'object does not support item or slice assignment')
+
+        __setattr__ = _handler(
+            '__guarded_setattr__',
+            'attribute-less object (assign or del)')
+
+        __delattr__ = _handler(
+            '__guarded_delattr__',
+            'attribute-less object (assign or del)')
     return Wrapper
+
 
 def _full_write_guard():
     # Nested scope abuse!
-    # safetype and Wrapper variables are used by guard()
-    safetype = {dict: True, list: True}.has_key
+    # safetypes and Wrapper variables are used by guard()
+    safetypes = {dict, list}
     Wrapper = _write_wrapper()
+
     def guard(ob):
         # Don't bother wrapping simple types, or objects that claim to
         # handle their own write security.
-        if safetype(type(ob)) or hasattr(ob, '_guarded_writes'):
+        if type(ob) in safetypes or hasattr(ob, '_guarded_writes'):
             return ob
         # Hand the object to the Wrapper instance, then return the instance.
         return Wrapper(ob)
     return guard
+
+
 full_write_guard = _full_write_guard()
+
 
 def guarded_setattr(object, name, value):
     setattr(full_write_guard(object), name, value)
+
+
 safe_builtins['setattr'] = guarded_setattr
+
 
 def guarded_delattr(object, name):
     delattr(full_write_guard(object), name)
+
+
 safe_builtins['delattr'] = guarded_delattr
+
+
+def guarded_iter_unpack_sequence(it, spec, _getiter_):
+    """Protect sequence unpacking of targets in a 'for loop'.
+
+    The target of a for loop could be a sequence.
+    For example "for a, b in it"
+    => Each object from the iterator needs guarded sequence unpacking.
+    """
+    # The iteration itself needs to be protected as well.
+    for ob in _getiter_(it):
+        yield guarded_unpack_sequence(ob, spec, _getiter_)
+
+
+def guarded_unpack_sequence(it, spec, _getiter_):
+    """Protect nested sequence unpacking.
+
+    Protect the unpacking of 'it' by wrapping it with '_getiter_'.
+    Furthermore for each child element, defined by spec,
+    guarded_unpack_sequence is called again.
+
+    Have a look at transformer.py 'gen_unpack_spec' for a more detailed
+    explanation.
+    """
+    # Do the guarded unpacking of the sequence.
+    ret = list(_getiter_(it))
+
+    # If the sequence is shorter then expected the interpreter will raise
+    # 'ValueError: need more than X value to unpack' anyway
+    # => No childs are unpacked => nothing to protect.
+    if len(ret) < spec['min_len']:
+        return ret
+
+    # For all child elements do the guarded unpacking again.
+    for (idx, child_spec) in spec['childs']:
+        ret[idx] = guarded_unpack_sequence(ret[idx], child_spec, _getiter_)
+
+    return ret

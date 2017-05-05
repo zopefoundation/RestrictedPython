@@ -11,29 +11,64 @@
 # FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
-"""Setup for RestrictedPython package
-"""
+"""Setup for RestrictedPython package"""
+
+from setuptools import find_packages
+from setuptools import setup
+
 import os
-from setuptools import setup, find_packages
+
 
 def read(*rnames):
     return open(os.path.join(os.path.dirname(__file__), *rnames)).read()
 
+
 setup(name='RestrictedPython',
-      version='3.7.dev0',
+      version='4.0.0.dev0',
       url='http://pypi.python.org/pypi/RestrictedPython',
       license='ZPL 2.1',
       description='RestrictedPython provides a restricted execution '
-      'environment for Python, e.g. for running untrusted code.',
+                  'environment for Python, e.g. for running untrusted code.',
+      long_description=(read('README.rst') + '\n' +
+                        read('docs', 'CHANGES.rst')),
+      classifiers=[
+          'License :: OSI Approved :: Zope Public License',
+          'Programming Language :: Python',
+          'Operating System :: OS Independent',
+          'Programming Language :: Python :: 2.7',
+          'Programming Language :: Python :: 3.4',
+          'Programming Language :: Python :: 3.5',
+          'Programming Language :: Python :: 3.6',
+          'Programming Language :: Python :: Implementation :: CPython',
+          'Programming Language :: Python :: Implementation :: PyPy',
+          'Topic :: Security',
+      ],
       author='Zope Foundation and Contributors',
       author_email='zope-dev@zope.org',
-      long_description=(read('src', 'RestrictedPython', 'README.txt')
-                        + '\n' +
-                        read('CHANGES.txt')),
+      packages=find_packages('src'),
+      package_dir={'': 'src'},
+      install_requires=[
+          'setuptools',
 
-      packages = find_packages('src'),
-      package_dir = {'': 'src'},
-      install_requires = ['setuptools'],
-      include_package_data = True,
-      zip_safe = False,
+      ],
+      setup_requires=[
+          'pytest-runner',
+      ],
+      test_requires=[
+          'pytest',
+      ],
+      extras_require={
+          'docs': [
+              'Sphinx',
+          ],
+          'release': [
+              'zest.releaser',
+          ],
+          'develop': [
+              'pdbpp',
+              'isort',
+          ],
+      },
+      include_package_data=True,
+      zip_safe=False,
       )

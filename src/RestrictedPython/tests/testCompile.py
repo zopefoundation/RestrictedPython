@@ -11,12 +11,12 @@
 # FOR A PARTICULAR PURPOSE
 #
 ##############################################################################
-__version__ = '$Revision$'[11:-2]
-
-import unittest
 
 from RestrictedPython.RCompile import niceParse
+
 import compiler.ast
+import unittest
+
 
 class CompileTests(unittest.TestCase):
 

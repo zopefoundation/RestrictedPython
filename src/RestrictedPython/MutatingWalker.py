@@ -11,13 +11,23 @@
 #
 ##############################################################################
 
-__version__='$Revision: 1.6 $'[11:-2]
+from compiler import ast
 
-from SelectCompiler import ast
+import warnings
+
+
+warnings.warn(
+    "This Module (RestrictedPython.MutatingWalker) is deprecated"
+    "and will be gone soon.",
+    category=PendingDeprecationWarning,
+    stacklevel=1
+)
+
 
 ListType = type([])
 TupleType = type(())
 SequenceTypes = (ListType, TupleType)
+
 
 class MutatingWalker:
 
@@ -43,7 +53,7 @@ class MutatingWalker:
             if v is not child:
                 # Change the sequence.
                 if type(res) is ListType:
-                    res[idx : idx + 1] = [v]
+                    res[idx: idx + 1] = [v]
                 else:
                     res = res[:idx] + (v,) + res[idx + 1:]
         return res
@@ -69,6 +79,7 @@ class MutatingWalker:
                            self.defaultVisitNode)
             self._cache[klass] = meth
         return meth(node, self)
+
 
 def walk(tree, visitor):
     return MutatingWalker(visitor).dispatchNode(tree)

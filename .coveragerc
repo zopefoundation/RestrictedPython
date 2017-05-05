@@ -1,0 +1,15 @@
+[run]
+branch = True
+source = RestrictedPython
+omit =
+    # Tests are classically not part of source code
+    # and should not be calculated into coverage sum
+    # on the other hand, the coverage tools do a handy job on highlighting
+    # code branches and tests that that did not get executed.
+    # Therefore we include tests into coverage analysis for the moment.
+    #tests/*.py
+    #src/RestrictedPython/tests
+    #src/RestrictedPython/tests/*.py
+
+[report]
+precision = 3

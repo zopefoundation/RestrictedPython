@@ -1,0 +1,98 @@
+How it works
+============
+
+*Caution:* This is old documentation from RestrictedPython 3 and before.
+Information should be transferred and this file should be removed.
+
+Every time I see this code, I have to relearn it.  These notes will
+hopefully make this a little easier. :)
+
+- The important module is RCompile.  The entry points are the
+  compile_restricted_* functions.
+
+  + compile_restricted_function is used by Python scripts.
+
+  + compile_restricted_eval is used by ZPT
+
+    and by DTML indirectly through Eval.RestrictionCapableEval.
+
+- OK, so lets see how this works by following the logic of
+  compile_restricted_eval.
+
+  - First, we create an RExpression, passing the source and a
+    "file name", to be used in tracebacks.
+
+    Now, an RExpression is just:
+
+    + a subclass of RestrictedCompileMode and Expression.
+
+      Expression is a subclass of AbstractCompileMode that sets it's
+      mode to 'eval' and everided compile. Sigh.
+
+    + RestrictedCompileMode is a subclass of AbstractCompileMode
+      that changes a bunch of things. :)  These include compile, so we
+      can ignore the compile we got from Expression.  It would have
+      been simpler to just set the dang mode in RExpression. Sigh.
+
+      RestrictedCompileMode seem to be the interesting base class. I
+      assume it implements the interesting functionality. We'll see
+      below...
+
+  - Next, we call compileAndTuplize.
+
+    + This calls compile on the RExpression. It has an error
+      handler that does something that I hope I don't care about. :)
+
+    + It then calls the genCode method on the RExpression.
+      This is boring, so we'll not worry about it.
+
+  - The compile method provided by RestrictedCompileMode is
+    interesting.
+
+    + First it calls _get_tree.
+
+      * It uses compiler.parse to parse the source
+
+      * it uses MutatingWalker.walk to mutate the tree using the
+        RestrictedCompileMode's 'rm' attr, which is a
+        RestrictionMutator.
+
+        The RestrictionMutator has the recipies for mutating the parse
+        tree. (Note, for comparison, that Zope3's
+        zope.untrustedpython.rcompile module an alternative
+        RestrictionMutator that provides a much smaller set of
+        changes.)
+
+        A mutator has visit method for different kinds of AST
+        nodes. These visit methods may mutate nodes or return new
+        nodes that replace the originally visited nodes.  There is a
+        default visitor that visits a node's children and replaces the
+        children whose visitors returned new nodes.
+
+        The walk function just calls the visitor for the root node of
+        the given tree.  Note _get_tree ignores the walk return value,
+        thus assuming that the visitor for the root node doesn't
+        return a new node.  This is a theoretical bug that we can
+        ignore.
+
+    + Second, it generates the code. This too is boring.
+
+- So this seems simple enough. ;)  When we want to add a check, we
+  need to update or add a visit function in RestrictionMutator.
+
+  How does a visit function work.
+
+  - First, we usually call walker.defaultVisitNode(node). This
+    transforms the node's child nodes.
+
+  - Then we hack the node, or possibly return the node. To do this, we
+    have to know how the node works.
+
+  - The hack often involved changing the code to call some checker
+    function. These have names like _name_.  These are names that
+    would be illegal in the input source.
+
+    If this is a new function, we have to provide it in
+    AccessControl.ZopeGuards._safe_globals.
+
+- Don't forget to add a test case to tests.before_and_after.

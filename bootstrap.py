@@ -49,8 +49,8 @@ parser.add_option("--version",
 parser.add_option("-t", "--accept-buildout-test-releases",
                   dest='accept_buildout_test_releases',
                   action="store_true", default=False,
-                  help=("Normally, if you do not specify a --version, the "
-                        "bootstrap script and buildout gets the newest "
+                  help=("Normally, if you do not specify a --buildout-version, "
+                        "the bootstrap script and buildout gets the newest "
                         "*final* versions of zc.buildout and its recipes and "
                         "extensions for you.  If you use this flag, "
                         "bootstrap and buildout will get the newest releases "

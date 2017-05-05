@@ -15,28 +15,43 @@
 RestrictionMutator modifies a tree produced by
 compiler.transformer.Transformer, restricting and enhancing the
 code in various ways before sending it to pycodegen.
-
-$Revision: 1.13 $
 """
 
-from SelectCompiler import ast, parse, OP_ASSIGN, OP_DELETE, OP_APPLY
+from compiler import ast
+from compiler.consts import OP_APPLY
+from compiler.consts import OP_ASSIGN
+from compiler.consts import OP_DELETE
+from compiler.transformer import parse
+
+import warnings
+
+
+warnings.warn(
+    "This Module (RestrictedPython.RestrictionMutator) is deprecated"
+    "and will be gone soon.",
+    category=PendingDeprecationWarning,
+    stacklevel=1
+)
+
 
 # These utility functions allow us to generate AST subtrees without
 # line number attributes.  These trees can then be inserted into other
 # trees without affecting line numbers shown in tracebacks, etc.
 def rmLineno(node):
     """Strip lineno attributes from a code tree."""
-    if node.__dict__.has_key('lineno'):
+    if 'lineno' in node.__dict__:
         del node.lineno
     for child in node.getChildren():
         if isinstance(child, ast.Node):
             rmLineno(child)
+
 
 def stmtNode(txt):
     """Make a "clean" statement node."""
     node = parse(txt).node.nodes[0]
     rmLineno(node)
     return node
+
 
 # The security checks are performed by a set of six functions that
 # must be provided by the restricted environment.
@@ -56,9 +71,11 @@ _write_const = ast.Const("write")
 _printed_expr = stmtNode("_print()").expr
 _print_target_node = stmtNode("_print = _print_()")
 
-class FuncInfo:
+
+class FuncInfo(object):
     print_used = False
     printed_used = False
+
 
 class RestrictionMutator:
 
@@ -385,8 +402,8 @@ class RestrictionMutator:
                      ast.Name(node.node.name),
                      node.expr,
                      ]
-                    ),
-                )
+                ),
+            )
             newnode.lineno = node.lineno
             return newnode
         else:

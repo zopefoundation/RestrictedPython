@@ -10,14 +10,26 @@
 # FOR A PARTICULAR PURPOSE
 #
 ##############################################################################
+from __future__ import print_function
 
-__version__='$Revision: 1.4 $'[11:-2]
 
-class PrintCollector:
-    '''Collect written text, and return it when called.'''
-    def __init__(self):
+class PrintCollector(object):
+    """Collect written text, and return it when called."""
+
+    def __init__(self, _getattr_=None):
         self.txt = []
+        self._getattr_ = _getattr_
+
     def write(self, text):
         self.txt.append(text)
+
     def __call__(self):
         return ''.join(self.txt)
+
+    def _call_print(self, *objects, **kwargs):
+        if kwargs.get('file', None) is None:
+            kwargs['file'] = self
+        else:
+            self._getattr_(kwargs['file'], 'write')
+
+        print(*objects, **kwargs)

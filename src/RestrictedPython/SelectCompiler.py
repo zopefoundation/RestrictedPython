@@ -13,14 +13,24 @@
 """Compiler selector.
 """
 
+from compiler import ast
+from compiler.consts import OP_APPLY
+from compiler.consts import OP_ASSIGN
+from compiler.consts import OP_DELETE
+from compiler.transformer import parse
+from RCompile import compile_restricted
+from RCompile import compile_restricted_eval
+from RCompile import compile_restricted_exec
+from RCompile import compile_restricted_function
+
 # Use the compiler from the standard library.
 import compiler
-from compiler import ast
-from compiler.transformer import parse
-from compiler.consts import OP_ASSIGN, OP_DELETE, OP_APPLY
+import warnings
 
-from RCompile import \
-     compile_restricted, \
-     compile_restricted_function, \
-     compile_restricted_exec, \
-     compile_restricted_eval
+
+warnings.warn(
+    "This Module (RestrictedPython.SelectCompiler) is deprecated"
+    "and will be gone soon.",
+    category=PendingDeprecationWarning,
+    stacklevel=1
+)

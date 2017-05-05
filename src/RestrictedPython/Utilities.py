@@ -11,22 +11,10 @@
 #
 ##############################################################################
 
-__version__='$Revision: 1.7 $'[11:-2]
-
 import math
 import random
 import string
-import warnings
 
-_old_filters = warnings.filters[:]
-warnings.filterwarnings('ignore', category=DeprecationWarning)
-try:
-    try:
-        import sets
-    except ImportError:
-        sets = None
-finally:
-    warnings.filters[:] = _old_filters
 
 utility_builtins = {}
 
@@ -34,33 +22,44 @@ utility_builtins['string'] = string
 utility_builtins['math'] = math
 utility_builtins['random'] = random
 utility_builtins['whrandom'] = random
-utility_builtins['sets'] = sets
+utility_builtins['set'] = set
+utility_builtins['frozenset'] = frozenset
+
+try:
+    import sets
+    utility_builtins['sets'] = sets
+except ImportError:
+    pass
 
 try:
     import DateTime
-    utility_builtins['DateTime']= DateTime.DateTime
+    utility_builtins['DateTime'] = DateTime.DateTime
 except ImportError:
     pass
 
 
 def same_type(arg1, *args):
-    '''Compares the class or type of two or more objects.'''
+    """Compares the class or type of two or more objects."""
     t = getattr(arg1, '__class__', type(arg1))
     for arg in args:
         if getattr(arg, '__class__', type(arg)) is not t:
             return 0
     return 1
+
+
 utility_builtins['same_type'] = same_type
 
 
 def test(*args):
     length = len(args)
     for i in range(1, length, 2):
-        if args[i-1]:
+        if args[i - 1]:
             return args[i]
 
     if length % 2:
         return args[-1]
+
+
 utility_builtins['test'] = test
 
 
@@ -98,4 +97,6 @@ def reorder(s, with_=None, without=()):
             del orig[key]
 
     return result
+
+
 utility_builtins['reorder'] = reorder
