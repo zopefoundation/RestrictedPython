@@ -1,18 +1,24 @@
+# Standard library imports
+import ast
+import contextlib
+import types
+
+# Test framework imports
+import pytest
+
+# RestrictedPython internal imports
 from RestrictedPython import RestrictingNodeTransformer
 from RestrictedPython._compat import IS_PY2
 from RestrictedPython._compat import IS_PY3
 from RestrictedPython.Guards import guarded_iter_unpack_sequence
 from RestrictedPython.Guards import guarded_unpack_sequence
 from RestrictedPython.Guards import safe_builtins
+import RestrictedPython
+
+# Test internals (fixures and helpers)
 from tests import c_exec
 from tests import e_eval
 from tests import e_exec
-
-import ast
-import contextlib
-import pytest
-import RestrictedPython
-import types
 
 
 def test_transformer__RestrictingNodeTransformer__generic_visit__1():

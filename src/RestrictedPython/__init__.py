@@ -45,5 +45,6 @@ from RestrictedPython.compile import CompileResult  # isort:skip
 # Policy
 from RestrictedPython.transformer import RestrictingNodeTransformer  # isort:skip
 
+# RestrictedPython internal imports
 #
 from RestrictedPython.Eval import RestrictionCapableEval

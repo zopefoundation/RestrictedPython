@@ -1,7 +1,11 @@
-from RestrictedPython._compat import IS_PY3
-from tests import c_exec
-
+# Test framework imports
 import pytest
+
+# RestrictedPython internal imports
+from RestrictedPython._compat import IS_PY3
+
+# Test internals (fixures and helpers)
+from tests import c_exec
 
 
 YIELD_EXAMPLE = """\

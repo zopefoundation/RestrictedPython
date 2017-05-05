@@ -1,9 +1,12 @@
-from collections import namedtuple
-from RestrictedPython._compat import IS_PY2
-from RestrictedPython.transformer import RestrictingNodeTransformer
 
+# Standard library imports
+from collections import namedtuple
 import ast
 import warnings
+
+# RestrictedPython internal imports
+from RestrictedPython._compat import IS_PY2
+from RestrictedPython.transformer import RestrictingNodeTransformer
 
 
 CompileResult = namedtuple(

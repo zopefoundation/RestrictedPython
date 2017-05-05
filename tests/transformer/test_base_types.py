@@ -1,8 +1,12 @@
+# Test framework imports
+import pytest
+
+# RestrictedPython internal imports
 from RestrictedPython._compat import IS_PY2
+
+# Test internals (fixures and helpers)
 from tests import c_exec
 from tests import e_eval
-
-import pytest
 
 
 @pytest.mark.parametrize(*e_eval)

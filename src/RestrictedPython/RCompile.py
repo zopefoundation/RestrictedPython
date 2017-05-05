@@ -14,7 +14,8 @@
 Python standard library.
 """
 
-from compile import CompileResult
+# Standard library imports
+# Standard Library Imports
 from compiler import ast
 from compiler import misc
 from compiler import parse
@@ -22,15 +23,16 @@ from compiler import pycodegen
 from compiler import syntax
 from compiler.pycodegen import AbstractCompileMode
 from compiler.pycodegen import Expression
-from compiler.pycodegen import findOp
 from compiler.pycodegen import FunctionCodeGenerator  # noqa
 from compiler.pycodegen import Interactive
 from compiler.pycodegen import Module
 from compiler.pycodegen import ModuleCodeGenerator
-from RestrictionMutator import RestrictionMutator
-
-import MutatingWalker
+from compiler.pycodegen import findOp
 import warnings
+
+from compile import CompileResult
+from RestrictionMutator import RestrictionMutator
+import MutatingWalker
 
 
 warnings.warn(

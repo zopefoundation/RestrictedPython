@@ -1,8 +1,12 @@
+# Test framework imports
+import pytest
+
+# RestrictedPython internal imports
 from RestrictedPython._compat import IS_PY3
+
+# Test internals (fixures and helpers)
 from tests import c_exec
 from tests import e_exec
-
-import pytest
 
 
 GLOBAL_EXAMPLE = """

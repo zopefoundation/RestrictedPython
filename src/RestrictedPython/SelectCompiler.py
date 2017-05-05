@@ -13,19 +13,21 @@
 """Compiler selector.
 """
 
+# Standard library imports
+# Standard Library Imports
 from compiler import ast
 from compiler.consts import OP_APPLY
 from compiler.consts import OP_ASSIGN
 from compiler.consts import OP_DELETE
 from compiler.transformer import parse
+# Use the compiler from the standard library.
+import compiler
+import warnings
+
 from RCompile import compile_restricted
 from RCompile import compile_restricted_eval
 from RCompile import compile_restricted_exec
 from RCompile import compile_restricted_function
-
-# Use the compiler from the standard library.
-import compiler
-import warnings
 
 
 warnings.warn(

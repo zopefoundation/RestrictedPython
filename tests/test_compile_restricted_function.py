@@ -1,9 +1,16 @@
-from RestrictedPython import PrintCollector
-from RestrictedPython import safe_builtins
-from tests import c_function
+
+# Standard library imports
 from types import FunctionType
 
+# Test framework imports
 import pytest
+
+# RestrictedPython internal imports
+from RestrictedPython import PrintCollector
+from RestrictedPython import safe_builtins
+
+# Test internals (fixures and helpers)
+from tests import c_function
 
 
 @pytest.mark.parametrize(*c_function)

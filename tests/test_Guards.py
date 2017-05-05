@@ -1,8 +1,12 @@
+# Test framework imports
+import pytest
+
+# RestrictedPython internal imports
 from RestrictedPython.Guards import safe_builtins
+
+# Test internals (fixures and helpers)
 from tests import e_eval
 from tests import e_exec
-
-import pytest
 
 
 @pytest.mark.parametrize(*e_eval)

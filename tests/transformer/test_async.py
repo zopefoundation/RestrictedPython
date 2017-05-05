@@ -1,9 +1,13 @@
+# Test framework imports
+import pytest
+
+# RestrictedPython internal imports
 from RestrictedPython import compile_restricted_exec
 from RestrictedPython._compat import IS_PY35_OR_GREATER
 from RestrictedPython.transformer import RestrictingNodeTransformer
-from tests import c_exec
 
-import pytest
+# Test internals (fixures and helpers)
+from tests import c_exec
 
 
 pytestmark = pytest.mark.skipif(

@@ -1,9 +1,13 @@
+# Test framework imports
+import pytest
+
+# RestrictedPython internal imports
 from RestrictedPython._compat import IS_PY3
 from RestrictedPython.PrintCollector import PrintCollector
-from tests import c_exec
-
-import pytest
 import RestrictedPython
+
+# Test internals (fixures and helpers)
+from tests import c_exec
 
 
 pytestmark = pytest.mark.skipif(

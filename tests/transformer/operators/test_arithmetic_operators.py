@@ -1,8 +1,12 @@
+# Test framework imports
+import pytest
+
+# RestrictedPython internal imports
 from RestrictedPython._compat import IS_PY35_OR_GREATER
+
+# Test internals (fixures and helpers)
 from tests import c_eval
 from tests import e_eval
-
-import pytest
 
 
 # Arithmetic Operators
