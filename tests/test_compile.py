@@ -162,7 +162,7 @@ def test_compile__compile_restricted_eval__used_names(c_eval):
 
 @pytest.mark.parametrize(*c_single)
 def test_compile__compile_restricted_csingle(c_single):
-    """It compiles code as an Expression."""
+    """It compiles code as an Interactive."""
     result = c_single('4 * 6')
     if c_single is RestrictedPython.compile.compile_restricted_single:
         # New implementation disallows single mode
