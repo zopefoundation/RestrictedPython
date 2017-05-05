@@ -116,7 +116,7 @@ def compile_restricted_function(
         body,
         name,
         filename='<string>',
-        globalize=None,  # List of globals (e.g. )
+        globalize=None,  # List of globals (e.g. ['here', 'context', ...])
         flags=0,
         dont_inherit=False,
         policy=RestrictingNodeTransformer):
@@ -137,7 +137,7 @@ def compile_restricted_function(
     >>> safe_locals = {}
     >>> safe_globals = {}
     >>> exec(compiled.code, safe_globals, safe_locals)
-    >>> compiled_function = safe_locals.values()[0]
+    >>> compiled_function = safe_locals['function_name']
     >>> result = compiled_function(*[], **{})
 
     Then if you want to controll the globals for a specific call to this
@@ -147,10 +147,10 @@ def compile_restricted_function(
     >>> safe_globals = safe_globals.copy()
     >>> safe_globals.update(my_call_specific_global_bindings)
     >>> import types
-    >>> new_function = types.FunctionType(compiled_function.func_code, \
+    >>> new_function = types.FunctionType(compiled_function.__code__, \
                                           safe_globals, \
                                           '<function_name>', \
-                                          compiled_function.func_defaults or \
+                                          compiled_function.__defaults__ or \
                                           () \
                                           )
     >>> result = new_function(*[], **{})

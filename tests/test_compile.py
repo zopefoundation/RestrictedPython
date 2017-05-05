@@ -164,10 +164,15 @@ def test_compile__compile_restricted_eval__used_names(c_eval):
 def test_compile__compile_restricted_csingle(c_single):
     """It compiles code as an Expression."""
     result = c_single('4 * 6')
-    assert result.code is None
-    assert result.errors == (
-        'Line None: Interactive statements are not allowed.',
-    )
+    if c_single is RestrictedPython.compile.compile_restricted_single:
+        # New implementation disallows single mode
+        assert result.code is None
+        assert result.errors == (
+            'Line None: Interactive statements are not allowed.',
+        )
+    else:  # RestrictedPython.RCompile.compile_restricted_single
+        assert result.code is not None
+        assert result.errors == ()
 
 
 PRINT_EXAMPLE = """
@@ -181,6 +186,9 @@ def a():
     reason="Print statement is gone in Python 3."
            "Test Deprecation Warming in Python 2")
 def test_compile_restricted():
+    """This test checks compile_restricted itself if that emit Python warnings.
+    For actual tests for print statement see: test_print_stmt.py
+    """
     with pytest.warns(SyntaxWarning) as record:
         result = compile_restricted(PRINT_EXAMPLE, '<string>', 'exec')
         assert isinstance(result, types.CodeType)
@@ -199,6 +207,8 @@ def a():
 
 
 def test_compile_restricted_eval():
+    """This test checks compile_restricted itself if that raise Python errors.
+    """
     with pytest.raises(SyntaxError,
                        message="Line 3: Eval calls are not allowed."):
         compile_restricted(EVAL_EXAMPLE, '<string>', 'exec')

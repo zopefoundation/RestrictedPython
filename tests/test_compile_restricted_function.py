@@ -76,9 +76,9 @@ return printed
 
 @pytest.mark.parametrize(*c_function)
 def test_compile_restricted_function_with_arguments(c_function):
-    p = 'input'
+    p = 'input1, input2'
     body = """
-print(input)
+print(input1 + input2)
 return printed
 """
     name = "hello_world"
@@ -105,7 +105,7 @@ return printed
     exec(result.code, safe_globals, safe_locals)
     hello_world = safe_locals['hello_world']
     assert type(hello_world) == FunctionType
-    assert hello_world('Hello World!') == 'Hello World!\n'
+    assert hello_world('Hello ', 'World!') == 'Hello World!\n'
 
 
 @pytest.mark.parametrize(*c_function)

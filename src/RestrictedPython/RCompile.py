@@ -144,6 +144,18 @@ def compile_restricted_eval(source, filename='<string>'):
     return compileAndTuplize(gen)
 
 
+def compile_restricted_single(source, filename='<string>'):
+    """Compiles a restricted expression."""
+    warnings.warn(
+        "RestrictedPython.RCompile.compile_restricted_single is deprecated"
+        "use RestrictedPython.compile_restricted_single instead.",
+        category=PendingDeprecationWarning,
+        stacklevel=1
+    )
+    gen = RInteractive(source, filename)
+    return compileAndTuplize(gen)
+
+
 def compile_restricted(source, filename, mode):
     """Replacement for the builtin compile() function."""
     warnings.warn(
