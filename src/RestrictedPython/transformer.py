@@ -1084,6 +1084,9 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         """
 
         self.print_info.print_used = True
+        self.warn(node,
+                  "Print statement is deprecated and "
+                  "not avaliable anymore in Python 3.")
 
         node = self.node_contents_visit(node)
         if node.dest is None:

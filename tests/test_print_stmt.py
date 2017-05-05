@@ -98,7 +98,7 @@ def test_print_stmt__protect_chevron_print(c_exec, mocker):
     _getattr_.side_effect = getattr
     glb = {'_getattr_': _getattr_, '_print_': PrintCollector}
 
-    exec(code,  glb)
+    exec(code, glb)
 
     stream = mocker.stub()
     stream.write = mocker.stub()
@@ -182,7 +182,9 @@ def test_print_stmt__with_printed_no_print_nested(c_exec):
 
     if c_exec is RestrictedPython.compile.compile_restricted_exec:
         assert warnings == [
-            "Line 3: Doesn't print, but reads 'printed' variable."]
+            "Line 2: Print statement is deprecated and not avaliable anymore in Python 3.",  # NOQA: E501
+            "Line 3: Doesn't print, but reads 'printed' variable."
+        ]
 
     if c_exec is RestrictedPython.RCompile.compile_restricted_exec:
         assert warnings == ["Doesn't print, but reads 'printed' variable."]
@@ -203,7 +205,9 @@ def test_print_stmt__with_print_no_printed(c_exec):
 
     if c_exec is RestrictedPython.compile.compile_restricted_exec:
         assert warnings == [
-            "Line 2: Prints, but never reads 'printed' variable."]
+            "Line 3: Print statement is deprecated and not avaliable anymore in Python 3.",  # NOQA: E501
+            "Line 2: Prints, but never reads 'printed' variable."
+        ]
 
     if c_exec is RestrictedPython.RCompile.compile_restricted_exec:
         assert warnings == ["Prints, but never reads 'printed' variable."]
@@ -226,7 +230,10 @@ def test_print_stmt__with_print_no_printed_nested(c_exec):
 
     if c_exec is RestrictedPython.compile.compile_restricted_exec:
         assert warnings == [
-            "Line 3: Prints, but never reads 'printed' variable."]
+            "Line 2: Print statement is deprecated and not avaliable anymore in Python 3.",  # NOQA: E501
+            "Line 4: Print statement is deprecated and not avaliable anymore in Python 3.",  # NOQA: E501
+            "Line 3: Prints, but never reads 'printed' variable.",
+        ]
 
     if c_exec is RestrictedPython.RCompile.compile_restricted_exec:
         assert warnings == ["Prints, but never reads 'printed' variable."]
