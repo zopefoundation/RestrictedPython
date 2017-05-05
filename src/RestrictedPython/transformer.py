@@ -835,8 +835,9 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         """Checks and mutates attribute access/assignment.
 
         'a.b' becomes '_getattr_(a, "b")'
-
         'a.b = c' becomes '_write_(a).b = c'
+        'del a.b' becomes 'del _write_(a).b'
+
         The _write_ function should return a security proxy.
         """
         if node.attr.startswith('_') and node.attr != '_':
@@ -861,7 +862,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
             copy_locations(new_node, node)
             return new_node
 
-        elif isinstance(node.ctx, ast.Store):
+        elif isinstance(node.ctx, (ast.Store, ast.Del)):
             node = self.node_contents_visit(node)
             new_value = ast.Call(
                 func=ast.Name('_write_', ast.Load()),
