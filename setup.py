@@ -24,7 +24,7 @@ def read(*rnames):
 
 
 setup(name='RestrictedPython',
-      version='4.0a1',
+      version='4.0a2.dev0',
       url='http://pypi.python.org/pypi/RestrictedPython',
       license='ZPL 2.1',
       description='RestrictedPython provides a restricted execution '
