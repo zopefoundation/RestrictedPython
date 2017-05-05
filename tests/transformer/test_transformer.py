@@ -310,6 +310,23 @@ def test_transformer__RestrictingNodeTransformer__visit_Attribute__5(
     assert glb['a'].b == 'it works'
 
 
+@pytest.mark.parametrize(*e_exec)
+def test_transformer__RestrictingNodeTransformer__visit_Attribute__5_5(
+        e_exec, mocker):
+    """It transforms deleting of an attribute to `_write_`."""
+    glb = {
+        '_write_': mocker.stub(),
+        'a': mocker.stub(),
+    }
+    glb['a'].b = 'it exists'
+    glb['_write_'].return_value = glb['a']
+
+    e_exec("del a.b", glb)
+
+    glb['_write_'].assert_called_once_with(glb['a'])
+    assert not hasattr(glb['a'], 'b')
+
+
 DISALLOW_TRACEBACK_ACCESS = """
 try:
     raise Exception()
