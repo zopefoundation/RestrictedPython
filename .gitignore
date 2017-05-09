@@ -21,7 +21,7 @@ pyvenv.cfg
 /eggs
 /fake-eggs
 /htmlcov
-/report-*.html
+/reports
 /include
 /lib
 /share
