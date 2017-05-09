@@ -1,6 +1,8 @@
-from RestrictedPython._compat import IS_PY3
-
+# Test framework imports
 import pytest
+
+# RestrictedPython internal imports
+from RestrictedPython._compat import IS_PY3
 
 
 def test_string_in_utility_builtins():

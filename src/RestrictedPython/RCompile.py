@@ -14,7 +14,7 @@
 Python standard library.
 """
 
-from compile import CompileResult
+# Standard library imports
 from compiler import ast
 from compiler import misc
 from compiler import parse
@@ -22,15 +22,17 @@ from compiler import pycodegen
 from compiler import syntax
 from compiler.pycodegen import AbstractCompileMode
 from compiler.pycodegen import Expression
-from compiler.pycodegen import findOp
 from compiler.pycodegen import FunctionCodeGenerator  # noqa
 from compiler.pycodegen import Interactive
 from compiler.pycodegen import Module
 from compiler.pycodegen import ModuleCodeGenerator
-from RestrictionMutator import RestrictionMutator
-
-import MutatingWalker
+from compiler.pycodegen import findOp
 import warnings
+
+# RestrictedPython internal imports
+from RestrictedPython.compile import CompileResult
+from RestrictedPython.MutatingWalker import walk
+from RestrictedPython.RestrictionMutator import RestrictionMutator
 
 
 warnings.warn(
@@ -74,7 +76,7 @@ class RestrictedCompileMode(AbstractCompileMode):
 
     def _get_tree(self):
         tree = self.parse()
-        MutatingWalker.walk(tree, self.rm)
+        walk(tree, self.rm)
         if self.rm.errors:
             raise SyntaxError(self.rm.errors[0])
         misc.set_filename(self.filename, tree)

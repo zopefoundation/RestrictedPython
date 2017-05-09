@@ -1,8 +1,10 @@
+# Test framework imports
+import pytest
+
+# RestrictedPython internal imports
 from RestrictedPython.Limits import limited_list
 from RestrictedPython.Limits import limited_range
 from RestrictedPython.Limits import limited_tuple
-
-import pytest
 
 
 def test_limited_range_length_1():

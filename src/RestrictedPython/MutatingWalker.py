@@ -11,8 +11,8 @@
 #
 ##############################################################################
 
+# Standard library imports
 from compiler import ast
-
 import warnings
 
 

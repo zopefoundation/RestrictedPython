@@ -13,19 +13,22 @@
 """Compiler selector.
 """
 
+# flake8: NOQA: 401
+# isort: skip
+
+# Standard library imports
 from compiler import ast
 from compiler.consts import OP_APPLY
 from compiler.consts import OP_ASSIGN
 from compiler.consts import OP_DELETE
 from compiler.transformer import parse
+import compiler
+import warnings
+
 from RCompile import compile_restricted
 from RCompile import compile_restricted_eval
 from RCompile import compile_restricted_exec
 from RCompile import compile_restricted_function
-
-# Use the compiler from the standard library.
-import compiler
-import warnings
 
 
 warnings.warn(

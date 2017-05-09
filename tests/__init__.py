@@ -1,5 +1,5 @@
+# RestrictedPython internal imports
 from RestrictedPython._compat import IS_PY2
-
 import RestrictedPython
 
 

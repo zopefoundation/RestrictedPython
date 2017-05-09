@@ -12,10 +12,13 @@
 #
 ##############################################################################
 
-from RestrictedPython.RCompile import niceParse
-
+# Standard library imports
+# Standard Library Imports
 import compiler.ast
 import unittest
+
+# RestrictedPython internal imports
+from RestrictedPython.RCompile import niceParse
 
 
 class CompileTests(unittest.TestCase):

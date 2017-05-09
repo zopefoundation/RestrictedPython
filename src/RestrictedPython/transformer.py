@@ -17,19 +17,20 @@ uses Python standard library ast module and its containing classes to transform
 the parsed python code to create a modified AST for a byte code generation.
 """
 
-# This package should follow the Plone Sytleguide for Python,
+# This package should follow the Plone Styleguide for Python,
 # which differ from PEP8:
 # http://docs.plone.org/develop/styleguide/python.html
 
+# Standard library imports
+import ast
+import contextlib
+import textwrap
 
+# RestrictedPython internal imports
 from ._compat import IS_PY2
 from ._compat import IS_PY3
 from ._compat import IS_PY34_OR_GREATER
 from ._compat import IS_PY35_OR_GREATER
-
-import ast
-import contextlib
-import textwrap
 
 
 # For AugAssign the operator must be converted to a string.

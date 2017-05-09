@@ -17,12 +17,12 @@ compiler.transformer.Transformer, restricting and enhancing the
 code in various ways before sending it to pycodegen.
 """
 
+# Standard library imports
 from compiler import ast
 from compiler.consts import OP_APPLY
 from compiler.consts import OP_ASSIGN
 from compiler.consts import OP_DELETE
 from compiler.transformer import parse
-
 import warnings
 
 

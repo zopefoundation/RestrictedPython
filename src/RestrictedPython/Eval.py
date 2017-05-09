@@ -12,10 +12,12 @@
 ##############################################################################
 """Restricted Python Expressions."""
 
-from ._compat import IS_PY2
-from .compile import compile_restricted_eval
-
+# Standard library imports
 import ast
+
+# RestrictedPython internal imports
+from RestrictedPython._compat import IS_PY2
+from RestrictedPython.compile import compile_restricted_eval
 
 
 if IS_PY2:

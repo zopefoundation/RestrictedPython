@@ -1,5 +1,5 @@
+# RestrictedPython internal imports
 from RestrictedPython.PrintCollector import PrintCollector
-
 import RestrictedPython
 
 

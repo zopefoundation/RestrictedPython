@@ -1,6 +1,8 @@
-from tests import e_exec
-
+# Test framework imports
 import pytest
+
+# Test internals (fixures and helpers)
+from tests import e_exec
 
 
 SIMPLE_SUBSCRIPTS = """

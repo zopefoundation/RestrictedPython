@@ -1,7 +1,11 @@
+# Standard library imports
 from operator import getitem
-from tests import e_eval
 
+# Test framework imports
 import pytest
+
+# Test internals (fixures and helpers)
+from tests import e_eval
 
 
 @pytest.mark.parametrize(*e_eval)

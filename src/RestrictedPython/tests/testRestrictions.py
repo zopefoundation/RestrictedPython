@@ -5,17 +5,20 @@
 # AccessControl, so we need to define throwaway wrapper implementations
 # here instead.
 
-from RestrictedPython import PrintCollector
-from RestrictedPython.RCompile import compile_restricted
-from RestrictedPython.RCompile import RFunction
-from RestrictedPython.RCompile import RModule
-from RestrictedPython.tests import restricted_module
-from RestrictedPython.tests import verify
-
+# Standard library imports
+# Standard Library Imports
 import os
 import re
 import sys
 import unittest
+
+# RestrictedPython internal imports
+from RestrictedPython import PrintCollector
+from RestrictedPython.RCompile import RFunction
+from RestrictedPython.RCompile import RModule
+from RestrictedPython.RCompile import compile_restricted
+from RestrictedPython.tests import restricted_module
+from RestrictedPython.tests import verify
 
 
 try:

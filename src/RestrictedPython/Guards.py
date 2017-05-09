@@ -15,7 +15,8 @@
 # AccessControl.ZopeGuards contains a large set of wrappers for builtins.
 # DocumentTemplate.DT_UTil contains a few.
 
-from ._compat import IS_PY2
+# RestrictedPython internal imports
+from RestrictedPython._compat import IS_PY2
 
 
 if IS_PY2:

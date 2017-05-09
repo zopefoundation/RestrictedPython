@@ -1,15 +1,22 @@
-from RestrictedPython import compile_restricted
+
+# Standard library imports
+import types
+
+# Test framework imports
+import pytest
+
+# RestrictedPython internal imports
 from RestrictedPython import CompileResult
+from RestrictedPython import compile_restricted
 from RestrictedPython._compat import IS_PY2
 from RestrictedPython._compat import IS_PY3
+import RestrictedPython.compile
+
+# Test internals (fixures and helpers)
 from tests import c_eval
 from tests import c_exec
 from tests import c_single
 from tests import e_eval
-
-import pytest
-import RestrictedPython.compile
-import types
 
 
 def test_compile__compile_restricted_invalid_code_input():
