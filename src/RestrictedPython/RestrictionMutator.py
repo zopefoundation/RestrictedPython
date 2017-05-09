@@ -18,7 +18,6 @@ code in various ways before sending it to pycodegen.
 """
 
 # Standard library imports
-# Standard Library Imports
 from compiler import ast
 from compiler.consts import OP_APPLY
 from compiler.consts import OP_ASSIGN

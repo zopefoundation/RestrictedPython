@@ -13,9 +13,10 @@
 """RestrictedPython package."""
 
 # flake8: NOQA: E401
+# isort: skip
 
 # This is a file to define public API in the base namespace of the package.
-# use: isor:skip to supress all isort related warnings / errors,
+# use: isort:skip to supress all isort related warnings / errors,
 # as this file should be logically grouped imports
 
 
@@ -25,26 +26,22 @@
 # from RestrictedPython.RCompile import compile_restricted_exec
 # from RestrictedPython.RCompile import compile_restricted_function
 
+# RestrictedPython internal imports
 # new API Style
 # compile_restricted methods:
-from RestrictedPython.compile import compile_restricted  # isort:skip
-from RestrictedPython.compile import compile_restricted_eval  # isort:skip
-from RestrictedPython.compile import compile_restricted_exec  # isort:skip
-from RestrictedPython.compile import compile_restricted_function  # isort:skip
-from RestrictedPython.compile import compile_restricted_single  # isort:skip
-
-# predefined builtins
-from RestrictedPython.Guards import safe_builtins  # isort:skip
-from RestrictedPython.Limits import limited_builtins  # isort:skip
-from RestrictedPython.Utilities import utility_builtins  # isort:skip
-
-# Helper Methods
-from RestrictedPython.PrintCollector import PrintCollector  # isort:skip
-from RestrictedPython.compile import CompileResult  # isort:skip
-
-# Policy
-from RestrictedPython.transformer import RestrictingNodeTransformer  # isort:skip
-
-# RestrictedPython internal imports
+from RestrictedPython.compile import CompileResult
+from RestrictedPython.compile import compile_restricted
+from RestrictedPython.compile import compile_restricted_eval
+from RestrictedPython.compile import compile_restricted_exec
+from RestrictedPython.compile import compile_restricted_function
+from RestrictedPython.compile import compile_restricted_single
 #
 from RestrictedPython.Eval import RestrictionCapableEval
+# predefined builtins
+from RestrictedPython.Guards import safe_builtins
+from RestrictedPython.Limits import limited_builtins
+# Helper Methods
+from RestrictedPython.PrintCollector import PrintCollector
+# Policy
+from RestrictedPython.transformer import RestrictingNodeTransformer
+from RestrictedPython.Utilities import utility_builtins

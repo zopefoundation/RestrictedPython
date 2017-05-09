@@ -17,13 +17,11 @@ uses Python standard library ast module and its containing classes to transform
 the parsed python code to create a modified AST for a byte code generation.
 """
 
-# This package should follow the Plone Sytleguide for Python,
+# This package should follow the Plone Styleguide for Python,
 # which differ from PEP8:
 # http://docs.plone.org/develop/styleguide/python.html
 
-
 # Standard library imports
-# Standard Library Imports
 import ast
 import contextlib
 import textwrap

@@ -16,7 +16,7 @@
 # DocumentTemplate.DT_UTil contains a few.
 
 # RestrictedPython internal imports
-from ._compat import IS_PY2
+from RestrictedPython._compat import IS_PY2
 
 
 if IS_PY2:
