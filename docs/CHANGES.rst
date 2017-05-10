@@ -1,7 +1,13 @@
 Changes
 =======
 
-4.0.0 (unreleased)
+4.0a2 (unreleased)
+------------------
+
+- Nothing changed yet.
+
+
+4.0a1 (2017-05-05)
 ------------------
 
 - Mostly complete rewrite based on Python AST module.

@@ -24,7 +24,7 @@ def read(*rnames):
 
 
 setup(name='RestrictedPython',
-      version='4.0.0.dev0',
+      version='4.0a2.dev0',
       url='http://pypi.python.org/pypi/RestrictedPython',
       license='ZPL 2.1',
       description='RestrictedPython provides a restricted execution '
@@ -43,6 +43,7 @@ setup(name='RestrictedPython',
           'Programming Language :: Python :: Implementation :: PyPy',
           'Topic :: Security',
       ],
+      keywords='restricted execution security untrusted code',
       author='Zope Foundation and Contributors',
       author_email='zope-dev@zope.org',
       packages=find_packages('src'),

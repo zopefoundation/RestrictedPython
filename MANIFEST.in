@@ -1,0 +1,15 @@
+include *.txt
+include .coveragerc
+include tox.ini
+
+include .editorconfig
+exclude .editorconfig
+
+recursive-include docs *.ast
+recursive-include docs *.bat
+recursive-include docs *.py
+recursive-include docs *.rst
+recursive-include docs *.txt
+recursive-include docs Makefile
+recursive-include src *.rst
+recursive-include tests *.py
