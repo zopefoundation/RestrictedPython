@@ -51,7 +51,7 @@ def positional_and_star_and_keyword_and_kw_args():
 
 
 @pytest.mark.parametrize(*e_exec)
-def test_RestrictingNodeTransformer__visit_Call(e_exec, mocker):
+def test_RestrictingNodeTransformer__visit_Call__2(e_exec, mocker):
     _apply_ = mocker.stub()
     _apply_.side_effect = lambda func, *args, **kwargs: func(*args, **kwargs)
 

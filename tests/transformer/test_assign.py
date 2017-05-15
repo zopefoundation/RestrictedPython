@@ -6,7 +6,7 @@ import pytest
 
 
 @pytest.mark.parametrize(*e_exec)
-def test_RestrictingNodeTransformer__visit_Assign(e_exec, mocker):
+def test_RestrictingNodeTransformer__visit_Assign__1(e_exec, mocker):
     src = "orig = (a, (x, z)) = (c, d) = g"
 
     _getiter_ = mocker.stub()
@@ -35,7 +35,7 @@ def test_RestrictingNodeTransformer__visit_Assign(e_exec, mocker):
     IS_PY2,
     reason="starred assignments are python3 only")
 @pytest.mark.parametrize(*e_exec)
-def test_RestrictingNodeTransformer__visit_Assign2(
+def test_RestrictingNodeTransformer__visit_Assign__2(
         e_exec, mocker):
     src = "a, *d, (c, *e), x  = (1, 2, 3, (4, 3, 4), 5)"
 

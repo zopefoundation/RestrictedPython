@@ -143,7 +143,7 @@ def tuple_unpack(err):
     IS_PY3,
     reason="tuple unpacking on exceptions is gone in python3")
 @pytest.mark.parametrize(*e_exec)
-def test_RestrictingNodeTransformer__visit_ExceptHandler(
+def test_RestrictingNodeTransformer__visit_ExceptHandler__1(
         e_exec, mocker):
     _getiter_ = mocker.stub()
     _getiter_.side_effect = lambda it: it

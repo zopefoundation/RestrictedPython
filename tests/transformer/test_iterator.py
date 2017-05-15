@@ -42,7 +42,7 @@ def nested_generator(it1, it2):
 
 
 @pytest.mark.parametrize(*e_exec)
-def test_RestrictingNodeTransformer__guard_iter(e_exec, mocker):
+def test_RestrictingNodeTransformer__guard_iter__1(e_exec, mocker):
     it = (1, 2, 3)
     _getiter_ = mocker.stub()
     _getiter_.side_effect = lambda x: x
@@ -123,7 +123,7 @@ def generator(it):
 
 
 @pytest.mark.parametrize(*e_exec)
-def test_RestrictingNodeTransformer__guard_iter2(e_exec, mocker):
+def test_RestrictingNodeTransformer__guard_iter__2(e_exec, mocker):
     it = ((1, 2), (3, 4), (5, 6))
 
     call_ref = [
