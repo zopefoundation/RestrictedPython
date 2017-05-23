@@ -4,7 +4,7 @@ Changes
 4.0a2 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Drop support for long-deprecated ``sets`` module.
 
 
 4.0a1 (2017-05-05)
