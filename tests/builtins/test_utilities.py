@@ -1,7 +1,3 @@
-from RestrictedPython._compat import IS_PY3
-
-import pytest
-
 
 def test_string_in_utility_builtins():
     import string
