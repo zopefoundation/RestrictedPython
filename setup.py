@@ -27,8 +27,9 @@ setup(name='RestrictedPython',
       version='4.0a2.dev0',
       url='http://pypi.python.org/pypi/RestrictedPython',
       license='ZPL 2.1',
-      description='RestrictedPython provides a restricted execution '
-                  'environment for Python, e.g. for running untrusted code.',
+      description='RestrictedPython is a defined subset of the Python language'
+                  ' which allows to provide a program input into a trusted'
+                  ' environment.',
       long_description=(read('README.rst') + '\n' +
                         read('docs', 'CHANGES.rst')),
       classifiers=[
