@@ -6,6 +6,8 @@ Changes
 
 - Update Configurations to give better feedback and helpful reports.
   [loechel]
+- Drop support for long-deprecated ``sets`` module.
+  [tseaver]
 
 
 4.0a1 (2017-05-05)
