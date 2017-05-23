@@ -4,7 +4,8 @@ Changes
 4.0a2 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Update Configurations to give better feedback and helpful reports.
+  [loechel]
 
 
 4.0a1 (2017-05-05)
