@@ -32,14 +32,6 @@ def test_set_in_utility_builtins():
     assert utility_builtins['set'] is set
 
 
-@pytest.mark.skipif(IS_PY3,
-                    reason='Python 3 has no longer includes the sets module.')
-def test_sets_in_utility_builtins():
-    from RestrictedPython.Utilities import utility_builtins
-    import sets
-    assert utility_builtins['sets'] is sets
-
-
 def test_frozenset_in_utility_builtins():
     from RestrictedPython.Utilities import utility_builtins
     assert utility_builtins['frozenset'] is frozenset
