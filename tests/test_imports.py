@@ -2,12 +2,10 @@
 Tests about imports
 """
 
-# Test framework imports
-import pytest
-
-# Test internals (fixures and helpers)
 from tests import c_exec
 from tests import e_exec
+
+import pytest
 
 
 OS_IMPORT_EXAMPLE = """
