@@ -4,7 +4,8 @@ Changes
 4.0a2 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Modified README and setup.py to provide a better desciption test for PyPI.
+  [loechel]
 
 
 4.0a1 (2017-05-05)
