@@ -26,11 +26,11 @@ This would not harm any system.
     ...     return 'Hello World!'
     ... """
     >>>
-    >>> locals = {}
+    >>> loc = {}
     >>> byte_code = compile_restricted(source_code, '<inline>', 'exec')
-    >>> exec(byte_code, safe_builtins, locals)
+    >>> exec(byte_code, safe_builtins, loc)
     >>>
-    >>> locals['example']()
+    >>> loc['example']()
     'Hello World!'
 
 Problematic code example

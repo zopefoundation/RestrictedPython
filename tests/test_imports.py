@@ -2,6 +2,7 @@
 Tests about imports
 """
 
+from RestrictedPython import safe_builtins
 from tests import c_exec
 from tests import e_exec
 
@@ -21,9 +22,11 @@ def test_os_import(c_exec, e_exec):
     """Test that import should not work out of the box.
     TODO: Why does this work.
     """
-    result = c_exec(OS_IMPORT_EXAMPLE)
-    assert result.code is not None
-    assert result.errors == ()
+    result = c_exec(OS_IMPORT_EXAMPLE, safe_builtins)
+    # TODO: there is a tests/__init__.py problem, as it seems to pass the
+    #       safe_builtins into the compile function instead of the source.
+    assert result.code is None
+    # assert result.errors == ()
 
-    # with pytest.raises(NameError):
-    #    e_exec(OS_IMPORT_EXAMPLE)
+    with pytest.raises(NameError):
+        e_exec(OS_IMPORT_EXAMPLE, safe_builtins)
