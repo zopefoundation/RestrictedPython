@@ -6,6 +6,8 @@ Changes
 
 - Modified README and setup.py to provide a better desciption test for PyPI.
   [loechel]
+- Drop support for long-deprecated ``sets`` module.
+  [tseaver]
 
 
 4.0a1 (2017-05-05)
