@@ -887,7 +887,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         'foo[a:b]' becomes '_getitem_(foo, slice(a, b, None))'
         'foo[a:b:c]' becomes '_getitem_(foo, slice(a, b, c))'
         'foo[a, b:c] becomes '_getitem_(foo, (a, slice(b, c, None)))'
-        'foo[a] = c' becomes '_write(foo)[a] = c'
+        'foo[a] = c' becomes '_write_(foo)[a] = c'
         'del foo[a]' becomes 'del _write_(foo)[a]'
 
         The _write_ function should return a security proxy.
