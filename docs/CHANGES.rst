@@ -4,7 +4,7 @@ Changes
 4.0a3 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Update Configurations to give better feedback and helpful reports.
 
 
 4.0a2 (2017-05-26)
@@ -12,6 +12,7 @@ Changes
 
 - Modified README and setup.py to provide a better desciption test for PyPI.
   [loechel]
+  
 - Drop support for long-deprecated ``sets`` module.
   [tseaver]
 

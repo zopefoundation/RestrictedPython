@@ -17,6 +17,7 @@ pyvenv.cfg
 /build
 /develop-eggs
 /dist
+/reports
 /downloads
 /eggs
 /fake-eggs

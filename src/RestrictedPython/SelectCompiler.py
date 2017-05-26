@@ -13,6 +13,10 @@
 """Compiler selector.
 """
 
+# flake8: NOQA: 401
+# isort: skip
+# TODO: Drop whole file on getting rid of old implementation.
+
 from compiler import ast
 from compiler.consts import OP_APPLY
 from compiler.consts import OP_ASSIGN
@@ -23,8 +27,7 @@ from RCompile import compile_restricted_eval
 from RCompile import compile_restricted_exec
 from RCompile import compile_restricted_function
 
-# Use the compiler from the standard library.
-import compiler
+import compiler  # Use the compiler from the standard library.
 import warnings
 
 
