@@ -1,7 +1,7 @@
 Changes
 =======
 
-4.0a2 (unreleased)
+4.0a2 (2017-05-26)
 ------------------
 
 - Modified README and setup.py to provide a better desciption test for PyPI.
