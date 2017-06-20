@@ -1,7 +1,7 @@
 Changes
 =======
 
-4.0a3 (unreleased)
+4.0a3 (2017-06-20)
 ------------------
 
 - Fix install problem caused by an invisible non-ASCII character in
