@@ -23,6 +23,12 @@ def read(*rnames):
     return open(os.path.join(os.path.dirname(__file__), *rnames)).read()
 
 
+tests_require = [
+    'pytest',
+    'pytest-mock',
+]
+
+
 setup(name='RestrictedPython',
       version='4.0a3.dev0',
       url='http://pypi.python.org/pypi/RestrictedPython',
@@ -56,13 +62,12 @@ setup(name='RestrictedPython',
       setup_requires=[
           'pytest-runner',
       ],
-      test_requires=[
-          'pytest',
-      ],
+      tests_require=tests_require,
       extras_require={
           'docs': [
               'Sphinx',
           ],
+          'test': tests_require,
           'release': [
               'zest.releaser',
           ],
