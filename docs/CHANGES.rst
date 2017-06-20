@@ -4,9 +4,10 @@ Changes
 4.0a3 (unreleased)
 ------------------
 
-- Update Configurations to give better feedback and helpful reports.
 - Fix install problem caused by an invisible non-ASCII character in
   `README.rst`.
+
+- Update configurations to give better feedback and helpful reports.
 
 
 
@@ -15,7 +16,7 @@ Changes
 
 - Modified README and setup.py to provide a better desciption test for PyPI.
   [loechel]
-  
+
 - Drop support for long-deprecated ``sets`` module.
   [tseaver]
 
