@@ -5,7 +5,7 @@ RestrictedPython
 RestrictedPython is a tool that helps to define a subset of the Python language which allows to provide a program input into a trusted environment.
 RestrictedPython is not a sandbox system or a secured environment, but it helps to define a trusted environment and execute untrusted code inside of it.
 
-For full documentation please see  http://restrictedpython.readthedocs.io/ or the local ``docs/index``.
+For full documentation please see http://restrictedpython.readthedocs.io/ or the local ``docs/index``.
 
 Example
 =======

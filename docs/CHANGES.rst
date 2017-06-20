@@ -5,6 +5,9 @@ Changes
 ------------------
 
 - Update Configurations to give better feedback and helpful reports.
+- Fix install problem caused by an invisible non-ASCII character in
+  `README.rst`.
+
 
 
 4.0a2 (2017-05-26)
