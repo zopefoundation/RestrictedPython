@@ -26,6 +26,7 @@ matrix:
 
 
 install:
+    - travis_retry pip install -U pip setuptools
     - travis_retry pip install -U -c constraints.txt tox coveralls coverage
 
 script:
