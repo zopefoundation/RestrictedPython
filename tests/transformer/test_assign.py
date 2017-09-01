@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from RestrictedPython._compat import IS_PY2
 from RestrictedPython.Guards import guarded_unpack_sequence
 from tests import e_exec

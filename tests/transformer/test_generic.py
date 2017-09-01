@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from RestrictedPython import RestrictingNodeTransformer
 
 import ast
@@ -11,6 +13,8 @@ def test_RestrictingNodeTransformer__generic_visit__1():
     transformer = RestrictingNodeTransformer()
     transformer.visit(MyFancyNode())
     assert transformer.errors == [
-        'Line None: MyFancyNode statements are not allowed.']
+        'Line None: MyFancyNode statements are not allowed.',
+    ]
     assert transformer.warnings == [
-        'Line None: MyFancyNode statement is not known to RestrictedPython']
+        'Line None: MyFancyNode statement is not known to RestrictedPython',
+    ]

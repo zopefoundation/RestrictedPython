@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from RestrictedPython._compat import IS_PY2
 from tests import c_exec
 from tests import e_exec
@@ -171,7 +173,7 @@ def bad_name():
 
 
 @pytest.mark.skipif(IS_PY2,
-                    reason="print is a statement in Python 2")
+                    reason='print is a statement in Python 2')
 @pytest.mark.parametrize(*c_exec)
 def test_RestrictingNodeTransformer__visit_Name__7(c_exec):
     """It denies a variable named `print`."""

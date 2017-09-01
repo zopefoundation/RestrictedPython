@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from RestrictedPython import PrintCollector
 from RestrictedPython import safe_builtins
 from tests import c_function

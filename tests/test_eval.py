@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from RestrictedPython.Eval import RestrictionCapableEval
 
 import pytest

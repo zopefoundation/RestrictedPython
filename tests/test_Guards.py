@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from RestrictedPython.Guards import safe_builtins
 from tests import e_eval
 from tests import e_exec

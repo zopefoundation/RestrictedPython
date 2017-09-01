@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from RestrictedPython._compat import IS_PY3
 from RestrictedPython.PrintCollector import PrintCollector
 from tests import c_exec

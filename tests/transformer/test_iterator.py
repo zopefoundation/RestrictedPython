@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from RestrictedPython.Guards import guarded_iter_unpack_sequence
 from tests import e_exec
 
@@ -56,10 +58,12 @@ def test_RestrictingNodeTransformer__guard_iter__1(e_exec, mocker):
 
     ret = glb['nested_for_loop']((1, 2), (3, 4))
     assert 20 == ret
-    _getiter_.assert_has_calls([
-        mocker.call((1, 2)),
-        mocker.call((3, 4))
-    ])
+    _getiter_.assert_has_calls(
+        [
+            mocker.call((1, 2)),
+            mocker.call((3, 4)),
+        ],
+    )
     _getiter_.reset_mock()
 
     ret = glb['dict_comp'](it)
@@ -74,10 +78,12 @@ def test_RestrictingNodeTransformer__guard_iter__1(e_exec, mocker):
 
     ret = glb['nested_list_comp']((1, 2), (3, 4))
     assert [5, 6] == ret
-    _getiter_.assert_has_calls([
-        mocker.call((1, 2)),
-        mocker.call((3, 4))
-    ])
+    _getiter_.assert_has_calls(
+        [
+            mocker.call((1, 2)),
+            mocker.call((3, 4)),
+        ],
+    )
     _getiter_.reset_mock()
 
     ret = glb['set_comp'](it)
@@ -94,10 +100,13 @@ def test_RestrictingNodeTransformer__guard_iter__1(e_exec, mocker):
     ret = glb['nested_generator']((0, 1, 2), (1, 2))
     assert isinstance(ret, types.GeneratorType)
     assert list(ret) == [2, 3, 3, 4]
-    _getiter_.assert_has_calls([
-        mocker.call((0, 1, 2)),
-        mocker.call((1, 2)),
-        mocker.call((1, 2))])
+    _getiter_.assert_has_calls(
+        [
+            mocker.call((0, 1, 2)),
+            mocker.call((1, 2)),
+            mocker.call((1, 2)),
+        ],
+    )
     _getiter_.reset_mock()
 
 
@@ -130,7 +139,7 @@ def test_RestrictingNodeTransformer__guard_iter__2(e_exec, mocker):
         mocker.call(it),
         mocker.call(it[0]),
         mocker.call(it[1]),
-        mocker.call(it[2])
+        mocker.call(it[2]),
     ]
 
     _getiter_ = mocker.stub()
@@ -138,7 +147,7 @@ def test_RestrictingNodeTransformer__guard_iter__2(e_exec, mocker):
 
     glb = {
         '_getiter_': _getiter_,
-        '_iter_unpack_sequence_': guarded_iter_unpack_sequence
+        '_iter_unpack_sequence_': guarded_iter_unpack_sequence,
     }
 
     e_exec(ITERATORS_WITH_UNPACK_SEQUENCE, glb)

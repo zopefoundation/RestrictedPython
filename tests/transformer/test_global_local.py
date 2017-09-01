@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from RestrictedPython._compat import IS_PY3
 from tests import c_exec
 from tests import e_exec
@@ -37,7 +39,7 @@ outside()
 
 @pytest.mark.skipif(
     not IS_PY3,
-    reason="The `nonlocal` statement was introduced in Python 3.0.")
+    reason='The `nonlocal` statement was introduced in Python 3.0.')
 @pytest.mark.parametrize(*c_exec)
 def test_Nonlocal(c_exec):
     result = c_exec(NONLOCAL_EXAMPLE)

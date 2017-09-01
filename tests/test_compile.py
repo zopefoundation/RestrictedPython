@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from RestrictedPython import compile_restricted
 from RestrictedPython import CompileResult
 from RestrictedPython._compat import IS_PY2

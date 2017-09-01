@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from operator import getitem
 from tests import e_eval
 

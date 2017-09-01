@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from RestrictedPython._compat import IS_PY2
 from RestrictedPython._compat import IS_PY3
 from RestrictedPython.Guards import guarded_unpack_sequence
@@ -15,7 +17,7 @@ lambda_err_msg = 'Line 1: "_bad" is an invalid variable ' \
 @pytest.mark.parametrize(*c_exec)
 def test_RestrictingNodeTransformer__visit_Lambda__1(c_exec):
     """It prevents arguments starting with `_`."""
-    result = c_exec("lambda _bad: None")
+    result = c_exec('lambda _bad: None')
     # RestrictedPython.compile.compile_restricted_exec on Python 2 renders
     # the error message twice. This is necessary as otherwise *_bad and **_bad
     # would be allowed.
@@ -25,7 +27,7 @@ def test_RestrictingNodeTransformer__visit_Lambda__1(c_exec):
 @pytest.mark.parametrize(*c_exec)
 def test_RestrictingNodeTransformer__visit_Lambda__2(c_exec):
     """It prevents keyword arguments starting with `_`."""
-    result = c_exec("lambda _bad=1: None")
+    result = c_exec('lambda _bad=1: None')
     # RestrictedPython.compile.compile_restricted_exec on Python 2 renders
     # the error message twice. This is necessary as otherwise *_bad and **_bad
     # would be allowed.
@@ -35,26 +37,26 @@ def test_RestrictingNodeTransformer__visit_Lambda__2(c_exec):
 @pytest.mark.parametrize(*c_exec)
 def test_RestrictingNodeTransformer__visit_Lambda__3(c_exec):
     """It prevents * arguments starting with `_`."""
-    result = c_exec("lambda *_bad: None")
+    result = c_exec('lambda *_bad: None')
     assert result.errors == (lambda_err_msg,)
 
 
 @pytest.mark.parametrize(*c_exec)
 def test_RestrictingNodeTransformer__visit_Lambda__4(c_exec):
     """It prevents ** arguments starting with `_`."""
-    result = c_exec("lambda **_bad: None")
+    result = c_exec('lambda **_bad: None')
     assert result.errors == (lambda_err_msg,)
 
 
 @pytest.mark.skipif(
     IS_PY3,
-    reason="tuple parameter unpacking is gone in Python 3")
+    reason='tuple parameter unpacking is gone in Python 3')
 @pytest.mark.parametrize(*c_exec)
 def test_RestrictingNodeTransformer__visit_Lambda__5(c_exec):
     """It prevents arguments starting with `_` in tuple unpacking."""
     # The old `compile` breaks with tuples in arguments:
     if c_exec is RestrictedPython.compile.compile_restricted_exec:
-        result = c_exec("lambda (a, _bad): None")
+        result = c_exec('lambda (a, _bad): None')
         # RestrictedPython.compile.compile_restricted_exec on Python 2 renders
         # the error message twice. This is necessary as otherwise *_bad and
         # **_bad would be allowed.
@@ -63,13 +65,13 @@ def test_RestrictingNodeTransformer__visit_Lambda__5(c_exec):
 
 @pytest.mark.skipif(
     IS_PY3,
-    reason="tuple parameter unpacking is gone in Python 3")
+    reason='tuple parameter unpacking is gone in Python 3')
 @pytest.mark.parametrize(*c_exec)
 def test_RestrictingNodeTransformer__visit_Lambda__6(c_exec):
     """It prevents arguments starting with `_` in nested tuple unpacking."""
     # The old `compile` breaks with tuples in arguments:
     if c_exec is RestrictedPython.compile.compile_restricted_exec:
-        result = c_exec("lambda (a, (c, (_bad, c))): None")
+        result = c_exec('lambda (a, (c, (_bad, c))): None')
         # RestrictedPython.compile.compile_restricted_exec on Python 2 renders
         # the error message twice. This is necessary as otherwise *_bad and
         # **_bad would be allowed.
@@ -78,11 +80,11 @@ def test_RestrictingNodeTransformer__visit_Lambda__6(c_exec):
 
 @pytest.mark.skipif(
     IS_PY2,
-    reason="There is no single `*` argument in Python 2")
+    reason='There is no single `*` argument in Python 2')
 @pytest.mark.parametrize(*c_exec)
 def test_RestrictingNodeTransformer__visit_Lambda__7(c_exec):
     """It prevents arguments starting with `_` together with a single `*`."""
-    result = c_exec("lambda good, *, _bad: None")
+    result = c_exec('lambda good, *, _bad: None')
     assert result.errors == (lambda_err_msg,)
 
 
@@ -103,19 +105,21 @@ def test_RestrictingNodeTransformer__visit_Lambda__8(c_exec):
 
 @pytest.mark.skipif(
     IS_PY3,
-    reason="tuple parameter unpacking is gone in python 3")
+    reason='tuple parameter unpacking is gone in python 3')
 @pytest.mark.parametrize(*e_exec)
 def test_RestrictingNodeTransformer__visit_Lambda__9(
-        e_exec, mocker):
+    e_exec,
+    mocker,
+):
     _getiter_ = mocker.stub()
     _getiter_.side_effect = lambda it: it
     glb = {
         '_getiter_': _getiter_,
         '_unpack_sequence_': guarded_unpack_sequence,
-        '_getattr_': lambda ob, val: getattr(ob, val)
+        '_getattr_': lambda ob, val: getattr(ob, val),
     }
 
-    src = "m = lambda (a, (b, c)), *ag, **kw: a+b+c+sum(ag)+sum(kw.values())"
+    src = 'm = lambda (a, (b, c)), *ag, **kw: a+b+c+sum(ag)+sum(kw.values())'
     try:
         e_exec(src, glb)
     except AttributeError:
