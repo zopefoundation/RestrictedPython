@@ -10,7 +10,8 @@ import RestrictedPython
 
 pytestmark = pytest.mark.skipif(
     IS_PY3,
-    reason="print statement no longer exists in Python 3")
+    reason='print statement no longer exists in Python 3',
+)
 
 
 ALLOWED_PRINT_STATEMENT = """
@@ -38,7 +39,10 @@ print('Hello World!', 'Hello Earth!')
 
 @pytest.mark.parametrize(*c_exec)
 def test_print_stmt__simple_prints(c_exec):
-    glb = {'_print_': PrintCollector, '_getattr_': None}
+    glb = {
+        '_print_': PrintCollector,
+        '_getattr_': None,
+    }
 
     code, errors = c_exec(ALLOWED_PRINT_STATEMENT)[:2]
     assert code is not None
@@ -62,7 +66,7 @@ def test_print_stmt__simple_prints(c_exec):
     assert code is not None
     assert errors == ()
     exec(code, glb)
-    assert glb['_print']() == "Hello World!\n"
+    assert glb['_print']() == 'Hello World!\n'
 
     code, errors = c_exec(ALLOWED_PRINT_MULTI_TUPLE)[:2]
     assert code is not None
@@ -78,7 +82,10 @@ def test_print_stmt__fail_with_none_target(c_exec, mocker):
     assert code is not None
     assert errors == ()
 
-    glb = {'_getattr_': getattr, '_print_': PrintCollector}
+    glb = {
+        '_getattr_': getattr,
+        '_print_': PrintCollector,
+    }
 
     with pytest.raises(AttributeError) as excinfo:
         exec(code, glb)
@@ -98,7 +105,10 @@ def test_print_stmt__protect_chevron_print(c_exec, mocker):
 
     _getattr_ = mocker.stub()
     _getattr_.side_effect = getattr
-    glb = {'_getattr_': _getattr_, '_print_': PrintCollector}
+    glb = {
+        '_getattr_': _getattr_,
+        '_print_': PrintCollector,
+    }
 
     exec(code, glb)
 
@@ -106,10 +116,12 @@ def test_print_stmt__protect_chevron_print(c_exec, mocker):
     stream.write = mocker.stub()
     glb['print_into_stream'](stream)
 
-    stream.write.assert_has_calls([
-        mocker.call('Hello World!'),
-        mocker.call('\n')
-    ])
+    stream.write.assert_has_calls(
+        [
+            mocker.call('Hello World!'),
+            mocker.call('\n'),
+        ],
+    )
 
     _getattr_.assert_called_once_with(stream, 'write')
 
@@ -139,7 +151,10 @@ def main():
 def test_print_stmt__nested_print_collector(c_exec, mocker):
     code, errors = c_exec(INJECT_PRINT_COLLECTOR_NESTED)[:2]
 
-    glb = {"_print_": PrintCollector, '_getattr_': None}
+    glb = {
+        '_print_': PrintCollector,
+        '_getattr_': None,
+    }
     exec(code, glb)
 
     ret = glb['main']()
@@ -161,10 +176,13 @@ def test_print_stmt__with_printed_no_print(c_exec):
 
     if c_exec is RestrictedPython.compile.compile_restricted_exec:
         assert warnings == [
-            "Line 2: Doesn't print, but reads 'printed' variable."]
+            "Line 2: Doesn't print, but reads 'printed' variable.",
+        ]
 
     if c_exec is RestrictedPython.RCompile.compile_restricted_exec:
-        assert warnings == ["Doesn't print, but reads 'printed' variable."]
+        assert warnings == [
+            "Doesn't print, but reads 'printed' variable.",
+        ]
 
 
 WARN_PRINTED_NO_PRINT_NESTED = """
@@ -184,8 +202,8 @@ def test_print_stmt__with_printed_no_print_nested(c_exec):
 
     if c_exec is RestrictedPython.compile.compile_restricted_exec:
         assert warnings == [
-            "Line 2: Print statement is deprecated and not avaliable anymore in Python 3.",  # NOQA: E501
-            "Line 3: Doesn't print, but reads 'printed' variable."
+            'Line 2: Print statement is deprecated and not avaliable anymore in Python 3.',  # NOQA: E501
+            "Line 3: Doesn't print, but reads 'printed' variable.",
         ]
 
     if c_exec is RestrictedPython.RCompile.compile_restricted_exec:
@@ -207,8 +225,8 @@ def test_print_stmt__with_print_no_printed(c_exec):
 
     if c_exec is RestrictedPython.compile.compile_restricted_exec:
         assert warnings == [
-            "Line 3: Print statement is deprecated and not avaliable anymore in Python 3.",  # NOQA: E501
-            "Line 2: Prints, but never reads 'printed' variable."
+            'Line 3: Print statement is deprecated and not avaliable anymore in Python 3.',  # NOQA: E501
+            "Line 2: Prints, but never reads 'printed' variable.",
         ]
 
     if c_exec is RestrictedPython.RCompile.compile_restricted_exec:
@@ -232,8 +250,8 @@ def test_print_stmt__with_print_no_printed_nested(c_exec):
 
     if c_exec is RestrictedPython.compile.compile_restricted_exec:
         assert warnings == [
-            "Line 2: Print statement is deprecated and not avaliable anymore in Python 3.",  # NOQA: E501
-            "Line 4: Print statement is deprecated and not avaliable anymore in Python 3.",  # NOQA: E501
+            'Line 2: Print statement is deprecated and not avaliable anymore in Python 3.',  # NOQA: E501
+            'Line 4: Print statement is deprecated and not avaliable anymore in Python 3.',  # NOQA: E501
             "Line 3: Prints, but never reads 'printed' variable.",
         ]
 
@@ -257,7 +275,10 @@ def class_scope():
 @pytest.mark.parametrize(*c_exec)
 def test_print_stmt_no_new_scope(c_exec):
     code, errors = c_exec(NO_PRINT_SCOPES)[:2]
-    glb = {'_print_': PrintCollector, '_getattr_': None}
+    glb = {
+        '_print_': PrintCollector,
+        '_getattr_': None,
+    }
     exec(code, glb)
 
     ret = glb['class_scope']()
@@ -275,7 +296,10 @@ def func(cond):
 @pytest.mark.parametrize(*c_exec)
 def test_print_stmt_conditional_print(c_exec):
     code, errors = c_exec(CONDITIONAL_PRINT)[:2]
-    glb = {'_print_': PrintCollector, '_getattr_': None}
+    glb = {
+        '_print_': PrintCollector,
+        '_getattr_': None,
+    }
     exec(code, glb)
 
     assert glb['func'](True) == '1\n'

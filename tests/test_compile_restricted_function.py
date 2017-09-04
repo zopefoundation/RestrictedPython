@@ -12,10 +12,10 @@ import pytest
 def test_compile_restricted_function(c_function):
     p = ''
     body = """
-print("Hello World!")
+print('Hello World!')
 return printed
 """
-    name = "hello_world"
+    name = 'hello_world'
     global_symbols = []
 
     result = c_function(
@@ -23,7 +23,7 @@ return printed
         body,
         name,
         filename='<string>',
-        globalize=global_symbols
+        globalize=global_symbols,
     )
 
     assert result.code is not None
@@ -32,7 +32,7 @@ return printed
     safe_globals = {
         '__name__': 'script',
         '_getattr_': getattr,
-        '_print_': PrintCollector
+        '_print_': PrintCollector,
     }
     safe_globals.update(safe_builtins)
     safe_locals = {}
@@ -49,7 +49,7 @@ def test_compile_restricted_function_func_wrapped(c_function):
 print("Hello World!")
 return printed
 """
-    name = "hello_world"
+    name = 'hello_world'
     global_symbols = []
 
     result = c_function(
@@ -57,7 +57,7 @@ return printed
         body,
         name,
         filename='<string>',
-        globalize=global_symbols
+        globalize=global_symbols,
     )
 
     assert result.code is not None
@@ -83,7 +83,7 @@ def test_compile_restricted_function_with_arguments(c_function):
 print(input1 + input2)
 return printed
 """
-    name = "hello_world"
+    name = 'hello_world'
     global_symbols = []
 
     result = c_function(
@@ -91,7 +91,7 @@ return printed
         body,
         name,
         filename='<string>',
-        globalize=global_symbols
+        globalize=global_symbols,
     )
 
     assert result.code is not None
@@ -100,7 +100,7 @@ return printed
     safe_globals = {
         '__name__': 'script',
         '_getattr_': getattr,
-        '_print_': PrintCollector
+        '_print_': PrintCollector,
     }
     safe_globals.update(safe_builtins)
     safe_locals = {}
@@ -117,7 +117,7 @@ def test_compile_restricted_function_can_access_global_variables(c_function):
 print(input)
 return printed
 """
-    name = "hello_world"
+    name = 'hello_world'
     global_symbols = ['input']
 
     result = c_function(
@@ -125,7 +125,7 @@ return printed
         body,
         name,
         filename='<string>',
-        globalize=global_symbols
+        globalize=global_symbols,
     )
 
     assert result.code is not None
@@ -135,7 +135,7 @@ return printed
         '__name__': 'script',
         '_getattr_': getattr,
         'input': 'Hello World!',
-        '_print_': PrintCollector
+        '_print_': PrintCollector,
     }
     safe_globals.update(safe_builtins)
     safe_locals = {}
@@ -149,7 +149,7 @@ return printed
 def test_compile_restricted_function_pretends_the_code_is_executed_in_a_global_scope(c_function):  # NOQA: E501
     p = ''
     body = """output = output + 'bar'"""
-    name = "hello_world"
+    name = 'hello_world'
     global_symbols = ['output']
 
     result = c_function(
@@ -157,7 +157,7 @@ def test_compile_restricted_function_pretends_the_code_is_executed_in_a_global_s
         body,
         name,
         filename='<string>',
-        globalize=global_symbols
+        globalize=global_symbols,
     )
 
     assert result.code is not None
@@ -180,7 +180,7 @@ def test_compile_restricted_function_pretends_the_code_is_executed_in_a_global_s
 def test_compile_restricted_function_allows_invalid_python_identifiers_as_function_name(c_function):  # NOQA: E501
     p = ''
     body = """output = output + 'bar'"""
-    name = "<foo>.bar.__baz__"
+    name = '<foo>.bar.__baz__'
     global_symbols = ['output']
 
     result = c_function(
@@ -188,7 +188,7 @@ def test_compile_restricted_function_allows_invalid_python_identifiers_as_functi
         body,
         name,
         filename='<string>',
-        globalize=global_symbols
+        globalize=global_symbols,
     )
 
     assert result.code is not None
