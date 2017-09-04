@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 ##############################################################################
 #
 # Copyright (c) 2002 Zope Foundation and Contributors.
@@ -17,10 +19,10 @@ import warnings
 
 
 warnings.warn(
-    "This Module (RestrictedPython.MutatingWalker) is deprecated"
-    "and will be gone soon.",
+    'This Module (RestrictedPython.MutatingWalker) is deprecated'
+    'and will be gone soon.',
     category=PendingDeprecationWarning,
-    stacklevel=1
+    stacklevel=1,
 )
 
 
@@ -59,10 +61,10 @@ class MutatingWalker:
         return res
 
     def dispatchObject(self, ob):
-        '''
+        """
         Expected to return either ob or something that will take
         its place.
-        '''
+        """
         if isinstance(ob, ast.Node):
             return self.dispatchNode(ob)
         elif type(ob) in SequenceTypes:
@@ -75,8 +77,11 @@ class MutatingWalker:
         meth = self._cache.get(klass, None)
         if meth is None:
             className = klass.__name__
-            meth = getattr(self.visitor, 'visit' + className,
-                           self.defaultVisitNode)
+            meth = getattr(
+                self.visitor,
+                'visit' + className,
+                self.defaultVisitNode,
+            )
             self._cache[klass] = meth
         return meth(node, self)
 

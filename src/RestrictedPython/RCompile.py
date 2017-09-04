@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 ##############################################################################
 #
 # Copyright (c) 2002 Zope Foundation and Contributors.
@@ -34,10 +36,10 @@ import warnings
 
 
 warnings.warn(
-    "This Module (RestrictedPython.RCompile) is deprecated"
-    "and will be gone soon.",
+    'This Module (RestrictedPython.RCompile) is deprecated'
+    'and will be gone soon.',
     category=PendingDeprecationWarning,
-    stacklevel=1
+    stacklevel=1,
 )
 
 
@@ -92,10 +94,18 @@ def compileAndTuplize(gen):
         gen.compile()
     except TypeError as v:
         return CompileResult(
-            None, (str(v),), gen.rm.warnings, gen.rm.used_names)
+            None,
+            (str(v),),
+            gen.rm.warnings,
+            gen.rm.used_names,
+        )
     except SyntaxError as v:
         return CompileResult(
-            None, (str(v),), gen.rm.warnings, gen.rm.used_names)
+            None,
+            (str(v),),
+            gen.rm.warnings,
+            gen.rm.used_names,
+        )
     return CompileResult(gen.getCode(), (), gen.rm.warnings, gen.rm.used_names)
 
 
@@ -111,10 +121,10 @@ def compile_restricted_function(p, body, name, filename, globalize=None):
     appeared in a global statement at the top of the function).
     """
     warnings.warn(
-        "RestrictedPython.RCompile.compile_restricted_function is deprecated"
-        "use RestrictedPython.compile_restricted_function instead.",
+        'RestrictedPython.RCompile.compile_restricted_function is deprecated'
+        'use RestrictedPython.compile_restricted_function instead.',
         category=PendingDeprecationWarning,
-        stacklevel=1
+        stacklevel=1,
     )
     gen = RFunction(p, body, name, filename, globalize)
     return compileAndTuplize(gen)
@@ -123,10 +133,10 @@ def compile_restricted_function(p, body, name, filename, globalize=None):
 def compile_restricted_exec(source, filename='<string>'):
     """Compiles a restricted code suite."""
     warnings.warn(
-        "RestrictedPython.RCompile.compile_restricted_exec is deprecated"
-        "use RestrictedPython.compile_restricted_exec instead.",
+        'RestrictedPython.RCompile.compile_restricted_exec is deprecated'
+        'use RestrictedPython.compile_restricted_exec instead.',
         category=PendingDeprecationWarning,
-        stacklevel=1
+        stacklevel=1,
     )
     gen = RModule(source, filename)
     return compileAndTuplize(gen)
@@ -135,10 +145,10 @@ def compile_restricted_exec(source, filename='<string>'):
 def compile_restricted_eval(source, filename='<string>'):
     """Compiles a restricted expression."""
     warnings.warn(
-        "RestrictedPython.RCompile.compile_restricted_eval is deprecated"
-        "use RestrictedPython.compile_restricted_eval instead.",
+        'RestrictedPython.RCompile.compile_restricted_eval is deprecated'
+        'use RestrictedPython.compile_restricted_eval instead.',
         category=PendingDeprecationWarning,
-        stacklevel=1
+        stacklevel=1,
     )
     gen = RExpression(source, filename)
     return compileAndTuplize(gen)
@@ -147,10 +157,10 @@ def compile_restricted_eval(source, filename='<string>'):
 def compile_restricted_single(source, filename='<string>'):
     """Compiles a restricted expression."""
     warnings.warn(
-        "RestrictedPython.RCompile.compile_restricted_single is deprecated"
-        "use RestrictedPython.compile_restricted_single instead.",
+        'RestrictedPython.RCompile.compile_restricted_single is deprecated'
+        'use RestrictedPython.compile_restricted_single instead.',
         category=PendingDeprecationWarning,
-        stacklevel=1
+        stacklevel=1,
     )
     gen = RInteractive(source, filename)
     return compileAndTuplize(gen)
@@ -159,20 +169,21 @@ def compile_restricted_single(source, filename='<string>'):
 def compile_restricted(source, filename, mode):
     """Replacement for the builtin compile() function."""
     warnings.warn(
-        "RestrictedPython.RCompile.compile_restricted is deprecated"
-        "use RestrictedPython.compile_restricted instead.",
+        'RestrictedPython.RCompile.compile_restricted is deprecated'
+        'use RestrictedPython.compile_restricted instead.',
         category=PendingDeprecationWarning,
-        stacklevel=1
+        stacklevel=1,
     )
-    if mode == "single":
+    if mode == 'single':
         gen = RInteractive(source, filename)
-    elif mode == "exec":
+    elif mode == 'exec':
         gen = RModule(source, filename)
-    elif mode == "eval":
+    elif mode == 'eval':
         gen = RExpression(source, filename)
     else:
-        raise ValueError("compile_restricted() 3rd arg must be 'exec' or "
-                         "'eval' or 'single'")
+        raise ValueError(
+            "compile_restricted() 3rd arg must be 'exec' or 'eval' or 'single'",  # NOQA: E501
+        )
     gen.compile()
     return gen.getCode()
 
@@ -231,23 +242,31 @@ class RestrictedCodeGenerator:
 # are defined here (at the end) so that can refer to RestrictedCodeGenerator.
 
 
-class RestrictedFunctionCodeGenerator(RestrictedCodeGenerator,
-                                      pycodegen.FunctionCodeGenerator):
+class RestrictedFunctionCodeGenerator(
+    RestrictedCodeGenerator,
+    pycodegen.FunctionCodeGenerator,
+):
     pass
 
 
-class RestrictedExpressionCodeGenerator(RestrictedCodeGenerator,
-                                        pycodegen.ExpressionCodeGenerator):
+class RestrictedExpressionCodeGenerator(
+    RestrictedCodeGenerator,
+    pycodegen.ExpressionCodeGenerator,
+):
     pass
 
 
-class RestrictedInteractiveCodeGenerator(RestrictedCodeGenerator,
-                                         pycodegen.InteractiveCodeGenerator):
+class RestrictedInteractiveCodeGenerator(
+    RestrictedCodeGenerator,
+    pycodegen.InteractiveCodeGenerator,
+):
     pass
 
 
-class RestrictedModuleCodeGenerator(RestrictedCodeGenerator,
-                                    pycodegen.ModuleCodeGenerator):
+class RestrictedModuleCodeGenerator(
+    RestrictedCodeGenerator,
+    pycodegen.ModuleCodeGenerator,
+):
 
     def initClass(self):
         ModuleCodeGenerator.initClass(self)
@@ -261,17 +280,17 @@ class RestrictedModuleCodeGenerator(RestrictedCodeGenerator,
 # Expression.
 
 class RExpression(RestrictedCompileMode, Expression):
-    mode = "eval"
+    mode = 'eval'
     CodeGeneratorClass = RestrictedExpressionCodeGenerator
 
 
 class RInteractive(RestrictedCompileMode, Interactive):
-    mode = "single"
+    mode = 'single'
     CodeGeneratorClass = RestrictedInteractiveCodeGenerator
 
 
 class RModule(RestrictedCompileMode, Module):
-    mode = "exec"
+    mode = 'exec'
     CodeGeneratorClass = RestrictedModuleCodeGenerator
 
 
@@ -291,7 +310,7 @@ class RFunction(RModule):
 
     def parse(self):
         # Parse the parameters and body, then combine them.
-        firstline = 'def f(%s): pass' % self.params
+        firstline = 'def f({params}): pass'.format(params=self.params)
         tree = niceParse(firstline, '<function parameters>', 'exec')
         f = tree.node.nodes[0]
         body_code = niceParse(self.body, self.filename, 'exec')

@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 ##############################################################################
 #
 # Copyright (c) 2002 Zope Foundation and Contributors.
@@ -43,7 +45,7 @@ from RestrictedPython.PrintCollector import PrintCollector  # isort:skip
 from RestrictedPython.compile import CompileResult  # isort:skip
 
 # Policy
-from RestrictedPython.transformer import RestrictingNodeTransformer  # isort:skip
+from RestrictedPython.transformer import RestrictingNodeTransformer  # isort:skip  # NOQA: E501
 
 #
-from RestrictedPython.Eval import RestrictionCapableEval
+from RestrictedPython.Eval import RestrictionCapableEval  # isort:skip

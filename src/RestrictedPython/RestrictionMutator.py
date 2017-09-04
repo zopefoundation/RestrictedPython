@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 ##############################################################################
 #
 # Copyright (c) 2002 Zope Foundation and Contributors.
@@ -27,10 +29,10 @@ import warnings
 
 
 warnings.warn(
-    "This Module (RestrictedPython.RestrictionMutator) is deprecated"
-    "and will be gone soon.",
+    'This Module (RestrictedPython.RestrictionMutator) is deprecated'
+    'and will be gone soon.',
     category=PendingDeprecationWarning,
-    stacklevel=1
+    stacklevel=1,
 )
 
 
@@ -56,20 +58,20 @@ def stmtNode(txt):
 # The security checks are performed by a set of six functions that
 # must be provided by the restricted environment.
 
-_apply_name = ast.Name("_apply_")
-_getattr_name = ast.Name("_getattr_")
-_getitem_name = ast.Name("_getitem_")
-_getiter_name = ast.Name("_getiter_")
-_print_target_name = ast.Name("_print")
-_write_name = ast.Name("_write_")
-_inplacevar_name = ast.Name("_inplacevar_")
+_apply_name = ast.Name('_apply_')
+_getattr_name = ast.Name('_getattr_')
+_getitem_name = ast.Name('_getitem_')
+_getiter_name = ast.Name('_getiter_')
+_print_target_name = ast.Name('_print')
+_write_name = ast.Name('_write_')
+_inplacevar_name = ast.Name('_inplacevar_')
 
 # Constants.
 _None_const = ast.Const(None)
-_write_const = ast.Const("write")
+_write_const = ast.Const('write')
 
-_printed_expr = stmtNode("_print()").expr
-_print_target_node = stmtNode("_print = _print_()")
+_printed_expr = stmtNode('_print()').expr
+_print_target_node = stmtNode('_print = _print_()')
 
 
 class FuncInfo(object):
@@ -89,7 +91,9 @@ class RestrictionMutator:
         """Records a security error discovered during compilation."""
         lineno = getattr(node, 'lineno', None)
         if lineno is not None and lineno > 0:
-            self.errors.append('Line %d: %s' % (lineno, info))
+            self.errors.append(
+                'Line {lineno:d}: {info}'.format(lineno=lineno, info=info),
+            )
         else:
             self.errors.append(info)
 
@@ -108,14 +112,20 @@ class RestrictionMutator:
         and perhaps other statements assign names.  Special case:
         '_' is allowed.
         """
-        if name.startswith("_") and name != "_":
+        if name.startswith('_') and name != '_':
             # Note: "_" *is* allowed.
-            self.error(node, '"%s" is an invalid variable name because'
-                       ' it starts with "_"' % name)
+            self.error(
+                node,
+                '"{name}" is an invalid variable name because'
+                ' it starts with "_"'.format(name=name),
+            )
         if name.endswith('__roles__'):
-            self.error(node, '"%s" is an invalid variable name because '
-                       'it ends with "__roles__".' % name)
-        if name == "printed":
+            self.error(
+                node,
+                '"{name}" is an invalid variable name because '
+                'it ends with "__roles__".'.format(name=name),
+            )
+        if name == 'printed':
             self.error(node, '"printed" is a reserved name.')
 
     def checkAttrName(self, node):
@@ -126,13 +136,19 @@ class RestrictionMutator:
         security policy.  Special case: '_' is allowed.
         """
         name = node.attrname
-        if name.startswith("_") and name != "_":
+        if name.startswith('_') and name != '_':
             # Note: "_" *is* allowed.
-            self.error(node, '"%s" is an invalid attribute name '
-                       'because it starts with "_".' % name)
+            self.error(
+                node,
+                '"{name}" is an invalid attribute name '
+                'because it starts with "_".'.format(name=name),
+            )
         if name.endswith('__roles__'):
-            self.error(node, '"%s" is an invalid attribute name '
-                       'because it ends with "__roles__".' % name)
+            self.error(
+                node,
+                '"{name}" is an invalid attribute name because it ends '
+                'with "__roles__".'.format(name=name),
+            )
 
     def prepBody(self, body):
         """Insert code for print at the beginning of the code suite."""
@@ -142,10 +158,12 @@ class RestrictionMutator:
             body.insert(0, _print_target_node)
             if not self.funcinfo.printed_used:
                 self.warnings.append(
-                    "Prints, but never reads 'printed' variable.")
+                    "Prints, but never reads 'printed' variable.",
+                )
             elif not self.funcinfo.print_used:
                 self.warnings.append(
-                    "Doesn't print, but reads 'printed' variable.")
+                    "Doesn't print, but reads 'printed' variable.",
+                )
 
     def visitFunction(self, node, walker):
         """Checks and mutates a function definition.
@@ -203,9 +221,15 @@ class RestrictionMutator:
             # Pre-validate access to the "write" attribute.
             # "print >> ob, x" becomes
             # "print >> (_getattr(ob, 'write') and ob), x"
-            node.dest = ast.And([
-                ast.CallFunc(_getattr_name, [node.dest, _write_const]),
-                node.dest])
+            node.dest = ast.And(
+                [
+                    ast.CallFunc(
+                        _getattr_name,
+                        [node.dest, _write_const],
+                    ),
+                    node.dest,
+                ],
+            )
         return node
 
     visitPrintnl = visitPrint
@@ -291,10 +315,14 @@ class RestrictionMutator:
         if getattr(node, 'in_aug_assign', False):
             # We're in an augmented assignment
             # We might support this later...
-            self.error(node, 'Augmented assignment of '
-                       'attributes is not allowed.')
-        return ast.CallFunc(_getattr_name,
-                            [node.expr, ast.Const(node.attrname)])
+            self.error(
+                node,
+                'Augmented assignment of attributes is not allowed.',
+            )
+        return ast.CallFunc(
+            _getattr_name,
+            [node.expr, ast.Const(node.attrname)],
+        )
 
     def visitSubscript(self, node, walker):
         """Checks all kinds of subscripts.
@@ -316,9 +344,12 @@ class RestrictionMutator:
             if getattr(node, 'in_aug_assign', False):
                 # We're in an augmented assignment
                 # We might support this later...
-                self.error(node, 'Augmented assignment of '
-                           'object items and slices is not allowed.')
-            if hasattr(node, 'subs'):
+                self.error(
+                    node,
+                    'Augmented assignment of object items and '
+                    'slices is not allowed.',
+                )
+            if getattr(node, 'subs', None) is not None:
                 # Subscript.
                 subs = node.subs
                 if len(subs) > 1:
@@ -398,10 +429,11 @@ class RestrictionMutator:
                 [ast.AssName(node.node.name, OP_ASSIGN)],
                 ast.CallFunc(
                     _inplacevar_name,
-                    [ast.Const(node.op),
-                     ast.Name(node.node.name),
-                     node.expr,
-                     ]
+                    [
+                        ast.Const(node.op),
+                        ast.Name(node.node.name),
+                        node.expr,
+                    ],
                 ),
             )
             newnode.lineno = node.lineno
