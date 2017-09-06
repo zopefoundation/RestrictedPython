@@ -44,13 +44,13 @@ warnings.warn(
 
 
 def niceParse(source, filename, mode):
-    if isinstance(source, unicode):
+    if isinstance(source, unicode):  # NOQA: F821,E501  # PY2 only statement, in Python 2 only module
         # Use the utf-8-sig BOM so the compiler
         # detects this as a UTF-8 encoded string.
         source = '\xef\xbb\xbf' + source.encode('utf-8')
     try:
         return parse(source, mode)
-    except:
+    except:  # NOQA: B901
         # Try to make a clean error message using
         # the builtin Python compiler.
         try:

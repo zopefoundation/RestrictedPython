@@ -101,7 +101,7 @@ def test_RestrictingNodeTransformer__visit_Attribute__5_5(e_exec, mocker):
     e_exec('del a.b', glb)
 
     glb['_write_'].assert_called_once_with(glb['a'])
-    assert not hasattr(glb['a'], 'b')
+    assert not hasattr(glb['a'], 'b')  # NOQA: P002
 
 
 DISALLOW_TRACEBACK_ACCESS = """

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# flake8: NOQA: B901
 
 from RestrictedPython._compat import IS_PY3
 from RestrictedPython.Guards import guarded_unpack_sequence
@@ -19,10 +20,7 @@ def try_except(m):
 
 
 @pytest.mark.parametrize(*e_exec)
-def test_RestrictingNodeTransformer__visit_Try__1(
-    e_exec,
-    mocker,
-):
+def test_RestrictingNodeTransformer__visit_Try__1(e_exec, mocker):
     """It allows try-except statements."""
     trace = mocker.stub()
     e_exec(TRY_EXCEPT)['try_except'](trace)
@@ -45,10 +43,7 @@ def try_except_else(m):
 
 
 @pytest.mark.parametrize(*e_exec)
-def test_RestrictingNodeTransformer__visit_Try__2(
-    e_exec,
-    mocker,
-):
+def test_RestrictingNodeTransformer__visit_Try__2(e_exec, mocker):
     """It allows try-except-else statements."""
     trace = mocker.stub()
     e_exec(TRY_EXCEPT_ELSE)['try_except_else'](trace)
@@ -71,10 +66,7 @@ def try_finally(m):
 
 
 @pytest.mark.parametrize(*e_exec)
-def test_RestrictingNodeTransformer__visit_TryFinally__1(
-    e_exec,
-    mocker,
-):
+def test_RestrictingNodeTransformer__visit_TryFinally__1(e_exec, mocker):
     """It allows try-finally statements."""
     trace = mocker.stub()
     e_exec(TRY_FINALLY)['try_finally'](trace)
@@ -98,10 +90,7 @@ def try_except_finally(m):
 
 
 @pytest.mark.parametrize(*e_exec)
-def test_RestrictingNodeTransformer__visit_TryFinally__2(
-    e_exec,
-    mocker,
-):
+def test_RestrictingNodeTransformer__visit_TryFinally__2(e_exec, mocker):
     """It allows try-except-finally statements."""
     trace = mocker.stub()
     e_exec(TRY_EXCEPT_FINALLY)['try_except_finally'](trace)
@@ -127,10 +116,7 @@ def try_except_else_finally(m):
 
 
 @pytest.mark.parametrize(*e_exec)
-def test_RestrictingNodeTransformer__visit_TryFinally__3(
-    e_exec,
-    mocker,
-):
+def test_RestrictingNodeTransformer__visit_TryFinally__3(e_exec, mocker):
     """It allows try-except-else-finally statements."""
     trace = mocker.stub()
     e_exec(TRY_EXCEPT_ELSE_FINALLY)['try_except_else_finally'](trace)
@@ -155,10 +141,7 @@ def tuple_unpack(err):
     IS_PY3,
     reason='tuple unpacking on exceptions is gone in python3')
 @pytest.mark.parametrize(*e_exec)
-def test_RestrictingNodeTransformer__visit_ExceptHandler__1(
-    e_exec,
-    mocker,
-):
+def test_RestrictingNodeTransformer__visit_ExceptHandler__1(e_exec, mocker):
     _getiter_ = mocker.stub()
     _getiter_.side_effect = lambda it: it
 
@@ -192,8 +175,7 @@ def except_using_bad_name():
 
 
 @pytest.mark.parametrize(*c_exec)
-def test_RestrictingNodeTransformer__visit_ExceptHandler__2(
-        c_exec):
+def test_RestrictingNodeTransformer__visit_ExceptHandler__2(c_exec):
     """It denies bad names in the except as statement."""
     result = c_exec(BAD_TRY_EXCEPT)
     assert result.errors == (

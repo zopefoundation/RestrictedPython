@@ -40,7 +40,7 @@ def _compile_restricted_mode(
         c_ast = None
         allowed_source_types = [str, ast.Module]
         if IS_PY2:
-            allowed_source_types.append(unicode)
+            allowed_source_types.append(unicode)  # NOQA: F821,E501  # PY2 only statement
         if not issubclass(type(source), tuple(allowed_source_types)):
             raise TypeError(
                 'Not allowed source type: '
@@ -177,7 +177,7 @@ def compile_restricted_function(
                                           () \
                                           )
     >>> result = new_function(*[], **{})
-    """
+    """  # NOQA: P102  # No param documentation --> doctest
     # Parse the parameters and body, then combine them.
     body_ast = ast.parse(body, '<func code>', 'exec')
 
