@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 ##############################################################################
 #
 # Copyright (c) 2002 Zope Foundation and Contributors.
@@ -50,7 +52,7 @@ def test(*args):
         if args[i - 1]:
             return args[i]
 
-    if length % 2:
+    if length % 2:  # NOQA: S001  # Modulo operation not format operation
         return args[-1]
 
 

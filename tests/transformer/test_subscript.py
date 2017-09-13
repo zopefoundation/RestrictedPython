@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from tests import e_exec
 
 import pytest
@@ -127,8 +129,8 @@ def test_read_extended_slice_subscript(e_exec, mocker):
             slice(None, 1, None),
             slice(1, None, None),
             slice(1, 2, None),
-            slice(1, 2, 3)
-        )
+            slice(1, 2, 3),
+        ),
     )
 
     assert ref == ret
@@ -142,7 +144,9 @@ def assign_subscript(a):
 
 @pytest.mark.parametrize(*e_exec)
 def test_write_subscripts(
-        e_exec, mocker):
+    e_exec,
+    mocker,
+):
     value = {'b': None}
     _write_ = mocker.stub()
     _write_.side_effect = lambda ob: ob
@@ -161,7 +165,9 @@ def del_subscript(a):
 
 @pytest.mark.parametrize(*e_exec)
 def test_del_subscripts(
-        e_exec, mocker):
+    e_exec,
+    mocker,
+):
     value = {'b': None}
     _write_ = mocker.stub()
     _write_.side_effect = lambda ob: ob

@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from RestrictedPython.Guards import safe_builtins
 from tests import e_eval
 from tests import e_exec
@@ -12,7 +14,7 @@ def test_Guards__safe_builtins__1(e_eval):
     assert e_eval('slice(1)', restricted_globals) == slice(1)
 
 
-CLASS_SOURCE = '''
+CLASS_SOURCE = """
 class C:
     value = None
     def display(self):
@@ -21,7 +23,7 @@ class C:
 c1 = C()
 c1.value = 2411
 b = c1.display()
-'''
+"""
 
 
 @pytest.mark.parametrize(*e_exec)
@@ -31,11 +33,13 @@ def test_Guards__safe_builtins__2(e_exec):
     `__build_class__` is only needed in Python 3.
     """
     restricted_globals = dict(
-        __builtins__=safe_builtins, b=None,
+        __builtins__=safe_builtins,
+        b=None,
         __name__='restricted_module',
         __metaclass__=type,
         _write_=lambda x: x,
-        _getattr_=getattr)
+        _getattr_=getattr,
+    )
 
     e_exec(CLASS_SOURCE, restricted_globals)
     assert restricted_globals['b'] == '2411'

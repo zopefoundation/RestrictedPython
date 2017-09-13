@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from RestrictedPython._compat import IS_PY3
 from tests import c_exec
 
@@ -14,7 +16,7 @@ def no_yield():
 def test_yield(c_exec):
     """It prevents using the `yield` statement."""
     result = c_exec(YIELD_EXAMPLE)
-    assert result.errors == ("Line 2: Yield statements are not allowed.",)
+    assert result.errors == ('Line 2: Yield statements are not allowed.',)
     assert result.code is None
 
 
@@ -30,7 +32,7 @@ def get_json(client, url):
 
 @pytest.mark.skipif(
     not IS_PY3,
-    reason="`yield from` statement was first introduced in Python 3.3")
+    reason='`yield from` statement was first introduced in Python 3.3')
 @pytest.mark.parametrize(*c_exec)
 def test_yield_from(c_exec):
     result = c_exec(YIELD_FORM_EXAMPLE)

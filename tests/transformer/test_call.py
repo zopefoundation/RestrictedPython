@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from tests import c_exec
 from tests import e_exec
 
@@ -57,7 +59,7 @@ def test_RestrictingNodeTransformer__visit_Call__2(e_exec, mocker):
 
     glb = {
         '_apply_': _apply_,
-        'foo': lambda *args, **kwargs: (args, kwargs)
+        'foo': lambda *args, **kwargs: (args, kwargs),
     }
 
     e_exec(FUNCTIONC_CALLS, glb)

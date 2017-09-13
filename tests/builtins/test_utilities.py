@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 
 def test_string_in_utility_builtins():
     import string

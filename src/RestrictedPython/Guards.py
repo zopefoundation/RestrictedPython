@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 ##############################################################################
 #
 # Copyright (c) 2002 Zope Foundation and Contributors.
@@ -54,7 +56,7 @@ _safe_names = [
     'slice',
     'str',
     'tuple',
-    'zip'
+    'zip',
 ]
 
 _safe_exceptions = [
@@ -211,19 +213,23 @@ def _write_wrapper():
 
         __setitem__ = _handler(
             '__guarded_setitem__',
-            'object does not support item or slice assignment')
+            'object does not support item or slice assignment',
+        )
 
         __delitem__ = _handler(
             '__guarded_delitem__',
-            'object does not support item or slice assignment')
+            'object does not support item or slice assignment',
+        )
 
         __setattr__ = _handler(
             '__guarded_setattr__',
-            'attribute-less object (assign or del)')
+            'attribute-less object (assign or del)',
+        )
 
         __delattr__ = _handler(
             '__guarded_delattr__',
-            'attribute-less object (assign or del)')
+            'attribute-less object (assign or del)',
+        )
     return Wrapper
 
 
@@ -236,7 +242,8 @@ def _full_write_guard():
     def guard(ob):
         # Don't bother wrapping simple types, or objects that claim to
         # handle their own write security.
-        if type(ob) in safetypes or hasattr(ob, '_guarded_writes'):
+        if type(ob) in safetypes \
+                or getattr(ob, '_guarded_writes', None) is not None:
             return ob
         # Hand the object to the Wrapper instance, then return the instance.
         return Wrapper(ob)

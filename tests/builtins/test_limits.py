@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from RestrictedPython.Limits import limited_list
 from RestrictedPython.Limits import limited_range
 from RestrictedPython.Limits import limited_tuple

@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from RestrictedPython import compile_restricted_exec
 from RestrictedPython._compat import IS_PY35_OR_GREATER
 from RestrictedPython.transformer import RestrictingNodeTransformer
@@ -8,7 +10,8 @@ import pytest
 
 pytestmark = pytest.mark.skipif(
     not IS_PY35_OR_GREATER,
-    reason="async statement was first introduced in Python 3.5")
+    reason='async statement was first introduced in Python 3.5',
+)
 
 
 # Example from https://docs.python.org/3/library/asyncio-task.html
@@ -70,7 +73,8 @@ loop.close()
 def test_await(c_exec):
     result = compile_restricted_exec(
         AWAIT_EXAMPLE,
-        policy=RestrictingAsyncNodeTransformer)
+        policy=RestrictingAsyncNodeTransformer,
+    )
     assert result.errors == ('Line 11: Await statements are not allowed.',)
     assert result.code is None
 
@@ -87,7 +91,8 @@ async def square_series(con, to):
 def test_async_with(c_exec):
     result = compile_restricted_exec(
         ASYNC_WITH_EXAMPLE,
-        policy=RestrictingAsyncNodeTransformer)
+        policy=RestrictingAsyncNodeTransformer,
+    )
     assert result.errors == ('Line 3: AsyncWith statements are not allowed.',)
     assert result.code is None
 
@@ -104,6 +109,7 @@ async def read_rows(rows):
 def test_async_for(c_exec):
     result = compile_restricted_exec(
         ASYNC_FOR_EXAMPLE,
-        policy=RestrictingAsyncNodeTransformer)
+        policy=RestrictingAsyncNodeTransformer,
+    )
     assert result.errors == ('Line 3: AsyncFor statements are not allowed.',)
     assert result.code is None

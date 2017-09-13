@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from RestrictedPython.Eval import RestrictionCapableEval
 
 import pytest
@@ -20,7 +22,7 @@ def test_init():
 
 def test_init_with_syntax_error():
     with pytest.raises(SyntaxError):
-        RestrictionCapableEval("if:")
+        RestrictionCapableEval('if:')
 
 
 def test_prepRestrictedCode():
