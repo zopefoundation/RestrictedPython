@@ -13,127 +13,121 @@ def test_Guards__safe_builtins__1(e_eval):
     assert e_eval('slice(1)', restricted_globals) == slice(1)
 
 
-CLASS_SOURCE = '''
-class C:
+@pytest.mark.parametrize(*e_exec)
+def test_Guards__safe_builtins__2(e_exec):
+    """It allows to define new classes by allowing `__build_class__`.
+    """
+
+    class_can_be_defined_code = '''
+class MyClass:
     value = None
     def display(self):
         return str(self.value)
 
-c1 = C()
-c1.value = 2411
-b = c1.display()
-'''
+ob1 = MyClass()
+ob1.value = 2411
+result = ob1.display()'''
 
-
-@pytest.mark.parametrize(*e_exec)
-def test_Guards__safe_builtins__2(e_exec):
-    """It allows to define new classes by allowing `__build_class__`.
-
-    `__build_class__` is only needed in Python 3.
-    """
     restricted_globals = dict(
-        __builtins__=safe_builtins, b=None,
+        __builtins__=safe_builtins,
+        result=None,
         __name__='restricted_module',
         __metaclass__=type,
         _write_=lambda x: x,
-        _getattr_=getattr,)
+        _getattr_=getattr)
 
-    e_exec(CLASS_SOURCE, restricted_globals)
-    assert restricted_globals['b'] == '2411'
-
-
-class D:
-    value = None
-    _guarded_writes = 1
-
-
-SET_ATTRIBUTE = '''
-d1 = D()
-setattr(d1, 'value', 9999)
-'''
-
-
-DEL_ATTRIBUTE = '''
-delattr(d1, 'value')
-'''
+    e_exec(class_can_be_defined_code, restricted_globals)
+    assert restricted_globals['result'] == '2411'
 
 
 @pytest.mark.parametrize(*e_exec)
-def test_Guards__safe_builtins__3(e_exec):
+def test_Guards__guarded_setattr__1(e_exec):
     """It allows use setattr and delattr when _guarded_writes is True.
-
-    `__build_class__` is only needed in Python 3.
     """
+    class MyObjectD:
+        value = None
+        _guarded_writes = 1
+
+    setattr_code = '''
+my_object_d = MyObjectD()
+setattr(my_object_d, 'value', 9999)'''
+
+    delattr_code = "delattr(my_object_d, 'value')"
+
     restricted_globals = dict(
-        __builtins__=safe_builtins, D=D, d1=None,
+        __builtins__=safe_builtins,
+        MyObjectD=MyObjectD,
+        my_object_d=None,
         __name__='restricted_module',
         __metaclass__=type,
         _write_=lambda x: x,
         _getattr_=getattr,)
 
-    e_exec(SET_ATTRIBUTE, restricted_globals)
-    assert 9999 == restricted_globals['d1'].value
+    e_exec(setattr_code, restricted_globals)
+    assert 9999 == restricted_globals['my_object_d'].value
 
-    e_exec(DEL_ATTRIBUTE, restricted_globals)
-    assert None is restricted_globals['d1'].value
-
-
-class E:
-    foo = None
-
-
-SET_ATTRIBUTE_WITHOUT_GUARDED_WRITES = '''
-e1 = E()
-setattr(e1, 'foo', 'bar')
-'''
+    e_exec(delattr_code, restricted_globals)
+    assert None is restricted_globals['my_object_d'].value
 
 
 @pytest.mark.parametrize(*e_exec)
 def test_Guards__write_wrapper__1(e_exec):
-    """It wraps it when it is not marked with _guarded_writes."""
+    """It wraps the value attribute when it is not
+    marked with _guarded_writes."""
+    class ObjWithoutGuardedWrites:
+        my_attr = None
+
+    setattr_without_guarded_writes_code = '''
+my_ob = ObjWithoutGuardedWrites()
+setattr(my_ob, 'my_attr', 'bar')'''
+
     restricted_globals = dict(
-        __builtins__=safe_builtins, E=E, e1=None,
+        __builtins__=safe_builtins,
+        ObjWithoutGuardedWrites=ObjWithoutGuardedWrites,
+        my_attr=None,
         __name__='restricted_module',
         __metaclass__=type,
         _write_=lambda x: x,
         _getattr_=getattr,)
 
     with pytest.raises(TypeError) as excinfo:
-        e_exec(SET_ATTRIBUTE_WITHOUT_GUARDED_WRITES, restricted_globals)
+        e_exec(setattr_without_guarded_writes_code, restricted_globals)
     assert 'attribute-less object (assign or del)' in str(excinfo.value)
-
-
-class F:
-    foo = None
-
-    def __guarded_setattr__(self, key, value):
-        setattr(self, key, value)
-
-
-SET_ATTRIBUTE_USING_GUARDED_SETATTR = '''
-f1 = F()
-setattr(f1, 'foo', 'bar')
-'''
 
 
 @pytest.mark.parametrize(*e_exec)
 def test_Guards__write_wrapper__2(e_exec):
-    """It wraps it and it works when guarded_setattr is implemented."""
+    """It wraps setattr and it works when guarded_setattr is implemented."""
+
+    class ObjWithGuardedSetattr:
+        my_attr = None
+
+        def __guarded_setattr__(self, key, value):
+            setattr(self, key, value)
+
+    set_attribute_using_guarded_setattr_code = '''
+myobj_with_guarded_setattr = ObjWithGuardedSetattr()
+setattr(myobj_with_guarded_setattr, 'my_attr', 'bar')
+    '''
+
     restricted_globals = dict(
-        __builtins__=safe_builtins, F=F, f1=None,
+        __builtins__=safe_builtins,
+        ObjWithGuardedSetattr=ObjWithGuardedSetattr,
+        myobj_with_guarded_setattr=None,
         __name__='restricted_module',
         __metaclass__=type,
         _write_=lambda x: x,
         _getattr_=getattr,)
 
-    e_exec(SET_ATTRIBUTE_USING_GUARDED_SETATTR, restricted_globals)
-    assert restricted_globals['f1'].foo == 'bar'
+    e_exec(set_attribute_using_guarded_setattr_code, restricted_globals)
+    assert restricted_globals['myobj_with_guarded_setattr'].my_attr == 'bar'
 
 
 @pytest.mark.parametrize(*e_exec)
 def test_Guards__guarded_unpack_sequence__1(e_exec, mocker):
-    """It does not protect unpacking when the sequence is shorter
-    than expected."""
+    """If the sequence is shorter then expected the interpreter will raise
+    'ValueError: need more than X value to unpack' anyway
+    => No childs are unpacked => nothing to protect."""
     src = "one, two, three = (1, 2)"
 
     _getiter_ = mocker.stub()
