@@ -4,7 +4,8 @@ Changes
 4.0a4 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Drop support of PyPy as there currently seems to be no way to restrict the
+  builtins. See https://bitbucket.org/pypy/pypy/issues/2653.
 
 
 4.0a3 (2017-06-20)
