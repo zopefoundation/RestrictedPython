@@ -11,7 +11,7 @@ controlled and restricted execution of code:
   ... def hello_world():
   ...     return "Hello World!"
   ... '''
-  >>> from RestrictedPython.RCompile import compile_restricted
+  >>> from RestrictedPython import compile_restricted
   >>> code = compile_restricted(src, '<string>', 'exec')
 
 The resulting code can be executed using the ``exec`` built-in:
@@ -99,9 +99,10 @@ callable, from which the restricted machinery will create the object):
 
   >>> from RestrictedPython.PrintCollector import PrintCollector
   >>> _print_ = PrintCollector
+  >>> _getattr_ = getattr
 
   >>> src = '''
-  ... print "Hello World!"
+  ... print("Hello World!")
   ... '''
   >>> code = compile_restricted(src, '<string>', 'exec')
   >>> exec(code)
@@ -111,7 +112,7 @@ collector collects it.  We can have access to the text using the
 ``printed`` variable, though:
 
   >>> src = '''
-  ... print "Hello World!"
+  ... print("Hello World!")
   ... result = printed
   ... '''
   >>> code = compile_restricted(src, '<string>', 'exec')
@@ -133,7 +134,7 @@ unsafe operations, such as opening files:
   ... open('/etc/passwd')
   ... '''
   >>> code = compile_restricted(src, '<string>', 'exec')
-  >>> exec(code) in restricted_globals
+  >>> exec(code, restricted_globals)
   Traceback (most recent call last):
     ...
   NameError: name 'open' is not defined
@@ -158,7 +159,7 @@ Normally accessing attriutes works as expected, because we're using
 the standard ``getattr`` function for the ``_getattr_`` guard:
 
   >>> src = '''
-  ... print shed.colour
+  ... print(shed.colour)
   ... result = printed
   ... '''
   >>> code = compile_restricted(src, '<string>', 'exec')
