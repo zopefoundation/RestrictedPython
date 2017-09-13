@@ -486,13 +486,6 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
 
         To access `generic_visit` on the super class use `node_contents_visit`.
         """
-        # TODO: To be discussed - For whom that info is relevant
-        # import warnings
-        # warnings.warn(
-        #     '{o.__class__.__name__}'
-        #     ' statement is not known to RestrictedPython'.format(node),
-        #     SyntaxWarning
-        # )
         self.warn(
             node,
             '{0.__class__.__name__}'
@@ -1345,7 +1338,6 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
 
         This statement was introduced in Python 3.
         """
-        # TODO: Review if we want to allow it later
         self.not_allowed(node)
 
     def visit_ClassDef(self, node):

@@ -7,6 +7,9 @@ Changes
 - Remove wrapping of ``len`` in write wrapper because it is unclear if this is 
   still needed.
 
+- Drop support of PyPy as there currently seems to be no way to restrict the
+  builtins. See https://bitbucket.org/pypy/pypy/issues/2653.
+
 
 4.0a3 (2017-06-20)
 ------------------
