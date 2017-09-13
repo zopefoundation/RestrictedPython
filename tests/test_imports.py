@@ -3,7 +3,6 @@ Tests about imports
 """
 
 from RestrictedPython import safe_builtins
-from tests import c_exec
 from tests import e_exec
 
 import pytest
@@ -16,17 +15,17 @@ os.listdir('/')
 """
 
 
-@pytest.mark.parametrize(*c_exec)
 @pytest.mark.parametrize(*e_exec)
-def test_os_import(c_exec, e_exec):
-    """Test that import should not work out of the box.
-    TODO: Why does this work.
-    """
-    result = c_exec(OS_IMPORT_EXAMPLE, safe_builtins)
-    # TODO: there is a tests/__init__.py problem, as it seems to pass the
-    #       safe_builtins into the compile function instead of the source.
-    assert result.code is None
-    # assert result.errors == ()
+def test_os_import(e_exec):
+    """It does not allow to import anything by default.
 
-    with pytest.raises(NameError):
-        e_exec(OS_IMPORT_EXAMPLE, safe_builtins)
+    The `__import__` function is not provided as it is not safe.
+    """
+    # Caution: This test is broken on PyPy until the following issue is fixed:
+    # https://bitbucket.org/pypy/pypy/issues/2653
+    # PyPy currently ignores the restriction of the `__builtins__`.
+    glb = {'__builtins__': safe_builtins}
+
+    with pytest.raises(ImportError) as err:
+        e_exec(OS_IMPORT_EXAMPLE, glb)
+    assert '__import__ not found' == str(err.value)
