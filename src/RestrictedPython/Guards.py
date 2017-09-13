@@ -202,10 +202,6 @@ def _write_wrapper():
         return handler
 
     class Wrapper(object):
-        def __len__(self):
-            # Required for slices with negative bounds.
-            return len(self.ob)
-
         def __init__(self, ob):
             self.__dict__['ob'] = ob
 
