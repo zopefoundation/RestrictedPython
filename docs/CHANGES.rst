@@ -4,7 +4,8 @@ Changes
 4.0a4 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Remove wrapping of ``len`` in write wrapper because it is unclear if this is 
+  still needed.
 
 
 4.0a3 (2017-06-20)
