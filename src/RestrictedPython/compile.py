@@ -31,7 +31,7 @@ def _compile_restricted_mode(
         c_ast = None
         allowed_source_types = [str, ast.Module]
         if IS_PY2:
-            allowed_source_types.append(unicode)
+            allowed_source_types.append(unicode)  # NOQA: F821,E501  # PY2 only statement, in Python 2 only module
         if not issubclass(type(source), tuple(allowed_source_types)):
             raise TypeError('Not allowed source type: '
                             '"{0.__class__.__name__}".'.format(source))
