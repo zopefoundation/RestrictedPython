@@ -85,8 +85,8 @@ class RestrictionCapableEval(object):
                 used = set()
                 for node in ast.walk(exp_node):
                     if isinstance(node, ast.Name):
-                        # Because there are no Name expressions which context
-                        # is *not* Load, we changed the if here to an assert.
+                        # As we are in 'eval' mode here, no other contexts
+                        # should be possible, but who knows:
                         assert isinstance(node.ctx, ast.Load)
                         used.add(node.id)
 
