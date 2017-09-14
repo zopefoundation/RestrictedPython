@@ -4,7 +4,17 @@ Changes
 4.0a4 (unreleased)
 ------------------
 
-- Remove wrapping of ``len`` in write wrapper because it is unclear if this is 
+- Security issue: RestrictedPython now ships with a default implementation for
+  ``_getattr_`` which prevents from using the ``format()`` method on
+  str/unicode as it is not safe, see:
+  http://lucumr.pocoo.org/2016/12/29/careful-with-str-format/
+
+  **Caution:** If you do not already have secured the access to this
+  ``format()`` method in your ``_getattr_`` implementation use
+  ``RestrictedPython.Guards.safer_getattr()`` in your implementation to
+  benefit from this fix.
+
+- Remove wrapping of ``len`` in write wrapper because it is unclear if this is
   still needed.
 
 - Drop support of PyPy as there currently seems to be no way to restrict the
