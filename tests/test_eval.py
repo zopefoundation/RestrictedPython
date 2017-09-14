@@ -72,7 +72,8 @@ def test_Eval__RestictionCapableEval__prepUnrestrictedCode_2():
 
 
 def test_Eval__RestictionCapableEval__prepRestrictedCode_1():
-    """It does nothing when restricted code is already set by prepRestrictedCode."""
+    """It does nothing when restricted code is already set by
+    prepRestrictedCode."""
     ob = RestrictionCapableEval("a")
     ob.prepRestrictedCode()
     assert ob.used == ('a',)
