@@ -164,6 +164,7 @@ def test_compile_restricted_function_pretends_the_code_is_executed_in_a_global_s
     safe_globals = {
         '__name__': 'script',
         'output': 'foo',
+        '_str_': str,
     }
     # safe_globals.update(safe_builtins)
     safe_locals = {}
@@ -195,6 +196,7 @@ def test_compile_restricted_function_allows_invalid_python_identifiers_as_functi
     safe_globals = {
         '__name__': 'script',
         'output': 'foo',
+        '_str_': str,
     }
     # safe_globals.update(safe_builtins)
     safe_locals = {}

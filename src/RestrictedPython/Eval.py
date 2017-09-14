@@ -12,6 +12,7 @@
 ##############################################################################
 """Restricted Python Expressions."""
 
+from . import Guards
 from ._compat import IS_PY2
 from .compile import compile_restricted_eval
 
@@ -38,7 +39,12 @@ def default_guarded_getitem(ob, index):
 class RestrictionCapableEval(object):
     """A base class for restricted code."""
 
-    globals = {'__builtins__': None}
+    globals = {
+        '__builtins__': None,
+        '_str_': Guards.SecureStr,
+    }
+    if IS_PY2:
+        globals['_unicode_'] = Guards.SecureUnicode
     # restricted
     rcode = None
 

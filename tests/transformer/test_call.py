@@ -57,6 +57,7 @@ def test_RestrictingNodeTransformer__visit_Call__2(e_exec, mocker):
 
     glb = {
         '_apply_': _apply_,
+        '_str_': str,
         'foo': lambda *args, **kwargs: (args, kwargs)
     }
 

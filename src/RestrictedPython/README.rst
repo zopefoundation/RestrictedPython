@@ -11,17 +11,18 @@ controlled and restricted execution of code:
   ... def hello_world():
   ...     return "Hello World!"
   ... '''
-  >>> from RestrictedPython import compile_restricted
+  >>> from RestrictedPython import compile_restricted, safe_builtins
   >>> code = compile_restricted(src, '<string>', 'exec')
 
 The resulting code can be executed using the ``exec`` built-in:
 
-  >>> exec(code)
+  >>> glob = {'__builtins__': safe_builtins}
+  >>> exec(code, glob)
 
-As a result, the ``hello_world`` function is now available in the
-global namespace:
+As a result, the ``hello_world`` function is now available in the ``glob``
+dict:
 
-  >>> hello_world()
+  >>> glob['hello_world']()
   'Hello World!'
 
 Compatibility
@@ -60,7 +61,12 @@ Specifically:
 4. ``__import__`` is the normal Python import hook, and should be used
    to control access to Python packages and modules.
 
-5. ``__builtins__`` is the normal Python builtins dictionary, which
+5. ``_str_`` and ``_unicode_`` (the latter is Python 2 only) are the factories
+   to create string resp. unicode objects. If using ``safe_builtins``
+   (see next item) they are predefined with secured subclasses of ``str`` resp.
+   ``unicode``.
+
+6. ``__builtins__`` is the normal Python builtins dictionary, which
    should be weeded down to a set that cannot be used to get around
    your restrictions.  A usable "safe" set is
    ``RestrictedPython.Guards.safe_builtins``.
@@ -100,6 +106,7 @@ callable, from which the restricted machinery will create the object):
   >>> from RestrictedPython.PrintCollector import PrintCollector
   >>> _print_ = PrintCollector
   >>> _getattr_ = getattr
+  >>> _str_ = str
 
   >>> src = '''
   ... print("Hello World!")

@@ -31,6 +31,8 @@ def _eval(compile_func):
         if glb is None:
             glb = {}
         return eval(code, glb)
+    # The next line can be dropped after the old implementation was dropped.
+    _eval.compile_func = compile_func
     return _eval
 
 

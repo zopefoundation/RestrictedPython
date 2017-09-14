@@ -20,8 +20,9 @@ def try_except(m):
 def test_RestrictingNodeTransformer__visit_Try__1(
         e_exec, mocker):
     """It allows try-except statements."""
+    glb = {'_str_': str}
     trace = mocker.stub()
-    e_exec(TRY_EXCEPT)['try_except'](trace)
+    e_exec(TRY_EXCEPT, glb)['try_except'](trace)
 
     trace.assert_has_calls([
         mocker.call('try'),
@@ -44,8 +45,9 @@ def try_except_else(m):
 def test_RestrictingNodeTransformer__visit_Try__2(
         e_exec, mocker):
     """It allows try-except-else statements."""
+    glb = {'_str_': str}
     trace = mocker.stub()
-    e_exec(TRY_EXCEPT_ELSE)['try_except_else'](trace)
+    e_exec(TRY_EXCEPT_ELSE, glb)['try_except_else'](trace)
 
     trace.assert_has_calls([
         mocker.call('try'),
@@ -68,8 +70,9 @@ def try_finally(m):
 def test_RestrictingNodeTransformer__visit_TryFinally__1(
         e_exec, mocker):
     """It allows try-finally statements."""
+    glb = {'_str_': str}
     trace = mocker.stub()
-    e_exec(TRY_FINALLY)['try_finally'](trace)
+    e_exec(TRY_FINALLY, glb)['try_finally'](trace)
 
     trace.assert_has_calls([
         mocker.call('try'),
@@ -93,8 +96,9 @@ def try_except_finally(m):
 def test_RestrictingNodeTransformer__visit_TryFinally__2(
         e_exec, mocker):
     """It allows try-except-finally statements."""
+    glb = {'_str_': str}
     trace = mocker.stub()
-    e_exec(TRY_EXCEPT_FINALLY)['try_except_finally'](trace)
+    e_exec(TRY_EXCEPT_FINALLY, glb)['try_except_finally'](trace)
 
     trace.assert_has_calls([
         mocker.call('try'),
@@ -120,8 +124,9 @@ def try_except_else_finally(m):
 def test_RestrictingNodeTransformer__visit_TryFinally__3(
         e_exec, mocker):
     """It allows try-except-else-finally statements."""
+    glb = {'_str_': str}
     trace = mocker.stub()
-    e_exec(TRY_EXCEPT_ELSE_FINALLY)['try_except_else_finally'](trace)
+    e_exec(TRY_EXCEPT_ELSE_FINALLY, glb)['try_except_else_finally'](trace)
 
     trace.assert_has_calls([
         mocker.call('try'),

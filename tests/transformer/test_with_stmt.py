@@ -162,7 +162,10 @@ def test_with_stmt_subscript(e_exec, mocker):
     _write_ = mocker.stub()
     _write_.side_effect = lambda ob: ob
 
-    glb = {'_write_': _write_}
+    glb = {
+        '_write_': _write_,
+        '_str_': str,
+    }
     e_exec(WITH_STMT_SUBSCRIPT, glb)
 
     # Test single_key

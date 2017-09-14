@@ -76,6 +76,7 @@ def test_RestrictingNodeTransformer__visit_Attribute__5(
     """It transforms writing to an attribute to `_write_`."""
     glb = {
         '_write_': mocker.stub(),
+        '_str_': str,
         'a': mocker.stub(),
     }
     glb['_write_'].return_value = glb['a']

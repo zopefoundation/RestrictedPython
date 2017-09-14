@@ -6,13 +6,13 @@ import pytest
 @pytest.mark.parametrize(*e_eval)
 def test_RestrictingNodeTransformer__visit_Eq__1(e_eval):
     """It allows == expressions."""
-    assert e_eval('1 == int("1")') is True
+    assert e_eval('1 == int(1.0)') is True
 
 
 @pytest.mark.parametrize(*e_eval)
 def test_RestrictingNodeTransformer__visit_NotEq__1(e_eval):
     """It allows != expressions."""
-    assert e_eval('1 != int("1")') is False
+    assert e_eval('1 != int(1.0)') is False
 
 
 @pytest.mark.parametrize(*e_eval)
