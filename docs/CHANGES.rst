@@ -4,8 +4,8 @@ Changes
 4.0a4 (unreleased)
 ------------------
 
-- Remove wrapping of ``len`` in write wrapper because it is unclear if this is 
-  still needed.
+- Remove ``__len__`` method in ``.Guards._write_wrapper`` because it is no
+  longer reachable by code using the wrapper.
 
 - Drop support of PyPy as there currently seems to be no way to restrict the
   builtins. See https://bitbucket.org/pypy/pypy/issues/2653.
