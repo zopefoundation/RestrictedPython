@@ -36,7 +36,11 @@ print('Hello World!', 'Hello Earth!')
 
 @pytest.mark.parametrize(*c_exec)
 def test_print_stmt__simple_prints(c_exec):
-    glb = {'_print_': PrintCollector, '_getattr_': None}
+    glb = {
+        '_print_': PrintCollector,
+        '_getattr_': None,
+        '_str_': str,
+    }
 
     code, errors = c_exec(ALLOWED_PRINT_STATEMENT)[:2]
     assert code is not None
@@ -96,7 +100,11 @@ def test_print_stmt__protect_chevron_print(c_exec, mocker):
 
     _getattr_ = mocker.stub()
     _getattr_.side_effect = getattr
-    glb = {'_getattr_': _getattr_, '_print_': PrintCollector}
+    glb = {
+        '_getattr_': _getattr_,
+        '_print_': PrintCollector,
+        '_str_': str,
+    }
 
     exec(code, glb)
 
@@ -137,7 +145,11 @@ def main():
 def test_print_stmt__nested_print_collector(c_exec, mocker):
     code, errors = c_exec(INJECT_PRINT_COLLECTOR_NESTED)[:2]
 
-    glb = {"_print_": PrintCollector, '_getattr_': None}
+    glb = {
+        '_print_': PrintCollector,
+        '_getattr_': None,
+        '_str_': str,
+    }
     exec(code, glb)
 
     ret = glb['main']()
@@ -255,7 +267,11 @@ def class_scope():
 @pytest.mark.parametrize(*c_exec)
 def test_print_stmt_no_new_scope(c_exec):
     code, errors = c_exec(NO_PRINT_SCOPES)[:2]
-    glb = {'_print_': PrintCollector, '_getattr_': None}
+    glb = {
+        '_print_': PrintCollector,
+        '_getattr_': None,
+        '_str_': str,
+    }
     exec(code, glb)
 
     ret = glb['class_scope']()
@@ -273,7 +289,11 @@ def func(cond):
 @pytest.mark.parametrize(*c_exec)
 def test_print_stmt_conditional_print(c_exec):
     code, errors = c_exec(CONDITIONAL_PRINT)[:2]
-    glb = {'_print_': PrintCollector, '_getattr_': None}
+    glb = {
+        '_print_': PrintCollector,
+        '_getattr_': None,
+        '_str_': str,
+    }
     exec(code, glb)
 
     assert glb['func'](True) == '1\n'

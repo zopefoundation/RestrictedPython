@@ -510,7 +510,16 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
 
     def visit_Str(self, node):
         """Allow string literals without restrictions."""
-        return self.node_contents_visit(node)
+        node = self.node_contents_visit(node)
+        factory_name = '_str_'
+        if IS_PY2 and isinstance(node.s, unicode):
+            factory_name = '_unicode_'
+        new_node = ast.Call(
+            func=ast.Name(factory_name, ast.Load()),
+            args=[node],
+            keywords=[])
+        copy_locations(new_node, node)
+        return new_node
 
     def visit_Bytes(self, node):
         """Allow bytes literals without restrictions.

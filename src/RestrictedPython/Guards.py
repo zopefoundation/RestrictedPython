@@ -52,7 +52,6 @@ _safe_names = [
     'repr',
     'round',
     'slice',
-    'str',
     'tuple',
     'zip'
 ]
@@ -109,11 +108,10 @@ _safe_exceptions = [
 
 if IS_PY2:
     _safe_names.extend([
-        'basestring',
+        'basestring',  # cannot be instantiated
         'cmp',
         'long',
         'unichr',
-        'unicode',
         'xrange',
     ])
     _safe_exceptions.extend([
@@ -187,6 +185,28 @@ for name in _safe_exceptions:
 # staticmethod
 # super
 # type
+
+
+class SecureStr(str):
+    """Str class which does not allow unsafe methods."""
+
+    def format(*args, **kw):
+        raise NotImplementedError('Using format() is not safe.')
+
+
+safe_builtins['str'] = SecureStr
+safe_builtins['_str_'] = SecureStr
+
+
+if IS_PY2:
+    class SecureUnicode(unicode):
+        """Unicode class which does not allow unsafe methods."""
+
+        def format(*args, **kw):
+            raise NotImplementedError('Using format() is not safe.')
+
+    safe_builtins['unicode'] = SecureUnicode
+    safe_builtins['_unicode_'] = SecureUnicode
 
 
 def _write_wrapper():

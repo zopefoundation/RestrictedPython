@@ -46,7 +46,11 @@ print ('a', 'b', file=None)
 
 
 def test_print_function__simple_prints():
-    glb = {'_print_': PrintCollector, '_getattr_': None}
+    glb = {
+        '_print_': PrintCollector,
+        '_getattr_': None,
+        '_str_': str,
+    }
 
     code, errors = compiler(ALLOWED_PRINT_FUNCTION)[:2]
     assert errors == ()
@@ -131,7 +135,8 @@ def test_print_function_with_kw_args(mocker):
     glb = {
         '_print_': PrintCollector,
         '_getattr_': None,
-        "_apply_": _apply_
+        "_apply_": _apply_,
+        '_str_': str,
     }
 
     code, errors = compiler(ALLOWED_PRINT_FUNCTION_WITH_KWARGS)[:2]
@@ -164,7 +169,8 @@ def test_print_function__protect_file(mocker):
     glb = {
         '_print_': PrintCollector,
         '_getattr_': _getattr_,
-        'stream': stream
+        'stream': stream,
+        '_str_': str,
     }
 
     code, errors = compiler(PROTECT_WRITE_ON_FILE)[:2]
@@ -207,7 +213,11 @@ def main():
 def test_print_function__nested_print_collector():
     code, errors = compiler(INJECT_PRINT_COLLECTOR_NESTED)[:2]
 
-    glb = {"_print_": PrintCollector, '_getattr_': None}
+    glb = {
+        '_print_': PrintCollector,
+        '_getattr_': None,
+        '_str_': str,
+    }
     exec(code, glb)
 
     ret = glb['main']()
@@ -307,7 +317,8 @@ def test_print_function_no_new_scope():
         '_print_': PrintCollector,
         '__metaclass__': type,
         '_getattr_': None,
-        '_getiter_': lambda ob: ob
+        '_getiter_': lambda ob: ob,
+        '_str_': str,
     }
     exec(code, glb)
 

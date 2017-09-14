@@ -10,6 +10,9 @@ Changes
 - Drop support of PyPy as there currently seems to be no way to restrict the
   builtins. See https://bitbucket.org/pypy/pypy/issues/2653.
 
+- Security issue: No longer allow using the ``format`` method of str resp.
+  unicode. See http://lucumr.pocoo.org/2016/12/29/careful-with-str-format/.
+
 
 4.0a3 (2017-06-20)
 ------------------

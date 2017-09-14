@@ -14,7 +14,10 @@ def test_read_simple_subscript(e_exec, mocker):
     value = None
     _getitem_ = mocker.stub()
     _getitem_.side_effect = lambda ob, index: (ob, index)
-    glb = {'_getitem_': _getitem_}
+    glb = {
+        '_getitem_': _getitem_,
+        '_str_': str,
+    }
     e_exec(SIMPLE_SUBSCRIPTS, glb)
 
     assert (value, 'b') == glb['simple_subscript'](value)
@@ -146,7 +149,10 @@ def test_write_subscripts(
     value = {'b': None}
     _write_ = mocker.stub()
     _write_.side_effect = lambda ob: ob
-    glb = {'_write_': _write_}
+    glb = {
+        '_write_': _write_,
+        '_str_': str,
+    }
     e_exec(WRITE_SUBSCRIPTS, glb)
 
     glb['assign_subscript'](value)
@@ -165,7 +171,10 @@ def test_del_subscripts(
     value = {'b': None}
     _write_ = mocker.stub()
     _write_.side_effect = lambda ob: ob
-    glb = {'_write_': _write_}
+    glb = {
+        '_write_': _write_,
+        '_str_': str,
+    }
     e_exec(DEL_SUBSCRIPT, glb)
     glb['del_subscript'](value)
 
