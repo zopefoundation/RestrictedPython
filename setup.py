@@ -30,7 +30,7 @@ tests_require = [
 
 
 setup(name='RestrictedPython',
-      version='4.0a4.dev0',
+      version='4.0b1',
       url='http://pypi.python.org/pypi/RestrictedPython',
       license='ZPL 2.1',
       description='RestrictedPython is a defined subset of the Python '

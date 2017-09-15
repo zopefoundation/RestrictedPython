@@ -1,7 +1,7 @@
 Changes
 =======
 
-4.0a4 (unreleased)
+4.0b1 (2017-09-15)
 ------------------
 
 - Security issue: RestrictedPython now ships with a default implementation for
