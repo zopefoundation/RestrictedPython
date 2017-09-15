@@ -85,10 +85,8 @@ class RestrictionCapableEval(object):
                 used = set()
                 for node in ast.walk(exp_node):
                     if isinstance(node, ast.Name):
-                        # As we are in 'eval' mode here, no other contexts
-                        # should be possible, but who knows:
-                        assert isinstance(node.ctx, ast.Load)
-                        used.add(node.id)
+                        if isinstance(node.ctx, ast.Load):
+                            used.add(node.id)
 
                 self.used = tuple(used)
 

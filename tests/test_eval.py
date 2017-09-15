@@ -50,6 +50,12 @@ def test_Eval__RestrictionCapableEval_1():
         ob.prepRestrictedCode()
 
 
+def test_Eval__RestrictionCapableEval__2():
+    """It stores used names."""
+    ob = RestrictionCapableEval("[x for x in (1, 2, 3)]")
+    assert ob.used == ('x',)
+
+
 def test_Eval__RestictionCapableEval__prepUnrestrictedCode_1():
     """It does nothing when unrestricted code is already set by init."""
     ob = RestrictionCapableEval("a")
