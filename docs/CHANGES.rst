@@ -4,6 +4,16 @@ Changes
 4.0a4 (unreleased)
 ------------------
 
+- Security issue: RestrictedPython now ships with a default implementation for
+  ``_getattr_`` which prevents from using the ``format()`` method on
+  str/unicode as it is not safe, see:
+  http://lucumr.pocoo.org/2016/12/29/careful-with-str-format/
+
+  **Caution:** If you do not already have secured the access to this
+  ``format()`` method in your ``_getattr_`` implementation use
+  ``RestrictedPython.Guards.safer_getattr()`` in your implementation to
+  benefit from this fix.
+
 - Remove ``__len__`` method in ``.Guards._write_wrapper`` because it is no
   longer reachable by code using the wrapper.
 
