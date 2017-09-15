@@ -14,6 +14,10 @@ Changes
   ``RestrictedPython.Guards.safer_getattr()`` in your implementation to
   benefit from this fix.
 
+- Drop the old implementation of version 3.x: `RCompile.py`,
+  `SelectCompiler.py`, `MutatingWorker.py`, `RestrictionMutator.py` and
+  `tests/verify.py`.
+
 - Remove ``__len__`` method in ``.Guards._write_wrapper`` because it is no
   longer reachable by code using the wrapper.
 

@@ -3,7 +3,6 @@ from RestrictedPython._compat import IS_PY3
 from tests import c_exec
 
 import pytest
-import RestrictedPython
 
 
 EXEC_STATEMENT = """\
@@ -46,8 +45,4 @@ def no_eval():
 def test_RestrictingNodeTransformer__visit_Eval__1(c_exec):
     """It is an error if the code call the `eval` function."""
     result = c_exec(EVAL_FUNCTION)
-    if c_exec is RestrictedPython.compile.compile_restricted_exec:
-        assert result.errors == ("Line 2: Eval calls are not allowed.",)
-    else:
-        # `eval()` is allowed in the old implementation. :-(
-        assert result.errors == ()
+    assert result.errors == ("Line 2: Eval calls are not allowed.",)

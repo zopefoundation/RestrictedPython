@@ -15,17 +15,9 @@
 # flake8: NOQA: E401
 
 # This is a file to define public API in the base namespace of the package.
-# use: isor:skip to supress all isort related warnings / errors,
+# use: isort:skip to supress all isort related warnings / errors,
 # as this file should be logically grouped imports
 
-
-# Old API --> Old Import Locations (Deprecated)
-# from RestrictedPython.RCompile import compile_restricted
-# from RestrictedPython.RCompile import compile_restricted_eval
-# from RestrictedPython.RCompile import compile_restricted_exec
-# from RestrictedPython.RCompile import compile_restricted_function
-
-# new API Style
 # compile_restricted methods:
 from RestrictedPython.compile import compile_restricted  # isort:skip
 from RestrictedPython.compile import compile_restricted_eval  # isort:skip

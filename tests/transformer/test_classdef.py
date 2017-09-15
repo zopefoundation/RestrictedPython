@@ -4,7 +4,6 @@ from tests import c_exec
 from tests import e_exec
 
 import pytest
-import RestrictedPython
 
 
 GOOD_CLASS = '''
@@ -108,6 +107,4 @@ def test_RestrictingNodeTransformer__visit_ClassDef__5(e_exec):
     comb = restricted_globals['comb']
     assert comb.class_att == 2342
     assert comb.base_att == 42
-    if e_exec.compile_func is RestrictedPython.compile.compile_restricted_exec:
-        # Class decorators are only supported by the new implementation.
-        assert comb.wrap_att == 23
+    assert comb.wrap_att == 23

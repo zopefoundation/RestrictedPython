@@ -3,7 +3,6 @@ from RestrictedPython.PrintCollector import PrintCollector
 from tests import c_exec
 
 import pytest
-import RestrictedPython
 
 
 pytestmark = pytest.mark.skipif(
@@ -156,13 +155,8 @@ def test_print_stmt__with_printed_no_print(c_exec):
 
     assert code is not None
     assert errors == ()
-
-    if c_exec is RestrictedPython.compile.compile_restricted_exec:
-        assert warnings == [
-            "Line 2: Doesn't print, but reads 'printed' variable."]
-
-    if c_exec is RestrictedPython.RCompile.compile_restricted_exec:
-        assert warnings == ["Doesn't print, but reads 'printed' variable."]
+    assert warnings == [
+        "Line 2: Doesn't print, but reads 'printed' variable."]
 
 
 WARN_PRINTED_NO_PRINT_NESTED = """
@@ -179,15 +173,10 @@ def test_print_stmt__with_printed_no_print_nested(c_exec):
 
     assert code is not None
     assert errors == ()
-
-    if c_exec is RestrictedPython.compile.compile_restricted_exec:
-        assert warnings == [
-            "Line 2: Print statement is deprecated and not avaliable anymore in Python 3.",  # NOQA: E501
-            "Line 3: Doesn't print, but reads 'printed' variable."
-        ]
-
-    if c_exec is RestrictedPython.RCompile.compile_restricted_exec:
-        assert warnings == ["Doesn't print, but reads 'printed' variable."]
+    assert warnings == [
+        "Line 2: Print statement is deprecated and not avaliable anymore in Python 3.",  # NOQA: E501
+        "Line 3: Doesn't print, but reads 'printed' variable."
+    ]
 
 
 WARN_PRINT_NO_PRINTED = """
@@ -202,15 +191,10 @@ def test_print_stmt__with_print_no_printed(c_exec):
 
     assert code is not None
     assert errors == ()
-
-    if c_exec is RestrictedPython.compile.compile_restricted_exec:
-        assert warnings == [
-            "Line 3: Print statement is deprecated and not avaliable anymore in Python 3.",  # NOQA: E501
-            "Line 2: Prints, but never reads 'printed' variable."
-        ]
-
-    if c_exec is RestrictedPython.RCompile.compile_restricted_exec:
-        assert warnings == ["Prints, but never reads 'printed' variable."]
+    assert warnings == [
+        "Line 3: Print statement is deprecated and not avaliable anymore in Python 3.",  # NOQA: E501
+        "Line 2: Prints, but never reads 'printed' variable."
+    ]
 
 
 WARN_PRINT_NO_PRINTED_NESTED = """
@@ -227,16 +211,11 @@ def test_print_stmt__with_print_no_printed_nested(c_exec):
 
     assert code is not None
     assert errors == ()
-
-    if c_exec is RestrictedPython.compile.compile_restricted_exec:
-        assert warnings == [
-            "Line 2: Print statement is deprecated and not avaliable anymore in Python 3.",  # NOQA: E501
-            "Line 4: Print statement is deprecated and not avaliable anymore in Python 3.",  # NOQA: E501
-            "Line 3: Prints, but never reads 'printed' variable.",
-        ]
-
-    if c_exec is RestrictedPython.RCompile.compile_restricted_exec:
-        assert warnings == ["Prints, but never reads 'printed' variable."]
+    assert warnings == [
+        "Line 2: Print statement is deprecated and not avaliable anymore in Python 3.",  # NOQA: E501
+        "Line 4: Print statement is deprecated and not avaliable anymore in Python 3.",  # NOQA: E501
+        "Line 3: Prints, but never reads 'printed' variable.",
+    ]
 
 
 # python2 generates a new frame/scope for:
