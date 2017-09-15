@@ -1,5 +1,3 @@
-from RestrictedPython._compat import IS_PY2
-
 import RestrictedPython
 
 
@@ -72,16 +70,3 @@ e_function = ('e_function', [_function(RestrictedPython.compile.compile_restrict
 
 c_single = ('c_single', [RestrictedPython.compile.compile_restricted_single])
 e_single = ('e_single', [_single(RestrictedPython.compile.compile_restricted_single)])  # NOQA: E501
-
-
-if IS_PY2:
-    from RestrictedPython import RCompile
-    c_exec[1].append(RCompile.compile_restricted_exec)
-    c_eval[1].append(RCompile.compile_restricted_eval)
-    c_single[1].append(RCompile.compile_restricted_single)
-    c_function[1].append(RCompile.compile_restricted_function)
-
-    e_exec[1].append(_exec(RCompile.compile_restricted_exec))
-    e_eval[1].append(_eval(RCompile.compile_restricted_eval))
-    e_single[1].append(_single(RCompile.compile_restricted_single))
-    e_function[1].append(_function(RCompile.compile_restricted_function))

@@ -27,8 +27,7 @@ global namespace:
 Compatibility
 =============
 
-This release of RestrictedPython is compatible with Python 2.3, 2.4, 2.5, 2.6,
-and 2.7.
+This release of RestrictedPython is compatible with Python 2.7, 3.4, 3.5, 3.6.
 
 Implementing a policy
 =====================
