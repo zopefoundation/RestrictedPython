@@ -10,11 +10,12 @@ def test_Utilities__test_1():
 
 
 def test_Utilities__test_2():
-    """If the above is not met, and there is an extra argument it returns it."""
+    """If the above is not met, and there is an extra argument
+    it returns it."""
     assert test(False, 1, False, 2, 3) == 3
     assert test(False, 1, 2) == 2
     assert test(1) == 1
-    assert test(False) == False
+    assert not test(False)
 
 
 def test_Utilities__test_3():
