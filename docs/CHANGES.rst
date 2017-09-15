@@ -1,7 +1,7 @@
 Changes
 =======
 
-4.0b2 (unreleased)
+4.0b2 (2017-09-15)
 ------------------
 
 - Fix regression in ``RestrictionCapableEval`` which broke when using list
