@@ -15,11 +15,10 @@
 # AccessControl.ZopeGuards contains a large set of wrappers for builtins.
 # DocumentTemplate.DT_UTil contains a few.
 
-from . import _compat
-from ._compat import IS_PY2
+from RestrictedPython import _compat
 
 
-if IS_PY2:
+if _compat.IS_PY2:
     import __builtin__ as builtins
 else:
     # Do not attempt to use this package on Python2.7 as there
@@ -108,7 +107,7 @@ _safe_exceptions = [
     'ZeroDivisionError',
 ]
 
-if IS_PY2:
+if _compat.IS_PY2:
     _safe_names.extend([
         'basestring',
         'cmp',
