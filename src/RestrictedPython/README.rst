@@ -55,7 +55,9 @@ Specifically:
    takes two arguments.  The first is the base object to be accessed,
    while the second is the attribute name or item index that will be
    read.  The guard function should return the attribute or subitem,
-   or raise an exception.
+   or raise an exception. RestrictedPython ships with a default implementation
+   for ``_getattr_`` which prevents from using the format method of
+   strings as it is considered harmful.
 
 4. ``__import__`` is the normal Python import hook, and should be used
    to control access to Python packages and modules.

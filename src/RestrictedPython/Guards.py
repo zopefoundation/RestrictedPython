@@ -15,10 +15,10 @@
 # AccessControl.ZopeGuards contains a large set of wrappers for builtins.
 # DocumentTemplate.DT_UTil contains a few.
 
-from ._compat import IS_PY2
+from RestrictedPython import _compat
 
 
-if IS_PY2:
+if _compat.IS_PY2:
     import __builtin__ as builtins
 else:
     # Do not attempt to use this package on Python2.7 as there
@@ -107,7 +107,7 @@ _safe_exceptions = [
     'ZeroDivisionError',
 ]
 
-if IS_PY2:
+if _compat.IS_PY2:
     _safe_names.extend([
         'basestring',
         'cmp',
@@ -254,6 +254,22 @@ def guarded_delattr(object, name):
 
 
 safe_builtins['delattr'] = guarded_delattr
+
+
+def safer_getattr(object, name, getattr=getattr):
+    """Getattr implementation which prevents using format on string objects.
+
+    format() is considered harmful:
+    http://lucumr.pocoo.org/2016/12/29/careful-with-str-format/
+
+    """
+    if isinstance(object, _compat.basestring) and name == 'format':
+        raise NotImplementedError(
+            'Using format() on a %s is not safe.' % object.__class__.__name__)
+    return getattr(object, name)
+
+
+safe_builtins['_getattr_'] = safer_getattr
 
 
 def guarded_iter_unpack_sequence(it, spec, _getiter_):
