@@ -3,7 +3,6 @@ from RestrictedPython.PrintCollector import PrintCollector
 import RestrictedPython
 
 
-# The old 'RCompile' has no clue about the print function.
 compiler = RestrictedPython.compile.compile_restricted_exec
 
 

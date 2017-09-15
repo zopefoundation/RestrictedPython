@@ -2,7 +2,6 @@ from RestrictedPython.Guards import guarded_iter_unpack_sequence
 from tests import e_exec
 
 import pytest
-import RestrictedPython
 import types
 
 
@@ -163,9 +162,7 @@ def test_RestrictingNodeTransformer__guard_iter__2(e_exec, mocker):
     _getiter_.assert_has_calls(call_ref)
     _getiter_.reset_mock()
 
-    # The old code did not run with unpack sequence inside generators
-    if compile == RestrictedPython.compile.compile_restricted_exec:
-        ret = list(glb['generator'](it))
-        assert ret == [3, 7, 11]
-        _getiter_.assert_has_calls(call_ref)
-        _getiter_.reset_mock()
+    ret = list(glb['generator'](it))
+    assert ret == [3, 7, 11]
+    _getiter_.assert_has_calls(call_ref)
+    _getiter_.reset_mock()

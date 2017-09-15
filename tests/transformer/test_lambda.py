@@ -5,7 +5,6 @@ from tests import c_exec
 from tests import e_exec
 
 import pytest
-import RestrictedPython
 
 
 lambda_err_msg = 'Line 1: "_bad" is an invalid variable ' \
@@ -52,13 +51,11 @@ def test_RestrictingNodeTransformer__visit_Lambda__4(c_exec):
 @pytest.mark.parametrize(*c_exec)
 def test_RestrictingNodeTransformer__visit_Lambda__5(c_exec):
     """It prevents arguments starting with `_` in tuple unpacking."""
-    # The old `compile` breaks with tuples in arguments:
-    if c_exec is RestrictedPython.compile.compile_restricted_exec:
-        result = c_exec("lambda (a, _bad): None")
-        # RestrictedPython.compile.compile_restricted_exec on Python 2 renders
-        # the error message twice. This is necessary as otherwise *_bad and
-        # **_bad would be allowed.
-        assert lambda_err_msg in result.errors
+    result = c_exec("lambda (a, _bad): None")
+    # RestrictedPython.compile.compile_restricted_exec on Python 2 renders
+    # the error message twice. This is necessary as otherwise *_bad and
+    # **_bad would be allowed.
+    assert lambda_err_msg in result.errors
 
 
 @pytest.mark.skipif(
@@ -67,13 +64,11 @@ def test_RestrictingNodeTransformer__visit_Lambda__5(c_exec):
 @pytest.mark.parametrize(*c_exec)
 def test_RestrictingNodeTransformer__visit_Lambda__6(c_exec):
     """It prevents arguments starting with `_` in nested tuple unpacking."""
-    # The old `compile` breaks with tuples in arguments:
-    if c_exec is RestrictedPython.compile.compile_restricted_exec:
-        result = c_exec("lambda (a, (c, (_bad, c))): None")
-        # RestrictedPython.compile.compile_restricted_exec on Python 2 renders
-        # the error message twice. This is necessary as otherwise *_bad and
-        # **_bad would be allowed.
-        assert lambda_err_msg in result.errors
+    result = c_exec("lambda (a, (c, (_bad, c))): None")
+    # RestrictedPython.compile.compile_restricted_exec on Python 2 renders
+    # the error message twice. This is necessary as otherwise *_bad and
+    # **_bad would be allowed.
+    assert lambda_err_msg in result.errors
 
 
 @pytest.mark.skipif(
@@ -96,8 +91,7 @@ def check_getattr_in_lambda(arg=lambda _bad=(lambda ob, name: name): _bad2):
 def test_RestrictingNodeTransformer__visit_Lambda__8(c_exec):
     """It prevents arguments starting with `_` in weird lambdas."""
     result = c_exec(BAD_ARG_IN_LAMBDA)
-    # RestrictedPython.compile.compile_restricted_exec finds both invalid
-    # names, while the old implementation seems to abort after the first.
+    # On Python 2 the first error message is contained twice:
     assert lambda_err_msg in result.errors
 
 
@@ -116,11 +110,7 @@ def test_RestrictingNodeTransformer__visit_Lambda__9(
     }
 
     src = "m = lambda (a, (b, c)), *ag, **kw: a+b+c+sum(ag)+sum(kw.values())"
-    try:
-        e_exec(src, glb)
-    except AttributeError:
-        # Old implementation does not support tuple unpacking
-        return
+    e_exec(src, glb)
 
     ret = glb['m']((1, (2, 3)), 4, 5, 6, g=7, e=8)
     assert ret == 36

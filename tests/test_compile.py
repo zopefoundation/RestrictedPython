@@ -8,7 +8,6 @@ from tests import c_single
 from tests import e_eval
 
 import pytest
-import RestrictedPython.compile
 import types
 
 
@@ -47,15 +46,13 @@ def test_compile__compile_restricted_exec__1(c_exec):
 @pytest.mark.parametrize(*c_exec)
 def test_compile__compile_restricted_exec__2(c_exec):
     """It compiles without restrictions if there is no policy."""
-    if c_exec is RestrictedPython.compile.compile_restricted_exec:
-        # The old version does not support a custom policy
-        result = c_exec('_a = 42', policy=None)
-        assert result.errors == ()
-        assert result.warnings == []
-        assert result.used_names == {}
-        glob = {}
-        exec(result.code, glob)
-        assert glob['_a'] == 42
+    result = c_exec('_a = 42', policy=None)
+    assert result.errors == ()
+    assert result.warnings == []
+    assert result.used_names == {}
+    glob = {}
+    exec(result.code, glob)
+    assert glob['_a'] == 42
 
 
 @pytest.mark.parametrize(*c_exec)
@@ -68,11 +65,7 @@ def test_compile__compile_restricted_exec__3(c_exec):
     errors = (
         'Line 1: "_a" is an invalid variable name because it starts with "_"',
         'Line 2: "_b" is an invalid variable name because it starts with "_"')
-    if c_exec is RestrictedPython.compile.compile_restricted_exec:
-        assert result.errors == errors
-    else:
-        # The old version did only return the first error message.
-        assert result.errors == (errors[0],)
+    assert result.errors == errors
     assert result.warnings == []
     assert result.used_names == {}
     assert result.code is None
@@ -85,12 +78,8 @@ def test_compile__compile_restricted_exec__4(c_exec):
     assert result.code is None
     assert result.warnings == []
     assert result.used_names == {}
-    if c_exec is RestrictedPython.compile.compile_restricted_exec:
-        assert result.errors == (
-            'Line 1: SyntaxError: invalid syntax in on statement: asdf|',)
-    else:
-        # The old version had a less nice error message:
-        assert result.errors == ('invalid syntax (<string>, line 1)',)
+    assert result.errors == (
+        'Line 1: SyntaxError: invalid syntax in on statement: asdf|',)
 
 
 @pytest.mark.parametrize(*c_exec)
@@ -139,11 +128,8 @@ def test_compile__compile_restricted_eval__1(c_eval):
     Function definitions are not allowed in Expressions.
     """
     result = c_eval(FUNCTION_DEF)
-    if c_eval is RestrictedPython.compile.compile_restricted_eval:
-        assert result.errors == (
-            'Line 1: SyntaxError: invalid syntax in on statement: def a():',)
-    else:
-        assert result.errors == ('invalid syntax (<string>, line 1)',)
+    assert result.errors == (
+        'Line 1: SyntaxError: invalid syntax in on statement: def a():',)
 
 
 @pytest.mark.parametrize(*e_eval)
@@ -164,15 +150,10 @@ def test_compile__compile_restricted_eval__used_names(c_eval):
 def test_compile__compile_restricted_csingle(c_single):
     """It compiles code as an Interactive."""
     result = c_single('4 * 6')
-    if c_single is RestrictedPython.compile.compile_restricted_single:
-        # New implementation disallows single mode
-        assert result.code is None
-        assert result.errors == (
-            'Line None: Interactive statements are not allowed.',
-        )
-    else:  # RestrictedPython.RCompile.compile_restricted_single
-        assert result.code is not None
-        assert result.errors == ()
+    assert result.code is None
+    assert result.errors == (
+        'Line None: Interactive statements are not allowed.',
+    )
 
 
 PRINT_EXAMPLE = """

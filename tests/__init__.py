@@ -17,8 +17,6 @@ def _exec(compile_func):
             glb = {}
         exec(code, glb)
         return glb
-    # The next line can be dropped after the old implementation was dropped.
-    _exec.compile_func = compile_func
     return _exec
 
 
@@ -54,8 +52,9 @@ def _function(compile_func):
     return _function
 
 
-# Define the arguments for @pytest.mark.parametrize to be able to test both the
-# old and the new implementation to be equal:
+# Define the arguments for @pytest.mark.parametrize. This was used to be able
+# to test both the old and the new implementation are equal. It can be
+# refactored into fixtures.
 # Compile in `exec` mode.
 c_exec = ('c_exec', [RestrictedPython.compile.compile_restricted_exec])
 # Compile and execute in `exec` mode.

@@ -5,7 +5,6 @@ from tests import c_exec
 from tests import e_exec
 
 import pytest
-import RestrictedPython
 
 
 functiondef_err_msg = 'Line 1: "_bad" is an invalid variable ' \
@@ -71,13 +70,11 @@ def test_RestrictingNodeTransformer__visit_FunctionDef__5(
 def test_RestrictingNodeTransformer__visit_FunctionDef__6(
         c_exec):
     """It prevents function arguments starting with `_` in tuples."""
-    # The old `compile` breaks with tuples in function arguments:
-    if c_exec is RestrictedPython.compile.compile_restricted_exec:
-        result = c_exec("def foo(a, (c, (_bad, c))): pass")
-        # RestrictedPython.compile.compile_restricted_exec on Python 2 renders
-        # the error message twice. This is necessary as otherwise *_bad and
-        # **_bad would be allowed.
-        assert functiondef_err_msg in result.errors
+    result = c_exec("def foo(a, (c, (_bad, c))): pass")
+    # RestrictedPython.compile.compile_restricted_exec on Python 2 renders
+    # the error message twice. This is necessary as otherwise *_bad and
+    # **_bad would be allowed.
+    assert functiondef_err_msg in result.errors
 
 
 @pytest.mark.skipif(
@@ -122,11 +119,7 @@ def test_RestrictingNodeTransformer__visit_FunctionDef__8(
     _getiter_.assert_called_once_with(val)
     _getiter_.reset_mock()
 
-    try:
-        e_exec(NESTED_SEQ_UNPACK, glb)
-    except AttributeError:
-        # The old RCompile did not support nested.
-        return
+    e_exec(NESTED_SEQ_UNPACK, glb)
 
     val = (1, 2, (3, (4, 5)))
     ret = glb['nested'](val)
