@@ -54,7 +54,7 @@ _safe_names = [
     'slice',
     'str',
     'tuple',
-    'zip'
+    'zip',
 ]
 
 _safe_exceptions = [
@@ -207,19 +207,23 @@ def _write_wrapper():
 
         __setitem__ = _handler(
             '__guarded_setitem__',
-            'object does not support item or slice assignment')
+            'object does not support item or slice assignment',
+        )
 
         __delitem__ = _handler(
             '__guarded_delitem__',
-            'object does not support item or slice assignment')
+            'object does not support item or slice assignment',
+        )
 
         __setattr__ = _handler(
             '__guarded_setattr__',
-            'attribute-less object (assign or del)')
+            'attribute-less object (assign or del)',
+        )
 
         __delattr__ = _handler(
             '__guarded_delattr__',
-            'attribute-less object (assign or del)')
+            'attribute-less object (assign or del)',
+        )
     return Wrapper
 
 
@@ -265,7 +269,8 @@ def safer_getattr(object, name, getattr=getattr):
     """
     if isinstance(object, _compat.basestring) and name == 'format':
         raise NotImplementedError(
-            'Using format() on a %s is not safe.' % object.__class__.__name__)
+            'Using format() on a %s is not safe.' % object.__class__.__name__,
+        )
     return getattr(object, name)
 
 

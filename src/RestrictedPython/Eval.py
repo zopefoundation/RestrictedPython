@@ -76,7 +76,8 @@ class RestrictionCapableEval(object):
                 self.expr,
                 '<string>',
                 'eval',
-                ast.PyCF_ONLY_AST)
+                ast.PyCF_ONLY_AST,
+            )
 
             co = compile(exp_node, '<string>', 'eval')
 
@@ -99,7 +100,7 @@ class RestrictionCapableEval(object):
 
         global_scope = {
             '_getattr_': default_guarded_getattr,
-            '_getitem_': default_guarded_getitem
+            '_getitem_': default_guarded_getitem,
         }
 
         global_scope.update(self.globals)
