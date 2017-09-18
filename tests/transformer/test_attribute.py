@@ -17,7 +17,8 @@ def test_RestrictingNodeTransformer__visit_Attribute__1(c_exec):
     result = c_exec(BAD_ATTR_UNDERSCORE)
     assert result.errors == (
         'Line 3: "_some_attr" is an invalid attribute name because it '
-        'starts with "_".',)
+        'starts with "_".',
+    )
 
 
 BAD_ATTR_ROLES = """\
@@ -33,7 +34,8 @@ def test_RestrictingNodeTransformer__visit_Attribute__2(c_exec):
     result = c_exec(BAD_ATTR_ROLES)
     assert result.errors == (
         'Line 3: "abc__roles__" is an invalid attribute name because it '
-        'ends with "__roles__".',)
+        'ends with "__roles__".',
+    )
 
 
 TRANSFORM_ATTRIBUTE_ACCESS = """\
@@ -43,13 +45,12 @@ def func():
 
 
 @pytest.mark.parametrize(*e_exec)
-def test_RestrictingNodeTransformer__visit_Attribute__3(
-        e_exec, mocker):
+def test_RestrictingNodeTransformer__visit_Attribute__3(e_exec, mocker):
     """It transforms the attribute access to `_getattr_`."""
     glb = {
         '_getattr_': mocker.stub(),
         'a': [],
-        'b': 'b'
+        'b': 'b',
     }
     e_exec(TRANSFORM_ATTRIBUTE_ACCESS, glb)
     glb['func']()
@@ -71,8 +72,7 @@ def test_RestrictingNodeTransformer__visit_Attribute__4(c_exec):
 
 
 @pytest.mark.parametrize(*e_exec)
-def test_RestrictingNodeTransformer__visit_Attribute__5(
-        e_exec, mocker):
+def test_RestrictingNodeTransformer__visit_Attribute__5(e_exec, mocker):
     """It transforms writing to an attribute to `_write_`."""
     glb = {
         '_write_': mocker.stub(),
@@ -87,8 +87,7 @@ def test_RestrictingNodeTransformer__visit_Attribute__5(
 
 
 @pytest.mark.parametrize(*e_exec)
-def test_RestrictingNodeTransformer__visit_Attribute__5_5(
-        e_exec, mocker):
+def test_RestrictingNodeTransformer__visit_Attribute__5_5(e_exec, mocker):
     """It transforms deleting of an attribute to `_write_`."""
     glb = {
         '_write_': mocker.stub(),
@@ -117,7 +116,8 @@ def test_RestrictingNodeTransformer__visit_Attribute__6(c_exec):
     result = c_exec(DISALLOW_TRACEBACK_ACCESS)
     assert result.errors == (
         'Line 5: "__traceback__" is an invalid attribute name because '
-        'it starts with "_".',)
+        'it starts with "_".',
+    )
 
 
 TRANSFORM_ATTRIBUTE_ACCESS_FUNCTION_DEFAULT = """
@@ -127,8 +127,7 @@ def func_default(x=a.a):
 
 
 @pytest.mark.parametrize(*e_exec)
-def test_RestrictingNodeTransformer__visit_Attribute__7(
-        e_exec, mocker):
+def test_RestrictingNodeTransformer__visit_Attribute__7(e_exec, mocker):
     """It transforms attribute access in function default kw to `_write_`."""
     _getattr_ = mocker.Mock()
     _getattr_.side_effect = getattr
@@ -145,15 +144,14 @@ def test_RestrictingNodeTransformer__visit_Attribute__7(
 
 
 @pytest.mark.parametrize(*e_exec)
-def test_RestrictingNodeTransformer__visit_Attribute__8(
-        e_exec, mocker):
+def test_RestrictingNodeTransformer__visit_Attribute__8(e_exec, mocker):
     """It transforms attribute access in lamda default kw to `_write_`."""
     _getattr_ = mocker.Mock()
     _getattr_.side_effect = getattr
 
     glb = {
         '_getattr_': _getattr_,
-        'b': mocker.Mock(b=2)
+        'b': mocker.Mock(b=2),
     }
 
     e_exec('lambda_default = lambda x=b.b: x', glb)

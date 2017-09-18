@@ -12,8 +12,7 @@ functiondef_err_msg = 'Line 1: "_bad" is an invalid variable ' \
 
 
 @pytest.mark.parametrize(*c_exec)
-def test_RestrictingNodeTransformer__visit_FunctionDef__1(
-        c_exec):
+def test_RestrictingNodeTransformer__visit_FunctionDef__1(c_exec):
     """It prevents function arguments starting with `_`."""
     result = c_exec("def foo(_bad): pass")
     # RestrictedPython.compile.compile_restricted_exec on Python 2 renders
@@ -23,8 +22,7 @@ def test_RestrictingNodeTransformer__visit_FunctionDef__1(
 
 
 @pytest.mark.parametrize(*c_exec)
-def test_RestrictingNodeTransformer__visit_FunctionDef__2(
-        c_exec):
+def test_RestrictingNodeTransformer__visit_FunctionDef__2(c_exec):
     """It prevents function keyword arguments starting with `_`."""
     result = c_exec("def foo(_bad=1): pass")
     # RestrictedPython.compile.compile_restricted_exec on Python 2 renders
@@ -34,16 +32,14 @@ def test_RestrictingNodeTransformer__visit_FunctionDef__2(
 
 
 @pytest.mark.parametrize(*c_exec)
-def test_RestrictingNodeTransformer__visit_FunctionDef__3(
-        c_exec):
+def test_RestrictingNodeTransformer__visit_FunctionDef__3(c_exec):
     """It prevents function * arguments starting with `_`."""
     result = c_exec("def foo(*_bad): pass")
     assert result.errors == (functiondef_err_msg,)
 
 
 @pytest.mark.parametrize(*c_exec)
-def test_RestrictingNodeTransformer__visit_FunctionDef__4(
-        c_exec):
+def test_RestrictingNodeTransformer__visit_FunctionDef__4(c_exec):
     """It prevents function ** arguments starting with `_`."""
     result = c_exec("def foo(**_bad): pass")
     assert result.errors == (functiondef_err_msg,)
@@ -51,10 +47,10 @@ def test_RestrictingNodeTransformer__visit_FunctionDef__4(
 
 @pytest.mark.skipif(
     IS_PY3,
-    reason="tuple parameter unpacking is gone in Python 3")
+    reason="tuple parameter unpacking is gone in Python 3",
+)
 @pytest.mark.parametrize(*c_exec)
-def test_RestrictingNodeTransformer__visit_FunctionDef__5(
-        c_exec):
+def test_RestrictingNodeTransformer__visit_FunctionDef__5(c_exec):
     """It prevents function arguments starting with `_` in tuples."""
     result = c_exec("def foo((a, _bad)): pass")
     # RestrictedPython.compile.compile_restricted_exec on Python 2 renders
@@ -65,10 +61,10 @@ def test_RestrictingNodeTransformer__visit_FunctionDef__5(
 
 @pytest.mark.skipif(
     IS_PY3,
-    reason="tuple parameter unpacking is gone in Python 3")
+    reason="tuple parameter unpacking is gone in Python 3",
+)
 @pytest.mark.parametrize(*c_exec)
-def test_RestrictingNodeTransformer__visit_FunctionDef__6(
-        c_exec):
+def test_RestrictingNodeTransformer__visit_FunctionDef__6(c_exec):
     """It prevents function arguments starting with `_` in tuples."""
     result = c_exec("def foo(a, (c, (_bad, c))): pass")
     # RestrictedPython.compile.compile_restricted_exec on Python 2 renders
@@ -79,10 +75,10 @@ def test_RestrictingNodeTransformer__visit_FunctionDef__6(
 
 @pytest.mark.skipif(
     IS_PY2,
-    reason="There is no single `*` argument in Python 2")
+    reason="There is no single `*` argument in Python 2",
+)
 @pytest.mark.parametrize(*c_exec)
-def test_RestrictingNodeTransformer__visit_FunctionDef__7(
-        c_exec):
+def test_RestrictingNodeTransformer__visit_FunctionDef__7(c_exec):
     """It prevents `_` function arguments together with a single `*`."""
     result = c_exec("def foo(good, *, _bad): pass")
     assert result.errors == (functiondef_err_msg,)
@@ -99,16 +95,16 @@ def nested_with_order((a, b), (c, d)):
 
 @pytest.mark.skipif(
     IS_PY3,
-    reason="tuple parameter unpacking is gone in python 3")
+    reason="tuple parameter unpacking is gone in python 3",
+)
 @pytest.mark.parametrize(*e_exec)
-def test_RestrictingNodeTransformer__visit_FunctionDef__8(
-        e_exec, mocker):
+def test_RestrictingNodeTransformer__visit_FunctionDef__8(e_exec, mocker):
     _getiter_ = mocker.stub()
     _getiter_.side_effect = lambda it: it
 
     glb = {
         '_getiter_': _getiter_,
-        '_unpack_sequence_': guarded_unpack_sequence
+        '_unpack_sequence_': guarded_unpack_sequence,
     }
 
     e_exec('def simple((a, b)): return a, b', glb)
@@ -134,5 +130,6 @@ def test_RestrictingNodeTransformer__visit_FunctionDef__8(
     assert ret == (1, 2, 3, 4)
     _getiter_.assert_has_calls([
         mocker.call((1, 2)),
-        mocker.call((3, 4))])
+        mocker.call((3, 4)),
+    ])
     _getiter_.reset_mock()

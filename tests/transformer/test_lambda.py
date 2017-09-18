@@ -99,14 +99,13 @@ def test_RestrictingNodeTransformer__visit_Lambda__8(c_exec):
     IS_PY3,
     reason="tuple parameter unpacking is gone in python 3")
 @pytest.mark.parametrize(*e_exec)
-def test_RestrictingNodeTransformer__visit_Lambda__9(
-        e_exec, mocker):
+def test_RestrictingNodeTransformer__visit_Lambda__9(e_exec, mocker):
     _getiter_ = mocker.stub()
     _getiter_.side_effect = lambda it: it
     glb = {
         '_getiter_': _getiter_,
         '_unpack_sequence_': guarded_unpack_sequence,
-        '_getattr_': lambda ob, val: getattr(ob, val)
+        '_getattr_': lambda ob, val: getattr(ob, val),
     }
 
     src = "m = lambda (a, (b, c)), *ag, **kw: a+b+c+sum(ag)+sum(kw.values())"

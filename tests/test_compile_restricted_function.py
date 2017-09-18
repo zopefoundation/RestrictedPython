@@ -21,7 +21,7 @@ return printed
         body,
         name,
         filename='<string>',
-        globalize=global_symbols
+        globalize=global_symbols,
     )
 
     assert result.code is not None
@@ -30,7 +30,7 @@ return printed
     safe_globals = {
         '__name__': 'script',
         '_getattr_': getattr,
-        '_print_': PrintCollector
+        '_print_': PrintCollector,
     }
     safe_globals.update(safe_builtins)
     safe_locals = {}
@@ -55,7 +55,7 @@ return printed
         body,
         name,
         filename='<string>',
-        globalize=global_symbols
+        globalize=global_symbols,
     )
 
     assert result.code is not None
@@ -89,7 +89,7 @@ return printed
         body,
         name,
         filename='<string>',
-        globalize=global_symbols
+        globalize=global_symbols,
     )
 
     assert result.code is not None
@@ -98,7 +98,7 @@ return printed
     safe_globals = {
         '__name__': 'script',
         '_getattr_': getattr,
-        '_print_': PrintCollector
+        '_print_': PrintCollector,
     }
     safe_globals.update(safe_builtins)
     safe_locals = {}
@@ -123,7 +123,7 @@ return printed
         body,
         name,
         filename='<string>',
-        globalize=global_symbols
+        globalize=global_symbols,
     )
 
     assert result.code is not None
@@ -133,7 +133,7 @@ return printed
         '__name__': 'script',
         '_getattr_': getattr,
         'input': 'Hello World!',
-        '_print_': PrintCollector
+        '_print_': PrintCollector,
     }
     safe_globals.update(safe_builtins)
     safe_locals = {}
@@ -155,7 +155,7 @@ def test_compile_restricted_function_pretends_the_code_is_executed_in_a_global_s
         body,
         name,
         filename='<string>',
-        globalize=global_symbols
+        globalize=global_symbols,
     )
 
     assert result.code is not None
@@ -186,7 +186,7 @@ def test_compile_restricted_function_allows_invalid_python_identifiers_as_functi
         body,
         name,
         filename='<string>',
-        globalize=global_symbols
+        globalize=global_symbols,
     )
 
     assert result.code is not None
