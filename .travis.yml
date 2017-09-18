@@ -1,23 +1,7 @@
 language: python
 sudo: false
-<<<<<<< HEAD
-python:
-    - 2.7
-    - 3.4
-    - 3.5
-    - 3.6
-env:
-    - ENVIRON=py
-    - ENVIRON=py27-datetime,py36-datetime
-    - ENVIRON=isort,flake8,docs
-matrix:
-    exclude:
-        - env: ENVIRON=isort,flake8,docs
-        - env: ENVIRON=py27-datetime,py36-datetime
-=======
 
 matrix:
->>>>>>> adjust travis-ci config to reflect new tox settings
     include:
         - python: "2.7"
           env: TOXENV=docs,lint-py2
@@ -26,11 +10,6 @@ matrix:
         - python: "2.7"
           env: TOXENV=py27
         - python: "2.7"
-          env: TOXENV=py27-rp3
-        - python: "2.7"
-<<<<<<< HEAD
-          env: ENVIRON=py27-datetime
-=======
           env: TOXENV=py27-datetime
         - python: "3.4"
           env: TOXENV=py34
@@ -54,7 +33,6 @@ matrix:
         - python: "pypy3"
           env: TOXENV=pypy
 
->>>>>>> adjust travis-ci config to reflect new tox settings
 install:
     - travis_retry pip install -U pip setuptools
     - travis_retry pip install -U -c constraints.txt tox coveralls coverage
