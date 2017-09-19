@@ -3,23 +3,23 @@
 environment:
   matrix:
     - PTHON: "C:\\Python27"
-      env: TOXENV=lint-py2,docs
+      TOXENV: "lint-py2,docs"
     - PTHON: "C:\\Python36"
-      env: TOXENV=lint-py3,docs
+      TOXENV: "lint-py3,docs"
     - PTHON: "C:\\Python27"
-      env: TOXENV=py27
+      TOXENV: "py27"
     - PTHON: "C:\\Python27"
-      env: TOXENV=py27-rp3
+      TOXENV: "py27-rp3"
     - PTHON: "C:\\Python27"
-      env: TOXENV=py27-datetime
+      TOXENV: "py27-datetime"
     - PTHON: "C:\\Python34"
-      env: TOXENV=py34
+      TOXENV: "py34"
     - PTHON: "C:\\Python35"
-      env: TOXENV=py35
+      TOXENV: "py35"
     - PTHON: "C:\\Python36"
-      env: TOXENV=py36
+      TOXENV: "py36"
     - PTHON: "C:\\Python36"
-      env: TOXENV=py36-datetime
+      TOXENV: "py36-datetime"
 
 cache:
   - '%LOCALAPPDATA%\pip\Cache'
