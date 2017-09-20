@@ -30,4 +30,4 @@ install:
 build: off
 
 test_script:
-  - "Scripts\\tox.exe"
+  - "tox.exe"
