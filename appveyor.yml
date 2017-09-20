@@ -3,9 +3,9 @@
 environment:
   matrix:
     - PYTHON: "C:\\Python27"
-      TOXENV: "lint-py2,docs"
+      TOXENV: "lint-py27,docs"
     - PYTHON: "C:\\Python36"
-      TOXENV: "lint-py3,docs"
+      TOXENV: "lint-py36,docs"
     - PYTHON: "C:\\Python27"
       TOXENV: "py27"
     - PYTHON: "C:\\Python27"
