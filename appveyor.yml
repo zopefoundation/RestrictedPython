@@ -9,8 +9,6 @@ environment:
     - PYTHON: "C:\\Python27"
       TOXENV: "py27"
     - PYTHON: "C:\\Python27"
-      TOXENV: "py27-rp3"
-    - PYTHON: "C:\\Python27"
       TOXENV: "py27-datetime"
     - PYTHON: "C:\\Python34"
       TOXENV: "py34"
