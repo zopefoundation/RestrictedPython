@@ -2,23 +2,23 @@
 
 environment:
   matrix:
-    - PTHON: "C:\\Python27"
+    - PYTHON: "C:\\Python27"
       TOXENV: "lint-py2,docs"
-    - PTHON: "C:\\Python36"
+    - PYTHON: "C:\\Python36"
       TOXENV: "lint-py3,docs"
-    - PTHON: "C:\\Python27"
+    - PYTHON: "C:\\Python27"
       TOXENV: "py27"
-    - PTHON: "C:\\Python27"
+    - PYTHON: "C:\\Python27"
       TOXENV: "py27-rp3"
-    - PTHON: "C:\\Python27"
+    - PYTHON: "C:\\Python27"
       TOXENV: "py27-datetime"
-    - PTHON: "C:\\Python34"
+    - PYTHON: "C:\\Python34"
       TOXENV: "py34"
-    - PTHON: "C:\\Python35"
+    - PYTHON: "C:\\Python35"
       TOXENV: "py35"
-    - PTHON: "C:\\Python36"
+    - PYTHON: "C:\\Python36"
       TOXENV: "py36"
-    - PTHON: "C:\\Python36"
+    - PYTHON: "C:\\Python36"
       TOXENV: "py36-datetime"
 
 cache:
