@@ -25,9 +25,9 @@ cache:
 version: '{branch}.{build}'
 
 install:
-  - "%PYTHON%\\python.exe -m pip install tox"
+  - "python.exe -m pip install tox"
 
 build: off
 
 test_script:
-  - "%PYTHON%\\Scripts\\tox.exe"
+  - "Scripts\\tox.exe"
