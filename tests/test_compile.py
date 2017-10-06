@@ -193,3 +193,14 @@ def test_compile_restricted_eval():
     with pytest.raises(SyntaxError,
                        message="Line 3: Eval calls are not allowed."):
         compile_restricted(EVAL_EXAMPLE, '<string>', 'exec')
+
+
+def test_compile___compile_restricted_mode__1(recwarn, mocker):
+    """It warns when using another Python implementation than CPython."""
+    mocker.patch('RestrictedPython.compile.IS_CPYTHON', new=False)
+    compile_restricted('42')
+    assert len(recwarn) == 1
+    w = recwarn.pop()
+    assert w.category == RuntimeWarning
+    assert str(w.message).startswith(
+        'You are using on a not supported Python implementation.')

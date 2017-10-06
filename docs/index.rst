@@ -9,6 +9,12 @@ Welcome to RestrictedPython's documentation!
 
 .. include:: idea.rst
 
+Supported Python versions
+=========================
+
+RestrictedPython support CPython 2.7, 3.4, 3.5 and 3.6.
+It does _not_ support PyPy or other alternative Python implementations.
+
 Contents
 ========
 

@@ -4,8 +4,9 @@ Changes
 4.0b3 (unreleased)
 ------------------
 
-- Nothing changed yet.
-
+- Warn when using another Python implementation than CPython as it is not safe
+  to use RestrictedPython with other versions than CPyton.
+  See https://bitbucket.org/pypy/pypy/issues/2653 for PyPy.
 
 4.0b2 (2017-09-15)
 ------------------
@@ -31,7 +32,7 @@ Changes
   `SelectCompiler.py`, `MutatingWorker.py`, `RestrictionMutator.py` and
   `tests/verify.py`.
 
-- Drop support of PyPy as there currently seems to be no way to restrict the
+- Drop support of PyPy as there currently is no way to restrict the
   builtins. See https://bitbucket.org/pypy/pypy/issues/2653.
 
 - Remove ``__len__`` method in ``.Guards._write_wrapper`` because it is no

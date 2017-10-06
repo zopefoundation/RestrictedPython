@@ -1,3 +1,4 @@
+import platform
 import sys
 
 
@@ -11,3 +12,5 @@ if IS_PY2:
     basestring = basestring  # NOQA: F821  # Python 2 only built-in function
 else:
     basestring = str
+
+IS_CPYTHON = platform.python_implementation() == 'CPython'
