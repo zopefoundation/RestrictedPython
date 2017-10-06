@@ -12,7 +12,7 @@ def test_RestrictingNodeTransformer__visit_Call__1(c_exec):
     loc = {}
     exec(result.code, {}, loc)
     assert loc['a'] == 3
-    assert result.used_names == {'max': True}
+    assert result.used_names == {'max': True, }
 
 
 # def f(a, b, c): pass
@@ -57,7 +57,7 @@ def test_RestrictingNodeTransformer__visit_Call__2(e_exec, mocker):
 
     glb = {
         '_apply_': _apply_,
-        'foo': lambda *args, **kwargs: (args, kwargs)
+        'foo': lambda *args, **kwargs: (args, kwargs),
     }
 
     e_exec(FUNCTIONC_CALLS, glb)

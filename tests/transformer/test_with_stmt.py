@@ -24,7 +24,7 @@ def test_with_stmt_unpack_sequence(e_exec, mocker):
 
     glb = {
         '_getiter_': _getiter_,
-        '_unpack_sequence_': guarded_unpack_sequence
+        '_unpack_sequence_': guarded_unpack_sequence,
     }
 
     e_exec(WITH_STMT_WITH_UNPACK_SEQUENCE, glb)
@@ -34,7 +34,8 @@ def test_with_stmt_unpack_sequence(e_exec, mocker):
     assert ret == (1, 2, 3)
     _getiter_.assert_has_calls([
         mocker.call((1, (2, 3))),
-        mocker.call((2, 3))])
+        mocker.call((2, 3)),
+    ])
 
 
 WITH_STMT_MULTI_CTX_WITH_UNPACK_SEQUENCE = """
@@ -62,7 +63,7 @@ def test_with_stmt_multi_ctx_unpack_sequence(c_exec, mocker):
 
     glb = {
         '_getiter_': _getiter_,
-        '_unpack_sequence_': guarded_unpack_sequence
+        '_unpack_sequence_': guarded_unpack_sequence,
     }
 
     exec(result.code, glb)
@@ -75,7 +76,7 @@ def test_with_stmt_multi_ctx_unpack_sequence(c_exec, mocker):
         mocker.call((2, 3)),
         mocker.call(((4, 5), (6, 7))),
         mocker.call((4, 5)),
-        mocker.call((6, 7))
+        mocker.call((6, 7)),
     ])
 
 
@@ -127,7 +128,7 @@ def test_with_stmt_attribute_access(e_exec, mocker):
     assert x.y == ctx
     _write_.assert_has_calls([
         mocker.call(x),
-        mocker.call(x)
+        mocker.call(x),
     ])
 
     _write_.reset_mock()

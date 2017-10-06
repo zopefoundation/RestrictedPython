@@ -45,7 +45,10 @@ print ('a', 'b', file=None)
 
 
 def test_print_function__simple_prints():
-    glb = {'_print_': PrintCollector, '_getattr_': None}
+    glb = {
+        '_print_': PrintCollector,
+        '_getattr_': None,
+    }
 
     code, errors = compiler(ALLOWED_PRINT_FUNCTION)[:2]
     assert errors == ()
@@ -104,7 +107,7 @@ def test_print_function_with_star_args(mocker):
     glb = {
         '_print_': PrintCollector,
         '_getattr_': None,
-        "_apply_": _apply_
+        "_apply_": _apply_,
     }
 
     code, errors = compiler(ALLOWED_PRINT_FUNCTION_WITH_STAR_ARGS)[:2]
@@ -130,7 +133,7 @@ def test_print_function_with_kw_args(mocker):
     glb = {
         '_print_': PrintCollector,
         '_getattr_': None,
-        "_apply_": _apply_
+        "_apply_": _apply_,
     }
 
     code, errors = compiler(ALLOWED_PRINT_FUNCTION_WITH_KWARGS)[:2]
@@ -145,7 +148,8 @@ def test_print_function_with_kw_args(mocker):
         3,
         end='!',
         file=None,
-        sep='-')
+        sep='-',
+    )
 
 
 PROTECT_WRITE_ON_FILE = """
@@ -163,7 +167,7 @@ def test_print_function__protect_file(mocker):
     glb = {
         '_print_': PrintCollector,
         '_getattr_': _getattr_,
-        'stream': stream
+        'stream': stream,
     }
 
     code, errors = compiler(PROTECT_WRITE_ON_FILE)[:2]
@@ -177,7 +181,7 @@ def test_print_function__protect_file(mocker):
         mocker.call('a'),
         mocker.call(' '),
         mocker.call('b'),
-        mocker.call('\n')
+        mocker.call('\n'),
     ])
 
 
@@ -306,7 +310,7 @@ def test_print_function_no_new_scope():
         '_print_': PrintCollector,
         '__metaclass__': type,
         '_getattr_': None,
-        '_getiter_': lambda ob: ob
+        '_getiter_': lambda ob: ob,
     }
     exec(code, glb)
 
@@ -334,7 +338,10 @@ def main():
 
 def test_print_function_pass_print_function():
     code, errors = compiler(PASS_PRINT_FUNCTION)[:2]
-    glb = {'_print_': PrintCollector, '_getattr_': None}
+    glb = {
+        '_print_': PrintCollector,
+        '_getattr_': None,
+    }
     exec(code, glb)
 
     ret = glb['main']()
@@ -352,7 +359,10 @@ def func(cond):
 
 def test_print_function_conditional_print():
     code, errors = compiler(CONDITIONAL_PRINT)[:2]
-    glb = {'_print_': PrintCollector, '_getattr_': None}
+    glb = {
+        '_print_': PrintCollector,
+        '_getattr_': None,
+    }
     exec(code, glb)
 
     assert glb['func'](True) == '1\n'

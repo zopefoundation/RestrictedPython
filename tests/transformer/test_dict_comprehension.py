@@ -32,5 +32,5 @@ def test_dict_comprehension_with_attrs(e_exec, mocker):
         mocker.call(z[0], 'k'),
         mocker.call(z[1], 'k'),
         mocker.call(z[1], 'v'),
-        mocker.call(z[1], 'k')
+        mocker.call(z[1], 'k'),
     ])

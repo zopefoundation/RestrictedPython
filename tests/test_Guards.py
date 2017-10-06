@@ -35,7 +35,8 @@ result = ob1.display()'''
         __name__='restricted_module',
         __metaclass__=type,
         _write_=lambda x: x,
-        _getattr_=getattr)
+        _getattr_=getattr,
+    )
 
     e_exec(class_can_be_defined_code, restricted_globals)
     assert restricted_globals['result'] == '2411'
@@ -62,7 +63,8 @@ setattr(my_object_d, 'value', 9999)'''
         __name__='restricted_module',
         __metaclass__=type,
         _write_=lambda x: x,
-        _getattr_=getattr,)
+        _getattr_=getattr,
+    )
 
     e_exec(setattr_code, restricted_globals)
     assert 9999 == restricted_globals['my_object_d'].value
@@ -89,7 +91,8 @@ setattr(my_ob, 'my_attr', 'bar')'''
         __name__='restricted_module',
         __metaclass__=type,
         _write_=lambda x: x,
-        _getattr_=getattr,)
+        _getattr_=getattr,
+    )
 
     with pytest.raises(TypeError) as excinfo:
         e_exec(setattr_without_guarded_writes_code, restricted_globals)
@@ -118,7 +121,8 @@ setattr(myobj_with_guarded_setattr, 'my_attr', 'bar')
         __name__='restricted_module',
         __metaclass__=type,
         _write_=lambda x: x,
-        _getattr_=getattr,)
+        _getattr_=getattr,
+    )
 
     e_exec(set_attribute_using_guarded_setattr_code, restricted_globals)
     assert restricted_globals['myobj_with_guarded_setattr'].my_attr == 'bar'

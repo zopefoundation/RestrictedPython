@@ -17,15 +17,14 @@ def try_except(m):
 
 
 @pytest.mark.parametrize(*e_exec)
-def test_RestrictingNodeTransformer__visit_Try__1(
-        e_exec, mocker):
+def test_RestrictingNodeTransformer__visit_Try__1(e_exec, mocker):
     """It allows try-except statements."""
     trace = mocker.stub()
     e_exec(TRY_EXCEPT)['try_except'](trace)
 
     trace.assert_has_calls([
         mocker.call('try'),
-        mocker.call('except')
+        mocker.call('except'),
     ])
 
 
@@ -41,15 +40,14 @@ def try_except_else(m):
 
 
 @pytest.mark.parametrize(*e_exec)
-def test_RestrictingNodeTransformer__visit_Try__2(
-        e_exec, mocker):
+def test_RestrictingNodeTransformer__visit_Try__2(e_exec, mocker):
     """It allows try-except-else statements."""
     trace = mocker.stub()
     e_exec(TRY_EXCEPT_ELSE)['try_except_else'](trace)
 
     trace.assert_has_calls([
         mocker.call('try'),
-        mocker.call('else')
+        mocker.call('else'),
     ])
 
 
@@ -65,15 +63,14 @@ def try_finally(m):
 
 
 @pytest.mark.parametrize(*e_exec)
-def test_RestrictingNodeTransformer__visit_TryFinally__1(
-        e_exec, mocker):
+def test_RestrictingNodeTransformer__visit_TryFinally__1(e_exec, mocker):
     """It allows try-finally statements."""
     trace = mocker.stub()
     e_exec(TRY_FINALLY)['try_finally'](trace)
 
     trace.assert_has_calls([
         mocker.call('try'),
-        mocker.call('finally')
+        mocker.call('finally'),
     ])
 
 
@@ -90,8 +87,7 @@ def try_except_finally(m):
 
 
 @pytest.mark.parametrize(*e_exec)
-def test_RestrictingNodeTransformer__visit_TryFinally__2(
-        e_exec, mocker):
+def test_RestrictingNodeTransformer__visit_TryFinally__2(e_exec, mocker):
     """It allows try-except-finally statements."""
     trace = mocker.stub()
     e_exec(TRY_EXCEPT_FINALLY)['try_except_finally'](trace)
@@ -99,7 +95,7 @@ def test_RestrictingNodeTransformer__visit_TryFinally__2(
     trace.assert_has_calls([
         mocker.call('try'),
         mocker.call('except'),
-        mocker.call('finally')
+        mocker.call('finally'),
     ])
 
 
@@ -117,8 +113,7 @@ def try_except_else_finally(m):
 
 
 @pytest.mark.parametrize(*e_exec)
-def test_RestrictingNodeTransformer__visit_TryFinally__3(
-        e_exec, mocker):
+def test_RestrictingNodeTransformer__visit_TryFinally__3(e_exec, mocker):
     """It allows try-except-else-finally statements."""
     trace = mocker.stub()
     e_exec(TRY_EXCEPT_ELSE_FINALLY)['try_except_else_finally'](trace)
@@ -126,7 +121,7 @@ def test_RestrictingNodeTransformer__visit_TryFinally__3(
     trace.assert_has_calls([
         mocker.call('try'),
         mocker.call('else'),
-        mocker.call('finally')
+        mocker.call('finally'),
     ])
 
 
@@ -143,14 +138,13 @@ def tuple_unpack(err):
     IS_PY3,
     reason="tuple unpacking on exceptions is gone in python3")
 @pytest.mark.parametrize(*e_exec)
-def test_RestrictingNodeTransformer__visit_ExceptHandler__1(
-        e_exec, mocker):
+def test_RestrictingNodeTransformer__visit_ExceptHandler__1(e_exec, mocker):
     _getiter_ = mocker.stub()
     _getiter_.side_effect = lambda it: it
 
     glb = {
         '_getiter_': _getiter_,
-        '_unpack_sequence_': guarded_unpack_sequence
+        '_unpack_sequence_': guarded_unpack_sequence,
     }
 
     e_exec(EXCEPT_WITH_TUPLE_UNPACK, glb)
@@ -160,7 +154,8 @@ def test_RestrictingNodeTransformer__visit_ExceptHandler__1(
 
     _getiter_.assert_has_calls([
         mocker.call(err),
-        mocker.call((2, 3))])
+        mocker.call((2, 3)),
+    ])
 
 
 BAD_TRY_EXCEPT = """
@@ -181,4 +176,5 @@ def test_RestrictingNodeTransformer__visit_ExceptHandler__2(
     result = c_exec(BAD_TRY_EXCEPT)
     assert result.errors == (
         'Line 5: "_leading_underscore" is an invalid variable name because '
-        'it starts with "_"',)
+        'it starts with "_"',
+    )

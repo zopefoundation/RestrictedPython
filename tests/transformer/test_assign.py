@@ -33,10 +33,10 @@ def test_RestrictingNodeTransformer__visit_Assign__1(e_exec, mocker):
 
 @pytest.mark.skipif(
     IS_PY2,
-    reason="starred assignments are python3 only")
+    reason="starred assignments are python3 only",
+)
 @pytest.mark.parametrize(*e_exec)
-def test_RestrictingNodeTransformer__visit_Assign__2(
-        e_exec, mocker):
+def test_RestrictingNodeTransformer__visit_Assign__2(e_exec, mocker):
     src = "a, *d, (c, *e), x  = (1, 2, 3, (4, 3, 4), 5)"
 
     _getiter_ = mocker.stub()
@@ -44,7 +44,7 @@ def test_RestrictingNodeTransformer__visit_Assign__2(
 
     glb = {
         '_getiter_': _getiter_,
-        '_unpack_sequence_': guarded_unpack_sequence
+        '_unpack_sequence_': guarded_unpack_sequence,
     }
 
     e_exec(src, glb)
@@ -56,4 +56,5 @@ def test_RestrictingNodeTransformer__visit_Assign__2(
 
     _getiter_.assert_has_calls([
         mocker.call((1, 2, 3, (4, 3, 4), 5)),
-        mocker.call((4, 3, 4))])
+        mocker.call((4, 3, 4)),
+    ])
