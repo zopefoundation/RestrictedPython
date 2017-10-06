@@ -2,26 +2,22 @@
 
 environment:
   matrix:
-    - python: "2.7"
-      env: TOXENV=lint-py2,docs
-    - python: "3.6"
-      env: TOXENV=lint-py3,docs
-    - python: "2.7"
-      env: TOXENV=py27
-    - python: "2.7"
-      env: TOXENV=py27-rp3
-    - python: "2.7"
-      env: TOXENV=py27-datetime
-    - python: "3.4"
-      env: TOXENV=py34
-    - python: "3.5"
-      env: TOXENV=py35
-    - python: "3.6"
-      env: TOXENV=py36
-    - python: "3.6"
-      env: TOXENV=py36-datetime
-    - python: "3.7-dev"
-      env: TOXENV=py37
+    - PYTHON: "C:\\Python27"
+      TOXENV: "lint-py27,docs"
+    - PYTHON: "C:\\Python36"
+      TOXENV: "lint-py36,docs"
+    - PYTHON: "C:\\Python27"
+      TOXENV: "py27"
+    - PYTHON: "C:\\Python27"
+      TOXENV: "py27-datetime"
+    - PYTHON: "C:\\Python34"
+      TOXENV: "py34"
+    - PYTHON: "C:\\Python35"
+      TOXENV: "py35"
+    - PYTHON: "C:\\Python36"
+      TOXENV: "py36"
+    - PYTHON: "C:\\Python36"
+      TOXENV: "py36-datetime"
 
 cache:
   - '%LOCALAPPDATA%\pip\Cache'
@@ -29,9 +25,9 @@ cache:
 version: '{branch}.{build}'
 
 install:
-  - "%PYTHON%\\python.exe -m pip install tox"
+  - "python.exe -m pip install tox"
 
 build: off
 
 test_script:
-  - "%PYTHON%\\Scripts\\tox.exe"
+  - "tox.exe"
