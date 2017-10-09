@@ -13,8 +13,9 @@ syntax_error_template = (
     'Line {lineno}: {type}: {msg} in on statement: {statement}')
 
 NOT_CPYTHON_WARNING = (
-    'You are using on a not supported Python implementation.'
-    ' Use CPython to prevent security issues when using RestrictedPython!')
+    'RestrictedPython is only supported on CPython: use on other Python '
+    'implementations may create security issues.'
+)
 
 
 def _compile_restricted_mode(

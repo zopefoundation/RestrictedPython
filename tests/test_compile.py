@@ -7,6 +7,7 @@ from tests import c_exec
 from tests import c_single
 from tests import e_eval
 
+import platform
 import pytest
 import types
 
@@ -195,12 +196,29 @@ def test_compile_restricted_eval():
         compile_restricted(EVAL_EXAMPLE, '<string>', 'exec')
 
 
-def test_compile___compile_restricted_mode__1(recwarn, mocker):
+def test_compile_CPython_warning_mocked(recwarn, mocker):
     """It warns when using another Python implementation than CPython."""
     mocker.patch('RestrictedPython.compile.IS_CPYTHON', new=False)
     compile_restricted('42')
     assert len(recwarn) == 1
     w = recwarn.pop()
     assert w.category == RuntimeWarning
-    assert str(w.message).startswith(
-        'You are using on a not supported Python implementation.')
+    assert str(w.message) == str(
+        'RestrictedPython is only supported on CPython: use on other Python '
+        'implementations may create security issues.'
+    )
+
+
+@pytest.mark.skipif(
+    platform.python_implementation() == 'CPython',
+    reason='Warning only present if not CPython.')
+def test_compile_CPython_warning(recwarn, mocker):
+    """It warns when using another Python implementation than CPython."""
+    assert platform.python_implementation() != 'CPython'
+    with pytest.warns(RuntimeWarning) as record:
+        compile_restricted('42')
+    assert len(record) == 1
+    assert str(record[0].message) == str(
+        'RestrictedPython is only supported on CPython: use on other Python '
+        'implementations may create security issues.'
+    )
