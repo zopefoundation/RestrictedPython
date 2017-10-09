@@ -4,15 +4,13 @@ Changes
 4.0b3 (unreleased)
 ------------------
 
-- Warn when using another Python implementation than CPython as it is not safe
-  to use RestrictedPython with other versions than CPyton.
+- Warn when using another Python implementation than CPython as it is not safe to use RestrictedPython with other versions than CPyton.
   See https://bitbucket.org/pypy/pypy/issues/2653 for PyPy.
 
 4.0b2 (2017-09-15)
 ------------------
 
-- Fix regression in ``RestrictionCapableEval`` which broke when using list
-  comprehensions.
+- Fix regression in ``RestrictionCapableEval`` which broke when using list comprehensions.
 
 
 4.0b1 (2017-09-15)
@@ -32,8 +30,8 @@ Changes
   `SelectCompiler.py`, `MutatingWorker.py`, `RestrictionMutator.py` and
   `tests/verify.py`.
 
-- Drop support of PyPy as there currently is no way to restrict the
-  builtins. See https://bitbucket.org/pypy/pypy/issues/2653.
+- Drop support for PyPy as there currently is no way to restrict the builtins.
+  See https://bitbucket.org/pypy/pypy/issues/2653.
 
 - Remove ``__len__`` method in ``.Guards._write_wrapper`` because it is no
   longer reachable by code using the wrapper.
