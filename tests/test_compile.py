@@ -212,3 +212,18 @@ def test_compile___compile_restricted_mode__1(recwarn, mocker):
         'RestrictedPython is only supported on CPython: use on other Python '
         'implementations may create security issues.'
     )
+
+
+@pytest.mark.skipif(
+    platform.python_implementation() == 'CPython',
+    reason='Warning only present if not CPython.')
+def test_compile_CPython_warning(recwarn, mocker):
+    """It warns when using another Python implementation than CPython."""
+    assert platform.python_implementation() != 'CPython'
+    with pytest.warns(RuntimeWarning) as record:
+        compile_restricted('42')
+    assert len(record) == 1
+    assert str(record[0].message) == str(
+        'RestrictedPython is only supported on CPython: use on other Python '
+        'implementations may create security issues.'
+    )
