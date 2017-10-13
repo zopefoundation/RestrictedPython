@@ -174,6 +174,9 @@ def test_compile_restricted():
     with pytest.warns(SyntaxWarning) as record:
         result = compile_restricted(PRINT_EXAMPLE, '<string>', 'exec')
         assert isinstance(result, types.CodeType)
+        # Non-CPython versions have a RuntimeWarning, too.
+        if len(record) > 2:  # pragma: no cover
+            record.pop()
         assert len(record) == 2
         assert record[0].message.args[0] == \
             'Line 3: Print statement is deprecated ' \
@@ -196,29 +199,16 @@ def test_compile_restricted_eval():
         compile_restricted(EVAL_EXAMPLE, '<string>', 'exec')
 
 
-def test_compile_CPython_warning_mocked(recwarn, mocker):
+def test_compile___compile_restricted_mode__1(recwarn, mocker):
     """It warns when using another Python implementation than CPython."""
-    mocker.patch('RestrictedPython.compile.IS_CPYTHON', new=False)
+    if platform.python_implementation() == 'CPython':
+        # Using CPython we have to fake the check:
+        mocker.patch('RestrictedPython.compile.IS_CPYTHON', new=False)
     compile_restricted('42')
     assert len(recwarn) == 1
     w = recwarn.pop()
     assert w.category == RuntimeWarning
     assert str(w.message) == str(
-        'RestrictedPython is only supported on CPython: use on other Python '
-        'implementations may create security issues.'
-    )
-
-
-@pytest.mark.skipif(
-    platform.python_implementation() == 'CPython',
-    reason='Warning only present if not CPython.')
-def test_compile_CPython_warning(recwarn, mocker):
-    """It warns when using another Python implementation than CPython."""
-    assert platform.python_implementation() != 'CPython'
-    with pytest.warns(RuntimeWarning) as record:
-        compile_restricted('42')
-    assert len(record) == 1
-    assert str(record[0].message) == str(
         'RestrictedPython is only supported on CPython: use on other Python '
         'implementations may create security issues.'
     )

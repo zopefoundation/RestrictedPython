@@ -27,7 +27,8 @@ def _compile_restricted_mode(
         policy=RestrictingNodeTransformer):
 
     if not IS_CPYTHON:
-        warnings.warn(NOT_CPYTHON_WARNING, RuntimeWarning)
+        warnings.warn_explicit(
+            NOT_CPYTHON_WARNING, RuntimeWarning, 'RestrictedPython', 0)
 
     byte_code = None
     collected_errors = []
