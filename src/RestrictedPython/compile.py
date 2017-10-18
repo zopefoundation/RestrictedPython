@@ -1,4 +1,5 @@
 from collections import namedtuple
+from RestrictedPython._compat import IS_CPYTHON
 from RestrictedPython._compat import IS_PY2
 from RestrictedPython.transformer import RestrictingNodeTransformer
 
@@ -11,6 +12,11 @@ CompileResult = namedtuple(
 syntax_error_template = (
     'Line {lineno}: {type}: {msg} in on statement: {statement}')
 
+NOT_CPYTHON_WARNING = (
+    'RestrictedPython is only supported on CPython: use on other Python '
+    'implementations may create security issues.'
+)
+
 
 def _compile_restricted_mode(
         source,
@@ -19,9 +25,14 @@ def _compile_restricted_mode(
         flags=0,
         dont_inherit=False,
         policy=RestrictingNodeTransformer):
+
+    if not IS_CPYTHON:
+        warnings.warn_explicit(
+            NOT_CPYTHON_WARNING, RuntimeWarning, 'RestrictedPython', 0)
+
     byte_code = None
-    errors = []
-    warnings = []
+    collected_errors = []
+    collected_warnings = []
     used_names = {}
     if policy is None:
         # Unrestricted Source Checks
@@ -43,24 +54,30 @@ def _compile_restricted_mode(
             try:
                 c_ast = ast.parse(source, filename, mode)
             except (TypeError, ValueError) as e:
-                errors.append(str(e))
+                collected_errors.append(str(e))
             except SyntaxError as v:
-                errors.append(syntax_error_template.format(
+                collected_errors.append(syntax_error_template.format(
                     lineno=v.lineno,
                     type=v.__class__.__name__,
                     msg=v.msg,
                     statement=v.text.strip()
                 ))
         if c_ast:
-            policy(errors, warnings, used_names).visit(c_ast)
-            if not errors:
+            policy_instance = policy(
+                collected_errors, collected_warnings, used_names)
+            policy_instance.visit(c_ast)
+            if not collected_errors:
                 byte_code = compile(c_ast, filename, mode=mode  # ,
                                     # flags=flags,
                                     # dont_inherit=dont_inherit
                                     )
     else:
         raise TypeError('Unallowed policy provided for RestrictedPython')
-    return CompileResult(byte_code, tuple(errors), warnings, used_names)
+    return CompileResult(
+        byte_code,
+        tuple(collected_errors),
+        collected_warnings,
+        used_names)
 
 
 def compile_restricted_exec(
