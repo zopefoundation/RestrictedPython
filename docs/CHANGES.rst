@@ -62,6 +62,8 @@ Changes
 
 - Mostly complete rewrite based on Python AST module.
   [loechel (Alexander Loechel), icemac (Michael Howitz), stephan-hof (Stephan Hofmockel), tlotze (Thomas Lotze)]
+  
+- Support Python versions 3.4 up to 3.6.
 
 - switch to pytest
 
