@@ -30,7 +30,6 @@ The ``compiler`` module predates several major improvements of the Python develo
 While ``compiler`` still uses the old `CamelCase`_ Syntax (``visitNode(self, node, walker)``) the ``ast.AST`` did now use the Python common ``visit_Node(self, node)`` syntax.
 Also the names of classes have been changed, where ``compiler`` uses ``Walker`` and ``Mutator`` the corresponding elements in ``ast.AST`` are ``NodeVisitor`` and ``NodeTransformator``.
 
-
 ``ast`` module (Abstract Syntax Trees)
 --------------------------------------
 
@@ -48,7 +47,6 @@ The ``ast`` module consists of four areas:
 
   * ``PyCF_ONLY_AST``
 
-
 ``NodeVisitor`` & ``NodeTransformer``
 .....................................
 
@@ -58,15 +56,8 @@ In contrast, a ``NodeTransformer`` (which inherits from a ``NodeVisitor``) is al
 Modifying the AST
 -----------------
 
-
-
-
-
-
-
-
 Technical Backgrounds - Links to External Documentation
----------------------------------------------------------
+.......................................................
 
 * Concept of Immutable Types and Python Example (https://en.wikipedia.org/wiki/Immutable_object#Python)
 * Python 3 Standard Library Documentation on AST module ``ast`` (https://docs.python.org/3/library/ast.html)

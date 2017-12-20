@@ -12,7 +12,6 @@ Changes
 
 - Fix regression in ``RestrictionCapableEval`` which broke when using list comprehensions.
 
-
 4.0b1 (2017-09-15)
 ------------------
 
@@ -36,7 +35,6 @@ Changes
 - Remove ``__len__`` method in ``.Guards._write_wrapper`` because it is no
   longer reachable by code using the wrapper.
 
-
 4.0a3 (2017-06-20)
 ------------------
 
@@ -44,8 +42,6 @@ Changes
   `README.rst`.
 
 - Update configurations to give better feedback and helpful reports.
-
-
 
 4.0a2 (2017-05-26)
 ------------------
@@ -55,7 +51,6 @@ Changes
 
 - Drop support for long-deprecated ``sets`` module.
   [tseaver]
-
 
 4.0a1 (2017-05-05)
 ------------------
@@ -69,7 +64,6 @@ Changes
 
 - The ``compile_restricted*`` functions now return a
   ``namedtuple CompileResult`` instead of a simple ``tuple``.
-
 
 3.6.0 (2010-07-09)
 ------------------

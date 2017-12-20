@@ -8,7 +8,6 @@ Policies & builtins
     Should be described in detail.
     Especially the difference between builtins and a policy which is a NodeTransformer.
 
-
 RestrictedPython provides a way to define Policies, by redefining restricted versions of ``print``, ``getattr``, ``setattr``, ``import``, etc..
 As shortcuts it offers three stripped down versions of Pythons ``__builtins__``:
 

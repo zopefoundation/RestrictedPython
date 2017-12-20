@@ -1,7 +1,6 @@
 Grundlagen von RestrictedPython und der Sicherheitskonzepte von Zope2
 =====================================================================
 
-
 Motivation für RestrictedPython
 -------------------------------
 
@@ -36,13 +35,8 @@ Die zentrale Frage ist:
 
  Vertraue ich der Software, bzw. den Entwicklern der Software und führe diese aus.
 
-
-
-
 Python ist eine Turing-vollständige Prgrammiersprache.
 Somit haben Entwickler grundsätzlich erstmal keine Limitierungen beim programmieren.
-
-
 
 und können somit potentiell die Applikation und den Server selber schaden.
 

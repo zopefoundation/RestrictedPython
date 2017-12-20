@@ -7,22 +7,28 @@ RestrictedPython provides a ``restricted_compile`` function that works
 like the built-in ``compile`` function, except that it allows the
 controlled and restricted execution of code:
 
-  >>> src = '''
-  ... def hello_world():
-  ...     return "Hello World!"
-  ... '''
-  >>> from RestrictedPython import compile_restricted
-  >>> code = compile_restricted(src, '<string>', 'exec')
+.. code-block:: pycon
+
+    >>> src = '''
+    ... def hello_world():
+    ...     return "Hello World!"
+    ... '''
+    >>> from RestrictedPython import compile_restricted
+    >>> code = compile_restricted(src, '<string>', 'exec')
 
 The resulting code can be executed using the ``exec`` built-in:
 
-  >>> exec(code)
+.. code-block:: pycon
+
+    >>> exec(code)
 
 As a result, the ``hello_world`` function is now available in the
 global namespace:
 
-  >>> hello_world()
-  'Hello World!'
+.. code-block:: pycon
+
+    >>> hello_world()
+    'Hello World!'
 
 Compatibility
 =============
@@ -67,26 +73,30 @@ Specifically:
    ``RestrictedPython.Guards.safe_builtins``.
 
 To help illustrate how this works under the covers, here's an example
-function::
+function:
 
-  def f(x):
-      x.foo = x.foo + x[0]
-      print x
-      return printed
+.. code-block:: python
 
-and (sort of) how it looks after restricted compilation::
+    def f(x):
+        x.foo = x.foo + x[0]
+        print x
+        return printed
 
-  def f(x):
-      # Make local variables from globals.
-      _print = _print_()
-      _write = _write_
-      _getattr = _getattr_
-      _getitem = _getitem_
+and (sort of) how it looks after restricted compilation:
 
-      # Translation of f(x) above
-      _write(x).foo = _getattr(x, 'foo') + _getitem(x, 0)
-      print >>_print, x
-      return _print()
+.. code-block:: python
+
+    def f(x):
+        # Make local variables from globals.
+        _print = _print_()
+        _write = _write_
+        _getattr = _getattr_
+        _getitem = _getitem_
+
+        # Translation of f(x) above
+        _write(x).foo = _getattr(x, 'foo') + _getitem(x, 0)
+        print >>_print, x
+        return _print()
 
 Examples
 ========
@@ -98,29 +108,33 @@ To support the ``print`` statement in restricted code, we supply a
 ``_print_`` object (note that it's a *factory*, e.g. a class or a
 callable, from which the restricted machinery will create the object):
 
-  >>> from RestrictedPython.PrintCollector import PrintCollector
-  >>> _print_ = PrintCollector
-  >>> _getattr_ = getattr
+.. code-block:: pycon
 
-  >>> src = '''
-  ... print("Hello World!")
-  ... '''
-  >>> code = compile_restricted(src, '<string>', 'exec')
-  >>> exec(code)
+    >>> from RestrictedPython.PrintCollector import PrintCollector
+    >>> _print_ = PrintCollector
+    >>> _getattr_ = getattr
+
+    >>> src = '''
+    ... print("Hello World!")
+    ... '''
+    >>> code = compile_restricted(src, '<string>', 'exec')
+    >>> exec(code)
 
 As you can see, the text doesn't appear on stdout.  The print
 collector collects it.  We can have access to the text using the
 ``printed`` variable, though:
 
-  >>> src = '''
-  ... print("Hello World!")
-  ... result = printed
-  ... '''
-  >>> code = compile_restricted(src, '<string>', 'exec')
-  >>> exec(code)
+.. code-block:: pycon
 
-  >>> result
-  'Hello World!\n'
+    >>> src = '''
+    ... print("Hello World!")
+    ... result = printed
+    ... '''
+    >>> code = compile_restricted(src, '<string>', 'exec')
+    >>> exec(code)
+
+    >>> result
+    'Hello World!\n'
 
 Built-ins
 ---------
@@ -128,17 +142,19 @@ Built-ins
 By supplying a different ``__builtins__`` dictionary, we can rule out
 unsafe operations, such as opening files:
 
-  >>> from RestrictedPython.Guards import safe_builtins
-  >>> restricted_globals = dict(__builtins__ = safe_builtins)
+.. code-block:: pycon
 
-  >>> src = '''
-  ... open('/etc/passwd')
-  ... '''
-  >>> code = compile_restricted(src, '<string>', 'exec')
-  >>> exec(code, restricted_globals)
-  Traceback (most recent call last):
-    ...
-  NameError: name 'open' is not defined
+    >>> from RestrictedPython.Guards import safe_builtins
+    >>> restricted_globals = dict(__builtins__ = safe_builtins)
+
+    >>> src = '''
+    ... open('/etc/passwd')
+    ... '''
+    >>> code = compile_restricted(src, '<string>', 'exec')
+    >>> exec(code, restricted_globals)
+    Traceback (most recent call last):
+      ...
+    NameError: name 'open' is not defined
 
 Guards
 ------
@@ -147,54 +163,63 @@ Here's an example of a write guard that never lets restricted code
 modify (assign, delete an attribute or item) except dictionaries and
 lists:
 
-  >>> from RestrictedPython.Guards import full_write_guard
-  >>> _write_ = full_write_guard
-  >>> _getattr_ = getattr
+.. code-block:: pycon
 
-  >>> class BikeShed(object):
-  ...     colour = 'green'
-  ...
-  >>> shed = BikeShed()
+    >>> from RestrictedPython.Guards import full_write_guard
+    >>> _write_ = full_write_guard
+    >>> _getattr_ = getattr
+
+    >>> class BikeShed(object):
+    ...     colour = 'green'
+    ...
+    >>> shed = BikeShed()
 
 Normally accessing attriutes works as expected, because we're using
 the standard ``getattr`` function for the ``_getattr_`` guard:
 
-  >>> src = '''
-  ... print(shed.colour)
-  ... result = printed
-  ... '''
-  >>> code = compile_restricted(src, '<string>', 'exec')
-  >>> exec(code)
+.. code-block:: pycon
 
-  >>> result
-  'green\n'
+    >>> src = '''
+    ... print(shed.colour)
+    ... result = printed
+    ... '''
+    >>> code = compile_restricted(src, '<string>', 'exec')
+    >>> exec(code)
+
+    >>> result
+    'green\n'
 
 However, changing an attribute doesn't work:
 
-  >>> src = '''
-  ... shed.colour = 'red'
-  ... '''
-  >>> code = compile_restricted(src, '<string>', 'exec')
-  >>> exec(code)
-  Traceback (most recent call last):
-    ...
-  TypeError: attribute-less object (assign or del)
+.. code-block:: pycon
+
+    >>> src = '''
+    ... shed.colour = 'red'
+    ... '''
+    >>> code = compile_restricted(src, '<string>', 'exec')
+    >>> exec(code)
+    Traceback (most recent call last):
+      ...
+    TypeError: attribute-less object (assign or del)
 
 As said, this particular write guard (``full_write_guard``) will allow
 restricted code to modify lists and dictionaries:
 
-  >>> fibonacci = [1, 1, 2, 3, 4]
-  >>> transl = dict(one=1, two=2, tres=3)
-  >>> src = '''
-  ... # correct mistake in list
-  ... fibonacci[-1] = 5
-  ... # one item doesn't belong
-  ... del transl['tres']
-  ... '''
-  >>> code = compile_restricted(src, '<string>', 'exec')
-  >>> exec(code)
+.. code-block:: pycon
 
-  >>> fibonacci
-  [1, 1, 2, 3, 5]
-  >>> sorted(transl.keys())
-  ['one', 'two']
+    >>> fibonacci = [1, 1, 2, 3, 4]
+    >>> transl = dict(one=1, two=2, tres=3)
+    >>> src = '''
+    ... # correct mistake in list
+    ... fibonacci[-1] = 5
+    ... # one item doesn't belong
+    ... del transl['tres']
+    ... '''
+    >>> code = compile_restricted(src, '<string>', 'exec')
+    >>> exec(code)
+
+    >>> fibonacci
+    [1, 1, 2, 3, 5]
+
+    >>> sorted(transl.keys())
+    ['one', 'two']

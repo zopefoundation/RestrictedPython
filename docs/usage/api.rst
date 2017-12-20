@@ -95,8 +95,6 @@ RestrictedPython has tree major scopes:
     :type globalize:
     :return: byte code
 
-
-
 2. restricted builtins
 
   * ``safe_builtins``

@@ -26,7 +26,6 @@ Full code coverage tests.
 
     stephan-hof did propose a solution, should be discussed and if approved implemented.
 
-
 RestrictedPython 4.1+
 ---------------------
 

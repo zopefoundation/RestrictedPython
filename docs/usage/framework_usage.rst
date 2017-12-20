@@ -35,7 +35,7 @@ For that use case RestrictedPython provides the possibility to pass an own polic
 
 A policy is basically a special ``NodeTransformer`` that could be instantiated with three params for ``errors``, ``warnings`` and ``used_names``, it should be a subclass of RestrictedPython.RestrictingNodeTransformer.
 
-.. testcode:: own_policy
+.. code-block:: python
 
     from RestrictedPython import compile_restricted
     from RestrictedPython import RestrictingNodeTransformer
@@ -43,13 +43,15 @@ A policy is basically a special ``NodeTransformer`` that could be instantiated w
     class OwnRestrictingNodeTransformer(RestrictingNodeTransformer):
         pass
 
-    policy_instance = OwnRestrictingNodeTransformer(errors=[],
-                                                    warnings=[],
-                                                    used_names=[])
+    policy_instance = OwnRestrictingNodeTransformer(
+        errors=[],
+        warnings=[],
+        used_names=[]
+    )
 
 All ``compile_restricted*`` methods do have a optional parameter ``policy``, where a specific policy could be provided.
 
-.. testcode:: own_policy
+.. code-block:: python
 
     source_code = """
     def do_something():
@@ -58,17 +60,18 @@ All ``compile_restricted*`` methods do have a optional parameter ``policy``, whe
 
     policy = OwnRestrictingNodeTransformer
 
-    byte_code = compile_restricted(source_code,
-                                   filename='<inline code>',
-                                   mode='exec',
-                                   policy=policy # Policy Class
-                                   )
+    byte_code = compile_restricted(
+        source_code,
+        filename='<inline code>',
+        mode='exec',
+        policy=policy # Policy Class
+    )
     exec(byte_code, globals(), None)
 
 One special case "unrestricted RestrictedPython" (defined to unblock ports of Zope Packages to Python 3) is to actually use RestrictedPython in an unrestricted mode, by providing a Null-Policy (aka ``None``).
 That special case would be written as:
 
-.. testcode::
+.. code-block:: python
 
     from RestrictedPython import compile_restricted
 
@@ -77,9 +80,10 @@ That special case would be written as:
         pass
     """
 
-    byte_code = compile_restricted(source_code,
-                                   filename='<inline code>',
-                                   mode='exec',
-                                   policy=None # Null-Policy -> unrestricted
-                                   )
+    byte_code = compile_restricted(
+        source_code,
+        filename='<inline code>',
+        mode='exec',
+        policy=None # Null-Policy -> unrestricted
+    )
     exec(byte_code, globals(), None)

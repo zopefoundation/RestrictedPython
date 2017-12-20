@@ -28,7 +28,7 @@ Python itself offers three methods that provide such a workflow:
 Therefore RestrictedPython offers a replacement for the python builtin function ``compile()`` (Python 2: https://docs.python.org/2/library/functions.html#compile / Python 3 https://docs.python.org/3/library/functions.html#compile).
 This method is defined as following:
 
-.. code:: Python
+.. code-block:: python
 
     compile(source, filename, mode [, flags [, dont_inherit]])
 
@@ -42,7 +42,7 @@ There are three valid string values for ``mode``:
 
 For RestrictedPython this ``compile()`` method is replaced by:
 
-.. code:: Python
+.. code-block:: python
 
     compile_restricted(source, filename, mode [, flags [, dont_inherit]])
 

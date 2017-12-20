@@ -1,7 +1,6 @@
 RestrictedPython 3.6.x and before
 =================================
 
-
 Technical foundation of RestrictedPython
 ........................................
 
@@ -13,7 +12,6 @@ RestrictedPython based on the
 * ``compiler.pycodegen``
 
 With Python 2.6 the compiler module with all its sub modules has been declared deprecated with no direct upgrade Path or recommendations for a replacement.
-
 
 Version Support of RestrictedPython 3.6.x
 .........................................

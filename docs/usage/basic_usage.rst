@@ -3,7 +3,7 @@ Basic usage
 
 The general workflow to execute Python code that is loaded within a Python program is:
 
-.. testcode::
+.. code-block:: python
 
     source_code = """
     def do_something():
@@ -16,7 +16,7 @@ The general workflow to execute Python code that is loaded within a Python progr
 
 With RestrictedPython that workflow should be as straight forward as possible:
 
-.. testcode::
+.. code-block:: python
 
     from RestrictedPython import compile_restricted
 
@@ -25,15 +25,17 @@ With RestrictedPython that workflow should be as straight forward as possible:
         pass
     """
 
-    byte_code = compile_restricted(source_code,
-                                   filename='<inline code>',
-                                   mode='exec')
+    byte_code = compile_restricted(
+        source_code,
+        filename='<inline code>',
+        mode='exec'
+    )
     exec(byte_code)
     do_something()
 
 You might also use the replacement import:
 
-.. testcode::
+.. code-block:: python
 
     from RestrictedPython import compile_restricted as compile
 
@@ -51,7 +53,7 @@ restrict the access to the available library modules and methods.
 
 Providing defined dictionaries for ``exec()`` should be used in context of RestrictedPython.
 
-.. code:: Python
+.. code-block:: python
 
     byte_code = <code>
     exec(byte_code, { ... }, { ... })
@@ -65,7 +67,7 @@ RestrictedPython provides three predefined built-ins for that (see :ref:`predefi
 
 So you normally end up using:
 
-.. testcode::
+.. code-block:: python
 
     from RestrictedPython import compile_restricted
 
@@ -79,10 +81,11 @@ So you normally end up using:
     """
 
     try:
-        byte_code = compile_restricted(source_code,
-                                       filename='<inline code>',
-                                       mode='exec')
-
+        byte_code = compile_restricted(
+            source_code,
+            filename='<inline code>',
+            mode='exec'
+        )
         exec(byte_code, safe_builtins, None)
     except SyntaxError as e:
         pass
