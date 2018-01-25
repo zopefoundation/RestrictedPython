@@ -139,38 +139,8 @@ def compile_restricted_function(
         policy=RestrictingNodeTransformer):
     """Compile a restricted code object for a function.
 
-    The globalize argument, if specified, is a list of variable names to be
-    treated as globals (code is generated as if each name in the list
-    appeared in a global statement at the top of the function).
-    This allows to inject global variables into the generated function that
-    feel like they are local variables, so the programmer who uses this doesn't
-    have to understand that his code is executed inside a function scope
-    instead of the global scope of a module.
-
-    To actually get an executable function, you need to execute this code and
-    pull out the defined function out of the locals like this:
-
-    >>> compiled = compile_restricted_function('', 'pass', 'function_name')
-    >>> safe_locals = {}
-    >>> safe_globals = {}
-    >>> exec(compiled.code, safe_globals, safe_locals)
-    >>> compiled_function = safe_locals['function_name']
-    >>> result = compiled_function(*[], **{})
-
-    Then if you want to controll the globals for a specific call to this
-    function, you can regenerate the function like this:
-
-    >>> my_call_specific_global_bindings = dict(foo='bar')
-    >>> safe_globals = safe_globals.copy()
-    >>> safe_globals.update(my_call_specific_global_bindings)
-    >>> import types
-    >>> new_function = types.FunctionType(compiled_function.__code__, \
-                                          safe_globals, \
-                                          '<function_name>', \
-                                          compiled_function.__defaults__ or \
-                                          () \
-                                          )
-    >>> result = new_function(*[], **{})
+    Documentation see:
+    http://restrictedpython.readthedocs.io/en/latest/usage/index.html#RestrictedPython.compile_restricted_function
     """
     # Parse the parameters and body, then combine them.
     body_ast = ast.parse(body, '<func code>', 'exec')
