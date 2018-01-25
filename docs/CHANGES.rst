@@ -7,6 +7,9 @@ Changes
 - Warn when using another Python implementation than CPython as it is not safe to use RestrictedPython with other versions than CPyton.
   See https://bitbucket.org/pypy/pypy/issues/2653 for PyPy.
 
+- Allow to use list comprehensions in the default implementation of
+  ``RestrictionCapableEval.eval()``.
+
 4.0b2 (2017-09-15)
 ------------------
 
@@ -62,7 +65,7 @@ Changes
 
 - Mostly complete rewrite based on Python AST module.
   [loechel (Alexander Loechel), icemac (Michael Howitz), stephan-hof (Stephan Hofmockel), tlotze (Thomas Lotze)]
-  
+
 - Support Python versions 3.4 up to 3.6.
 
 - switch to pytest
