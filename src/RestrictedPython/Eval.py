@@ -35,6 +35,11 @@ def default_guarded_getitem(ob, index):
     return ob[index]
 
 
+def default_guarded_getiter(ob):
+    # No restrictions.
+    return ob
+
+
 class RestrictionCapableEval(object):
     """A base class for restricted code."""
 
@@ -99,7 +104,8 @@ class RestrictionCapableEval(object):
 
         global_scope = {
             '_getattr_': default_guarded_getattr,
-            '_getitem_': default_guarded_getitem
+            '_getitem_': default_guarded_getitem,
+            '_getiter_': default_guarded_getiter,
         }
 
         global_scope.update(self.globals)
