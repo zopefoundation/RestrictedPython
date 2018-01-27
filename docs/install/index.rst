@@ -5,6 +5,6 @@ RestrictedPython is usually not used stand alone, if you use it in context of yo
 
 For a standalone usage:
 
-.. code-block:: shell
+.. code-block:: console
 
     $ pip install RestrictedPython

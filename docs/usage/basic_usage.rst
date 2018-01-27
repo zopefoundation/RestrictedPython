@@ -3,7 +3,7 @@ Basic usage
 
 The general workflow to execute Python code that is loaded within a Python program is:
 
-.. code-block:: python
+.. testcode::
 
     source_code = """
     def do_something():
@@ -16,7 +16,7 @@ The general workflow to execute Python code that is loaded within a Python progr
 
 With RestrictedPython that workflow should be as straight forward as possible:
 
-.. code-block:: python
+.. testcode::
 
     from RestrictedPython import compile_restricted
 
@@ -35,7 +35,7 @@ With RestrictedPython that workflow should be as straight forward as possible:
 
 You might also use the replacement import:
 
-.. code-block:: python
+.. testcode::
 
     from RestrictedPython import compile_restricted as compile
 
@@ -67,7 +67,7 @@ RestrictedPython provides three predefined built-ins for that (see :ref:`predefi
 
 So you normally end up using:
 
-.. code-block:: python
+.. testcode::
 
     from RestrictedPython import compile_restricted
 
