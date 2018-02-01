@@ -95,3 +95,10 @@ def test_Eval__RestictionCapableEval__eval_1():
     ob.globals['c'] = 8
     result = ob.eval(dict(a=1, b=2, c=4))
     assert result == 11
+
+
+def test_Eval__RestictionCapableEval__eval__2():
+    """It allows to use list comprehensions."""
+    ob = RestrictionCapableEval("[item for item in (1, 2)]")
+    result = ob.eval({})
+    assert result == [1, 2]
