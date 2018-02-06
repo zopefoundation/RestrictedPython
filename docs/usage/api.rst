@@ -128,7 +128,6 @@ RestrictedPython has tree major scopes:
     ...     compiled_function.__defaults__ or ())
     >>> result = new_function(*[], **{})
 
-
 2. restricted builtins
 
   * ``safe_builtins``

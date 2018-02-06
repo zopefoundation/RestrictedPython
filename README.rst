@@ -22,6 +22,8 @@ An unproblematic code example
 Python allows you to execute a large set of commands.
 This would not harm any system.
 
+.. code-block:: pycon
+
     >>> from RestrictedPython import compile_restricted
     >>> from RestrictedPython import safe_builtins
     >>>
@@ -42,15 +44,17 @@ Problematic code example
 
 This example directly executed in Python could harm your system.
 
-  >>> from RestrictedPython import compile_restricted
-  >>> from RestrictedPython import safe_builtins
-  >>>
-  >>> source_code = """
-  ... import os
-  ...
-  ... os.listdir('/')
-  ... """
-  >>> byte_code = compile_restricted(source_code, '<inline>', 'exec')
-  >>> exec(byte_code, {'__builtins__': safe_builtins}, {})
-  Traceback (most recent call last):
-  ImportError: __import__ not found
+.. code-block:: pycon
+
+    >>> from RestrictedPython import compile_restricted
+    >>> from RestrictedPython import safe_builtins
+    >>>
+    >>> source_code = """
+    ... import os
+    ...
+    ... os.listdir('/')
+    ... """
+    >>> byte_code = compile_restricted(source_code, '<inline>', 'exec')
+    >>> exec(byte_code, {'__builtins__': safe_builtins}, {})
+    Traceback (most recent call last):
+    ImportError: __import__ not found

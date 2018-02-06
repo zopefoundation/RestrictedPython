@@ -25,9 +25,11 @@ With RestrictedPython that workflow should be as straight forward as possible:
         pass
     """
 
-    byte_code = compile_restricted(source_code,
-                                   filename='<inline code>',
-                                   mode='exec')
+    byte_code = compile_restricted(
+        source_code,
+        filename='<inline code>',
+        mode='exec'
+    )
     exec(byte_code)
     do_something()
 
@@ -51,7 +53,7 @@ restrict the access to the available library modules and methods.
 
 Providing defined dictionaries for ``exec()`` should be used in context of RestrictedPython.
 
-.. code:: Python
+.. code-block:: python
 
     byte_code = <code>
     exec(byte_code, { ... }, { ... })
@@ -79,10 +81,11 @@ So you normally end up using:
     """
 
     try:
-        byte_code = compile_restricted(source_code,
-                                       filename='<inline code>',
-                                       mode='exec')
-
+        byte_code = compile_restricted(
+            source_code,
+            filename='<inline code>',
+            mode='exec'
+        )
         exec(byte_code, safe_builtins, None)
     except SyntaxError as e:
         pass
