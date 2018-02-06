@@ -1,3 +1,4 @@
 # Constraints for Python Packages
 # -----------------------------------------------
 # Pin Versions / Version Ranges if necessary.
+isort >= 4.3.2
