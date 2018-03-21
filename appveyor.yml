@@ -5,7 +5,7 @@ environment:
     - PYTHON: "C:\\Python27"
       TOXENV: "lint-py27,docs"
     - PYTHON: "C:\\Python36"
-      TOXENV: "lint-py36,docs"
+      TOXENV: "lint-py36,docs,black-check"
     - PYTHON: "C:\\Python27"
       TOXENV: "py27"
     - PYTHON: "C:\\Python27"
