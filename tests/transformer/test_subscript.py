@@ -51,7 +51,11 @@ def test_read_slice_subscript_no_upper_bound(e_exec, mocker):
     glb = {'_getitem_': _getitem_}
     e_exec(SLICE_SUBSCRIPT_NO_UPPER_BOUND, glb)
 
-    assert (value, slice(1, None, None)) == glb['slice_subscript_no_upper_bound'](value)  # NOQA: E501
+    assert (value, slice(1, None, None)) == glb[
+        'slice_subscript_no_upper_bound'
+    ](
+        value
+    )  # NOQA: E501
 
 
 SLICE_SUBSCRIPT_NO_LOWER_BOUND = """
@@ -68,7 +72,11 @@ def test_read_slice_subscript_no_lower_bound(e_exec, mocker):
     glb = {'_getitem_': _getitem_}
     e_exec(SLICE_SUBSCRIPT_NO_LOWER_BOUND, glb)
 
-    assert (value, slice(None, 1, None)) == glb['slice_subscript_no_lower_bound'](value)  # NOQA: E501
+    assert (value, slice(None, 1, None)) == glb[
+        'slice_subscript_no_lower_bound'
+    ](
+        value
+    )  # NOQA: E501
 
 
 SLICE_SUBSCRIPT_NO_STEP = """
@@ -127,8 +135,8 @@ def test_read_extended_slice_subscript(e_exec, mocker):
             slice(None, 1, None),
             slice(1, None, None),
             slice(1, 2, None),
-            slice(1, 2, 3)
-        )
+            slice(1, 2, 3),
+        ),
     )
 
     assert ref == ret
@@ -141,8 +149,7 @@ def assign_subscript(a):
 
 
 @pytest.mark.parametrize(*e_exec)
-def test_write_subscripts(
-        e_exec, mocker):
+def test_write_subscripts(e_exec, mocker):
     value = {'b': None}
     _write_ = mocker.stub()
     _write_.side_effect = lambda ob: ob
@@ -160,8 +167,7 @@ def del_subscript(a):
 
 
 @pytest.mark.parametrize(*e_exec)
-def test_del_subscripts(
-        e_exec, mocker):
+def test_del_subscripts(e_exec, mocker):
     value = {'b': None}
     _write_ = mocker.stub()
     _write_.side_effect = lambda ob: ob

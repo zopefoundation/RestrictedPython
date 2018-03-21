@@ -33,3 +33,4 @@ pyvenv.cfg
 coverage.xml
 docs/doctrees
 docs/html
+.ropeproject/

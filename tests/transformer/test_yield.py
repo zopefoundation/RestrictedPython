@@ -30,7 +30,8 @@ def get_json(client, url):
 
 @pytest.mark.skipif(
     not IS_PY3,
-    reason="`yield from` statement was first introduced in Python 3.3")
+    reason="`yield from` statement was first introduced in Python 3.3",
+)
 @pytest.mark.parametrize(*c_exec)
 def test_yield_from(c_exec):
     result = c_exec(YIELD_FORM_EXAMPLE)

@@ -54,7 +54,7 @@ _safe_names = [
     'slice',
     'str',
     'tuple',
-    'zip'
+    'zip',
 ]
 
 _safe_exceptions = [
@@ -108,21 +108,12 @@ _safe_exceptions = [
 ]
 
 if _compat.IS_PY2:
-    _safe_names.extend([
-        'basestring',
-        'cmp',
-        'long',
-        'unichr',
-        'unicode',
-        'xrange',
-    ])
-    _safe_exceptions.extend([
-        'StandardError',
-    ])
+    _safe_names.extend(
+        ['basestring', 'cmp', 'long', 'unichr', 'unicode', 'xrange']
+    )
+    _safe_exceptions.extend(['StandardError'])
 else:
-    _safe_names.extend([
-        '__build_class__',  # needed to define new classes
-    ])
+    _safe_names.extend(['__build_class__'])  # needed to define new classes
 
 for name in _safe_names:
     safe_builtins[name] = getattr(builtins, name)
@@ -191,35 +182,43 @@ for name in _safe_exceptions:
 
 def _write_wrapper():
     # Construct the write wrapper class
+
     def _handler(secattr, error_msg):
         # Make a class method.
+
         def handler(self, *args):
             try:
                 f = getattr(self.ob, secattr)
             except AttributeError:
                 raise TypeError(error_msg)
+
             f(*args)
+
         return handler
 
     class Wrapper(object):
+
         def __init__(self, ob):
             self.__dict__['ob'] = ob
 
         __setitem__ = _handler(
             '__guarded_setitem__',
-            'object does not support item or slice assignment')
+            'object does not support item or slice assignment',
+        )
 
         __delitem__ = _handler(
             '__guarded_delitem__',
-            'object does not support item or slice assignment')
+            'object does not support item or slice assignment',
+        )
 
         __setattr__ = _handler(
-            '__guarded_setattr__',
-            'attribute-less object (assign or del)')
+            '__guarded_setattr__', 'attribute-less object (assign or del)'
+        )
 
         __delattr__ = _handler(
-            '__guarded_delattr__',
-            'attribute-less object (assign or del)')
+            '__guarded_delattr__', 'attribute-less object (assign or del)'
+        )
+
     return Wrapper
 
 
@@ -234,8 +233,10 @@ def _full_write_guard():
         # handle their own write security.
         if type(ob) in safetypes or hasattr(ob, '_guarded_writes'):
             return ob
+
         # Hand the object to the Wrapper instance, then return the instance.
         return Wrapper(ob)
+
     return guard
 
 
@@ -265,7 +266,9 @@ def safer_getattr(object, name, getattr=getattr):
     """
     if isinstance(object, _compat.basestring) and name == 'format':
         raise NotImplementedError(
-            'Using format() on a %s is not safe.' % object.__class__.__name__)
+            'Using format() on a %s is not safe.' % object.__class__.__name__
+        )
+
     return getattr(object, name)
 
 

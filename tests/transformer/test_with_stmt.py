@@ -15,6 +15,7 @@ def call(ctx):
 
 @pytest.mark.parametrize(*e_exec)
 def test_with_stmt_unpack_sequence(e_exec, mocker):
+
     @contextlib.contextmanager
     def ctx():
         yield (1, (2, 3))
@@ -23,8 +24,7 @@ def test_with_stmt_unpack_sequence(e_exec, mocker):
     _getiter_.side_effect = lambda ob: ob
 
     glb = {
-        '_getiter_': _getiter_,
-        '_unpack_sequence_': guarded_unpack_sequence
+        '_getiter_': _getiter_, '_unpack_sequence_': guarded_unpack_sequence
     }
 
     e_exec(WITH_STMT_WITH_UNPACK_SEQUENCE, glb)
@@ -32,9 +32,7 @@ def test_with_stmt_unpack_sequence(e_exec, mocker):
     ret = glb['call'](ctx)
 
     assert ret == (1, 2, 3)
-    _getiter_.assert_has_calls([
-        mocker.call((1, (2, 3))),
-        mocker.call((2, 3))])
+    _getiter_.assert_has_calls([mocker.call((1, (2, 3))), mocker.call((2, 3))])
 
 
 WITH_STMT_MULTI_CTX_WITH_UNPACK_SEQUENCE = """
@@ -61,22 +59,23 @@ def test_with_stmt_multi_ctx_unpack_sequence(c_exec, mocker):
     _getiter_.side_effect = lambda ob: ob
 
     glb = {
-        '_getiter_': _getiter_,
-        '_unpack_sequence_': guarded_unpack_sequence
+        '_getiter_': _getiter_, '_unpack_sequence_': guarded_unpack_sequence
     }
 
-    exec(result.code, glb)
+    exec (result.code, glb)
 
     ret = glb['call'](ctx1, ctx2)
 
     assert ret == (1, 2, 3, 4, 5, 6, 7)
-    _getiter_.assert_has_calls([
-        mocker.call((1, (2, 3))),
-        mocker.call((2, 3)),
-        mocker.call(((4, 5), (6, 7))),
-        mocker.call((4, 5)),
-        mocker.call((6, 7))
-    ])
+    _getiter_.assert_has_calls(
+        [
+            mocker.call((1, (2, 3))),
+            mocker.call((2, 3)),
+            mocker.call(((4, 5), (6, 7))),
+            mocker.call((4, 5)),
+            mocker.call((6, 7)),
+        ]
+    )
 
 
 WITH_STMT_ATTRIBUTE_ACCESS = """
@@ -125,10 +124,7 @@ def test_with_stmt_attribute_access(e_exec, mocker):
 
     assert x.z == 1
     assert x.y == ctx
-    _write_.assert_has_calls([
-        mocker.call(x),
-        mocker.call(x)
-    ])
+    _write_.assert_has_calls([mocker.call(x), mocker.call(x)])
 
     _write_.reset_mock()
 

@@ -72,16 +72,15 @@ class RestrictionCapableEval(object):
             result = compile_restricted_eval(self.expr, '<string>')
             if result.errors:
                 raise SyntaxError(result.errors[0])
+
             self.used = tuple(result.used_names)
             self.rcode = result.code
 
     def prepUnrestrictedCode(self):
         if self.ucode is None:
             exp_node = compile(
-                self.expr,
-                '<string>',
-                'eval',
-                ast.PyCF_ONLY_AST)
+                self.expr, '<string>', 'eval', ast.PyCF_ONLY_AST
+            )
 
             co = compile(exp_node, '<string>', 'eval')
 

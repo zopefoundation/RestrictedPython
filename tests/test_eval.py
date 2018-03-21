@@ -13,7 +13,7 @@ def test_init():
     ob = RestrictionCapableEval(exp)
 
     assert ob.expr == "{'a':[m.pop()]}['a']         + [m[0]]"
-    assert ob.used == ('m', )
+    assert ob.used == ('m',)
     assert ob.ucode is not None
     assert ob.rcode is None
 
@@ -26,7 +26,7 @@ def test_init_with_syntax_error():
 def test_prepRestrictedCode():
     ob = RestrictionCapableEval(exp)
     ob.prepRestrictedCode()
-    assert ob.used == ('m', )
+    assert ob.used == ('m',)
     assert ob.rcode is not None
 
 

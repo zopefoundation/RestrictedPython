@@ -10,7 +10,7 @@ def test_RestrictingNodeTransformer__visit_Call__1(c_exec):
     result = c_exec('a = max([1, 2, 3])')
     assert result.errors == ()
     loc = {}
-    exec(result.code, {}, loc)
+    exec (result.code, {}, loc)
     assert loc['a'] == 3
     assert result.used_names == {'max': True}
 
@@ -55,10 +55,7 @@ def test_RestrictingNodeTransformer__visit_Call__2(e_exec, mocker):
     _apply_ = mocker.stub()
     _apply_.side_effect = lambda func, *args, **kwargs: func(*args, **kwargs)
 
-    glb = {
-        '_apply_': _apply_,
-        'foo': lambda *args, **kwargs: (args, kwargs)
-    }
+    glb = {'_apply_': _apply_, 'foo': lambda *args, **kwargs: (args, kwargs)}
 
     e_exec(FUNCTIONC_CALLS, glb)
 
@@ -82,23 +79,23 @@ def test_RestrictingNodeTransformer__visit_Call__2(e_exec, mocker):
     ret = glb['kw_args']()
     ref = ((), {'x': 5, 'y': 6})
     assert ref == ret
-    _apply_.assert_called_once_with(glb['foo'], **ref[1])
+    _apply_.assert_called_once_with(glb['foo'], ** ref[1])
     _apply_.reset_mock()
 
     ret = glb['star_and_kw']()
     ref = ((3, 4), {'x': 5, 'y': 6})
     assert ref == ret
-    _apply_.assert_called_once_with(glb['foo'], *ref[0], **ref[1])
+    _apply_.assert_called_once_with(glb['foo'], *ref[0], ** ref[1])
     _apply_.reset_mock()
 
     ret = glb['positional_and_star_and_kw_args']()
     ref = ((1, 3, 4), {'x': 5, 'y': 6})
     assert ref == ret
-    _apply_.assert_called_once_with(glb['foo'], *ref[0], **ref[1])
+    _apply_.assert_called_once_with(glb['foo'], *ref[0], ** ref[1])
     _apply_.reset_mock()
 
     ret = glb['positional_and_star_and_keyword_and_kw_args']()
     ref = ((1, 2, 3, 4), {'x': 5, 'y': 6, 'r': 9})
     assert ref == ret
-    _apply_.assert_called_once_with(glb['foo'], *ref[0], **ref[1])
+    _apply_.assert_called_once_with(glb['foo'], *ref[0], ** ref[1])
     _apply_.reset_mock()

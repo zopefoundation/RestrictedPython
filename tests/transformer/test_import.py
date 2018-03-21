@@ -4,7 +4,8 @@ import pytest
 
 
 import_errmsg = (
-    'Line 1: "%s" is an invalid variable name because it starts with "_"')
+    'Line 1: "%s" is an invalid variable name because it starts with "_"'
+)
 
 
 @pytest.mark.parametrize(*c_exec)

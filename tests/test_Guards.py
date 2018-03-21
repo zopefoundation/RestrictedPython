@@ -35,7 +35,8 @@ result = ob1.display()'''
         __name__='restricted_module',
         __metaclass__=type,
         _write_=lambda x: x,
-        _getattr_=getattr)
+        _getattr_=getattr,
+    )
 
     e_exec(class_can_be_defined_code, restricted_globals)
     assert restricted_globals['result'] == '2411'
@@ -45,6 +46,7 @@ result = ob1.display()'''
 def test_Guards__guarded_setattr__1(e_exec):
     """It allows use setattr and delattr when _guarded_writes is True.
     """
+
     class MyObjectD:
         value = None
         _guarded_writes = 1
@@ -62,7 +64,8 @@ setattr(my_object_d, 'value', 9999)'''
         __name__='restricted_module',
         __metaclass__=type,
         _write_=lambda x: x,
-        _getattr_=getattr,)
+        _getattr_=getattr,
+    )
 
     e_exec(setattr_code, restricted_globals)
     assert 9999 == restricted_globals['my_object_d'].value
@@ -75,6 +78,7 @@ setattr(my_object_d, 'value', 9999)'''
 def test_Guards__write_wrapper__1(e_exec):
     """It wraps the value attribute when it is not
     marked with _guarded_writes."""
+
     class ObjWithoutGuardedWrites:
         my_attr = None
 
@@ -89,7 +93,8 @@ setattr(my_ob, 'my_attr', 'bar')'''
         __name__='restricted_module',
         __metaclass__=type,
         _write_=lambda x: x,
-        _getattr_=getattr,)
+        _getattr_=getattr,
+    )
 
     with pytest.raises(TypeError) as excinfo:
         e_exec(setattr_without_guarded_writes_code, restricted_globals)
@@ -118,7 +123,8 @@ setattr(myobj_with_guarded_setattr, 'my_attr', 'bar')
         __name__='restricted_module',
         __metaclass__=type,
         _write_=lambda x: x,
-        _getattr_=getattr,)
+        _getattr_=getattr,
+    )
 
     e_exec(set_attribute_using_guarded_setattr_code, restricted_globals)
     assert restricted_globals['myobj_with_guarded_setattr'].my_attr == 'bar'
@@ -134,8 +140,7 @@ def test_Guards__guarded_unpack_sequence__1(e_exec, mocker):
     _getiter_ = mocker.stub()
     _getiter_.side_effect = lambda it: it
     glb = {
-        '_getiter_': _getiter_,
-        '_unpack_sequence_': guarded_unpack_sequence,
+        '_getiter_': _getiter_, '_unpack_sequence_': guarded_unpack_sequence
     }
 
     with pytest.raises(ValueError) as excinfo:
@@ -157,9 +162,7 @@ def test_Guards__safer_getattr__1(e_exec):
     format() is considered harmful:
     http://lucumr.pocoo.org/2016/12/29/careful-with-str-format/
     """
-    glb = {
-        '__builtins__': safe_builtins,
-    }
+    glb = {'__builtins__': safe_builtins}
     with pytest.raises(NotImplementedError) as err:
         e_exec(STRING_DOT_FORMAT_DENIED, glb)
     assert 'Using format() on a str is not safe.' == str(err.value)
@@ -178,9 +181,7 @@ def test_Guards__safer_getattr__2(e_exec):
     format() is considered harmful:
     http://lucumr.pocoo.org/2016/12/29/careful-with-str-format/
     """
-    glb = {
-        '__builtins__': safe_builtins,
-    }
+    glb = {'__builtins__': safe_builtins}
     with pytest.raises(NotImplementedError) as err:
         e_exec(UNICODE_DOT_FORMAT_DENIED, glb)
     if IS_PY2:

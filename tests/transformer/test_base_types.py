@@ -23,8 +23,7 @@ def test_Set(e_eval):
     assert e_eval('{1, 2, 3}') == set([1, 2, 3])
 
 
-@pytest.mark.skipif(IS_PY2,
-                    reason="... is new in Python 3")
+@pytest.mark.skipif(IS_PY2, reason="... is new in Python 3")
 @pytest.mark.parametrize(*c_exec)
 def test_Ellipsis(c_exec):
     """It prevents using the `ellipsis` statement."""

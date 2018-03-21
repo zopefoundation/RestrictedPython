@@ -44,12 +44,10 @@ def test_FloorDiv(e_eval):
 
 
 @pytest.mark.skipif(
-    not IS_PY35_OR_GREATER,
-    reason="MatMult was introducted on Python 3.5")
+    not IS_PY35_OR_GREATER, reason="MatMult was introducted on Python 3.5"
+)
 @pytest.mark.parametrize(*c_eval)
 def test_MatMult(c_eval):
     result = c_eval('(8, 3, 5) @ (2, 7, 1)')
-    assert result.errors == (
-        'Line None: MatMult statements are not allowed.',
-    )
+    assert result.errors == ('Line None: MatMult statements are not allowed.',)
     assert result.code is None

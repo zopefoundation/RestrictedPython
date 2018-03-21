@@ -27,6 +27,7 @@ utility_builtins['frozenset'] = frozenset
 
 try:
     import DateTime
+
     utility_builtins['DateTime'] = DateTime.DateTime  # pragma: no cover
 except ImportError:
     pass
@@ -38,6 +39,7 @@ def same_type(arg1, *args):
     for arg in args:
         if getattr(arg, '__class__', type(arg)) is not t:
             return 0
+
     return 1
 
 

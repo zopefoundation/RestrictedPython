@@ -25,13 +25,16 @@ def limited_range(iFirst, *args):
         iStart, iEnd, iStep = iFirst, args[0], args[1]
     else:
         raise AttributeError('range() requires 1-3 int arguments')
+
     if iStep == 0:
         raise ValueError('zero step for range()')
+
     iLen = int((iEnd - iStart) / iStep)
     if iLen < 0:
         iLen = 0
     if iLen >= RANGELIMIT:
         raise ValueError('range() too large')
+
     return range(iStart, iEnd, iStep)
 
 
@@ -41,6 +44,7 @@ limited_builtins['range'] = limited_range
 def limited_list(seq):
     if isinstance(seq, str):
         raise TypeError('cannot convert string to list')
+
     return list(seq)
 
 
@@ -50,6 +54,7 @@ limited_builtins['list'] = limited_list
 def limited_tuple(seq):
     if isinstance(seq, str):
         raise TypeError('cannot convert string to tuple')
+
     return tuple(seq)
 
 

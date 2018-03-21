@@ -6,8 +6,8 @@ import pytest
 
 
 pytestmark = pytest.mark.skipif(
-    IS_PY3,
-    reason="print statement no longer exists in Python 3")
+    IS_PY3, reason="print statement no longer exists in Python 3"
+)
 
 
 ALLOWED_PRINT_STATEMENT = """
@@ -40,31 +40,31 @@ def test_print_stmt__simple_prints(c_exec):
     code, errors = c_exec(ALLOWED_PRINT_STATEMENT)[:2]
     assert code is not None
     assert errors == ()
-    exec(code, glb)
+    exec (code, glb)
     assert glb['_print']() == 'Hello World!\n'
 
     code, errors = c_exec(ALLOWED_PRINT_STATEMENT_WITH_NO_NL)[:2]
     assert code is not None
     assert errors == ()
-    exec(code, glb)
+    exec (code, glb)
     assert glb['_print']() == 'Hello World!'
 
     code, errors = c_exec(ALLOWED_MULTI_PRINT_STATEMENT)[:2]
     assert code is not None
     assert errors == ()
-    exec(code, glb)
+    exec (code, glb)
     assert glb['_print']() == 'Hello World! Hello Earth!\n'
 
     code, errors = c_exec(ALLOWED_PRINT_TUPLE)[:2]
     assert code is not None
     assert errors == ()
-    exec(code, glb)
+    exec (code, glb)
     assert glb['_print']() == "Hello World!\n"
 
     code, errors = c_exec(ALLOWED_PRINT_MULTI_TUPLE)[:2]
     assert code is not None
     assert errors == ()
-    exec(code, glb)
+    exec (code, glb)
     assert glb['_print']() == "('Hello World!', 'Hello Earth!')\n"
 
 
@@ -78,7 +78,7 @@ def test_print_stmt__fail_with_none_target(c_exec, mocker):
     glb = {'_getattr_': getattr, '_print_': PrintCollector}
 
     with pytest.raises(AttributeError) as excinfo:
-        exec(code, glb)
+        exec (code, glb)
 
     assert "'NoneType' object has no attribute 'write'" in str(excinfo.value)
 
@@ -97,16 +97,15 @@ def test_print_stmt__protect_chevron_print(c_exec, mocker):
     _getattr_.side_effect = getattr
     glb = {'_getattr_': _getattr_, '_print_': PrintCollector}
 
-    exec(code, glb)
+    exec (code, glb)
 
     stream = mocker.stub()
     stream.write = mocker.stub()
     glb['print_into_stream'](stream)
 
-    stream.write.assert_has_calls([
-        mocker.call('Hello World!'),
-        mocker.call('\n')
-    ])
+    stream.write.assert_has_calls(
+        [mocker.call('Hello World!'), mocker.call('\n')]
+    )
 
     _getattr_.assert_called_once_with(stream, 'write')
 
@@ -137,7 +136,7 @@ def test_print_stmt__nested_print_collector(c_exec, mocker):
     code, errors = c_exec(INJECT_PRINT_COLLECTOR_NESTED)[:2]
 
     glb = {"_print_": PrintCollector, '_getattr_': None}
-    exec(code, glb)
+    exec (code, glb)
 
     ret = glb['main']()
     assert ret == 'inner\nf1\nf2main\n'
@@ -155,8 +154,7 @@ def test_print_stmt__with_printed_no_print(c_exec):
 
     assert code is not None
     assert errors == ()
-    assert warnings == [
-        "Line 2: Doesn't print, but reads 'printed' variable."]
+    assert warnings == ["Line 2: Doesn't print, but reads 'printed' variable."]
 
 
 WARN_PRINTED_NO_PRINT_NESTED = """
@@ -175,7 +173,7 @@ def test_print_stmt__with_printed_no_print_nested(c_exec):
     assert errors == ()
     assert warnings == [
         "Line 2: Print statement is deprecated and not avaliable anymore in Python 3.",  # NOQA: E501
-        "Line 3: Doesn't print, but reads 'printed' variable."
+        "Line 3: Doesn't print, but reads 'printed' variable.",
     ]
 
 
@@ -193,7 +191,7 @@ def test_print_stmt__with_print_no_printed(c_exec):
     assert errors == ()
     assert warnings == [
         "Line 3: Print statement is deprecated and not avaliable anymore in Python 3.",  # NOQA: E501
-        "Line 2: Prints, but never reads 'printed' variable."
+        "Line 2: Prints, but never reads 'printed' variable.",
     ]
 
 
@@ -235,7 +233,7 @@ def class_scope():
 def test_print_stmt_no_new_scope(c_exec):
     code, errors = c_exec(NO_PRINT_SCOPES)[:2]
     glb = {'_print_': PrintCollector, '_getattr_': None}
-    exec(code, glb)
+    exec (code, glb)
 
     ret = glb['class_scope']()
     assert ret == 'a\n'
@@ -253,7 +251,7 @@ def func(cond):
 def test_print_stmt_conditional_print(c_exec):
     code, errors = c_exec(CONDITIONAL_PRINT)[:2]
     glb = {'_print_': PrintCollector, '_getattr_': None}
-    exec(code, glb)
+    exec (code, glb)
 
     assert glb['func'](True) == '1\n'
     assert glb['func'](False) == ''
