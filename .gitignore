@@ -34,3 +34,4 @@ coverage.xml
 docs/doctrees
 docs/html
 .ropeproject/
+.pytest_cache
