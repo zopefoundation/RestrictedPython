@@ -30,7 +30,7 @@ loop.close()
 def test_async_def(c_exec):
     result = c_exec(ASYNC_DEF_EXMAPLE)
     assert result.errors == (
-        'Line 4: AsyncFunctionDef statements are not allowed.',
+        "Line 4: AsyncFunctionDef statements are not allowed.",
     )
     assert result.code is None
 
@@ -72,7 +72,7 @@ def test_await(c_exec):
     result = compile_restricted_exec(
         AWAIT_EXAMPLE, policy=RestrictingAsyncNodeTransformer
     )
-    assert result.errors == ('Line 11: Await statements are not allowed.',)
+    assert result.errors == ("Line 11: Await statements are not allowed.",)
     assert result.code is None
 
 
@@ -89,7 +89,7 @@ def test_async_with(c_exec):
     result = compile_restricted_exec(
         ASYNC_WITH_EXAMPLE, policy=RestrictingAsyncNodeTransformer
     )
-    assert result.errors == ('Line 3: AsyncWith statements are not allowed.',)
+    assert result.errors == ("Line 3: AsyncWith statements are not allowed.",)
     assert result.code is None
 
 
@@ -106,5 +106,5 @@ def test_async_for(c_exec):
     result = compile_restricted_exec(
         ASYNC_FOR_EXAMPLE, policy=RestrictingAsyncNodeTransformer
     )
-    assert result.errors == ('Line 3: AsyncFor statements are not allowed.',)
+    assert result.errors == ("Line 3: AsyncFor statements are not allowed.",)
     assert result.code is None

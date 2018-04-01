@@ -14,7 +14,7 @@ while a < 7:
 def test_RestrictingNodeTransformer__visit_While__1(e_exec):
     """It allows `while` statements."""
     glb = e_exec(WHILE)
-    assert glb['a'] == 8
+    assert glb["a"] == 8
 
 
 BREAK = """\
@@ -30,7 +30,7 @@ while True:
 def test_RestrictingNodeTransformer__visit_Break__1(e_exec):
     """It allows `break` statements."""
     glb = e_exec(BREAK)
-    assert glb['a'] == 8
+    assert glb["a"] == 8
 
 
 CONTINUE = """\
@@ -47,4 +47,4 @@ while a < 10:
 def test_RestrictingNodeTransformer__visit_Continue__1(e_exec):
     """It allows `continue` statements."""
     glb = e_exec(CONTINUE)
-    assert glb['a'] == 15
+    assert glb["a"] == 15

@@ -35,31 +35,31 @@ import textwrap
 # For AugAssign the operator must be converted to a string.
 IOPERATOR_TO_STR = {
     # Shared by python2 and python3
-    ast.Add: '+=',
-    ast.Sub: '-=',
-    ast.Mult: '*=',
-    ast.Div: '/=',
-    ast.Mod: '%=',
-    ast.Pow: '**=',
-    ast.LShift: '<<=',
-    ast.RShift: '>>=',
-    ast.BitOr: '|=',
-    ast.BitXor: '^=',
-    ast.BitAnd: '&=',
-    ast.FloorDiv: '//=',
+    ast.Add: "+=",
+    ast.Sub: "-=",
+    ast.Mult: "*=",
+    ast.Div: "/=",
+    ast.Mod: "%=",
+    ast.Pow: "**=",
+    ast.LShift: "<<=",
+    ast.RShift: ">>=",
+    ast.BitOr: "|=",
+    ast.BitXor: "^=",
+    ast.BitAnd: "&=",
+    ast.FloorDiv: "//=",
 }
 
 if IS_PY35_OR_GREATER:
-    IOPERATOR_TO_STR[ast.MatMult] = '@='
+    IOPERATOR_TO_STR[ast.MatMult] = "@="
 
 
 def copy_locations(new_node, old_node):
     # When new ast nodes are generated they have no 'lineno' and 'col_offset'.
     # This function copies these two fields from the incoming node
-    assert 'lineno' in new_node._attributes
+    assert "lineno" in new_node._attributes
     new_node.lineno = old_node.lineno
 
-    assert 'col_offset' in new_node._attributes
+    assert "col_offset" in new_node._attributes
     new_node.col_offset = old_node.col_offset
 
     ast.fix_missing_locations(new_node)
@@ -109,22 +109,22 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
     def gen_tmp_name(self):
         # 'check_name' ensures that no variable is prefixed with '_'.
         # => Its safe to use '_tmp..' as a temporary variable.
-        name = '_tmp%i' % self._tmp_idx
+        name = "_tmp%i" % self._tmp_idx
         self._tmp_idx += 1
         return name
 
     def error(self, node, info):
         """Record a security error discovered during transformation."""
-        lineno = getattr(node, 'lineno', None)
+        lineno = getattr(node, "lineno", None)
         self.errors.append(
-            'Line {lineno}: {info}'.format(lineno=lineno, info=info)
+            "Line {lineno}: {info}".format(lineno=lineno, info=info)
         )
 
     def warn(self, node, info):
         """Record a security error discovered during transformation."""
-        lineno = getattr(node, 'lineno', None)
+        lineno = getattr(node, "lineno", None)
         self.warnings.append(
-            'Line {lineno}: {info}'.format(lineno=lineno, info=info)
+            "Line {lineno}: {info}".format(lineno=lineno, info=info)
         )
 
     def guard_iter(self, node):
@@ -145,8 +145,8 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         if isinstance(node.target, ast.Tuple):
             spec = self.gen_unpack_spec(node.target)
             new_iter = ast.Call(
-                func=ast.Name('_iter_unpack_sequence_', ast.Load()),
-                args=[node.iter, spec, ast.Name('_getiter_', ast.Load())],
+                func=ast.Name("_iter_unpack_sequence_", ast.Load()),
+                args=[node.iter, spec, ast.Name("_getiter_", ast.Load())],
                 keywords=[],
             )
         else:
@@ -214,7 +214,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         """
         spec = ast.Dict(keys=[], values=[])
 
-        spec.keys.append(ast.Str('childs'))
+        spec.keys.append(ast.Str("childs"))
         spec.values.append(ast.Tuple([], ast.Load()))
 
         # starred elements in a sequence do not contribute into the min_len.
@@ -238,7 +238,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
                 el.elts.append(self.gen_unpack_spec(val))
                 spec.values[0].elts.append(el)
 
-        spec.keys.append(ast.Str('min_len'))
+        spec.keys.append(ast.Str("min_len"))
         spec.values.append(ast.Num(min_len))
 
         return spec
@@ -246,12 +246,12 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
     def protect_unpack_sequence(self, target, value):
         spec = self.gen_unpack_spec(target)
         return ast.Call(
-            func=ast.Name('_unpack_sequence_', ast.Load()),
-            args=[value, spec, ast.Name('_getiter_', ast.Load())],
+            func=ast.Name("_unpack_sequence_", ast.Load()),
+            args=[value, spec, ast.Name("_getiter_", ast.Load())],
             keywords=[],
         )
 
-    def gen_unpack_wrapper(self, node, target, ctx='store'):
+    def gen_unpack_wrapper(self, node, target, ctx="store"):
         """Helper function to protect tuple unpacks.
 
         node: used to copy the locations for the new nodes.
@@ -298,12 +298,12 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
                 body=try_body, finalbody=finalbody, handlers=[], orelse=[]
             )
 
-        if ctx == 'store':
+        if ctx == "store":
             ctx = ast.Store()
-        elif ctx == 'param':
+        elif ctx == "param":
             ctx = ast.Param()
         else:
-            raise Exception('Unsupported context type.')
+            raise Exception("Unsupported context type.")
 
         # This node is used to catch the tuple in a tmp variable.
         tmp_target = ast.Name(tmp_name, ctx)
@@ -318,7 +318,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
             return ast.NameConstant(value=None)
 
         else:
-            return ast.Name(id='None', ctx=ast.Load())
+            return ast.Name(id="None", ctx=ast.Load())
 
     def gen_lambda(self, args, body):
         return ast.Lambda(
@@ -362,7 +362,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
                 args.append(self.gen_none_node())
 
             return ast.Call(
-                func=ast.Name('slice', ast.Load()), args=args, keywords=[]
+                func=ast.Name("slice", ast.Load()), args=args, keywords=[]
             )
 
         elif isinstance(slice_, ast.ExtSlice):
@@ -378,14 +378,14 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         if name is None:
             return
 
-        if name.startswith('_') and name != '_':
+        if name.startswith("_") and name != "_":
             self.error(
                 node,
                 '"{name}" is an invalid variable name because it '
                 'starts with "_"'.format(name=name),
             )
 
-        elif name.endswith('__roles__'):
+        elif name.endswith("__roles__"):
             self.error(
                 node,
                 '"%s" is an invalid variable name because '
@@ -395,7 +395,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         elif name == "printed":
             self.error(node, '"printed" is a reserved name.')
 
-        elif name == 'print':
+        elif name == "print":
             # Assignments to 'print' would lead to funny results.
             self.error(node, '"print" is a reserved name.')
 
@@ -456,7 +456,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
             # Add '_print = _print_(_getattr_)' add the top of a
             # function/module.
             _print = ast.Assign(
-                targets=[ast.Name('_print', ast.Store())],
+                targets=[ast.Name("_print", ast.Store())],
                 value=ast.Call(
                     func=ast.Name("_print_", ast.Load()),
                     args=[ast.Name("_getattr_", ast.Load())],
@@ -486,7 +486,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         """
 
         call_getattr = ast.Call(
-            func=ast.Name('_getattr_', ast.Load()),
+            func=ast.Name("_getattr_", ast.Load()),
             args=[node, ast.Str(attr_name)],
             keywords=[],
         )
@@ -505,15 +505,15 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         """
         self.warn(
             node,
-            '{0.__class__.__name__}'
-            ' statement is not known to RestrictedPython'.format(node),
+            "{0.__class__.__name__}"
+            " statement is not known to RestrictedPython".format(node),
         )
         self.not_allowed(node)
 
     def not_allowed(self, node):
         self.error(
             node,
-            '{0.__class__.__name__} statements are not allowed.'.format(node),
+            "{0.__class__.__name__} statements are not allowed.".format(node),
         )
 
     def node_contents_visit(self, node):
@@ -577,7 +577,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         node = self.node_contents_visit(node)
 
         if isinstance(node.ctx, ast.Load):
-            if node.id == 'printed':
+            if node.id == "printed":
                 self.print_info.printed_used = True
                 new_node = ast.Call(
                     func=ast.Name("_print", ast.Load()), args=[], keywords=[]
@@ -586,10 +586,10 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
                 copy_locations(new_node, node)
                 return new_node
 
-            elif node.id == 'print':
+            elif node.id == "print":
                 self.print_info.print_used = True
                 new_node = ast.Attribute(
-                    value=ast.Name('_print', ast.Load()),
+                    value=ast.Name("_print", ast.Load()),
                     attr="_call_print",
                     ctx=ast.Load(),
                 )
@@ -796,10 +796,10 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         """
 
         if isinstance(node.func, ast.Name):
-            if node.func.id == 'exec':
-                self.error(node, 'Exec calls are not allowed.')
-            elif node.func.id == 'eval':
-                self.error(node, 'Eval calls are not allowed.')
+            if node.func.id == "exec":
+                self.error(node, "Exec calls are not allowed.")
+            elif node.func.id == "eval":
+                self.error(node, "Eval calls are not allowed.")
 
         needs_wrap = False
 
@@ -828,7 +828,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
             return node
 
         node.args.insert(0, node.func)
-        node.func = ast.Name('_apply_', ast.Load())
+        node.func = ast.Name("_apply_", ast.Load())
         copy_locations(node.func, node.args[0])
         return node
 
@@ -851,14 +851,14 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
 
         The _write_ function should return a security proxy.
         """
-        if node.attr.startswith('_') and node.attr != '_':
+        if node.attr.startswith("_") and node.attr != "_":
             self.error(
                 node,
                 '"{name}" is an invalid attribute name because it starts '
                 'with "_".'.format(name=node.attr),
             )
 
-        if node.attr.endswith('__roles__'):
+        if node.attr.endswith("__roles__"):
             self.error(
                 node,
                 '"{name}" is an invalid attribute name because it ends '
@@ -868,7 +868,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         if isinstance(node.ctx, ast.Load):
             node = self.node_contents_visit(node)
             new_node = ast.Call(
-                func=ast.Name('_getattr_', ast.Load()),
+                func=ast.Name("_getattr_", ast.Load()),
                 args=[node.value, ast.Str(node.attr)],
                 keywords=[],
             )
@@ -879,7 +879,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         elif isinstance(node.ctx, (ast.Store, ast.Del)):
             node = self.node_contents_visit(node)
             new_value = ast.Call(
-                func=ast.Name('_write_', ast.Load()),
+                func=ast.Name("_write_", ast.Load()),
                 args=[node.value],
                 keywords=[],
             )
@@ -916,7 +916,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
 
         if isinstance(node.ctx, ast.Load):
             new_node = ast.Call(
-                func=ast.Name('_getitem_', ast.Load()),
+                func=ast.Name("_getitem_", ast.Load()),
                 args=[node.value, self.transform_slice(node.slice)],
                 keywords=[],
             )
@@ -926,7 +926,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
 
         elif isinstance(node.ctx, (ast.Del, ast.Store)):
             new_value = ast.Call(
-                func=ast.Name('_write_', ast.Load()),
+                func=ast.Name("_write_", ast.Load()),
                 args=[node.value],
                 keywords=[],
             )
@@ -1073,7 +1073,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
             new_node = ast.Assign(
                 targets=[node.target],
                 value=ast.Call(
-                    func=ast.Name('_inplacevar_', ast.Load()),
+                    func=ast.Name("_inplacevar_", ast.Load()),
                     args=[
                         ast.Str(IOPERATOR_TO_STR[type(node.op)]),
                         ast.Name(node.target.id, ast.Load()),
@@ -1113,10 +1113,10 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
 
         node = self.node_contents_visit(node)
         if node.dest is None:
-            node.dest = ast.Name('_print', ast.Load())
+            node.dest = ast.Name("_print", ast.Load())
         else:
             # Pre-validate access to the 'write' attribute.
-            node.dest = self.gen_attr_check(node.dest, 'write')
+            node.dest = self.gen_attr_check(node.dest, "write")
 
         copy_locations(node.dest, node)
         return node
@@ -1278,7 +1278,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         for index, arg in enumerate(list(node.args.args)):
             if isinstance(arg, ast.Tuple):
                 tmp_target, unpack = self.gen_unpack_wrapper(
-                    node, arg, 'param'
+                    node, arg, "param"
                 )
 
                 # Replace the tuple with a single (temporary) parameter.
@@ -1378,15 +1378,17 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         if IS_PY2:
             new_class_node = node
         else:
-            if any(keyword.arg == 'metaclass' for keyword in node.keywords):
+            if any(keyword.arg == "metaclass" for keyword in node.keywords):
                 self.error(
                     node, 'The keyword argument "metaclass" is not allowed.'
                 )
             CLASS_DEF = textwrap.dedent(
-                '''\
+                """\
                 class {0.name}(metaclass=__metaclass__):
                     pass
-            '''.format(node)
+            """.format(
+                    node
+                )
             )
             new_class_node = ast.parse(CLASS_DEF).body[0]
             new_class_node.body = node.body
@@ -1404,7 +1406,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
             if not isinstance(child, ast.ImportFrom):
                 break
 
-            if not child.module == '__future__':
+            if not child.module == "__future__":
                 break
 
         self.inject_print_collector(node, position)

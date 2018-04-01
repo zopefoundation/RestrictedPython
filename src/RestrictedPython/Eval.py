@@ -24,7 +24,7 @@ else:
     maketrans = str.maketrans
 
 
-nltosp = maketrans('\r\n', '  ')
+nltosp = maketrans("\r\n", "  ")
 
 # No restrictions.
 default_guarded_getattr = getattr
@@ -43,7 +43,7 @@ def default_guarded_getiter(ob):
 class RestrictionCapableEval(object):
     """A base class for restricted code."""
 
-    globals = {'__builtins__': None}
+    globals = {"__builtins__": None}
     # restricted
     rcode = None
 
@@ -69,7 +69,7 @@ class RestrictionCapableEval(object):
 
     def prepRestrictedCode(self):
         if self.rcode is None:
-            result = compile_restricted_eval(self.expr, '<string>')
+            result = compile_restricted_eval(self.expr, "<string>")
             if result.errors:
                 raise SyntaxError(result.errors[0])
 
@@ -79,10 +79,10 @@ class RestrictionCapableEval(object):
     def prepUnrestrictedCode(self):
         if self.ucode is None:
             exp_node = compile(
-                self.expr, '<string>', 'eval', ast.PyCF_ONLY_AST
+                self.expr, "<string>", "eval", ast.PyCF_ONLY_AST
             )
 
-            co = compile(exp_node, '<string>', 'eval')
+            co = compile(exp_node, "<string>", "eval")
 
             # Examine the ast to discover which names the expression needs.
             if self.used is None:
@@ -102,9 +102,9 @@ class RestrictionCapableEval(object):
         self.prepRestrictedCode()
 
         global_scope = {
-            '_getattr_': default_guarded_getattr,
-            '_getitem_': default_guarded_getitem,
-            '_getiter_': default_guarded_getiter,
+            "_getattr_": default_guarded_getattr,
+            "_getitem_": default_guarded_getitem,
+            "_getiter_": default_guarded_getiter,
         }
 
         global_scope.update(self.globals)

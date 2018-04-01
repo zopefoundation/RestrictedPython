@@ -8,21 +8,21 @@ import warnings
 
 
 CompileResult = namedtuple(
-    'CompileResult', 'code, errors, warnings, used_names'
+    "CompileResult", "code, errors, warnings, used_names"
 )
 syntax_error_template = (
-    'Line {lineno}: {type}: {msg} in on statement: {statement}'
+    "Line {lineno}: {type}: {msg} in on statement: {statement}"
 )
 
 NOT_CPYTHON_WARNING = (
-    'RestrictedPython is only supported on CPython: use on other Python '
-    'implementations may create security issues.'
+    "RestrictedPython is only supported on CPython: use on other Python "
+    "implementations may create security issues."
 )
 
 
 def _compile_restricted_mode(
     source,
-    filename='<string>',
+    filename="<string>",
     mode="exec",
     flags=0,
     dont_inherit=False,
@@ -30,7 +30,7 @@ def _compile_restricted_mode(
 ):
     if not IS_CPYTHON:
         warnings.warn_explicit(
-            NOT_CPYTHON_WARNING, RuntimeWarning, 'RestrictedPython', 0
+            NOT_CPYTHON_WARNING, RuntimeWarning, "RestrictedPython", 0
         )
 
     byte_code = None
@@ -51,7 +51,7 @@ def _compile_restricted_mode(
             )
         if not issubclass(type(source), tuple(allowed_source_types)):
             raise TypeError(
-                'Not allowed source type: '
+                "Not allowed source type: "
                 '"{0.__class__.__name__}".'.format(source)
             )
 
@@ -87,7 +87,7 @@ def _compile_restricted_mode(
                     # dont_inherit=dont_inherit
                 )
     else:
-        raise TypeError('Unallowed policy provided for RestrictedPython')
+        raise TypeError("Unallowed policy provided for RestrictedPython")
 
     return CompileResult(
         byte_code, tuple(collected_errors), collected_warnings, used_names
@@ -96,7 +96,7 @@ def _compile_restricted_mode(
 
 def compile_restricted_exec(
     source,
-    filename='<string>',
+    filename="<string>",
     flags=0,
     dont_inherit=False,
     policy=RestrictingNodeTransformer,
@@ -105,7 +105,7 @@ def compile_restricted_exec(
     return _compile_restricted_mode(
         source,
         filename=filename,
-        mode='exec',
+        mode="exec",
         flags=flags,
         dont_inherit=dont_inherit,
         policy=policy,
@@ -114,7 +114,7 @@ def compile_restricted_exec(
 
 def compile_restricted_eval(
     source,
-    filename='<string>',
+    filename="<string>",
     flags=0,
     dont_inherit=False,
     policy=RestrictingNodeTransformer,
@@ -123,7 +123,7 @@ def compile_restricted_eval(
     return _compile_restricted_mode(
         source,
         filename=filename,
-        mode='eval',
+        mode="eval",
         flags=flags,
         dont_inherit=dont_inherit,
         policy=policy,
@@ -132,7 +132,7 @@ def compile_restricted_eval(
 
 def compile_restricted_single(
     source,
-    filename='<string>',
+    filename="<string>",
     flags=0,
     dont_inherit=False,
     policy=RestrictingNodeTransformer,
@@ -141,7 +141,7 @@ def compile_restricted_single(
     return _compile_restricted_mode(
         source,
         filename=filename,
-        mode='single',
+        mode="single",
         flags=flags,
         dont_inherit=dont_inherit,
         policy=policy,
@@ -152,7 +152,7 @@ def compile_restricted_function(
     p,  # parameters
     body,
     name,
-    filename='<string>',
+    filename="<string>",
     globalize=None,  # List of globals (e.g. ['here', 'context', ...])
     flags=0,
     dont_inherit=False,
@@ -164,7 +164,7 @@ def compile_restricted_function(
     http://restrictedpython.readthedocs.io/en/latest/usage/index.html#RestrictedPython.compile_restricted_function
     """
     # Parse the parameters and body, then combine them.
-    body_ast = ast.parse(body, '<func code>', 'exec')
+    body_ast = ast.parse(body, "<func code>", "exec")
 
     # The compiled code is actually executed inside a function
     # (that is called when the code is called) so reading and assigning to a
@@ -174,7 +174,7 @@ def compile_restricted_function(
     if globalize:
         body_ast.body.insert(0, ast.Global(globalize))
     wrapper_ast = ast.parse(
-        'def masked_function_name(%s): pass' % p, '<func wrapper>', 'exec'
+        "def masked_function_name(%s): pass" % p, "<func wrapper>", "exec"
     )
     # In case the name you chose for your generated function is not a
     # valid python identifier we set it after the fact
@@ -188,7 +188,7 @@ def compile_restricted_function(
     result = _compile_restricted_mode(
         wrapper_ast,
         filename=filename,
-        mode='exec',
+        mode="exec",
         flags=flags,
         dont_inherit=dont_inherit,
         policy=policy,
@@ -199,8 +199,8 @@ def compile_restricted_function(
 
 def compile_restricted(
     source,
-    filename='<unknown>',
-    mode='exec',
+    filename="<unknown>",
+    mode="exec",
     flags=0,
     dont_inherit=False,
     policy=RestrictingNodeTransformer,
@@ -210,7 +210,7 @@ def compile_restricted(
     policy ... `ast.NodeTransformer` class defining the restrictions.
 
     """
-    if mode in ['exec', 'eval', 'single', 'function']:
+    if mode in ["exec", "eval", "single", "function"]:
         result = _compile_restricted_mode(
             source,
             filename=filename,
@@ -220,7 +220,7 @@ def compile_restricted(
             policy=policy,
         )
     else:
-        raise TypeError('unknown mode %s', mode)
+        raise TypeError("unknown mode %s", mode)
 
     for warning in result.warnings:
         warnings.warn(warning, SyntaxWarning)

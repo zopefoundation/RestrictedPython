@@ -102,16 +102,16 @@ def test_RestrictingNodeTransformer__visit_Lambda__9(e_exec, mocker):
     _getiter_ = mocker.stub()
     _getiter_.side_effect = lambda it: it
     glb = {
-        '_getiter_': _getiter_,
-        '_unpack_sequence_': guarded_unpack_sequence,
-        '_getattr_': lambda ob,
+        "_getiter_": _getiter_,
+        "_unpack_sequence_": guarded_unpack_sequence,
+        "_getattr_": lambda ob,
         val: getattr(ob, val),
     }
 
     src = "m = lambda (a, (b, c)), *ag, **kw: a+b+c+sum(ag)+sum(kw.values())"
     e_exec(src, glb)
 
-    ret = glb['m']((1, (2, 3)), 4, 5, 6, g=7, e=8)
+    ret = glb["m"]((1, (2, 3)), 4, 5, 6, g=7, e=8)
     assert ret == 36
     assert 2 == _getiter_.call_count
     _getiter_.assert_any_call((1, (2, 3)))

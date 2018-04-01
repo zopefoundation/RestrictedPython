@@ -39,8 +39,8 @@ def test_RestrictingNodeTransformer__visit_Name__2(c_exec):
 @pytest.mark.parametrize(*e_exec)
 def test_RestrictingNodeTransformer__visit_Name__2_5(e_exec):
     """It allows `_` as variable name."""
-    glb = e_exec('_ = 2411')
-    assert glb['_'] == 2411
+    glb = e_exec("_ = 2411")
+    assert glb["_"] == 2411
 
 
 BAD_NAME_OVERRIDE_OVERRIDE_GUARD_WITH_FUNCTION = """\

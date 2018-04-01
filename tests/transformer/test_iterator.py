@@ -45,46 +45,46 @@ def test_RestrictingNodeTransformer__guard_iter__1(e_exec, mocker):
     it = (1, 2, 3)
     _getiter_ = mocker.stub()
     _getiter_.side_effect = lambda x: x
-    glb = {'_getiter_': _getiter_}
+    glb = {"_getiter_": _getiter_}
     e_exec(ITERATORS, glb)
 
-    ret = glb['for_loop'](it)
+    ret = glb["for_loop"](it)
     assert 6 == ret
     _getiter_.assert_called_once_with(it)
     _getiter_.reset_mock()
 
-    ret = glb['nested_for_loop']((1, 2), (3, 4))
+    ret = glb["nested_for_loop"]((1, 2), (3, 4))
     assert 20 == ret
     _getiter_.assert_has_calls([mocker.call((1, 2)), mocker.call((3, 4))])
     _getiter_.reset_mock()
 
-    ret = glb['dict_comp'](it)
+    ret = glb["dict_comp"](it)
     assert {1: 2, 2: 4, 3: 6} == ret
     _getiter_.assert_called_once_with(it)
     _getiter_.reset_mock()
 
-    ret = glb['list_comp'](it)
+    ret = glb["list_comp"](it)
     assert [2, 4, 6] == ret
     _getiter_.assert_called_once_with(it)
     _getiter_.reset_mock()
 
-    ret = glb['nested_list_comp']((1, 2), (3, 4))
+    ret = glb["nested_list_comp"]((1, 2), (3, 4))
     assert [5, 6] == ret
     _getiter_.assert_has_calls([mocker.call((1, 2)), mocker.call((3, 4))])
     _getiter_.reset_mock()
 
-    ret = glb['set_comp'](it)
+    ret = glb["set_comp"](it)
     assert {2, 4, 6} == ret
     _getiter_.assert_called_once_with(it)
     _getiter_.reset_mock()
 
-    ret = glb['generator'](it)
+    ret = glb["generator"](it)
     assert isinstance(ret, types.GeneratorType)
     assert list(ret) == [2, 4, 6]
     _getiter_.assert_called_once_with(it)
     _getiter_.reset_mock()
 
-    ret = glb['nested_generator']((0, 1, 2), (1, 2))
+    ret = glb["nested_generator"]((0, 1, 2), (1, 2))
     assert isinstance(ret, types.GeneratorType)
     assert list(ret) == [2, 3, 3, 4]
     _getiter_.assert_has_calls(
@@ -129,33 +129,33 @@ def test_RestrictingNodeTransformer__guard_iter__2(e_exec, mocker):
     _getiter_.side_effect = lambda x: x
 
     glb = {
-        '_getiter_': _getiter_,
-        '_iter_unpack_sequence_': guarded_iter_unpack_sequence,
+        "_getiter_": _getiter_,
+        "_iter_unpack_sequence_": guarded_iter_unpack_sequence,
     }
 
     e_exec(ITERATORS_WITH_UNPACK_SEQUENCE, glb)
 
-    ret = glb['for_loop'](it)
+    ret = glb["for_loop"](it)
     assert ret == 21
     _getiter_.assert_has_calls(call_ref)
     _getiter_.reset_mock()
 
-    ret = glb['dict_comp'](it)
+    ret = glb["dict_comp"](it)
     assert ret == {1: 3, 3: 7, 5: 11}
     _getiter_.assert_has_calls(call_ref)
     _getiter_.reset_mock()
 
-    ret = glb['list_comp'](it)
+    ret = glb["list_comp"](it)
     assert ret == [3, 7, 11]
     _getiter_.assert_has_calls(call_ref)
     _getiter_.reset_mock()
 
-    ret = glb['set_comp'](it)
+    ret = glb["set_comp"](it)
     assert ret == {3, 7, 11}
     _getiter_.assert_has_calls(call_ref)
     _getiter_.reset_mock()
 
-    ret = list(glb['generator'](it))
+    ret = list(glb["generator"](it))
     assert ret == [3, 7, 11]
     _getiter_.assert_has_calls(call_ref)
     _getiter_.reset_mock()

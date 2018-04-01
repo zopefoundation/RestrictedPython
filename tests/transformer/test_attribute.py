@@ -47,10 +47,10 @@ def func():
 @pytest.mark.parametrize(*e_exec)
 def test_RestrictingNodeTransformer__visit_Attribute__3(e_exec, mocker):
     """It transforms the attribute access to `_getattr_`."""
-    glb = {'_getattr_': mocker.stub(), 'a': [], 'b': 'b'}
+    glb = {"_getattr_": mocker.stub(), "a": [], "b": "b"}
     e_exec(TRANSFORM_ATTRIBUTE_ACCESS, glb)
-    glb['func']()
-    glb['_getattr_'].assert_called_once_with([], 'b')
+    glb["func"]()
+    glb["_getattr_"].assert_called_once_with([], "b")
 
 
 ALLOW_UNDERSCORE_ONLY = """\
@@ -70,26 +70,26 @@ def test_RestrictingNodeTransformer__visit_Attribute__4(c_exec):
 @pytest.mark.parametrize(*e_exec)
 def test_RestrictingNodeTransformer__visit_Attribute__5(e_exec, mocker):
     """It transforms writing to an attribute to `_write_`."""
-    glb = {'_write_': mocker.stub(), 'a': mocker.stub()}
-    glb['_write_'].return_value = glb['a']
+    glb = {"_write_": mocker.stub(), "a": mocker.stub()}
+    glb["_write_"].return_value = glb["a"]
 
     e_exec("a.b = 'it works'", glb)
 
-    glb['_write_'].assert_called_once_with(glb['a'])
-    assert glb['a'].b == 'it works'
+    glb["_write_"].assert_called_once_with(glb["a"])
+    assert glb["a"].b == "it works"
 
 
 @pytest.mark.parametrize(*e_exec)
 def test_RestrictingNodeTransformer__visit_Attribute__5_5(e_exec, mocker):
     """It transforms deleting of an attribute to `_write_`."""
-    glb = {'_write_': mocker.stub(), 'a': mocker.stub()}
-    glb['a'].b = 'it exists'
-    glb['_write_'].return_value = glb['a']
+    glb = {"_write_": mocker.stub(), "a": mocker.stub()}
+    glb["a"].b = "it exists"
+    glb["_write_"].return_value = glb["a"]
 
     e_exec("del a.b", glb)
 
-    glb['_write_'].assert_called_once_with(glb['a'])
-    assert not hasattr(glb['a'], 'b')
+    glb["_write_"].assert_called_once_with(glb["a"])
+    assert not hasattr(glb["a"], "b")
 
 
 DISALLOW_TRACEBACK_ACCESS = """
@@ -122,12 +122,12 @@ def test_RestrictingNodeTransformer__visit_Attribute__7(e_exec, mocker):
     _getattr_ = mocker.Mock()
     _getattr_.side_effect = getattr
 
-    glb = {'_getattr_': _getattr_, 'a': mocker.Mock(a=1)}
+    glb = {"_getattr_": _getattr_, "a": mocker.Mock(a=1)}
 
     e_exec(TRANSFORM_ATTRIBUTE_ACCESS_FUNCTION_DEFAULT, glb)
 
-    _getattr_.assert_has_calls([mocker.call(glb['a'], 'a')])
-    assert glb['func_default']() == 1
+    _getattr_.assert_has_calls([mocker.call(glb["a"], "a")])
+    assert glb["func_default"]() == 1
 
 
 @pytest.mark.parametrize(*e_exec)
@@ -136,9 +136,9 @@ def test_RestrictingNodeTransformer__visit_Attribute__8(e_exec, mocker):
     _getattr_ = mocker.Mock()
     _getattr_.side_effect = getattr
 
-    glb = {'_getattr_': _getattr_, 'b': mocker.Mock(b=2)}
+    glb = {"_getattr_": _getattr_, "b": mocker.Mock(b=2)}
 
-    e_exec('lambda_default = lambda x=b.b: x', glb)
+    e_exec("lambda_default = lambda x=b.b: x", glb)
 
-    _getattr_.assert_has_calls([mocker.call(glb['b'], 'b')])
-    assert glb['lambda_default']() == 2
+    _getattr_.assert_has_calls([mocker.call(glb["b"], "b")])
+    assert glb["lambda_default"]() == 2

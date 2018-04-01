@@ -6,10 +6,10 @@ from tests import e_exec
 import pytest
 
 
-GOOD_CLASS = '''
+GOOD_CLASS = """
 class Good:
     pass
-'''
+"""
 
 
 @pytest.mark.parametrize(*c_exec)
@@ -20,10 +20,10 @@ def test_RestrictingNodeTransformer__visit_ClassDef__1(c_exec):
     assert result.code is not None
 
 
-BAD_CLASS = '''\
+BAD_CLASS = """\
 class _bad:
     pass
-'''
+"""
 
 
 @pytest.mark.parametrize(*c_exec)
@@ -36,12 +36,12 @@ def test_RestrictingNodeTransformer__visit_ClassDef__2(c_exec):
     )
 
 
-IMPLICIT_METACLASS = '''
+IMPLICIT_METACLASS = """
 class Meta:
     pass
 
 b = Meta().foo
-'''
+"""
 
 
 @pytest.mark.parametrize(*e_exec)
@@ -60,13 +60,13 @@ def test_RestrictingNodeTransformer__visit_ClassDef__3(e_exec):
 
     e_exec(IMPLICIT_METACLASS, restricted_globals)
 
-    assert restricted_globals['b'] == 2411
+    assert restricted_globals["b"] == 2411
 
 
-EXPLICIT_METACLASS = '''
+EXPLICIT_METACLASS = """
 class WithMeta(metaclass=MyMetaClass):
     pass
-'''
+"""
 
 
 @pytest.mark.skipif(IS_PY2, reason="No valid syntax in Python 2.")
@@ -82,7 +82,7 @@ def test_RestrictingNodeTransformer__visit_ClassDef__4(c_exec):
     assert result.code is None
 
 
-DECORATED_CLASS = '''\
+DECORATED_CLASS = """\
 def wrap(cls):
     cls.wrap_att = 23
     return cls
@@ -95,7 +95,7 @@ class Combined(Base):
     class_att = 2342
 
 comb = Combined()
-'''
+"""
 
 
 @pytest.mark.parametrize(*e_exec)
@@ -107,13 +107,13 @@ def test_RestrictingNodeTransformer__visit_ClassDef__5(e_exec):
         _getattr_=getattr,
         _write_=lambda x: x,
         __metaclass__=type,
-        __name__='restricted_module',
+        __name__="restricted_module",
         __builtins__=safe_builtins,
     )
 
     e_exec(DECORATED_CLASS, restricted_globals)
 
-    comb = restricted_globals['comb']
+    comb = restricted_globals["comb"]
     assert comb.class_att == 2342
     assert comb.base_att == 42
     assert comb.wrap_att == 23

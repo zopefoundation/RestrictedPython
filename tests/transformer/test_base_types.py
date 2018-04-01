@@ -8,7 +8,7 @@ import pytest
 @pytest.mark.parametrize(*e_eval)
 def test_Num(e_eval):
     """It allows to use number literals."""
-    assert e_eval('42') == 42
+    assert e_eval("42") == 42
 
 
 @pytest.mark.parametrize(*e_eval)
@@ -20,12 +20,12 @@ def test_Bytes(e_eval):
 @pytest.mark.parametrize(*e_eval)
 def test_Set(e_eval):
     """It allows to use set literals."""
-    assert e_eval('{1, 2, 3}') == set([1, 2, 3])
+    assert e_eval("{1, 2, 3}") == set([1, 2, 3])
 
 
 @pytest.mark.skipif(IS_PY2, reason="... is new in Python 3")
 @pytest.mark.parametrize(*c_exec)
 def test_Ellipsis(c_exec):
     """It prevents using the `ellipsis` statement."""
-    result = c_exec('...')
-    assert result.errors == ('Line 1: Ellipsis statements are not allowed.',)
+    result = c_exec("...")
+    assert result.errors == ("Line 1: Ellipsis statements are not allowed.",)

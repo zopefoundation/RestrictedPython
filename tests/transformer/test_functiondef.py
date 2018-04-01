@@ -98,13 +98,13 @@ def test_RestrictingNodeTransformer__visit_FunctionDef__8(e_exec, mocker):
     _getiter_.side_effect = lambda it: it
 
     glb = {
-        '_getiter_': _getiter_, '_unpack_sequence_': guarded_unpack_sequence
+        "_getiter_": _getiter_, "_unpack_sequence_": guarded_unpack_sequence
     }
 
-    e_exec('def simple((a, b)): return a, b', glb)
+    e_exec("def simple((a, b)): return a, b", glb)
 
     val = (1, 2)
-    ret = glb['simple'](val)
+    ret = glb["simple"](val)
     assert ret == val
     _getiter_.assert_called_once_with(val)
     _getiter_.reset_mock()
@@ -112,7 +112,7 @@ def test_RestrictingNodeTransformer__visit_FunctionDef__8(e_exec, mocker):
     e_exec(NESTED_SEQ_UNPACK, glb)
 
     val = (1, 2, (3, (4, 5)))
-    ret = glb['nested'](val)
+    ret = glb["nested"](val)
     assert ret == (1, 2, 3, 4, 5)
     assert 3 == _getiter_.call_count
     _getiter_.assert_any_call(val)
@@ -120,7 +120,7 @@ def test_RestrictingNodeTransformer__visit_FunctionDef__8(e_exec, mocker):
     _getiter_.assert_any_call(val[2][1])
     _getiter_.reset_mock()
 
-    ret = glb['nested_with_order']((1, 2), (3, 4))
+    ret = glb["nested_with_order"]((1, 2), (3, 4))
     assert ret == (1, 2, 3, 4)
     _getiter_.assert_has_calls([mocker.call((1, 2)), mocker.call((3, 4))])
     _getiter_.reset_mock()

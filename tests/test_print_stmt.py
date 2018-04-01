@@ -35,37 +35,37 @@ print('Hello World!', 'Hello Earth!')
 
 @pytest.mark.parametrize(*c_exec)
 def test_print_stmt__simple_prints(c_exec):
-    glb = {'_print_': PrintCollector, '_getattr_': None}
+    glb = {"_print_": PrintCollector, "_getattr_": None}
 
     code, errors = c_exec(ALLOWED_PRINT_STATEMENT)[:2]
     assert code is not None
     assert errors == ()
-    exec (code, glb)
-    assert glb['_print']() == 'Hello World!\n'
+    exec(code, glb)
+    assert glb["_print"]() == "Hello World!\n"
 
     code, errors = c_exec(ALLOWED_PRINT_STATEMENT_WITH_NO_NL)[:2]
     assert code is not None
     assert errors == ()
-    exec (code, glb)
-    assert glb['_print']() == 'Hello World!'
+    exec(code, glb)
+    assert glb["_print"]() == "Hello World!"
 
     code, errors = c_exec(ALLOWED_MULTI_PRINT_STATEMENT)[:2]
     assert code is not None
     assert errors == ()
-    exec (code, glb)
-    assert glb['_print']() == 'Hello World! Hello Earth!\n'
+    exec(code, glb)
+    assert glb["_print"]() == "Hello World! Hello Earth!\n"
 
     code, errors = c_exec(ALLOWED_PRINT_TUPLE)[:2]
     assert code is not None
     assert errors == ()
-    exec (code, glb)
-    assert glb['_print']() == "Hello World!\n"
+    exec(code, glb)
+    assert glb["_print"]() == "Hello World!\n"
 
     code, errors = c_exec(ALLOWED_PRINT_MULTI_TUPLE)[:2]
     assert code is not None
     assert errors == ()
-    exec (code, glb)
-    assert glb['_print']() == "('Hello World!', 'Hello Earth!')\n"
+    exec(code, glb)
+    assert glb["_print"]() == "('Hello World!', 'Hello Earth!')\n"
 
 
 @pytest.mark.parametrize(*c_exec)
@@ -75,10 +75,10 @@ def test_print_stmt__fail_with_none_target(c_exec, mocker):
     assert code is not None
     assert errors == ()
 
-    glb = {'_getattr_': getattr, '_print_': PrintCollector}
+    glb = {"_getattr_": getattr, "_print_": PrintCollector}
 
     with pytest.raises(AttributeError) as excinfo:
-        exec (code, glb)
+        exec(code, glb)
 
     assert "'NoneType' object has no attribute 'write'" in str(excinfo.value)
 
@@ -95,19 +95,19 @@ def test_print_stmt__protect_chevron_print(c_exec, mocker):
 
     _getattr_ = mocker.stub()
     _getattr_.side_effect = getattr
-    glb = {'_getattr_': _getattr_, '_print_': PrintCollector}
+    glb = {"_getattr_": _getattr_, "_print_": PrintCollector}
 
-    exec (code, glb)
+    exec(code, glb)
 
     stream = mocker.stub()
     stream.write = mocker.stub()
-    glb['print_into_stream'](stream)
+    glb["print_into_stream"](stream)
 
     stream.write.assert_has_calls(
-        [mocker.call('Hello World!'), mocker.call('\n')]
+        [mocker.call("Hello World!"), mocker.call("\n")]
     )
 
-    _getattr_.assert_called_once_with(stream, 'write')
+    _getattr_.assert_called_once_with(stream, "write")
 
 
 # 'printed' is scope aware.
@@ -135,11 +135,11 @@ def main():
 def test_print_stmt__nested_print_collector(c_exec, mocker):
     code, errors = c_exec(INJECT_PRINT_COLLECTOR_NESTED)[:2]
 
-    glb = {"_print_": PrintCollector, '_getattr_': None}
-    exec (code, glb)
+    glb = {"_print_": PrintCollector, "_getattr_": None}
+    exec(code, glb)
 
-    ret = glb['main']()
-    assert ret == 'inner\nf1\nf2main\n'
+    ret = glb["main"]()
+    assert ret == "inner\nf1\nf2main\n"
 
 
 WARN_PRINTED_NO_PRINT = """
@@ -232,11 +232,11 @@ def class_scope():
 @pytest.mark.parametrize(*c_exec)
 def test_print_stmt_no_new_scope(c_exec):
     code, errors = c_exec(NO_PRINT_SCOPES)[:2]
-    glb = {'_print_': PrintCollector, '_getattr_': None}
-    exec (code, glb)
+    glb = {"_print_": PrintCollector, "_getattr_": None}
+    exec(code, glb)
 
-    ret = glb['class_scope']()
-    assert ret == 'a\n'
+    ret = glb["class_scope"]()
+    assert ret == "a\n"
 
 
 CONDITIONAL_PRINT = """
@@ -250,8 +250,8 @@ def func(cond):
 @pytest.mark.parametrize(*c_exec)
 def test_print_stmt_conditional_print(c_exec):
     code, errors = c_exec(CONDITIONAL_PRINT)[:2]
-    glb = {'_print_': PrintCollector, '_getattr_': None}
-    exec (code, glb)
+    glb = {"_print_": PrintCollector, "_getattr_": None}
+    exec(code, glb)
 
-    assert glb['func'](True) == '1\n'
-    assert glb['func'](False) == ''
+    assert glb["func"](True) == "1\n"
+    assert glb["func"](False) == ""

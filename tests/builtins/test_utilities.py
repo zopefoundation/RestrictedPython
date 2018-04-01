@@ -2,40 +2,40 @@ def test_string_in_utility_builtins():
     import string
     from RestrictedPython.Utilities import utility_builtins
 
-    assert utility_builtins['string'] is string
+    assert utility_builtins["string"] is string
 
 
 def test_math_in_utility_builtins():
     import math
     from RestrictedPython.Utilities import utility_builtins
 
-    assert utility_builtins['math'] is math
+    assert utility_builtins["math"] is math
 
 
 def test_whrandom_in_utility_builtins():
     import random
     from RestrictedPython.Utilities import utility_builtins
 
-    assert utility_builtins['whrandom'] is random
+    assert utility_builtins["whrandom"] is random
 
 
 def test_random_in_utility_builtins():
     import random
     from RestrictedPython.Utilities import utility_builtins
 
-    assert utility_builtins['random'] is random
+    assert utility_builtins["random"] is random
 
 
 def test_set_in_utility_builtins():
     from RestrictedPython.Utilities import utility_builtins
 
-    assert utility_builtins['set'] is set
+    assert utility_builtins["set"] is set
 
 
 def test_frozenset_in_utility_builtins():
     from RestrictedPython.Utilities import utility_builtins
 
-    assert utility_builtins['frozenset'] is frozenset
+    assert utility_builtins["frozenset"] is frozenset
 
 
 def test_DateTime_in_utility_builtins_if_importable():
@@ -53,21 +53,21 @@ def test_same_type_in_utility_builtins():
     from RestrictedPython.Utilities import same_type
     from RestrictedPython.Utilities import utility_builtins
 
-    assert utility_builtins['same_type'] is same_type
+    assert utility_builtins["same_type"] is same_type
 
 
 def test_test_in_utility_builtins():
     from RestrictedPython.Utilities import test
     from RestrictedPython.Utilities import utility_builtins
 
-    assert utility_builtins['test'] is test
+    assert utility_builtins["test"] is test
 
 
 def test_reorder_in_utility_builtins():
     from RestrictedPython.Utilities import reorder
     from RestrictedPython.Utilities import utility_builtins
 
-    assert utility_builtins['reorder'] is reorder
+    assert utility_builtins["reorder"] is reorder
 
 
 def test_sametype_only_one_arg():
@@ -121,53 +121,53 @@ def test_test_single_value_False():
 def test_test_even_values_first_true():
     from RestrictedPython.Utilities import test
 
-    assert test(True, 'first', True, 'second') == 'first'
+    assert test(True, "first", True, "second") == "first"
 
 
 def test_test_even_values_not_first_true():
     from RestrictedPython.Utilities import test
 
-    assert test(False, 'first', True, 'second') == 'second'
+    assert test(False, "first", True, "second") == "second"
 
 
 def test_test_odd_values_first_true():
     from RestrictedPython.Utilities import test
 
-    assert test(True, 'first', True, 'second', False) == 'first'
+    assert test(True, "first", True, "second", False) == "first"
 
 
 def test_test_odd_values_not_first_true():
     from RestrictedPython.Utilities import test
 
-    assert test(False, 'first', True, 'second', False) == 'second'
+    assert test(False, "first", True, "second", False) == "second"
 
 
 def test_test_odd_values_last_true():
     from RestrictedPython.Utilities import test
 
-    assert test(False, 'first', False, 'second', 'third') == 'third'
+    assert test(False, "first", False, "second", "third") == "third"
 
 
 def test_test_odd_values_last_false():
     from RestrictedPython.Utilities import test
 
-    assert test(False, 'first', False, 'second', False) is False
+    assert test(False, "first", False, "second", False) is False
 
 
 def test_reorder_with__None():
     from RestrictedPython.Utilities import reorder
 
-    before = ['a', 'b', 'c', 'd', 'e']
-    without = ['a', 'c', 'e']
+    before = ["a", "b", "c", "d", "e"]
+    without = ["a", "c", "e"]
     after = reorder(before, without=without)
-    assert after == [('b', 'b'), ('d', 'd')]
+    assert after == [("b", "b"), ("d", "d")]
 
 
 def test_reorder_with__not_None():
     from RestrictedPython.Utilities import reorder
 
-    before = ['a', 'b', 'c', 'd', 'e']
-    with_ = ['a', 'd']
-    without = ['a', 'c', 'e']
+    before = ["a", "b", "c", "d", "e"]
+    with_ = ["a", "d"]
+    without = ["a", "c", "e"]
     after = reorder(before, with_=with_, without=without)
-    assert after == [('d', 'd')]
+    assert after == [("d", "d")]

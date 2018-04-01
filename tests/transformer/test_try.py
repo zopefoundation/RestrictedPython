@@ -20,9 +20,9 @@ def try_except(m):
 def test_RestrictingNodeTransformer__visit_Try__1(e_exec, mocker):
     """It allows try-except statements."""
     trace = mocker.stub()
-    e_exec(TRY_EXCEPT)['try_except'](trace)
+    e_exec(TRY_EXCEPT)["try_except"](trace)
 
-    trace.assert_has_calls([mocker.call('try'), mocker.call('except')])
+    trace.assert_has_calls([mocker.call("try"), mocker.call("except")])
 
 
 TRY_EXCEPT_ELSE = """
@@ -40,9 +40,9 @@ def try_except_else(m):
 def test_RestrictingNodeTransformer__visit_Try__2(e_exec, mocker):
     """It allows try-except-else statements."""
     trace = mocker.stub()
-    e_exec(TRY_EXCEPT_ELSE)['try_except_else'](trace)
+    e_exec(TRY_EXCEPT_ELSE)["try_except_else"](trace)
 
-    trace.assert_has_calls([mocker.call('try'), mocker.call('else')])
+    trace.assert_has_calls([mocker.call("try"), mocker.call("else")])
 
 
 TRY_FINALLY = """
@@ -60,9 +60,9 @@ def try_finally(m):
 def test_RestrictingNodeTransformer__visit_TryFinally__1(e_exec, mocker):
     """It allows try-finally statements."""
     trace = mocker.stub()
-    e_exec(TRY_FINALLY)['try_finally'](trace)
+    e_exec(TRY_FINALLY)["try_finally"](trace)
 
-    trace.assert_has_calls([mocker.call('try'), mocker.call('finally')])
+    trace.assert_has_calls([mocker.call("try"), mocker.call("finally")])
 
 
 TRY_EXCEPT_FINALLY = """
@@ -81,10 +81,10 @@ def try_except_finally(m):
 def test_RestrictingNodeTransformer__visit_TryFinally__2(e_exec, mocker):
     """It allows try-except-finally statements."""
     trace = mocker.stub()
-    e_exec(TRY_EXCEPT_FINALLY)['try_except_finally'](trace)
+    e_exec(TRY_EXCEPT_FINALLY)["try_except_finally"](trace)
 
     trace.assert_has_calls(
-        [mocker.call('try'), mocker.call('except'), mocker.call('finally')]
+        [mocker.call("try"), mocker.call("except"), mocker.call("finally")]
     )
 
 
@@ -105,10 +105,10 @@ def try_except_else_finally(m):
 def test_RestrictingNodeTransformer__visit_TryFinally__3(e_exec, mocker):
     """It allows try-except-else-finally statements."""
     trace = mocker.stub()
-    e_exec(TRY_EXCEPT_ELSE_FINALLY)['try_except_else_finally'](trace)
+    e_exec(TRY_EXCEPT_ELSE_FINALLY)["try_except_else_finally"](trace)
 
     trace.assert_has_calls(
-        [mocker.call('try'), mocker.call('else'), mocker.call('finally')]
+        [mocker.call("try"), mocker.call("else"), mocker.call("finally")]
     )
 
 
@@ -130,12 +130,12 @@ def test_RestrictingNodeTransformer__visit_ExceptHandler__1(e_exec, mocker):
     _getiter_.side_effect = lambda it: it
 
     glb = {
-        '_getiter_': _getiter_, '_unpack_sequence_': guarded_unpack_sequence
+        "_getiter_": _getiter_, "_unpack_sequence_": guarded_unpack_sequence
     }
 
     e_exec(EXCEPT_WITH_TUPLE_UNPACK, glb)
     err = Exception(1, (2, 3))
-    ret = glb['tuple_unpack'](err)
+    ret = glb["tuple_unpack"](err)
     assert ret == 6
 
     _getiter_.assert_has_calls([mocker.call(err), mocker.call((2, 3))])

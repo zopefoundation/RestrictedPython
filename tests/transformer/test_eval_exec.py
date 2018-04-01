@@ -18,7 +18,7 @@ def no_exec():
 def test_RestrictingNodeTransformer__visit_Exec__1(c_exec):
     """It prevents using the `exec` statement. (Python 2 only)"""
     result = c_exec(EXEC_STATEMENT)
-    assert result.errors == ('Line 2: Exec statements are not allowed.',)
+    assert result.errors == ("Line 2: Exec statements are not allowed.",)
 
 
 EXEC_FUNCTION = """\
