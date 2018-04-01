@@ -26,7 +26,7 @@ def test_Utilities__test_3():
 
 def test_Utilities__reorder_1():
     """It also supports 2-tuples containing key, value."""
-    s = [('k1', 'v1'), ('k2', 'v2'), ('k3', 'v3')]
-    _with = [('k2', 'v2'), ('k3', 'v3')]
-    without = [('k2', 'v2'), ('k4', 'v4')]
-    assert reorder(s, _with, without) == [('k3', 'v3')]
+    s = [("k1", "v1"), ("k2", "v2"), ("k3", "v3")]
+    _with = [("k2", "v2"), ("k3", "v3")]
+    without = [("k2", "v2"), ("k4", "v4")]
+    assert reorder(s, _with, without) == [("k3", "v3")]

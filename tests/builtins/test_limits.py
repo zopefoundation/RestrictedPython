@@ -58,7 +58,7 @@ def test_limited_list_valid_list_input():
 
 def test_limited_list_invalid_string_input():
     with pytest.raises(TypeError):
-        limited_list('input')
+        limited_list("input")
 
 
 def test_limited_tuple_valid_list_input():
@@ -69,4 +69,4 @@ def test_limited_tuple_valid_list_input():
 
 def test_limited_tuple_invalid_string_input():
     with pytest.raises(TypeError):
-        limited_tuple('input')
+        limited_tuple("input")

@@ -6,7 +6,7 @@ matrix:
         - python: "2.7"
           env: TOXENV=docs,lint-py27
         - python: "3.6"
-          env: TOXENV=docs,lint-py36
+          env: TOXENV=docs,lint-py36,black-check
         - python: "2.7"
           env: TOXENV=py27
         - python: "2.7"

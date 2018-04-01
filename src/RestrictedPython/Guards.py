@@ -28,101 +28,92 @@ else:
 safe_builtins = {}
 
 _safe_names = [
-    'None',
-    'False',
-    'True',
-    'abs',
-    'bool',
-    'callable',
-    'chr',
-    'complex',
-    'divmod',
-    'float',
-    'hash',
-    'hex',
-    'id',
-    'int',
-    'isinstance',
-    'issubclass',
-    'len',
-    'oct',
-    'ord',
-    'pow',
-    'range',
-    'repr',
-    'round',
-    'slice',
-    'str',
-    'tuple',
-    'zip'
+    "None",
+    "False",
+    "True",
+    "abs",
+    "bool",
+    "callable",
+    "chr",
+    "complex",
+    "divmod",
+    "float",
+    "hash",
+    "hex",
+    "id",
+    "int",
+    "isinstance",
+    "issubclass",
+    "len",
+    "oct",
+    "ord",
+    "pow",
+    "range",
+    "repr",
+    "round",
+    "slice",
+    "str",
+    "tuple",
+    "zip",
 ]
 
 _safe_exceptions = [
-    'ArithmeticError',
-    'AssertionError',
-    'AttributeError',
-    'BaseException',
-    'BufferError',
-    'BytesWarning',
-    'DeprecationWarning',
-    'EOFError',
-    'EnvironmentError',
-    'Exception',
-    'FloatingPointError',
-    'FutureWarning',
-    'GeneratorExit',
-    'IOError',
-    'ImportError',
-    'ImportWarning',
-    'IndentationError',
-    'IndexError',
-    'KeyError',
-    'KeyboardInterrupt',
-    'LookupError',
-    'MemoryError',
-    'NameError',
-    'NotImplementedError',
-    'OSError',
-    'OverflowError',
-    'PendingDeprecationWarning',
-    'ReferenceError',
-    'RuntimeError',
-    'RuntimeWarning',
-    'StopIteration',
-    'SyntaxError',
-    'SyntaxWarning',
-    'SystemError',
-    'SystemExit',
-    'TabError',
-    'TypeError',
-    'UnboundLocalError',
-    'UnicodeDecodeError',
-    'UnicodeEncodeError',
-    'UnicodeError',
-    'UnicodeTranslateError',
-    'UnicodeWarning',
-    'UserWarning',
-    'ValueError',
-    'Warning',
-    'ZeroDivisionError',
+    "ArithmeticError",
+    "AssertionError",
+    "AttributeError",
+    "BaseException",
+    "BufferError",
+    "BytesWarning",
+    "DeprecationWarning",
+    "EOFError",
+    "EnvironmentError",
+    "Exception",
+    "FloatingPointError",
+    "FutureWarning",
+    "GeneratorExit",
+    "IOError",
+    "ImportError",
+    "ImportWarning",
+    "IndentationError",
+    "IndexError",
+    "KeyError",
+    "KeyboardInterrupt",
+    "LookupError",
+    "MemoryError",
+    "NameError",
+    "NotImplementedError",
+    "OSError",
+    "OverflowError",
+    "PendingDeprecationWarning",
+    "ReferenceError",
+    "RuntimeError",
+    "RuntimeWarning",
+    "StopIteration",
+    "SyntaxError",
+    "SyntaxWarning",
+    "SystemError",
+    "SystemExit",
+    "TabError",
+    "TypeError",
+    "UnboundLocalError",
+    "UnicodeDecodeError",
+    "UnicodeEncodeError",
+    "UnicodeError",
+    "UnicodeTranslateError",
+    "UnicodeWarning",
+    "UserWarning",
+    "ValueError",
+    "Warning",
+    "ZeroDivisionError",
 ]
 
 if _compat.IS_PY2:
-    _safe_names.extend([
-        'basestring',
-        'cmp',
-        'long',
-        'unichr',
-        'unicode',
-        'xrange',
-    ])
-    _safe_exceptions.extend([
-        'StandardError',
-    ])
+    _safe_names.extend(
+        ["basestring", "cmp", "long", "unichr", "unicode", "xrange"]
+    )
+    _safe_exceptions.extend(["StandardError"])
 else:
-    _safe_names.extend([
-        '__build_class__',  # needed to define new classes
-    ])
+    _safe_names.extend(["__build_class__"])  # needed to define new classes
 
 for name in _safe_names:
     safe_builtins[name] = getattr(builtins, name)
@@ -191,35 +182,43 @@ for name in _safe_exceptions:
 
 def _write_wrapper():
     # Construct the write wrapper class
+
     def _handler(secattr, error_msg):
         # Make a class method.
+
         def handler(self, *args):
             try:
                 f = getattr(self.ob, secattr)
             except AttributeError:
                 raise TypeError(error_msg)
+
             f(*args)
+
         return handler
 
     class Wrapper(object):
+
         def __init__(self, ob):
-            self.__dict__['ob'] = ob
+            self.__dict__["ob"] = ob
 
         __setitem__ = _handler(
-            '__guarded_setitem__',
-            'object does not support item or slice assignment')
+            "__guarded_setitem__",
+            "object does not support item or slice assignment",
+        )
 
         __delitem__ = _handler(
-            '__guarded_delitem__',
-            'object does not support item or slice assignment')
+            "__guarded_delitem__",
+            "object does not support item or slice assignment",
+        )
 
         __setattr__ = _handler(
-            '__guarded_setattr__',
-            'attribute-less object (assign or del)')
+            "__guarded_setattr__", "attribute-less object (assign or del)"
+        )
 
         __delattr__ = _handler(
-            '__guarded_delattr__',
-            'attribute-less object (assign or del)')
+            "__guarded_delattr__", "attribute-less object (assign or del)"
+        )
+
     return Wrapper
 
 
@@ -232,10 +231,12 @@ def _full_write_guard():
     def guard(ob):
         # Don't bother wrapping simple types, or objects that claim to
         # handle their own write security.
-        if type(ob) in safetypes or hasattr(ob, '_guarded_writes'):
+        if type(ob) in safetypes or hasattr(ob, "_guarded_writes"):
             return ob
+
         # Hand the object to the Wrapper instance, then return the instance.
         return Wrapper(ob)
+
     return guard
 
 
@@ -246,14 +247,14 @@ def guarded_setattr(object, name, value):
     setattr(full_write_guard(object), name, value)
 
 
-safe_builtins['setattr'] = guarded_setattr
+safe_builtins["setattr"] = guarded_setattr
 
 
 def guarded_delattr(object, name):
     delattr(full_write_guard(object), name)
 
 
-safe_builtins['delattr'] = guarded_delattr
+safe_builtins["delattr"] = guarded_delattr
 
 
 def safer_getattr(object, name, getattr=getattr):
@@ -263,13 +264,15 @@ def safer_getattr(object, name, getattr=getattr):
     http://lucumr.pocoo.org/2016/12/29/careful-with-str-format/
 
     """
-    if isinstance(object, _compat.basestring) and name == 'format':
+    if isinstance(object, _compat.basestring) and name == "format":
         raise NotImplementedError(
-            'Using format() on a %s is not safe.' % object.__class__.__name__)
+            "Using format() on a %s is not safe." % object.__class__.__name__
+        )
+
     return getattr(object, name)
 
 
-safe_builtins['_getattr_'] = safer_getattr
+safe_builtins["_getattr_"] = safer_getattr
 
 
 def guarded_iter_unpack_sequence(it, spec, _getiter_):
@@ -300,11 +303,11 @@ def guarded_unpack_sequence(it, spec, _getiter_):
     # If the sequence is shorter then expected the interpreter will raise
     # 'ValueError: need more than X value to unpack' anyway
     # => No childs are unpacked => nothing to protect.
-    if len(ret) < spec['min_len']:
+    if len(ret) < spec["min_len"]:
         return ret
 
     # For all child elements do the guarded unpacking again.
-    for (idx, child_spec) in spec['childs']:
+    for (idx, child_spec) in spec["childs"]:
         ret[idx] = guarded_unpack_sequence(ret[idx], child_spec, _getiter_)
 
     return ret

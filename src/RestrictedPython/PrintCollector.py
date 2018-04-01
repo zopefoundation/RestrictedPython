@@ -24,12 +24,12 @@ class PrintCollector(object):
         self.txt.append(text)
 
     def __call__(self):
-        return ''.join(self.txt)
+        return "".join(self.txt)
 
     def _call_print(self, *objects, **kwargs):
-        if kwargs.get('file', None) is None:
-            kwargs['file'] = self
+        if kwargs.get("file", None) is None:
+            kwargs["file"] = self
         else:
-            self._getattr_(kwargs['file'], 'write')
+            self._getattr_(kwargs["file"], "write")
 
         print(*objects, **kwargs)

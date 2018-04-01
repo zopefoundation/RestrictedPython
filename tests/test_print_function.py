@@ -45,49 +45,49 @@ print ('a', 'b', file=None)
 
 
 def test_print_function__simple_prints():
-    glb = {'_print_': PrintCollector, '_getattr_': None}
+    glb = {"_print_": PrintCollector, "_getattr_": None}
 
     code, errors = compiler(ALLOWED_PRINT_FUNCTION)[:2]
     assert errors == ()
     assert code is not None
     exec(code, glb)
-    assert glb['_print']() == 'Hello World!\n'
+    assert glb["_print"]() == "Hello World!\n"
 
     code, errors = compiler(ALLOWED_PRINT_FUNCTION_WITH_END)[:2]
     assert code is not None
     assert errors == ()
     exec(code, glb)
-    assert glb['_print']() == 'Hello World!'
+    assert glb["_print"]() == "Hello World!"
 
     code, errors = compiler(ALLOWED_PRINT_FUNCTION_MULTI_ARGS)[:2]
     assert code is not None
     assert errors == ()
     exec(code, glb)
-    assert glb['_print']() == 'Hello World! Hello Earth!\n'
+    assert glb["_print"]() == "Hello World! Hello Earth!\n"
 
     code, errors = compiler(ALLOWED_PRINT_FUNCTION_WITH_SEPARATOR)[:2]
     assert code is not None
     assert errors == ()
     exec(code, glb)
-    assert glb['_print']() == "a|b|c!"
+    assert glb["_print"]() == "a|b|c!"
 
     code, errors = compiler(PRINT_FUNCTION_WITH_NONE_SEPARATOR)[:2]
     assert code is not None
     assert errors == ()
     exec(code, glb)
-    assert glb['_print']() == "a b\n"
+    assert glb["_print"]() == "a b\n"
 
     code, errors = compiler(PRINT_FUNCTION_WITH_NONE_END)[:2]
     assert code is not None
     assert errors == ()
     exec(code, glb)
-    assert glb['_print']() == "a b\n"
+    assert glb["_print"]() == "a b\n"
 
     code, errors = compiler(PRINT_FUNCTION_WITH_NONE_FILE)[:2]
     assert code is not None
     assert errors == ()
     exec(code, glb)
-    assert glb['_print']() == "a b\n"
+    assert glb["_print"]() == "a b\n"
 
 
 ALLOWED_PRINT_FUNCTION_WITH_STAR_ARGS = """
@@ -101,18 +101,14 @@ def test_print_function_with_star_args(mocker):
     _apply_ = mocker.stub()
     _apply_.side_effect = lambda func, *args, **kwargs: func(*args, **kwargs)
 
-    glb = {
-        '_print_': PrintCollector,
-        '_getattr_': None,
-        "_apply_": _apply_
-    }
+    glb = {"_print_": PrintCollector, "_getattr_": None, "_apply_": _apply_}
 
     code, errors = compiler(ALLOWED_PRINT_FUNCTION_WITH_STAR_ARGS)[:2]
     assert code is not None
     assert errors == ()
     exec(code, glb)
-    assert glb['_print']() == "1 2 3\n"
-    _apply_.assert_called_once_with(glb['_print']._call_print, 1, 2, 3)
+    assert glb["_print"]() == "1 2 3\n"
+    _apply_.assert_called_once_with(glb["_print"]._call_print, 1, 2, 3)
 
 
 ALLOWED_PRINT_FUNCTION_WITH_KWARGS = """
@@ -127,25 +123,16 @@ def test_print_function_with_kw_args(mocker):
     _apply_ = mocker.stub()
     _apply_.side_effect = lambda func, *args, **kwargs: func(*args, **kwargs)
 
-    glb = {
-        '_print_': PrintCollector,
-        '_getattr_': None,
-        "_apply_": _apply_
-    }
+    glb = {"_print_": PrintCollector, "_getattr_": None, "_apply_": _apply_}
 
     code, errors = compiler(ALLOWED_PRINT_FUNCTION_WITH_KWARGS)[:2]
     assert code is not None
     assert errors == ()
     exec(code, glb)
-    assert glb['_print']() == "1-2-3!"
+    assert glb["_print"]() == "1-2-3!"
     _apply_.assert_called_once_with(
-        glb['_print']._call_print,
-        1,
-        2,
-        3,
-        end='!',
-        file=None,
-        sep='-')
+        glb["_print"]._call_print, 1, 2, 3, end="!", file=None, sep="-"
+    )
 
 
 PROTECT_WRITE_ON_FILE = """
@@ -160,11 +147,7 @@ def test_print_function__protect_file(mocker):
     stream = mocker.stub()
     stream.write = mocker.stub()
 
-    glb = {
-        '_print_': PrintCollector,
-        '_getattr_': _getattr_,
-        'stream': stream
-    }
+    glb = {"_print_": PrintCollector, "_getattr_": _getattr_, "stream": stream}
 
     code, errors = compiler(PROTECT_WRITE_ON_FILE)[:2]
     assert code is not None
@@ -172,13 +155,15 @@ def test_print_function__protect_file(mocker):
 
     exec(code, glb)
 
-    _getattr_.assert_called_once_with(stream, 'write')
-    stream.write.assert_has_calls([
-        mocker.call('a'),
-        mocker.call(' '),
-        mocker.call('b'),
-        mocker.call('\n')
-    ])
+    _getattr_.assert_called_once_with(stream, "write")
+    stream.write.assert_has_calls(
+        [
+            mocker.call("a"),
+            mocker.call(" "),
+            mocker.call("b"),
+            mocker.call("\n"),
+        ]
+    )
 
 
 # 'printed' is scope aware.
@@ -206,11 +191,11 @@ def main():
 def test_print_function__nested_print_collector():
     code, errors = compiler(INJECT_PRINT_COLLECTOR_NESTED)[:2]
 
-    glb = {"_print_": PrintCollector, '_getattr_': None}
+    glb = {"_print_": PrintCollector, "_getattr_": None}
     exec(code, glb)
 
-    ret = glb['main']()
-    assert ret == 'inner\nf1\nf2main\n'
+    ret = glb["main"]()
+    assert ret == "inner\nf1\nf2main\n"
 
 
 WARN_PRINTED_NO_PRINT = """
@@ -303,21 +288,21 @@ def comprehension_scope():
 def test_print_function_no_new_scope():
     code, errors = compiler(NO_PRINT_SCOPES)[:2]
     glb = {
-        '_print_': PrintCollector,
-        '__metaclass__': type,
-        '_getattr_': None,
-        '_getiter_': lambda ob: ob
+        "_print_": PrintCollector,
+        "__metaclass__": type,
+        "_getattr_": None,
+        "_getiter_": lambda ob: ob,
     }
     exec(code, glb)
 
-    ret = glb['class_scope']()
-    assert ret == 'a\n'
+    ret = glb["class_scope"]()
+    assert ret == "a\n"
 
-    ret = glb['lambda_scope']()
-    assert ret == '1\n2\n'
+    ret = glb["lambda_scope"]()
+    assert ret == "1\n2\n"
 
-    ret = glb['comprehension_scope']()
-    assert ret == '1\n1\n'
+    ret = glb["comprehension_scope"]()
+    assert ret == "1\n1\n"
 
 
 PASS_PRINT_FUNCTION = """
@@ -334,11 +319,11 @@ def main():
 
 def test_print_function_pass_print_function():
     code, errors = compiler(PASS_PRINT_FUNCTION)[:2]
-    glb = {'_print_': PrintCollector, '_getattr_': None}
+    glb = {"_print_": PrintCollector, "_getattr_": None}
     exec(code, glb)
 
-    ret = glb['main']()
-    assert ret == '1\n2\n'
+    ret = glb["main"]()
+    assert ret == "1\n2\n"
 
 
 CONDITIONAL_PRINT = """
@@ -352,8 +337,8 @@ def func(cond):
 
 def test_print_function_conditional_print():
     code, errors = compiler(CONDITIONAL_PRINT)[:2]
-    glb = {'_print_': PrintCollector, '_getattr_': None}
+    glb = {"_print_": PrintCollector, "_getattr_": None}
     exec(code, glb)
 
-    assert glb['func'](True) == '1\n'
-    assert glb['func'](False) == ''
+    assert glb["func"](True) == "1\n"
+    assert glb["func"](False) == ""

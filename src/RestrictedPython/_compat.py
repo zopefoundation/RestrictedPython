@@ -13,4 +13,4 @@ if IS_PY2:
 else:
     basestring = str
 
-IS_CPYTHON = platform.python_implementation() == 'CPython'
+IS_CPYTHON = platform.python_implementation() == "CPython"

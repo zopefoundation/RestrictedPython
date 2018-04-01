@@ -16,7 +16,8 @@ def test_RestrictingNodeTransformer__visit_Name__1(c_exec):
     """It denies a variable name starting in `__`."""
     result = c_exec(BAD_NAME_STARTING_WITH_UNDERSCORE)
     assert result.errors == (
-        'Line 2: "__" is an invalid variable name because it starts with "_"',)
+        'Line 2: "__" is an invalid variable name because it starts with "_"',
+    )
 
 
 BAD_NAME_OVERRIDE_GUARD_WITH_NAME = """\
@@ -31,14 +32,15 @@ def test_RestrictingNodeTransformer__visit_Name__2(c_exec):
     result = c_exec(BAD_NAME_OVERRIDE_GUARD_WITH_NAME)
     assert result.errors == (
         'Line 2: "_getattr" is an invalid variable name because '
-        'it starts with "_"',)
+        'it starts with "_"',
+    )
 
 
 @pytest.mark.parametrize(*e_exec)
 def test_RestrictingNodeTransformer__visit_Name__2_5(e_exec):
     """It allows `_` as variable name."""
-    glb = e_exec('_ = 2411')
-    assert glb['_'] == 2411
+    glb = e_exec("_ = 2411")
+    assert glb["_"] == 2411
 
 
 BAD_NAME_OVERRIDE_OVERRIDE_GUARD_WITH_FUNCTION = """\
@@ -54,7 +56,8 @@ def test_RestrictingNodeTransformer__visit_Name__3(c_exec):
     result = c_exec(BAD_NAME_OVERRIDE_OVERRIDE_GUARD_WITH_FUNCTION)
     assert result.errors == (
         'Line 2: "_getattr" is an invalid variable name because it '
-        'starts with "_"',)
+        'starts with "_"',
+    )
 
 
 BAD_NAME_OVERRIDE_GUARD_WITH_CLASS = """\
@@ -70,7 +73,8 @@ def test_RestrictingNodeTransformer__visit_Name__4(c_exec):
     result = c_exec(BAD_NAME_OVERRIDE_GUARD_WITH_CLASS)
     assert result.errors == (
         'Line 2: "_getattr" is an invalid variable name because it '
-        'starts with "_"',)
+        'starts with "_"',
+    )
 
 
 BAD_NAME_IN_WITH = """\
@@ -86,7 +90,8 @@ def test_RestrictingNodeTransformer__visit_Name__4_4(c_exec):
     result = c_exec(BAD_NAME_IN_WITH)
     assert result.errors == (
         'Line 2: "_leading_underscore" is an invalid variable name because '
-        'it starts with "_"',)
+        'it starts with "_"',
+    )
 
 
 BAD_NAME_IN_COMPOUND_WITH = """\
@@ -102,7 +107,8 @@ def test_RestrictingNodeTransformer__visit_Name__4_5(c_exec):
     result = c_exec(BAD_NAME_IN_COMPOUND_WITH)
     assert result.errors == (
         'Line 2: "_restricted_name" is an invalid variable name because '
-        'it starts with "_"',)
+        'it starts with "_"',
+    )
 
 
 BAD_NAME_DICT_COMP = """\
@@ -117,7 +123,8 @@ def test_RestrictingNodeTransformer__visit_Name__4_6(c_exec):
     result = c_exec(BAD_NAME_DICT_COMP)
     assert result.errors == (
         'Line 2: "_restricted_name" is an invalid variable name because '
-        'it starts with "_"',)
+        'it starts with "_"',
+    )
 
 
 BAD_NAME_SET_COMP = """\
@@ -132,7 +139,8 @@ def test_RestrictingNodeTransformer__visit_Name__4_7(c_exec):
     result = c_exec(BAD_NAME_SET_COMP)
     assert result.errors == (
         'Line 2: "_restricted_name" is an invalid variable name because '
-        'it starts with "_"',)
+        'it starts with "_"',
+    )
 
 
 BAD_NAME_ENDING_WITH___ROLES__ = """\
@@ -147,7 +155,8 @@ def test_RestrictingNodeTransformer__visit_Name__5(c_exec):
     result = c_exec(BAD_NAME_ENDING_WITH___ROLES__)
     assert result.errors == (
         'Line 2: "myvar__roles__" is an invalid variable name because it '
-        'ends with "__roles__".',)
+        'ends with "__roles__".',
+    )
 
 
 BAD_NAME_PRINTED = """\
@@ -170,8 +179,7 @@ def bad_name():
 """
 
 
-@pytest.mark.skipif(IS_PY2,
-                    reason="print is a statement in Python 2")
+@pytest.mark.skipif(IS_PY2, reason="print is a statement in Python 2")
 @pytest.mark.parametrize(*c_exec)
 def test_RestrictingNodeTransformer__visit_Name__7(c_exec):
     """It denies a variable named `print`."""
