@@ -10,6 +10,7 @@
 *.egg
 *.egg-info
 /local.cfg
+/.eggs/
 /.installed.cfg
 /.mr.developer.cfg
 /_build/
