@@ -5,6 +5,9 @@ include tox.ini
 include .editorconfig
 exclude .editorconfig
 
+include appveyor.yml
+exclude appveyor.yml
+
 recursive-include docs *.ast
 recursive-include docs *.bat
 recursive-include docs *.py
