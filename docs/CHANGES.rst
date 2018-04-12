@@ -1,7 +1,7 @@
 Changes
 =======
 
-4.0b3 (unreleased)
+4.0b3 (2018-04-12)
 ------------------
 
 - Warn when using another Python implementation than CPython as it is not safe to use RestrictedPython with other versions than CPyton.
