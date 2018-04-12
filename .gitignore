@@ -1,35 +1,72 @@
-*.mo
+# Python
 *.py[cod]
-.coverage*
-pip-selfcheck.json
-pyvenv.cfg
-/.python-version
-/*.egg-info
-/.eggs/
+.cache
 /.Python
-/.cache
+
+#PyENV
+/.python-version
+
+# Packages / zc.buildout
+*.egg
+*.egg-info
+/local.cfg
+/.eggs/
 /.installed.cfg
 /.mr.developer.cfg
+/_build/
+/bin/
+/build/
+/develop-eggs/
+/dist/
+/eggs/
+/etc/
+/include/
+/lib/
+/local/
+/parts/
+/reports/
+/sdist/
+/share/
+/src-mrd/
+/var/
+
+# Installer logs
+pip-log.txt
+pip-selfcheck.json
+.plone.versioncheck.cache
+.plone.versioncheck.tracked.json
+
+# Unit test / coverage reports
+/.coverage*
+/coverage.xml
+/.tox
+.pytest_cache
+
+#Translations
+*.mo
+
+#Mr Developer
+.mr.developer.cfg
+
+# local config
+local.cfg
+secret.cfg
+
+# Codeintel
+.codeintel
+
+# Editors specific
+/.idea/
+/.Python
+/.ropeproject/
 /.project
 /.pydevproject
-/.tox
-/bin
-/build
-/develop-eggs
-/dist
-/reports
-/downloads
-/eggs
-/fake-eggs
-/htmlcov
-/report-*.html
-/include
-/lib
-/share
-/local.cfg
-/parts
-/src/*.egg-info
-/var
-coverage.xml
-docs/doctrees
-docs/html
+
+# Import Data
+/*.csv
+
+# JavaScript specific
+node_modules/
+
+# MAC specifics
+.DS_Store
