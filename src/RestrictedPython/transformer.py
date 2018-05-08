@@ -367,7 +367,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         if name is None:
             return
 
-        if name.startswith('_') and name != '_':
+        if name.startswith('_') and name != '_' and name != '__init__':
             self.error(
                 node,
                 '"{name}" is an invalid variable name because it '
