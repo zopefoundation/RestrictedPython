@@ -396,7 +396,8 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         if (name.startswith('_')
                 and name != '_'
                 and not (allow_magic_methods
-                         and name in ALLOWED_FUNC_NAMES)):
+                         and name in ALLOWED_FUNC_NAMES
+                         and node.col_offset != 0)):
             self.error(
                 node,
                 '"{name}" is an invalid variable name because it '

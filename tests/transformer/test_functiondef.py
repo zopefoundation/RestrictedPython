@@ -138,19 +138,6 @@ def test_RestrictingNodeTransformer__visit_FunctionDef__8(
     _getiter_.reset_mock()
 
 
-FUNC_NAMES_TEST = """
-def __init__(test):
-    test
-"""
-
-
-@pytest.mark.parametrize(*c_exec)
-def test_RestrictingNodeTransformer__module_func_def_name(c_exec):
-    """It allows to define functions with the name of allowed magic methods."""
-    result = c_exec(FUNC_NAMES_TEST)
-    assert result.errors == ()
-
-
 BLACKLISTED_FUNC_NAMES_CALL_TEST = """
 def __init__(test):
     test
@@ -161,9 +148,13 @@ __init__(1)
 
 @pytest.mark.parametrize(*c_exec)
 def test_RestrictingNodeTransformer__module_func_def_name_call(c_exec):
-    """It forbids to use names of allowed magic methods."""
+    """It forbids definition and usage of magic methods as functions ...
+
+    ... at module level.
+    """
     result = c_exec(BLACKLISTED_FUNC_NAMES_CALL_TEST)
     # assert result.errors == ('Line 1: ')
     assert result.errors == (
+        'Line 2: "__init__" is an invalid variable name because it starts with "_"',  # NOQA: E501
         'Line 5: "__init__" is an invalid variable name because it starts with "_"',  # NOQA: E501
     )
