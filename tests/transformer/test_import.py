@@ -71,3 +71,19 @@ def test_RestrictingNodeTransformer__visit_Import__9(c_exec):
     """It denies relative from importing as something starting with `_`."""
     result = c_exec('from .x import y as _leading_underscore')
     assert result.errors == (import_errmsg % '_leading_underscore',)
+
+
+@pytest.mark.parametrize(*c_exec)
+def test_RestrictingNodeTransformer__visit_Import_star__1(c_exec):
+    """It allows importing a module."""
+    result = c_exec('import *')
+    assert result.errors == ('Line 1: SyntaxError: invalid syntax in on statement: import *',)  # NOQA: E501
+    assert result.code is None
+
+
+@pytest.mark.parametrize(*c_exec)
+def test_RestrictingNodeTransformer__visit_Import_star__2(c_exec):
+    """It allows importing a module."""
+    result = c_exec('from a import *')
+    assert result.errors == ('Line 1: "*" imports are not allowed.',)
+    assert result.code is None

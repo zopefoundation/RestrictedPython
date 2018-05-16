@@ -4,7 +4,8 @@ Changes
 4.0b4 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Deny * imports
+  [loechel]
 
 
 4.0b3 (2018-04-12)
