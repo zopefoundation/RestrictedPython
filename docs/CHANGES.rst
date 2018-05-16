@@ -4,7 +4,8 @@ Changes
 4.0b4 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Allow special __method__ Names in Function Definition.
+  [loechel]
 
 
 4.0b3 (2018-04-12)
