@@ -363,6 +363,40 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         else:
             raise Exception("Unknown slice type: {0}".format(slice_))
 
+    def check_func_name(self, node, name):
+        """Check Function and Method names."""
+
+        # Check which special methodes in Python should be allowed
+        # https://docs.python.org/3/reference/datamodel.html#special-method-names
+        allowed_func_names = [
+            '__init__',
+            '__contains__',
+            '__lt__',
+            '__le__',
+            '__eq__',
+            '__ne__',
+            '__gt__',
+            '__ge__',
+        ]
+
+        blacklisted_func_names = [
+            'print',
+        ]
+
+        if name is None:
+            return
+
+        if name in blacklisted_func_names:
+            # Assignments to 'print' would lead to funny results.
+            self.error(node, '"{name}" is a reserved name.'.format(name=name))
+
+        if name.startswith('_') and name != '_' and \
+                name not in allowed_func_names:
+            self.error(
+                node,
+                '"{name}" is an invalid variable name because it '
+                'starts with "_"'.format(name=name))
+
     def check_name(self, node, name):
         if name is None:
             return
@@ -379,10 +413,6 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
 
         elif name == "printed":
             self.error(node, '"printed" is a reserved name.')
-
-        elif name == 'print':
-            # Assignments to 'print' would lead to funny results.
-            self.error(node, '"print" is a reserved name.')
 
     def check_function_argument_names(self, node):
         # In python3 arguments are always identifiers.
@@ -782,6 +812,8 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
                 self.error(node, 'Exec calls are not allowed.')
             elif node.func.id == 'eval':
                 self.error(node, 'Eval calls are not allowed.')
+            elif node.func.id.startswith('_'):
+                self.error(node, 'Call of private method.')
 
         needs_wrap = False
 
@@ -1232,7 +1264,8 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
 
     def visit_FunctionDef(self, node):
         """Allow function definitions (`def`) with some restrictions."""
-        self.check_name(node, node.name)
+
+        self.check_func_name(node, node.name)
         self.check_function_argument_names(node)
 
         with self.print_info.new_print_scope():

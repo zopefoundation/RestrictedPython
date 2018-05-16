@@ -108,3 +108,19 @@ def test_RestrictingNodeTransformer__visit_ClassDef__5(e_exec):
     assert comb.class_att == 2342
     assert comb.base_att == 42
     assert comb.wrap_att == 23
+
+
+CONSTRUCTOR_TEST = """\
+class Test(object):
+    def __init__(self, input):
+        self.input = input
+
+"""
+
+
+@pytest.mark.parametrize(*c_exec)
+def test_RestrictedCasses_init(c_exec):
+    """Check if __init__ is allowed."""
+    result = c_exec(CONSTRUCTOR_TEST)
+    assert result.errors == ()
+    assert result.code is not None

@@ -136,3 +136,17 @@ def test_RestrictingNodeTransformer__visit_FunctionDef__8(
         mocker.call((1, 2)),
         mocker.call((3, 4))])
     _getiter_.reset_mock()
+
+
+BLACKLISTED_FUNC_NAMES_TEST = """
+def __init__(test):
+    test
+"""
+
+
+@pytest.mark.parametrize(*c_exec)
+def test_RestrictingNodeTransformer__module_func_def_name(c_exec):
+    """"""
+    result = c_exec(BLACKLISTED_FUNC_NAMES_TEST)
+    # assert result.errors == ('Line 1: ')
+    assert result.errors == ()
