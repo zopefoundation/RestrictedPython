@@ -15,7 +15,7 @@
 /.mr.developer.cfg
 /_build/
 /bin/
-/build/
+/_build/
 /develop-eggs/
 /dist/
 /eggs/
@@ -24,7 +24,6 @@
 /lib/
 /local/
 /parts/
-/reports/
 /sdist/
 /share/
 /src-mrd/
