@@ -138,7 +138,7 @@ def test_RestrictingNodeTransformer__visit_FunctionDef__8(
     _getiter_.reset_mock()
 
 
-BLACKLISTED_FUNC_NAMES_TEST = """
+FUNC_NAMES_TEST = """
 def __init__(test):
     test
 """
@@ -147,6 +147,24 @@ def __init__(test):
 @pytest.mark.parametrize(*c_exec)
 def test_RestrictingNodeTransformer__module_func_def_name(c_exec):
     """"""
-    result = c_exec(BLACKLISTED_FUNC_NAMES_TEST)
-    # assert result.errors == ('Line 1: ')
+    result = c_exec(FUNC_NAMES_TEST)
     assert result.errors == ()
+
+
+BLACKLISTED_FUNC_NAMES_CALL_TEST = """
+def __init__(test):
+    test
+
+__init__(1)
+"""
+
+
+@pytest.mark.parametrize(*c_exec)
+def test_RestrictingNodeTransformer__module_func_def_name_call(c_exec):
+    """"""
+    result = c_exec(BLACKLISTED_FUNC_NAMES_CALL_TEST)
+    # assert result.errors == ('Line 1: ')
+    assert result.errors == (
+        'Line 5: Call of private method.',
+        'Line 5: "__init__" is an invalid variable name because it starts with "_"',  # NOQA: E501
+    )
