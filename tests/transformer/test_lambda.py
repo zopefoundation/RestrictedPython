@@ -117,3 +117,18 @@ def test_RestrictingNodeTransformer__visit_Lambda__9(
     assert 2 == _getiter_.call_count
     _getiter_.assert_any_call((1, (2, 3)))
     _getiter_.assert_any_call((2, 3))
+
+
+LAMBDA_FUNC = """
+g = lambda x: x ** 2
+"""
+
+
+@pytest.mark.parametrize(*e_exec)
+def test_RestrictingNodeTransformer__visit_Lambda__10(e_exec):
+    """classical lambda functions shoulb be allowed."""
+    restricted_globals = dict(
+        g=None,
+    )
+    e_exec(LAMBDA_FUNC, restricted_globals)
+    assert restricted_globals['g'](2) == 4

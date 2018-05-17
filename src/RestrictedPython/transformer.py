@@ -1305,6 +1305,8 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
 
     def visit_Lambda(self, node):
         """Allow lambda with some restrictions."""
+        # TODO: Review again --> Why is PY3 case uncritical
+        #       and why is it uncritical if all args are not tuples?
         self.check_function_argument_names(node)
 
         node = self.node_contents_visit(node)
@@ -1331,7 +1333,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
                 outer_params.append(ast.Name(tmp_name, ast.Param()))
                 inner_args.append(converter)
 
-            else:
+            else:  # TODO: Impossible Case as tuple check above breaks that.
                 outer_params.append(arg)
                 inner_args.append(ast.Name(arg.id, ast.Load()))
 
