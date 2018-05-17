@@ -4,7 +4,10 @@ Changes
 4.0b4 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Imports like `from a import *` (so called star imports) are now forbidden as
+  they allow to import names starting with an underscore which could override
+  protected build-ins.
+  (`#102 <https://github.com/zopefoundation/RestrictedPython/issues/102>`_)
 
 
 4.0b3 (2018-04-12)
