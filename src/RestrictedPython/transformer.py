@@ -313,8 +313,11 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
             ctx = ast.Store()
         elif ctx == 'param':
             ctx = ast.Param()
-        else:
-            raise Exception('Unsupported context type.')
+        else:  # pragma: no cover
+            # Only store and param are defined ctx.
+            raise Exception(
+                'Unsupported context type: "{name}".'.format(name=type(ctx)),
+            )
 
         # This node is used to catch the tuple in a tmp variable.
         tmp_target = ast.Name(tmp_name, ctx)
@@ -380,7 +383,8 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
                 dims.elts.append(self.transform_slice(item))
             return dims
 
-        else:
+        else:  # pragma: no cover
+            # Index, Slice and ExtSlice are only defined Slice types.
             raise Exception("Unknown slice type: {0}".format(slice_))
 
     def check_name(self, node, name, allow_magic_methods=False):
@@ -892,7 +896,8 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
             node.value = new_value
             return node
 
-        else:
+        else:  # pragma: no cover
+            # Impossible Case only ctx Load, Store and Del are defined in ast.
             return self.node_contents_visit(node)
 
     # Subscripting
@@ -937,7 +942,8 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
             node.value = new_value
             return node
 
-        else:
+        else:  # pragma: no cover
+            # Impossible Case only ctx Load, Store and Del are defined in ast.
             return node
 
     def visit_Index(self, node):
@@ -1083,8 +1089,20 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
 
             copy_locations(new_node, node)
             return new_node
-
-        return node
+        else:  # pragma: no cover
+            # Impossible Case - Only Node Types:
+            # * Name
+            # * Attribute
+            # * Subscript
+            # defined, those are checked before.
+            self.error(
+                node,
+                'Node Type "{name}" is used, '
+                'but not possible as Language Reference states.'.format(
+                    name=type(node),
+                )
+            )
+            return node
 
     def visit_Print(self, node):
         """Checks and mutates a print statement.
