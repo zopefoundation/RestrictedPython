@@ -1411,7 +1411,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
 
         # Inject the print collector after 'from __future__ import ....'
         position = 0
-        for position, child in enumerate(node.body):
+        for position, child in enumerate(node.body):  # pragma: no branch
             if not isinstance(child, ast.ImportFrom):
                 break
 
