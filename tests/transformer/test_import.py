@@ -45,44 +45,24 @@ def test_RestrictingNodeTransformer__visit_Import__5(c_exec):
 
 
 @pytest.mark.parametrize(*c_exec)
-def test_RestrictingNodeTransformer__visit_Import__6_1(c_exec):
-    """It allows importing from a module starting with `_`."""
+def test_RestrictingNodeTransformer__visit_Import__6(c_exec):
+    """Deny imports from modules staring with `_`."""
     result = c_exec('from _a import m')
     assert result.errors == (
         'Line 1: module name starts "_", which is forbidden.',
     )
-
-
-@pytest.mark.parametrize(*c_exec)
-def test_RestrictingNodeTransformer__visit_Import__6_2(c_exec):
-    """It allows importing from a module starting with `_`."""
     result = c_exec('from a._b import m')
     assert result.errors == (
         'Line 1: module name starts "_", which is forbidden.',
     )
-
-
-@pytest.mark.parametrize(*c_exec)
-def test_RestrictingNodeTransformer__visit_Import__6_3(c_exec):
-    """It allows importing from a module starting with `_`."""
     result = c_exec('from _a.b import m')
     assert result.errors == (
         'Line 1: module name starts "_", which is forbidden.',
     )
-
-
-@pytest.mark.parametrize(*c_exec)
-def test_RestrictingNodeTransformer__visit_Import__6_4(c_exec):
-    """It allows importing from a module starting with `_`."""
     result = c_exec('from _a._b import m as x')
     assert result.errors == (
         'Line 1: module name starts "_", which is forbidden.',
     )
-
-
-@pytest.mark.parametrize(*c_exec)
-def test_RestrictingNodeTransformer__visit_Import__7(c_exec):
-    """It denies importing from a module as something starting with `_`."""
     result = c_exec('from a import m as _n')
     assert result.errors == (import_errmsg % '_n',)
 
@@ -119,7 +99,7 @@ def test_RestrictingNodeTransformer__visit_Import_star__2(c_exec):
 
 @pytest.mark.parametrize(*c_exec)
 def test_RestrictingNodeTransformer__visit_Import__future__1(c_exec):
-    """It allows importing from a module."""
+    """Allow __future__ imports."""
     result = c_exec('from __future__ import print_function')
     assert result.errors == ()
     assert result.code is not None
