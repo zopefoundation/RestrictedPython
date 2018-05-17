@@ -315,7 +315,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
             ctx = ast.Param()
         else:  # pragma: no cover
             # Only store and param are defined ctx.
-            raise Exception(
+            raise NotImplementedError(
                 'Unsupported context type: "{name}".'.format(name=type(ctx)),
             )
 
@@ -385,7 +385,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
 
         else:  # pragma: no cover
             # Index, Slice and ExtSlice are only defined Slice types.
-            raise Exception("Unknown slice type: {0}".format(slice_))
+            raise NotImplementedError("Unknown slice type: {0}".format(slice_))
 
     def check_name(self, node, name, allow_magic_methods=False):
         """Check names if they are allowed.
@@ -898,7 +898,8 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
 
         else:  # pragma: no cover
             # Impossible Case only ctx Load, Store and Del are defined in ast.
-            return self.node_contents_visit(node)
+            raise NotImplementedError(
+                "Unknown ctx type: {0}".format(type(node.ctx)))
 
     # Subscripting
 
@@ -944,7 +945,8 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
 
         else:  # pragma: no cover
             # Impossible Case only ctx Load, Store and Del are defined in ast.
-            return node
+            raise NotImplementedError(
+                "Unknown ctx type: {0}".format(type(node.ctx)))
 
     def visit_Index(self, node):
         """
@@ -1095,14 +1097,8 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
             # * Attribute
             # * Subscript
             # defined, those are checked before.
-            self.error(
-                node,
-                'Node Type "{name}" is used, '
-                'but not possible as Language Reference states.'.format(
-                    name=type(node),
-                )
-            )
-            return node
+            raise NotImplementedError(
+                "Unknown target type: {0}".format(type(node.target)))
 
     def visit_Print(self, node):
         """Checks and mutates a print statement.

@@ -190,8 +190,8 @@ def test_Guards__safer_getattr__2(e_exec):
         assert 'Using format() on a str is not safe.' == str(err.value)
 
 
-SAFER_GETATTR_DENIED = """\
-class A(object):
+SAFER_GETATTR_ALLOWED = """\
+class A:
 
     def __init__(self, value):
         self.value = value
@@ -203,16 +203,14 @@ result = getattr(a, 'value')
 
 @pytest.mark.parametrize(*e_exec)
 def test_Guards__safer_getattr__3(e_exec):
-    """
-    """
+    """It allows to use `safer_getattr`."""
     restricted_globals = dict(
         __builtins__=safe_builtins,
         __name__=None,
         __metaclass__=type,
         _write_=lambda x: x,
         getattr=safer_getattr,
-        object=object,
         result=None,
     )
-    e_exec(SAFER_GETATTR_DENIED, restricted_globals)
+    e_exec(SAFER_GETATTR_ALLOWED, restricted_globals)
     assert restricted_globals['result'] == 2

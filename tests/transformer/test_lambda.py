@@ -127,12 +127,12 @@ g = lambda x: x ** 2
 
 @pytest.mark.parametrize(*e_exec)
 def test_RestrictingNodeTransformer__visit_Lambda__10(e_exec):
-    """classical lambda functions shoulb be allowed."""
+    """Simple lambda functions are allowed."""
     restricted_globals = dict(
         g=None,
     )
     e_exec(LAMBDA_FUNC_1, restricted_globals)
-    assert restricted_globals['g'](2) == 4
+    assert 4 == restricted_globals['g'](2)
 
 
 LAMBDA_FUNC_2 = """
@@ -145,18 +145,18 @@ g = lambda (x, y) : (x ** 2, x + y)
     reason="tuple parameter unpacking is gone in python 3")
 @pytest.mark.parametrize(*e_exec)
 def test_RestrictingNodeTransformer__visit_Lambda__11(e_exec):
-    """classical lambda functions shoulb be allowed."""
+    """Lambda functions with tuple unpacking are allowed."""
     restricted_globals = dict(
         g=None,
         _unpack_sequence_=guarded_unpack_sequence,
         _getiter_=default_guarded_getiter,
     )
     e_exec(LAMBDA_FUNC_2, restricted_globals)
-    assert restricted_globals['g']((2, 2))
+    assert (9, 5) == restricted_globals['g']((3, 2))
 
 
 LAMBDA_FUNC_3 = """
-g = lambda (x, y), z : (x ** 2, x + y)
+g = lambda (x, y), z : (x ** y, x + z)
 """
 
 
@@ -165,11 +165,11 @@ g = lambda (x, y), z : (x ** 2, x + y)
     reason="tuple parameter unpacking is gone in python 3")
 @pytest.mark.parametrize(*e_exec)
 def test_RestrictingNodeTransformer__visit_Lambda__12(e_exec):
-    """classical lambda functions shoulb be allowed."""
+    """Lambda functions with tuple unpacking and simple params are allowed."""
     restricted_globals = dict(
         g=None,
         _unpack_sequence_=guarded_unpack_sequence,
         _getiter_=default_guarded_getiter,
     )
     e_exec(LAMBDA_FUNC_3, restricted_globals)
-    assert restricted_globals['g']((2, 2), 2)
+    assert (64, 6) == restricted_globals['g']((4, 3), 2)
