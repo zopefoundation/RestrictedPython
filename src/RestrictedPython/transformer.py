@@ -457,7 +457,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         """
         if (isinstance(node, ast.ImportFrom)
                 and not node.module == '__future__'
-                and any([name.startswith('_') for name in node.module.split('.')])):  # NOQA: E501
+                and any(name.startswith('_') for name in node.module.split('.'))):  # NOQA: E501
             self.error(node, 'module name starts "_", which is forbidden.')
 
         for name in node.names:
