@@ -1,6 +1,7 @@
 from RestrictedPython._compat import IS_PY2
 from RestrictedPython.Guards import guarded_unpack_sequence
 from RestrictedPython.Guards import safe_builtins
+from RestrictedPython.Guards import safer_getattr
 from tests import e_eval
 from tests import e_exec
 
@@ -187,3 +188,31 @@ def test_Guards__safer_getattr__2(e_exec):
         assert 'Using format() on a unicode is not safe.' == str(err.value)
     else:
         assert 'Using format() on a str is not safe.' == str(err.value)
+
+
+SAFER_GETATTR_DENIED = """\
+class A(object):
+
+    def __init__(self, value):
+        self.value = value
+
+a = A(2)
+result = getattr(a, 'value')
+"""
+
+
+@pytest.mark.parametrize(*e_exec)
+def test_Guards__safer_getattr__3(e_exec):
+    """
+    """
+    restricted_globals = dict(
+        __builtins__=safe_builtins,
+        __name__=None,
+        __metaclass__=type,
+        _write_=lambda x: x,
+        getattr=safer_getattr,
+        object=object,
+        result=None,
+    )
+    e_exec(SAFER_GETATTR_DENIED, restricted_globals)
+    assert restricted_globals['result'] == 2
