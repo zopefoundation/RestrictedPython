@@ -115,12 +115,85 @@ class Test(object):
     def __init__(self, input):
         self.input = input
 
+t = Test(42)
 """
 
 
-@pytest.mark.parametrize(*c_exec)
-def test_RestrictedCasses_init(c_exec):
-    """Check if __init__ is allowed."""
-    result = c_exec(CONSTRUCTOR_TEST)
-    assert result.errors == ()
-    assert result.code is not None
+@pytest.mark.parametrize(*e_exec)
+def test_RestrictingNodeTransformer__visit_ClassDef__6(e_exec):
+    """It allows to define an ``__init__`` method."""
+    restricted_globals = dict(
+        t=None,
+        _write_=lambda x: x,
+        __metaclass__=type,
+    )
+
+    e_exec(CONSTRUCTOR_TEST, restricted_globals)
+    t = restricted_globals['t']
+    assert t.input == 42
+
+
+COMPARE_TEST = """\
+class Test(object):
+
+    def __init__(self, value):
+        self.value = value
+
+    def __eq__(self, other):
+        return self.value == other.value
+
+a = Test(42)
+b = Test(42)
+c = Test(43)
+
+result1 = (a == b)
+result2 = (b == c)
+"""
+
+
+@pytest.mark.parametrize(*e_exec)
+def test_RestrictingNodeTransformer__visit_ClassDef__7(e_exec):
+    """It allows to define an ``__eq__`` method."""
+    restricted_globals = dict(
+        result1=None,
+        result2=None,
+        _getattr_=getattr,
+        _write_=lambda x: x,
+        __metaclass__=type,
+    )
+
+    e_exec(COMPARE_TEST, restricted_globals)
+    assert restricted_globals['result1'] is True
+    assert restricted_globals['result2'] is False
+
+
+CONTAINER_TEST = """\
+class Test(object):
+
+    def __init__(self, values):
+        self.values = values
+
+    def __contains__(self, value):
+        return value in self.values
+
+a = Test([1, 2, 3])
+
+result1 = (1 in a)
+result2 = (4 not in a)
+"""
+
+
+@pytest.mark.parametrize(*e_exec)
+def test_RestrictingNodeTransformer__visit_ClassDef__8(e_exec):
+    """It allows to define a ``__contains__`` method."""
+    restricted_globals = dict(
+        result1=None,
+        result2=None,
+        _getattr_=getattr,
+        _write_=lambda x: x,
+        __metaclass__=type,
+    )
+
+    e_exec(CONTAINER_TEST, restricted_globals)
+    assert restricted_globals['result1'] is True
+    assert restricted_globals['result2'] is True

@@ -146,7 +146,7 @@ def __init__(test):
 
 @pytest.mark.parametrize(*c_exec)
 def test_RestrictingNodeTransformer__module_func_def_name(c_exec):
-    """"""
+    """It allows to define functions with the name of allowed magic methods."""
     result = c_exec(FUNC_NAMES_TEST)
     assert result.errors == ()
 
@@ -161,10 +161,9 @@ __init__(1)
 
 @pytest.mark.parametrize(*c_exec)
 def test_RestrictingNodeTransformer__module_func_def_name_call(c_exec):
-    """"""
+    """It forbids to use names of allowed magic methods."""
     result = c_exec(BLACKLISTED_FUNC_NAMES_CALL_TEST)
     # assert result.errors == ('Line 1: ')
     assert result.errors == (
-        'Line 5: Call of private method.',
         'Line 5: "__init__" is an invalid variable name because it starts with "_"',  # NOQA: E501
     )

@@ -4,8 +4,18 @@ Changes
 4.0b4 (unreleased)
 ------------------
 
-- Allow special __method__ Names in Function Definition.
-  [loechel]
+- Allow the following magic methods to be defined on classes. They cannot be
+  called directly but by the built-in way to us them (e. g.
+  class instantiation, or comparison):
+
+  + \_\_init\_\_
+  + \_\_contains\_\_
+  + \_\_lt\_\_
+  + \_\_le\_\_
+  + \_\_eq\_\_
+  + \_\_ne\_\_
+  + \_\_gt\_\_
+  + \_\_ge\_\_
 
 
 4.0b3 (2018-04-12)
