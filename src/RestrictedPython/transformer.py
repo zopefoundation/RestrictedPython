@@ -53,6 +53,26 @@ if IS_PY35_OR_GREATER:
     IOPERATOR_TO_STR[ast.MatMult] = '@='
 
 
+# For creation allowed magic method names. See also
+# https://docs.python.org/3/reference/datamodel.html#special-method-names
+ALLOWED_FUNC_NAMES = frozenset([
+    '__init__',
+    '__contains__',
+    '__lt__',
+    '__le__',
+    '__eq__',
+    '__ne__',
+    '__gt__',
+    '__ge__',
+])
+
+
+FORBIDDEN_FUNC_NAMES = frozenset([
+    'print',
+    'printed',
+])
+
+
 # When new ast nodes are generated they have no 'lineno' and 'col_offset'.
 # This function copies these two fields from the incoming node
 def copy_locations(new_node, old_node):
@@ -363,26 +383,30 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         else:
             raise Exception("Unknown slice type: {0}".format(slice_))
 
-    def check_name(self, node, name):
+    def check_name(self, node, name, allow_magic_methods=False):
+        """Check names if they are allowed.
+
+        If ``allow_magic_methods is True`` names in `ALLOWED_FUNC_NAMES`
+        are additionally allowed although their names start with `_`.
+
+        """
         if name is None:
             return
 
-        if name.startswith('_') and name != '_':
+        if (name.startswith('_')
+                and name != '_'
+                and not (allow_magic_methods
+                         and name in ALLOWED_FUNC_NAMES
+                         and node.col_offset != 0)):
             self.error(
                 node,
                 '"{name}" is an invalid variable name because it '
                 'starts with "_"'.format(name=name))
-
         elif name.endswith('__roles__'):
             self.error(node, '"%s" is an invalid variable name because '
                        'it ends with "__roles__".' % name)
-
-        elif name == "printed":
-            self.error(node, '"printed" is a reserved name.')
-
-        elif name == 'print':
-            # Assignments to 'print' would lead to funny results.
-            self.error(node, '"print" is a reserved name.')
+        elif name in FORBIDDEN_FUNC_NAMES:
+            self.error(node, '"{name}" is a reserved name.'.format(name=name))
 
     def check_function_argument_names(self, node):
         # In python3 arguments are always identifiers.
@@ -1234,7 +1258,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
 
     def visit_FunctionDef(self, node):
         """Allow function definitions (`def`) with some restrictions."""
-        self.check_name(node, node.name)
+        self.check_name(node, node.name, allow_magic_methods=True)
         self.check_function_argument_names(node)
 
         with self.print_info.new_print_scope():
