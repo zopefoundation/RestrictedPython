@@ -25,6 +25,9 @@ Changes
 
 - Imports like `from _a import b` or `from a._b import x` are now forbidden.
 
+- Bring test coverage to 100 %.
+
+
 
 4.0b3 (2018-04-12)
 ------------------

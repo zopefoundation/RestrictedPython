@@ -313,8 +313,11 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
             ctx = ast.Store()
         elif ctx == 'param':
             ctx = ast.Param()
-        else:
-            raise Exception('Unsupported context type.')
+        else:  # pragma: no cover
+            # Only store and param are defined ctx.
+            raise NotImplementedError(
+                'Unsupported context type: "{name}".'.format(name=type(ctx)),
+            )
 
         # This node is used to catch the tuple in a tmp variable.
         tmp_target = ast.Name(tmp_name, ctx)
@@ -380,8 +383,9 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
                 dims.elts.append(self.transform_slice(item))
             return dims
 
-        else:
-            raise Exception("Unknown slice type: {0}".format(slice_))
+        else:  # pragma: no cover
+            # Index, Slice and ExtSlice are only defined Slice types.
+            raise NotImplementedError("Unknown slice type: {0}".format(slice_))
 
     def check_name(self, node, name, allow_magic_methods=False):
         """Check names if they are allowed.
@@ -897,8 +901,10 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
             node.value = new_value
             return node
 
-        else:
-            return self.node_contents_visit(node)
+        else:  # pragma: no cover
+            # Impossible Case only ctx Load, Store and Del are defined in ast.
+            raise NotImplementedError(
+                "Unknown ctx type: {0}".format(type(node.ctx)))
 
     # Subscripting
 
@@ -942,8 +948,10 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
             node.value = new_value
             return node
 
-        else:
-            return node
+        else:  # pragma: no cover
+            # Impossible Case only ctx Load, Store and Del are defined in ast.
+            raise NotImplementedError(
+                "Unknown ctx type: {0}".format(type(node.ctx)))
 
     def visit_Index(self, node):
         """
@@ -1088,8 +1096,14 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
 
             copy_locations(new_node, node)
             return new_node
-
-        return node
+        else:  # pragma: no cover
+            # Impossible Case - Only Node Types:
+            # * Name
+            # * Attribute
+            # * Subscript
+            # defined, those are checked before.
+            raise NotImplementedError(
+                "Unknown target type: {0}".format(type(node.target)))
 
     def visit_Print(self, node):
         """Checks and mutates a print statement.
@@ -1297,6 +1311,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         node = self.node_contents_visit(node)
 
         if IS_PY3:
+            # Implicit Tuple unpacking is not anymore avaliable in Python3
             return node
 
         # Check for tuple parameters which need _getiter_ protection
@@ -1397,7 +1412,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
 
         # Inject the print collector after 'from __future__ import ....'
         position = 0
-        for position, child in enumerate(node.body):
+        for position, child in enumerate(node.body):  # pragma: no branch
             if not isinstance(child, ast.ImportFrom):
                 break
 
