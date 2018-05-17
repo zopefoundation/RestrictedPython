@@ -53,6 +53,26 @@ if IS_PY35_OR_GREATER:
     IOPERATOR_TO_STR[ast.MatMult] = '@='
 
 
+# For creation allowed magic method names. See also
+# https://docs.python.org/3/reference/datamodel.html#special-method-names
+ALLOWED_FUNC_NAMES = frozenset([
+    '__init__',
+    '__contains__',
+    '__lt__',
+    '__le__',
+    '__eq__',
+    '__ne__',
+    '__gt__',
+    '__ge__',
+])
+
+
+FORBIDDEN_FUNC_NAMES = frozenset([
+    'print',
+    'printed',
+])
+
+
 # When new ast nodes are generated they have no 'lineno' and 'col_offset'.
 # This function copies these two fields from the incoming node
 def copy_locations(new_node, old_node):
@@ -293,8 +313,11 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
             ctx = ast.Store()
         elif ctx == 'param':
             ctx = ast.Param()
-        else:
-            raise Exception('Unsupported context type.')
+        else:  # pragma: no cover
+            # Only store and param are defined ctx.
+            raise NotImplementedError(
+                'Unsupported context type: "{name}".'.format(name=type(ctx)),
+            )
 
         # This node is used to catch the tuple in a tmp variable.
         tmp_target = ast.Name(tmp_name, ctx)
@@ -360,29 +383,34 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
                 dims.elts.append(self.transform_slice(item))
             return dims
 
-        else:
-            raise Exception("Unknown slice type: {0}".format(slice_))
+        else:  # pragma: no cover
+            # Index, Slice and ExtSlice are only defined Slice types.
+            raise NotImplementedError("Unknown slice type: {0}".format(slice_))
 
-    def check_name(self, node, name):
+    def check_name(self, node, name, allow_magic_methods=False):
+        """Check names if they are allowed.
+
+        If ``allow_magic_methods is True`` names in `ALLOWED_FUNC_NAMES`
+        are additionally allowed although their names start with `_`.
+
+        """
         if name is None:
             return
 
-        if name.startswith('_') and name != '_':
+        if (name.startswith('_')
+                and name != '_'
+                and not (allow_magic_methods
+                         and name in ALLOWED_FUNC_NAMES
+                         and node.col_offset != 0)):
             self.error(
                 node,
                 '"{name}" is an invalid variable name because it '
                 'starts with "_"'.format(name=name))
-
         elif name.endswith('__roles__'):
             self.error(node, '"%s" is an invalid variable name because '
                        'it ends with "__roles__".' % name)
-
-        elif name == "printed":
-            self.error(node, '"printed" is a reserved name.')
-
-        elif name == 'print':
-            # Assignments to 'print' would lead to funny results.
-            self.error(node, '"print" is a reserved name.')
+        elif name in FORBIDDEN_FUNC_NAMES:
+            self.error(node, '"{name}" is a reserved name.'.format(name=name))
 
     def check_function_argument_names(self, node):
         # In python3 arguments are always identifiers.
@@ -873,8 +901,10 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
             node.value = new_value
             return node
 
-        else:
-            return self.node_contents_visit(node)
+        else:  # pragma: no cover
+            # Impossible Case only ctx Load, Store and Del are defined in ast.
+            raise NotImplementedError(
+                "Unknown ctx type: {0}".format(type(node.ctx)))
 
     # Subscripting
 
@@ -918,8 +948,10 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
             node.value = new_value
             return node
 
-        else:
-            return node
+        else:  # pragma: no cover
+            # Impossible Case only ctx Load, Store and Del are defined in ast.
+            raise NotImplementedError(
+                "Unknown ctx type: {0}".format(type(node.ctx)))
 
     def visit_Index(self, node):
         """
@@ -1064,8 +1096,14 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
 
             copy_locations(new_node, node)
             return new_node
-
-        return node
+        else:  # pragma: no cover
+            # Impossible Case - Only Node Types:
+            # * Name
+            # * Attribute
+            # * Subscript
+            # defined, those are checked before.
+            raise NotImplementedError(
+                "Unknown target type: {0}".format(type(node.target)))
 
     def visit_Print(self, node):
         """Checks and mutates a print statement.
@@ -1239,7 +1277,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
 
     def visit_FunctionDef(self, node):
         """Allow function definitions (`def`) with some restrictions."""
-        self.check_name(node, node.name)
+        self.check_name(node, node.name, allow_magic_methods=True)
         self.check_function_argument_names(node)
 
         with self.print_info.new_print_scope():
@@ -1273,6 +1311,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         node = self.node_contents_visit(node)
 
         if IS_PY3:
+            # Implicit Tuple unpacking is not anymore avaliable in Python3
             return node
 
         # Check for tuple parameters which need _getiter_ protection
@@ -1373,7 +1412,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
 
         # Inject the print collector after 'from __future__ import ....'
         position = 0
-        for position, child in enumerate(node.body):
+        for position, child in enumerate(node.body):  # pragma: no branch
             if not isinstance(child, ast.ImportFrom):
                 break
 

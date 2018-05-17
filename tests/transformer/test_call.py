@@ -102,3 +102,21 @@ def test_RestrictingNodeTransformer__visit_Call__2(e_exec, mocker):
     assert ref == ret
     _apply_.assert_called_once_with(glb['foo'], *ref[0], **ref[1])
     _apply_.reset_mock()
+
+
+@pytest.mark.parametrize(*c_exec)
+def test_visit_Call__private_function(c_exec):
+    """Calling private functions is forbidden."""
+    result = c_exec('__init__(1)')
+    assert result.errors == (
+        'Line 1: "__init__" is an invalid variable name because it starts with "_"',  # NOQA: E501
+    )
+
+
+@pytest.mark.parametrize(*c_exec)
+def test_visit_Call__private_method(c_exec):
+    """Calling private methods is forbidden."""
+    result = c_exec('Int.__init__(1)')
+    assert result.errors == (
+        'Line 1: "__init__" is an invalid attribute name because it starts with "_".',  # NOQA: E501
+    )

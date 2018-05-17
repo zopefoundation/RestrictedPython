@@ -4,6 +4,20 @@ Changes
 4.0b4 (unreleased)
 ------------------
 
+- Allow the following magic methods to be defined on classes.
+  (`#104 <https://github.com/zopefoundation/RestrictedPython/issues/104>`_)
+  They cannot be called directly but by the built-in way to use them (e. g.
+  class instantiation, or comparison):
+
+  + ``__init__``
+  + ``__contains__``
+  + ``__lt__``
+  + ``__le__``
+  + ``__eq__``
+  + ``__ne__``
+  + ``__gt__``
+  + ``__ge__``
+
 - Imports like `from a import *` (so called star imports) are now forbidden as
   they allow to import names starting with an underscore which could override
   protected build-ins.
@@ -11,6 +25,7 @@ Changes
 
 - Imports like `from _a import b` or `from a._b import x` are now forbidden.
 
+- Bring test coverage to 100 %.
 
 4.0b3 (2018-04-12)
 ------------------
