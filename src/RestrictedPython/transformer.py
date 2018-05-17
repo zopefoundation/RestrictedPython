@@ -427,7 +427,6 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
 
         => 'from _a import x' is ok, because '_a' is not added to the scope.
         """
-
         for name in node.names:
             if '*' in name.name:
                 self.error(node, '"*" imports are not allowed.')

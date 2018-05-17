@@ -75,7 +75,7 @@ def test_RestrictingNodeTransformer__visit_Import__9(c_exec):
 
 @pytest.mark.parametrize(*c_exec)
 def test_RestrictingNodeTransformer__visit_Import_star__1(c_exec):
-    """It allows importing a module."""
+    """Importing `*` is a SyntaxError in Python itself."""
     result = c_exec('import *')
     assert result.errors == ('Line 1: SyntaxError: invalid syntax in on statement: import *',)  # NOQA: E501
     assert result.code is None
@@ -83,7 +83,7 @@ def test_RestrictingNodeTransformer__visit_Import_star__1(c_exec):
 
 @pytest.mark.parametrize(*c_exec)
 def test_RestrictingNodeTransformer__visit_Import_star__2(c_exec):
-    """It allows importing a module."""
+    """It denies importing `*` from a module."""
     result = c_exec('from a import *')
     assert result.errors == ('Line 1: "*" imports are not allowed.',)
     assert result.code is None
