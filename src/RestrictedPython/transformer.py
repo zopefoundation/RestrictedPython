@@ -428,10 +428,8 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         => 'from _a import x' is ok, because '_a' is not added to the scope.
         """
         if (isinstance(node, ast.ImportFrom)
-            and not node.module == '__future__'
-            and any(
-                [name.startswith('_') for name in node.module.split('.')]
-                )):
+                and not node.module == '__future__'
+                and any([name.startswith('_') for name in node.module.split('.')])):  # NOQA: E501
             self.error(node, 'module name starts "_", which is forbidden.')
 
         for name in node.names:
