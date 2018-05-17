@@ -1,5 +1,6 @@
 from RestrictedPython._compat import IS_PY2
 from RestrictedPython._compat import IS_PY3
+from RestrictedPython.Eval import default_guarded_getiter
 from RestrictedPython.Guards import guarded_unpack_sequence
 from tests import c_exec
 from tests import e_exec
@@ -119,7 +120,7 @@ def test_RestrictingNodeTransformer__visit_Lambda__9(
     _getiter_.assert_any_call((2, 3))
 
 
-LAMBDA_FUNC = """
+LAMBDA_FUNC_1 = """
 g = lambda x: x ** 2
 """
 
@@ -130,5 +131,45 @@ def test_RestrictingNodeTransformer__visit_Lambda__10(e_exec):
     restricted_globals = dict(
         g=None,
     )
-    e_exec(LAMBDA_FUNC, restricted_globals)
+    e_exec(LAMBDA_FUNC_1, restricted_globals)
     assert restricted_globals['g'](2) == 4
+
+
+LAMBDA_FUNC_2 = """
+g = lambda (x, y) : (x ** 2, x + y)
+"""
+
+
+@pytest.mark.skipif(
+    IS_PY3,
+    reason="tuple parameter unpacking is gone in python 3")
+@pytest.mark.parametrize(*e_exec)
+def test_RestrictingNodeTransformer__visit_Lambda__11(e_exec):
+    """classical lambda functions shoulb be allowed."""
+    restricted_globals = dict(
+        g=None,
+        _unpack_sequence_=guarded_unpack_sequence,
+        _getiter_=default_guarded_getiter,
+    )
+    e_exec(LAMBDA_FUNC_2, restricted_globals)
+    assert restricted_globals['g']((2, 2))
+
+
+LAMBDA_FUNC_3 = """
+g = lambda (x, y), z : (x ** 2, x + y)
+"""
+
+
+@pytest.mark.skipif(
+    IS_PY3,
+    reason="tuple parameter unpacking is gone in python 3")
+@pytest.mark.parametrize(*e_exec)
+def test_RestrictingNodeTransformer__visit_Lambda__12(e_exec):
+    """classical lambda functions shoulb be allowed."""
+    restricted_globals = dict(
+        g=None,
+        _unpack_sequence_=guarded_unpack_sequence,
+        _getiter_=default_guarded_getiter,
+    )
+    e_exec(LAMBDA_FUNC_3, restricted_globals)
+    assert restricted_globals['g']((2, 2), 2)
