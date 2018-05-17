@@ -9,6 +9,8 @@ Changes
   protected build-ins.
   (`#102 <https://github.com/zopefoundation/RestrictedPython/issues/102>`_)
 
+- Imports like `from _a import b` or `from a._b import x` are now forbidden.
+
 
 4.0b3 (2018-04-12)
 ------------------

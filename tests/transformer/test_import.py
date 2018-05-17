@@ -45,11 +45,30 @@ def test_RestrictingNodeTransformer__visit_Import__5(c_exec):
 
 
 @pytest.mark.parametrize(*c_exec)
-def test_RestrictingNodeTransformer__visit_Import_6(c_exec):
+def test_RestrictingNodeTransformer__visit_Import__6_1(c_exec):
     """It allows importing from a module starting with `_`."""
     result = c_exec('from _a import m')
-    assert result.errors == ()
-    assert result.code is not None
+    assert result.errors == (
+        'Line 1: module name starts "_", which is forbidden.',
+    )
+
+
+@pytest.mark.parametrize(*c_exec)
+def test_RestrictingNodeTransformer__visit_Import__6_2(c_exec):
+    """It allows importing from a module starting with `_`."""
+    result = c_exec('from a._b import m')
+    assert result.errors == (
+        'Line 1: module name starts "_", which is forbidden.',
+    )
+
+
+@pytest.mark.parametrize(*c_exec)
+def test_RestrictingNodeTransformer__visit_Import__6_3(c_exec):
+    """It allows importing from a module starting with `_`."""
+    result = c_exec('from _a.b import m')
+    assert result.errors == (
+        'Line 1: module name starts "_", which is forbidden.',
+    )
 
 
 @pytest.mark.parametrize(*c_exec)
