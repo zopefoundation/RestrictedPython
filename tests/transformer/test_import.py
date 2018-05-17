@@ -72,6 +72,15 @@ def test_RestrictingNodeTransformer__visit_Import__6_3(c_exec):
 
 
 @pytest.mark.parametrize(*c_exec)
+def test_RestrictingNodeTransformer__visit_Import__6_4(c_exec):
+    """It allows importing from a module starting with `_`."""
+    result = c_exec('from _a._b import m as x')
+    assert result.errors == (
+        'Line 1: module name starts "_", which is forbidden.',
+    )
+
+
+@pytest.mark.parametrize(*c_exec)
 def test_RestrictingNodeTransformer__visit_Import__7(c_exec):
     """It denies importing from a module as something starting with `_`."""
     result = c_exec('from a import m as _n')
@@ -106,3 +115,11 @@ def test_RestrictingNodeTransformer__visit_Import_star__2(c_exec):
     result = c_exec('from a import *')
     assert result.errors == ('Line 1: "*" imports are not allowed.',)
     assert result.code is None
+
+
+@pytest.mark.parametrize(*c_exec)
+def test_RestrictingNodeTransformer__visit_Import__future__1(c_exec):
+    """It allows importing from a module."""
+    result = c_exec('from __future__ import print_function')
+    assert result.errors == ()
+    assert result.code is not None
