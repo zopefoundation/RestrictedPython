@@ -46,16 +46,28 @@ def test_RestrictingNodeTransformer__visit_Import__5(c_exec):
 
 @pytest.mark.parametrize(*c_exec)
 def test_RestrictingNodeTransformer__visit_Import__6(c_exec):
-    """Deny imports from modules starting with `_`."""
-    message = 'Line 1: module name starts "_", which is forbidden.'
+    """Check for imports from modules starting with `_`
+    they will be deprecated in a future version."""
+    message = 'Line 1: module name starts "_", which is deprecated and will be forbidden in RestrictedPython 5.'  # NOQA: E501
     result = c_exec('from _a import m')
-    assert result.errors == (message,)
+    assert result.warnings == ([message,])
     result = c_exec('from a._b import m')
-    assert result.errors == (message,)
+    assert result.warnings == ([message,])
     result = c_exec('from _a.b import m')
-    assert result.errors == (message,)
+    assert result.warnings == ([message,])
     result = c_exec('from _a._b import m as x')
-    assert result.errors == (message,)
+    assert result.warnings == ([message,])
+    # Placeholder for future version
+    # """Deny imports from modules starting with `_`."""
+    # message = 'Line 1: module name starts "_", which is forbidden.'
+    # result = c_exec('from _a import m')
+    # assert result.errors == (message,)
+    # result = c_exec('from a._b import m')
+    # assert result.errors == (message,)
+    # result = c_exec('from _a.b import m')
+    # assert result.errors == (message,)
+    # result = c_exec('from _a._b import m as x')
+    # assert result.errors == (message,)
 
 
 @pytest.mark.parametrize(*c_exec)
