@@ -452,14 +452,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
 
         This is a protection against rebinding dunder names like
         _getitem_, _write_ via imports.
-
-        => 'from _a import x' is ok, because '_a' is not added to the scope.
         """
-        if (isinstance(node, ast.ImportFrom)
-                and not node.module == '__future__'
-                and any(name.startswith('_') for name in node.module.split('.'))):  # NOQA: E501
-            self.error(node, 'module name starts "_", which is forbidden.')
-
         for name in node.names:
             if '*' in name.name:
                 self.error(node, '"*" imports are not allowed.')
@@ -1161,7 +1154,18 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
 
     def visit_ImportFrom(self, node):
         """Allow `import from` statements with restrictions.
-        See check_import_names."""
+        See check_import_names.
+
+        => 'from _a import x' is security wise ok,
+        because '_a' is not added to the scope.
+
+        For consistency reasons we should deprecated that and
+        forbid it in a future versions.
+        """
+        if not node.module == '__future__' and any(name.startswith('_') for name in node.module.split('.')):  # NOQA: E501
+            # self.error(node, 'module name starts "_", which is forbidden.')
+            self.warn(node, 'module name starts "_", which is deprecated and '
+                      'will be forbidden in RestrictedPython 5.')
         return self.check_import_names(node)
 
     def visit_alias(self, node):
