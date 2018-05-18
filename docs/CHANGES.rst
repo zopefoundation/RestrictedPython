@@ -25,6 +25,8 @@ Changes
 
 - Bring test coverage to 100 %.
 
+- Drop support for Python 3.4.
+
 
 4.0b3 (2018-04-12)
 ------------------
