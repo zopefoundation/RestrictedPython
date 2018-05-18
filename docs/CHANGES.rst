@@ -23,8 +23,9 @@ Changes
   protected build-ins.
   (`#102 <https://github.com/zopefoundation/RestrictedPython/issues/102>`_)
 
-- Bring test coverage to 100 %.
+- Imports like `from _a import b` or `from a._b import x` are now forbidden.
 
+- Bring test coverage to 100 %.
 
 4.0b3 (2018-04-12)
 ------------------

@@ -45,18 +45,17 @@ def test_RestrictingNodeTransformer__visit_Import__5(c_exec):
 
 
 @pytest.mark.parametrize(*c_exec)
-def test_RestrictingNodeTransformer__visit_Import_6(c_exec):
-    """It allows importing from a module starting with `_`."""
+def test_RestrictingNodeTransformer__visit_Import__6(c_exec):
+    """Deny imports from modules starting with `_`."""
+    message = 'Line 1: module name starts "_", which is forbidden.'
     result = c_exec('from _a import m')
-    assert result.errors == ()
-    assert result.code is not None
-
-
-@pytest.mark.parametrize(*c_exec)
-def test_RestrictingNodeTransformer__visit_Import__7(c_exec):
-    """It denies importing from a module as something starting with `_`."""
-    result = c_exec('from a import m as _n')
-    assert result.errors == (import_errmsg % '_n',)
+    assert result.errors == (message,)
+    result = c_exec('from a._b import m')
+    assert result.errors == (message,)
+    result = c_exec('from _a.b import m')
+    assert result.errors == (message,)
+    result = c_exec('from _a._b import m as x')
+    assert result.errors == (message,)
 
 
 @pytest.mark.parametrize(*c_exec)
@@ -87,3 +86,11 @@ def test_RestrictingNodeTransformer__visit_Import_star__2(c_exec):
     result = c_exec('from a import *')
     assert result.errors == ('Line 1: "*" imports are not allowed.',)
     assert result.code is None
+
+
+@pytest.mark.parametrize(*c_exec)
+def test_RestrictingNodeTransformer__visit_Import__future__1(c_exec):
+    """Allow __future__ imports."""
+    result = c_exec('from __future__ import print_function')
+    assert result.errors == ()
+    assert result.code is not None
