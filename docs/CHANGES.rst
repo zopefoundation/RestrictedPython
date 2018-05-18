@@ -1,7 +1,7 @@
 Changes
 =======
 
-4.0b4 (unreleased)
+4.0b4 (2018-05-18)
 ------------------
 
 - Allow the following magic methods to be defined on classes.
