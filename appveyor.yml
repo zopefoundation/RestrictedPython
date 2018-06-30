@@ -2,7 +2,6 @@
 
 environment:
   matrix:
-    include:
     - PYTHON: "C:\\Python27"
       TOXENV: "lint-py27,docs"
     - PYTHON: "C:\\Python36"
@@ -21,9 +20,11 @@ environment:
       TOXENV: "py36-datetime"
     - PYTHON: "C:\\Python37"
       TOXENV: "py37"
-    allow_failures:
-    - PYTHON: "C:\\Python34"
-      TOXENV: "py34"
+
+matrix:
+  allow_failures:
+  - PYTHON: "C:\\Python34"
+    TOXENV: "py34"
 
 cache:
   - '%LOCALAPPDATA%\pip\Cache'
