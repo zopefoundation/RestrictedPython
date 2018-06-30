@@ -1,34 +1,49 @@
 # AppVeyor CI settings (Windows Machine CI Tests)
 
-environment:
-  matrix:
-    - PYTHON: "C:\\Python27"
-      TOXENV: "lint-py27,docs"
-    - PYTHON: "C:\\Python36"
-      TOXENV: "lint-py36,docs"
-    - PYTHON: "C:\\Python26"
-      TOXENV: "py26,datetime"
-    - PYTHON: "C:\\Python27"
-      TOXENV: "py27,datetime"
-    - PYTHON: "C:\\Python34"
-      TOXENV: "py34,datetime"
-    - PYTHON: "C:\\Python35"
-      TOXENV: "py35,datetime"
-    - PYTHON: "C:\\Python36"
-      TOXENV: "py36,datetime"
-    - PYTHON: "C:\\Python37"
-      TOXENV: "py37,datetime"
-    - PYTHON: "C:\\Python38"
-      TOXENV: "py38,datetime"
-
 matrix:
   allow_failures:
-  - PYTHON: "C:\\Python26"
-    TOXENV: "py26,datetime"
-  - PYTHON: "C:\\Python34"
-    TOXENV: "py34,datetime"
-  - PYTHON: "C:\\Python38"
-    TOXENV: "py38,datetime"
+  - PROFILE: py26
+  - PROFILE: py34
+  - PROFILE: py37
+  - PROFILE: py38
+
+environment:
+  matrix:
+    - PROFILE: py27-conventions
+      PYTHON_VERSION: 2.7"
+      TOXENV: "lint,docs"
+    - PROFILE: py35-conventions
+      PYTHON_VERSION: 3.6"
+      TOXENV: "lint,docs"
+    - PROFILE: py36-conventions
+      PYTHON_VERSION: 3.6"
+      TOXENV: "lint,docs"
+    - PROFILE: py37-conventions
+      PYTHON_VERSION: 3.6"
+      TOXENV: "lint,docs"
+    - PROFILE: py26
+      PYTHON_VERSION: 2.6"
+      TOXENV: "py26,datetime"
+    - PROFILE: py27
+      PYTHON_VERSION: 2.7"
+      TOXENV: "py27,datetime"
+    - PROFILE: py34
+      PYTHON_VERSION: 3.4"
+      TOXENV: "py34,datetime"
+    - PROFILE: py35
+      PYTHON_VERSION: 3.5"
+      TOXENV: "py35,datetime"
+    - PROFILE: py36
+      PYTHON_VERSION: 3.6"
+      TOXENV: "py36,datetime"
+    - PROFILE: py37
+      PYTHON_VERSION: 3.7"
+      TOXENV: "py37,datetime"
+    - PROFILE: py38
+      PYTHON_VERSION: 3.8"
+      TOXENV: "py38,datetime"
+
+
 
 cache:
   - '%LOCALAPPDATA%\pip\Cache'
