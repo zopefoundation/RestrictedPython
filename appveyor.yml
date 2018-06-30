@@ -2,6 +2,7 @@
 
 environment:
   matrix:
+    include:
     - PYTHON: "C:\\Python27"
       TOXENV: "lint-py27,docs"
     - PYTHON: "C:\\Python36"
