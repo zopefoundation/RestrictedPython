@@ -9,22 +9,22 @@ matrix:
           env: TOXENV=docs,lint
 # Do not test Python 2.6 anymore, it is unsupported
 #        - python: "2.6"
-#          env: TOXENV=py26,datetime
+#          env: TOXENV=py26,py26-datetime
         - python: "2.7"
-          env: TOXENV=py27,datetime
+          env: TOXENV=py27,py27-datetime
 # Do not test Python 2.6 anymore, it is unsupported
 #        - python: "3.4"
-#          env: TOXENV=py34,datetime
+#          env: TOXENV=py34,py34-datetime
         - python: "3.5"
-          env: TOXENV=py35,datetime
+          env: TOXENV=py35,py35-datetime
         - python: "3.6"
-          env: TOXENV=py36,datetime
+          env: TOXENV=py36,py36-datetime
         - python: "3.7"
-          env: TOXENV=py37,datetime
+          env: TOXENV=py37,py37-datetime
         - python: "3.7-dev"
-          env: TOXENV=py37,datetime
+          env: TOXENV=py37,py37-datetime
         - python: "3.8-dev"
-          env: TOXENV=py38,datetime
+          env: TOXENV=py38,py38-datetime
         - python: "pypy"
           env: TOXENV=pypy
         - python: "pypy3"
@@ -37,11 +37,11 @@ matrix:
 #        - python: "3.4"
 #          env: TOXENV=py34,datetime
         - python: "3.7"
-          env: TOXENV=py37,datetime
+          env: TOXENV=py37,py37-datetime
         - python: "3.7-dev"
-          env: TOXENV=py37,datetime
+          env: TOXENV=py37,py37-datetime
         - python: "3.8-dev"
-          env: TOXENV=py38,datetime
+          env: TOXENV=py38,py38-datetime
         - python: "pypy"
           env: TOXENV=pypy
         - python: "pypy3"

@@ -27,23 +27,23 @@ environment:
 #      TOXENV: "py26,datetime"
     - PROFILE: py27
       PYTHON_VERSION: 2.7"
-      TOXENV: "py27,datetime"
+      TOXENV: "py27,py27-datetime"
 # Do not test Python 3.4 anymore, it is unsupported
 #    - PROFILE: py34
 #      PYTHON_VERSION: 3.4"
-#      TOXENV: "py34,datetime"
+#      TOXENV: "py34,py34-datetime"
     - PROFILE: py35
       PYTHON_VERSION: 3.5"
-      TOXENV: "py35,datetime"
+      TOXENV: "py35,py35-datetime"
     - PROFILE: py36
       PYTHON_VERSION: 3.6"
-      TOXENV: "py36,datetime"
+      TOXENV: "py36,py36-datetime"
     - PROFILE: py37
       PYTHON_VERSION: 3.7"
-      TOXENV: "py37,datetime"
+      TOXENV: "py37,py37-datetime"
     - PROFILE: py38
       PYTHON_VERSION: 3.8"
-      TOXENV: "py38,datetime"
+      TOXENV: "py38,py38-datetime"
 
 
 
