@@ -2,8 +2,6 @@
 
 matrix:
   allow_failures:
-#  - PROFILE: py26
-#  - PROFILE: py34
   - PROFILE: py37
   - PROFILE: py38
 
@@ -21,17 +19,9 @@ environment:
     - PROFILE: py37-conventions
       PYTHON_VERSION: 3.6"
       TOXENV: "lint,docs"
-# Do not test Python 2.6 anymore, it is unsupported
-#    - PROFILE: py26
-#      PYTHON_VERSION: 2.6"
-#      TOXENV: "py26,datetime"
     - PROFILE: py27
       PYTHON_VERSION: 2.7"
       TOXENV: "py27,py27-datetime"
-# Do not test Python 3.4 anymore, it is unsupported
-#    - PROFILE: py34
-#      PYTHON_VERSION: 3.4"
-#      TOXENV: "py34,py34-datetime"
     - PROFILE: py35
       PYTHON_VERSION: 3.5"
       TOXENV: "py35,py35-datetime"
