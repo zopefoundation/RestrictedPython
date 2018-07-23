@@ -4,32 +4,28 @@ sudo: false
 matrix:
     include:
         - python: "2.7"
-          env: TOXENV=docs,lint-py27
+          env: TOXENV=docs,lint
         - python: "3.6"
-          env: TOXENV=docs,lint-py36
+          env: TOXENV=docs,lint
         - python: "2.7"
-          env: TOXENV=py27
-        - python: "2.7"
-          env: TOXENV=py27-datetime
+          env: TOXENV=py27,py27-datetime
         - python: "3.5"
-          env: TOXENV=py35
+          env: TOXENV=py35,py35-datetime
         - python: "3.6"
-          env: TOXENV=py36
-        - python: "3.6"
-          env: TOXENV=py36-datetime
+          env: TOXENV=py36,py36-datetime
+        - python: "3.7"
+          env: TOXENV=py37,py37-datetime
         - python: "3.7-dev"
-          env: TOXENV=py37
-        - python: "pypy"
-          env: TOXENV=pypy
-        - python: "pypy3"
-          env: TOXENV=pypy
+          env: TOXENV=py37,py37-datetime
+        - python: "3.8-dev"
+          env: TOXENV=py38,py38-datetime
     allow_failures:
+        - python: "3.7"
+          env: TOXENV=py37,py37-datetime
         - python: "3.7-dev"
-          env: TOXENV=py37
-        - python: "pypy"
-          env: TOXENV=pypy
-        - python: "pypy3"
-          env: TOXENV=pypy
+          env: TOXENV=py37,py37-datetime
+        - python: "3.8-dev"
+          env: TOXENV=py38,py38-datetime
 
 install:
     - travis_retry pip install -U pip setuptools
