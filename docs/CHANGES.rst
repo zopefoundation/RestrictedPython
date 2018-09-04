@@ -29,6 +29,10 @@ Changes
   override protected build-ins.
   (`#102 <https://github.com/zopefoundation/RestrictedPython/issues/102>`_)
 
+- When calling ``compile_restricted_function`` with a function body containing
+  a ``SyntaxError`` also a ``CompileResult`` is returned. This fixes
+  `Products.PythonScripts#11 <https://github.com/zopefoundation/Products.PythonScripts/issues/11>`_.
+
 - Bring test coverage to 100 %.
 
 - Drop support for Python 3.4.

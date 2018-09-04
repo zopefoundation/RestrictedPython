@@ -143,7 +143,16 @@ def compile_restricted_function(
     http://restrictedpython.readthedocs.io/en/latest/usage/index.html#RestrictedPython.compile_restricted_function
     """
     # Parse the parameters and body, then combine them.
-    body_ast = ast.parse(body, '<func code>', 'exec')
+    try:
+        body_ast = ast.parse(body, '<func code>', 'exec')
+    except SyntaxError as v:
+        error = syntax_error_template.format(
+            lineno=v.lineno,
+            type=v.__class__.__name__,
+            msg=v.msg,
+            statement=v.text.strip())
+        return CompileResult(
+            code=None, errors=(error,), warnings=(), used_names=())
 
     # The compiled code is actually executed inside a function
     # (that is called when the code is called) so reading and assigning to a

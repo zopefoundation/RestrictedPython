@@ -203,3 +203,21 @@ def test_compile_restricted_function_allows_invalid_python_identifiers_as_functi
     assert type(generated_function) == FunctionType
     generated_function()
     assert safe_globals['output'] == 'foobar'
+
+
+@pytest.mark.parametrize(*c_function)
+def test_compile_restricted_function_handle_SyntaxError(c_function):
+    p = ''
+    body = """a("""
+    name = "broken"
+
+    result = c_function(
+        p,  # parameters
+        body,
+        name,
+    )
+
+    assert result.code is None
+    assert result.errors == (
+        "Line 1: SyntaxError: unexpected EOF while parsing at statement: 'a('",
+    )
