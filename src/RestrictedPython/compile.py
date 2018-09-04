@@ -10,7 +10,7 @@ import warnings
 CompileResult = namedtuple(
     'CompileResult', 'code, errors, warnings, used_names')
 syntax_error_template = (
-    'Line {lineno}: {type}: {msg} in on statement: {statement}')
+    'Line {lineno}: {type}: {msg} at statement: {statement!r}')
 
 NOT_CPYTHON_WARNING = (
     'RestrictedPython is only supported on CPython: use on other Python '

@@ -80,7 +80,7 @@ def test_compile__compile_restricted_exec__4(c_exec):
     assert result.warnings == []
     assert result.used_names == {}
     assert result.errors == (
-        'Line 1: SyntaxError: invalid syntax in on statement: asdf|',)
+        "Line 1: SyntaxError: invalid syntax at statement: 'asdf|'",)
 
 
 @pytest.mark.parametrize(*c_exec)
@@ -112,8 +112,8 @@ def test_compile__compile_restricted_exec__10(c_exec):
     """It is a SyntaxError to use the `exec` statement. (Python 3 only)"""
     result = c_exec(EXEC_STATEMENT)
     assert (
-        "Line 2: SyntaxError: Missing parentheses in call to 'exec' in on "
-        "statement: exec 'q = 1'",) == result.errors
+        'Line 2: SyntaxError: Missing parentheses in call to \'exec\' at '
+        'statement: "exec \'q = 1\'"',) == result.errors
 
 
 FUNCTION_DEF = """\
@@ -130,7 +130,7 @@ def test_compile__compile_restricted_eval__1(c_eval):
     """
     result = c_eval(FUNCTION_DEF)
     assert result.errors == (
-        'Line 1: SyntaxError: invalid syntax in on statement: def a():',)
+        "Line 1: SyntaxError: invalid syntax at statement: 'def a():'",)
 
 
 @pytest.mark.parametrize(*e_eval)

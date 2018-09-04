@@ -77,7 +77,8 @@ def test_RestrictingNodeTransformer__visit_Import__9(c_exec):
 def test_RestrictingNodeTransformer__visit_Import_star__1(c_exec):
     """Importing `*` is a SyntaxError in Python itself."""
     result = c_exec('import *')
-    assert result.errors == ('Line 1: SyntaxError: invalid syntax in on statement: import *',)  # NOQA: E501
+    assert result.errors == (
+        "Line 1: SyntaxError: invalid syntax at statement: 'import *'",)
     assert result.code is None
 
 
