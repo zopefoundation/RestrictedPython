@@ -1,7 +1,7 @@
 Changes
 =======
 
-4.0b5 (unreleased)
+4.0b5 (2018-09-05)
 ------------------
 
 - When calling ``compile_restricted_function`` with a function body containing
