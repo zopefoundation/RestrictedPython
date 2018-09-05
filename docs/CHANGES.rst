@@ -4,7 +4,9 @@ Changes
 4.0b5 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- When calling ``compile_restricted_function`` with a function body containing
+  a ``SyntaxError`` also a ``CompileResult`` is returned. This fixes
+  `Products.PythonScripts#11 <https://github.com/zopefoundation/Products.PythonScripts/issues/11>`_.
 
 
 4.0b4 (2018-05-18)
@@ -28,10 +30,6 @@ Changes
   as they allow to import names starting with an underscore which could
   override protected build-ins.
   (`#102 <https://github.com/zopefoundation/RestrictedPython/issues/102>`_)
-
-- When calling ``compile_restricted_function`` with a function body containing
-  a ``SyntaxError`` also a ``CompileResult`` is returned. This fixes
-  `Products.PythonScripts#11 <https://github.com/zopefoundation/Products.PythonScripts/issues/11>`_.
 
 - Bring test coverage to 100 %.
 
