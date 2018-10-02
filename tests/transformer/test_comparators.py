@@ -52,12 +52,36 @@ def test_RestrictingNodeTransformer__visit_IsNot__1(e_eval):
 
 
 @pytest.mark.parametrize(*e_eval)
-def test_RestrictingNodeTransformer__visit_In__1(e_eval):
-    """It allows `in` expressions."""
+def test_RestrictingNodeTransformer__visit_In_List(e_eval):
+    """It allows `in` expressions for lists."""
     assert e_eval('2 in [1, 2, 3]') is True
 
 
 @pytest.mark.parametrize(*e_eval)
-def test_RestrictingNodeTransformer__visit_NotIn__1(e_eval):
-    """It allows `in` expressions."""
+def test_RestrictingNodeTransformer__visit_NotIn_List(e_eval):
+    """It allows `not in` expressions for lists."""
     assert e_eval('2 not in [1, 2, 3]') is False
+
+
+@pytest.mark.parametrize(*e_eval)
+def test_RestrictingNodeTransformer__visit_In_Set(e_eval):
+    """It allows `in` expressions for sets."""
+    assert e_eval('2 in {1, 1, 2, 3}') is True
+
+
+@pytest.mark.parametrize(*e_eval)
+def test_RestrictingNodeTransformer__visit_NotIn_Set(e_eval):
+    """It allows `not in` expressions for sets."""
+    assert e_eval('2 not in {1, 2, 3}') is False
+
+
+@pytest.mark.parametrize(*e_eval)
+def test_RestrictingNodeTransformer__visit_In_Dict(e_eval):
+    """It allows `in` expressions for dicts."""
+    assert e_eval('2 in {1: 1, 2: 2, 3: 3}') is True
+
+
+@pytest.mark.parametrize(*e_eval)
+def test_RestrictingNodeTransformer__visit_NotIn_Dict(e_eval):
+    """It allows `not in` expressions for dicts."""
+    assert e_eval('2 not in {1: 1, 2: 2, 3: 3}') is False
