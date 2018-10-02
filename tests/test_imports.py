@@ -48,7 +48,7 @@ mygetattr = __builtins__['getattr']
 )
 @pytest.mark.parametrize(*c_exec)
 def test_import_py2_builtins(c_exec):
-    """It should not be allowed to access global builtins in Python3."""
+    """It should not be allowed to access global __builtins__ in Python2."""
     result = c_exec(__BUILTINS_EXAMPLE)
     assert result.code is None
     assert result.errors == (
@@ -71,7 +71,7 @@ mygetattr = builtins['getattr']
 )
 @pytest.mark.parametrize(*c_exec)
 def test_import_py2_as_builtins(c_exec):
-    """It should not be allowed to access global builtins in Python3."""
+    """It should not be allowed to access global __builtins__ in Python2."""
     result = c_exec(__BUILTINS_EXAMPLE)
     assert result.code is None
     assert result.errors == (
