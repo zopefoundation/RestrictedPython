@@ -14,8 +14,8 @@ def no_yield():
 def test_yield(c_exec):
     """It prevents using the `yield` statement."""
     result = c_exec(YIELD_EXAMPLE)
-    assert result.errors == ("Line 2: Yield statements are not allowed.",)
-    assert result.code is None
+    assert result.errors == ()
+    assert result.code is not None
 
 
 # Modified Example from http://stackabuse.com/python-async-await-tutorial/
