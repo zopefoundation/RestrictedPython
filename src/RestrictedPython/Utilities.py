@@ -37,8 +37,8 @@ def same_type(arg1, *args):
     t = getattr(arg1, '__class__', type(arg1))
     for arg in args:
         if getattr(arg, '__class__', type(arg)) is not t:
-            return 0
-    return 1
+            return False
+    return True
 
 
 utility_builtins['same_type'] = same_type

@@ -76,7 +76,7 @@ def test_sametype_only_two_args_different():
 
     class Foo(object):
         pass
-    assert same_type(object(), Foo()) is 0
+    assert same_type(object(), Foo()) is False
 
 
 def test_sametype_only_multiple_args_same():
@@ -89,7 +89,7 @@ def test_sametype_only_multipe_args_one_different():
 
     class Foo(object):
         pass
-    assert same_type(object(), object(), Foo()) is 0
+    assert same_type(object(), object(), Foo()) is False
 
 
 def test_test_single_value_true():
