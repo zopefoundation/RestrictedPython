@@ -70,6 +70,7 @@ ALLOWED_FUNC_NAMES = frozenset([
 FORBIDDEN_FUNC_NAMES = frozenset([
     'print',
     'printed',
+    'builtins',
 ])
 
 

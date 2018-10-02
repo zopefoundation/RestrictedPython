@@ -1,7 +1,9 @@
 from RestrictedPython._compat import IS_PY2
+from RestrictedPython._compat import IS_PY3
 from RestrictedPython.Guards import guarded_unpack_sequence
 from RestrictedPython.Guards import safe_builtins
 from RestrictedPython.Guards import safer_getattr
+from tests import c_exec
 from tests import e_eval
 from tests import e_exec
 
@@ -214,3 +216,28 @@ def test_Guards__safer_getattr__3(e_exec):
     )
     e_exec(SAFER_GETATTR_ALLOWED, restricted_globals)
     assert restricted_globals['result'] == 2
+
+
+@pytest.mark.skipif(
+    IS_PY2,
+    reason="__builtins__ has been renamed in Python3 to builtins, "
+    "and need only to be tested there."
+)
+@pytest.mark.parametrize(*c_exec)
+def test_call_py3_builtins(c_exec):
+    """It should not be allowed to access global builtins in Python3."""
+    result = c_exec('builtins["getattr"]')
+    assert result.code is None
+    assert result.errors == ('Line 1: "builtins" is a reserved name.',)
+
+
+@pytest.mark.skipif(
+    IS_PY3,
+    reason="__builtins__ has been renamed in Python3 to builtins."
+)
+@pytest.mark.parametrize(*c_exec)
+def test_call_py2_builtins(c_exec):
+    """It should not be allowed to access global __builtins__ in Python2."""
+    result = c_exec('__builtins__["getattr"]')
+    assert result.code is None
+    assert result.errors == ('Line 1: "__builtins__" is an invalid variable name because it starts with "_"',)  # NOQA: E501
