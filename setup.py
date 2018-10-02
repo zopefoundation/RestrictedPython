@@ -64,22 +64,9 @@ setup(
     install_requires=[
         'setuptools',
     ],
-    setup_requires=[
-        'pytest-runner',
-    ],
     tests_require=tests_require,
     extras_require={
-        'docs': [
-            'Sphinx',
-        ],
         'test': tests_require,
-        'release': [
-            'zest.releaser',
-        ],
-        'develop': [
-            'pdbpp',
-            'isort',
-        ],
     },
     include_package_data=True,
     zip_safe=False
