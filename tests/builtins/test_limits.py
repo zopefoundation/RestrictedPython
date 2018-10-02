@@ -46,8 +46,13 @@ def test_limited_range_zero_step():
 
 
 def test_limited_range_range_overflow():
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError) as excinfo:
         limited_range(0, 5000, 1)
+    assert (
+        'To be created range() object would be to large, '
+        'in RestrictedPython we only allow 1000 elements in a range.'
+        in str(excinfo.value)
+    )
 
 
 def test_limited_list_valid_list_input():

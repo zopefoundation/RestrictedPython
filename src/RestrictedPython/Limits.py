@@ -31,7 +31,11 @@ def limited_range(iFirst, *args):
     if iLen < 0:
         iLen = 0
     if iLen >= RANGELIMIT:
-        raise ValueError('range() too large')
+        raise ValueError(
+            'To be created range() object would be to large, '
+            'in RestrictedPython we only allow {limit} '
+            'elements in a range.'.format(limit=str(RANGELIMIT)),
+        )
     return range(iStart, iEnd, iStep)
 
 
