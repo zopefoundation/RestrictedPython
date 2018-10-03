@@ -2,7 +2,6 @@
 
 matrix:
   allow_failures:
-  - PROFILE: py37
   - PROFILE: py38
 
 environment:
