@@ -60,7 +60,7 @@ def _compile_restricted_mode(
                     lineno=v.lineno,
                     type=v.__class__.__name__,
                     msg=v.msg,
-                    statement=v.text.strip()
+                    statement=v.text.strip() if v.text else None
                 ))
         if c_ast:
             policy_instance = policy(

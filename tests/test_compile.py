@@ -31,6 +31,17 @@ def test_compile__compile_restricted_invalid_mode_input():
         compile_restricted("pass", '<string>', 'invalid')
 
 
+INVALID_ASSINGMENT = """
+1 = 2
+"""
+
+
+def test_compile__invalid_syntax():
+    with pytest.raises(SyntaxError) as err:
+        compile_restricted(INVALID_ASSINGMENT, '<string>', 'exec')
+    assert "can't assign to literal at statement:" in str(err.value)
+
+
 @pytest.mark.parametrize(*c_exec)
 def test_compile__compile_restricted_exec__1(c_exec):
     """It returns a CompileResult on success."""
