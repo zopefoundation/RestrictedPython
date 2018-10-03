@@ -21,7 +21,9 @@ matrix:
           env: TOXENV=py37,py37-datetime
         - python: "3.8-dev"
           env: TOXENV=py38,py38-datetime
-    allow_failures:
+          dist: xenial
+          sudo: true
+allow_failures:
         - python: "3.8-dev"
           env: TOXENV=py38,py38-datetime
 
