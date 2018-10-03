@@ -17,6 +17,11 @@ def test_yield(c_exec):
     result = c_exec(YIELD_EXAMPLE)
     assert result.errors == ()
     assert result.code is not None
+    local = {}
+    exec(result.code, {}, local)
+    no_yield = local['no_yield']
+    exec_result = [elem for elem in no_yield()]
+    assert exec_result == [42]
 
 
 YIELD_FORM_EXAMPLE = """
@@ -34,6 +39,17 @@ def test_yield_from(c_exec):
     result = c_exec(YIELD_FORM_EXAMPLE)
     assert result.errors == ()
     assert result.code is not None
+
+    def my_generator():
+        my_list = [1, 2, 3, 4, 5]
+        for elem in my_list:
+            yield(elem)
+
+    local = {}
+    exec(result.code, {}, local)
+    reader_wapper = local['reader_wapper']
+    exec_result = [elem for elem in reader_wapper(my_generator())]
+    assert exec_result == [1, 2, 3, 4, 5]
 
 
 # Modified Example from http://stackabuse.com/python-async-await-tutorial/
