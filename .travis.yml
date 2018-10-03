@@ -23,9 +23,13 @@ matrix:
           sudo: true
         - python: "3.8-dev"
           env: TOXENV=py38,py38-datetime
-allow_failures:
-    - python: "3.8-dev"
-      env: TOXENV=py38,py38-datetime
+          dist: xenial
+          sudo: true
+    allow_failures:
+        - python: "3.8-dev"
+          env: TOXENV=py38,py38-datetime
+          dist: xenial
+          sudo: true
 
 install:
     - travis_retry pip install -U pip setuptools
