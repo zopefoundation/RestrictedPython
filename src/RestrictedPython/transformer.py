@@ -71,6 +71,7 @@ FORBIDDEN_FUNC_NAMES = frozenset([
     'print',
     'printed',
     'builtins',
+    'breakpoint',
 ])
 
 
