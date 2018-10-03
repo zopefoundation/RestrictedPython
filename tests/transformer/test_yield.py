@@ -1,4 +1,5 @@
 from RestrictedPython._compat import IS_PY3
+from RestrictedPython._compat import IS_PY35_OR_GREATER
 from tests import c_exec
 
 import pytest
@@ -12,14 +13,31 @@ def no_yield():
 
 @pytest.mark.parametrize(*c_exec)
 def test_yield(c_exec):
-    """It prevents using the `yield` statement."""
+    """`yield` statement should be allowed."""
     result = c_exec(YIELD_EXAMPLE)
     assert result.errors == ()
     assert result.code is not None
 
 
-# Modified Example from http://stackabuse.com/python-async-await-tutorial/
 YIELD_FORM_EXAMPLE = """
+def reader_wapper(input):
+    yield from input
+"""
+
+
+@pytest.mark.skipif(
+    not IS_PY3,
+    reason="`yield from` statement was first introduced in Python 3.3")
+@pytest.mark.parametrize(*c_exec)
+def test_yield_from(c_exec):
+    """`yield from` statement should be allowed."""
+    result = c_exec(YIELD_FORM_EXAMPLE)
+    assert result.errors == ()
+    assert result.code is not None
+
+
+# Modified Example from http://stackabuse.com/python-async-await-tutorial/
+ASYNCIO_YIELD_FORM_EXAMPLE = """
 import asyncio
 
 @asyncio.coroutine
@@ -32,7 +50,29 @@ def get_json(client, url):
     not IS_PY3,
     reason="`yield from` statement was first introduced in Python 3.3")
 @pytest.mark.parametrize(*c_exec)
-def test_yield_from(c_exec):
-    result = c_exec(YIELD_FORM_EXAMPLE)
-    assert result.errors == ('Line 6: YieldFrom statements are not allowed.',)
+def test_asyncio_yield_from(c_exec):
+    """`yield from` statement should be allowed."""
+    result = c_exec(ASYNCIO_YIELD_FORM_EXAMPLE)
+    assert result.errors == ()
+    assert result.code is not None
+
+
+ASYNC_YIELD_FORM_EXAMPLE = """
+import asyncio
+
+async def get_json(client, url):
+    file_content = yield from load_file('data.ini')
+"""
+
+
+@pytest.mark.skipif(
+    not IS_PY35_OR_GREATER,
+    reason="`yield from` statement was first introduced in Python 3.3")
+@pytest.mark.parametrize(*c_exec)
+def test_async_yield_from(c_exec):
+    """`yield from` statement should be allowed."""
+    result = c_exec(ASYNC_YIELD_FORM_EXAMPLE)
+    assert result.errors == (
+        'Line 4: AsyncFunctionDef statements are not allowed.',
+    )
     assert result.code is None
