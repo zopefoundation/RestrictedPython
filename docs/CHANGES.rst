@@ -4,7 +4,8 @@ Changes
 4.0b6 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Allow `yield` and `yield from` statements.
+  Generator functions would now work in RestrictedPython.
 
 
 4.0b5 (2018-09-05)

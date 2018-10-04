@@ -1365,12 +1365,12 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         return self.node_contents_visit(node)
 
     def visit_Yield(self, node):
-        """Deny `yield` unconditionally."""
-        self.not_allowed(node)
+        """Allow `yield`statements without restrictions."""
+        return self.node_contents_visit(node)
 
     def visit_YieldFrom(self, node):
-        """Deny `yield from` unconditionally."""
-        self.not_allowed(node)
+        """Allow `yield`statements without restrictions."""
+        return self.node_contents_visit(node)
 
     def visit_Global(self, node):
         """Allow `global` statements without restrictions."""
