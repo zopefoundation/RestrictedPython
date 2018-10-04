@@ -6,7 +6,7 @@ import pytest
 
 
 YIELD_EXAMPLE = """\
-def no_yield():
+def test_generator():
     yield 42
 """
 
@@ -19,8 +19,8 @@ def test_yield(c_exec):
     assert result.code is not None
     local = {}
     exec(result.code, {}, local)
-    no_yield = local['no_yield']
-    exec_result = [elem for elem in no_yield()]
+    test_generator = local['test_generator']
+    exec_result = list(test_generator())
     assert exec_result == [42]
 
 
@@ -40,7 +40,7 @@ def test_yield_from(c_exec):
     assert result.errors == ()
     assert result.code is not None
 
-    def my_generator():
+    def my_external_generator():
         my_list = [1, 2, 3, 4, 5]
         for elem in my_list:
             yield(elem)
@@ -48,7 +48,7 @@ def test_yield_from(c_exec):
     local = {}
     exec(result.code, {}, local)
     reader_wapper = local['reader_wapper']
-    exec_result = [elem for elem in reader_wapper(my_generator())]
+    exec_result = list(reader_wapper(my_external_generator()))
     assert exec_result == [1, 2, 3, 4, 5]
 
 
