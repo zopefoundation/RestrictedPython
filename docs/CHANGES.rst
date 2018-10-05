@@ -1,7 +1,7 @@
 Changes
 =======
 
-4.0b6 (unreleased)
+4.0b6 (2018-10-05)
 ------------------
 
 - Allow `yield` and `yield from` statements.
