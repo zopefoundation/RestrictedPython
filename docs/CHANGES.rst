@@ -7,6 +7,10 @@ Changes
 - Allow `yield` and `yield from` statements.
   Generator functions would now work in RestrictedPython.
 
+- Add support for Python 3.7.
+
+- Fix possible installation error.
+
 
 4.0b5 (2018-09-05)
 ------------------
