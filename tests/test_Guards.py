@@ -241,3 +241,34 @@ def test_call_py2_builtins(c_exec):
     result = c_exec('__builtins__["getattr"]')
     assert result.code is None
     assert result.errors == ('Line 1: "__builtins__" is an invalid variable name because it starts with "_"',)  # NOQA: E501
+
+
+BYPASS_CODE = """
+def exec_bypass():
+    return getattr(
+        getattr(
+            getattr(
+                getattr(
+                    getattr(
+                        [], '__class__'
+                    ),
+                    '__base__'
+                ),
+                '__subclasses__'
+            )().pop(78),
+            '__init__'
+        ), '__globals__'
+    ).pop('sys').modules.pop('os').popen('id').read()
+"""
+
+
+@pytest.mark.parametrize(*c_exec)
+def test_bypass_getattr_names(c_exec):
+    loc = {}
+    result = c_exec(BYPASS_CODE)
+    assert result.code is not None
+    assert result.errors == ()
+    assert result.warnings == []
+    exec(result.code, safe_builtins, loc)
+    with pytest.raises(AttributeError):
+        loc['exec_bypass']()
