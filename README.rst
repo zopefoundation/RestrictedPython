@@ -47,7 +47,7 @@ This example directly executed in Python could harm your system.
 .. code-block:: pycon
 
     >>> from RestrictedPython import compile_restricted
-    >>> from RestrictedPython import safe_builtins
+    >>> from RestrictedPython import safe_globals
     >>>
     >>> source_code = """
     ... import os
@@ -55,6 +55,6 @@ This example directly executed in Python could harm your system.
     ... os.listdir('/')
     ... """
     >>> byte_code = compile_restricted(source_code, '<inline>', 'exec')
-    >>> exec(byte_code, {'__builtins__': safe_builtins}, {})
+    >>> exec(byte_code, safe_globals, {})
     Traceback (most recent call last):
     ImportError: __import__ not found

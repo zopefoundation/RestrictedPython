@@ -86,11 +86,14 @@ So you normally end up using:
             filename='<inline code>',
             mode='exec'
         )
-        exec(byte_code, safe_builtins, None)
+        exec(byte_code, {'__builtins__': safe_builtins}, None)
     except SyntaxError as e:
         pass
 
 One common advanced usage would be to define an own restricted builtin dictionary.
+
+There is a shortcut for ``{'__builtins__': safe_builtins}`` named
+``safe_globals`` which can be imported from ``RestrictedPython``.
 
 Necessary setup
 ---------------

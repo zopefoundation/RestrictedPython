@@ -130,6 +130,7 @@ RestrictedPython has tree major scopes:
 
 2. restricted builtins
 
+  * ``safe_globals``
   * ``safe_builtins``
   * ``limited_builtins``
   * ``utility_builtins``
