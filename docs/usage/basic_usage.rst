@@ -92,8 +92,7 @@ So you normally end up using:
 
 One common advanced usage would be to define an own restricted builtin dictionary.
 
-There is a shortcut for ``{'__builtins__': safe_builtins}`` named
-``safe_globals`` which can be imported from ``RestrictedPython``.
+There is a shortcut for ``{'__builtins__': safe_builtins}`` named ``safe_globals`` which can be imported from ``RestrictedPython``.
 
 Necessary setup
 ---------------
