@@ -33,6 +33,7 @@ Guards
 
 RestrictedPython predefines several guarded access and manipulation methods:
 
+* ``safer_getattr``
 * ``guarded_setattr``
 * ``guarded_delattr``
 * ``guarded_iter_unpack_sequence``
