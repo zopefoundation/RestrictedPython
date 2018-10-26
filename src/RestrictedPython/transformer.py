@@ -568,15 +568,23 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         return self.node_contents_visit(node)
 
     def visit_Ellipsis(self, node):
-        """Deny using `...`.
+        """Allow using `...`.
 
         Ellipsis is exists only in Python 3.
         """
-        self.not_allowed(node)
+        return self.node_contents_visit(node)
 
     def visit_NameConstant(self, node):
         """
 
+        """
+        return self.node_contents_visit(node)
+
+    def visit_Constant(self, node):
+        """
+
+        Constant replaces Num, Str, Byte, NameConstant and Ellipsis
+        :see: https://docs.python.org/dev/whatsnew/3.8.html#deprecated
         """
         return self.node_contents_visit(node)
 
