@@ -27,6 +27,7 @@ from RestrictedPython.compile import compile_restricted_single  # isort:skip
 
 # predefined builtins
 from RestrictedPython.Guards import safe_builtins  # isort:skip
+from RestrictedPython.Guards import safe_globals  # isort:skip
 from RestrictedPython.Limits import limited_builtins  # isort:skip
 from RestrictedPython.Utilities import utility_builtins  # isort:skip
 
