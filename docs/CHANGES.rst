@@ -4,7 +4,16 @@ Changes
 4.0b7 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Fix documentation issue which leads to unnecessary unsafe code: Never use
+  ``safe_builtins`` as argument of ``compile_resticted`` but use
+  ``dict(__builtins__=safe_builtins)`` or the newly introduced
+  ``safe_globals``. Otherwise the default Python built-ins which are not in
+  ``safe_builtins`` can still be accessed.
+  (`#142 <https://github.com/zopefoundation/RestrictedPython/issues/142>`_)
+
+- Improve `.Guards.safer_getattr` to prevent accessing names starting with
+  underscore.
+  (`#142 <https://github.com/zopefoundation/RestrictedPython/issues/142>`_)
 
 
 4.0b6 (2018-10-05)
