@@ -275,7 +275,6 @@ def safer_getattr(object, name, default=None, getattr=getattr):
 
 
 safe_builtins['_getattr_'] = safer_getattr
-safe_builtins['getattr'] = safer_getattr
 
 
 def guarded_iter_unpack_sequence(it, spec, _getiter_):
