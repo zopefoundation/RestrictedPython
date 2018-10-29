@@ -2,6 +2,7 @@ from RestrictedPython._compat import IS_PY2
 from RestrictedPython._compat import IS_PY3
 from RestrictedPython.Guards import guarded_unpack_sequence
 from RestrictedPython.Guards import safe_builtins
+from RestrictedPython.Guards import safe_globals
 from RestrictedPython.Guards import safer_getattr
 from tests import c_exec
 from tests import e_eval
@@ -13,8 +14,7 @@ import pytest
 @pytest.mark.parametrize(*e_eval)
 def test_Guards__safe_builtins__1(e_eval):
     """It contains `slice()`."""
-    restricted_globals = dict(__builtins__=safe_builtins)
-    assert e_eval('slice(1)', restricted_globals) == slice(1)
+    assert e_eval('slice(1)', safe_globals) == slice(1)
 
 
 @pytest.mark.parametrize(*e_exec)
@@ -241,3 +241,23 @@ def test_call_py2_builtins(c_exec):
     result = c_exec('__builtins__["getattr"]')
     assert result.code is None
     assert result.errors == ('Line 1: "__builtins__" is an invalid variable name because it starts with "_"',)  # NOQA: E501
+
+
+GETATTR_UNDERSCORE_NAME = """
+getattr([], '__class__')
+"""
+
+
+@pytest.mark.parametrize(*c_exec)
+def test_safer_getattr__underscore_name(c_exec):
+    """It prevents accessing an attribute which starts with an underscore."""
+    result = c_exec(GETATTR_UNDERSCORE_NAME)
+    assert result.errors == ()
+    assert result.warnings == []
+    glb = safe_globals.copy()
+    glb['getattr'] = safer_getattr
+    with pytest.raises(AttributeError) as err:
+        exec(result.code, glb, {})
+    assert (
+        '"__class__" is an invalid attribute name because it starts with "_"'
+        == str(err.value))

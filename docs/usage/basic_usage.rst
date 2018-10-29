@@ -86,11 +86,13 @@ So you normally end up using:
             filename='<inline code>',
             mode='exec'
         )
-        exec(byte_code, safe_builtins, None)
+        exec(byte_code, {'__builtins__': safe_builtins}, None)
     except SyntaxError as e:
         pass
 
 One common advanced usage would be to define an own restricted builtin dictionary.
+
+There is a shortcut for ``{'__builtins__': safe_builtins}`` named ``safe_globals`` which can be imported from ``RestrictedPython``.
 
 Necessary setup
 ---------------
@@ -103,5 +105,9 @@ To use classes in Python 3
 
 To use ``for`` statements and comprehensions
     ``_iter_unpack_sequence_`` must point to :func:`RestrictedPython.Guards.guarded_iter_unpack_sequence`.
+
+To use ``getattr``
+    you have to provide an implementation for it.
+    :func:``RestrictedPython.Guards.safer_getattr`` can be a starting point.
 
 The usage of `RestrictedPython` in :mod:`AccessControl.ZopeGuards` can serve as example.

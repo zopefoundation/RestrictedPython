@@ -60,6 +60,7 @@ secret.cfg
 /.ropeproject/
 /.project
 /.pydevproject
+.mypy_cache/
 
 # Import Data
 /*.csv

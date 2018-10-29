@@ -28,6 +28,7 @@ RestrictedPython did move some of the imports to the base namespace, so you shou
 
 * predefined built-ins:
 
+  * ``from RestrictedPython import safe_globals``
   * ``from RestrictedPython import safe_builtins``
   * ``from RestrictedPython import limited_builtins``
   * ``from RestrictedPython import utility_builtins``
