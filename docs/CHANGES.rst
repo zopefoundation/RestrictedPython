@@ -1,7 +1,7 @@
 Changes
 =======
 
-4.0b7 (unreleased)
+4.0b7 (2018-10-30)
 ------------------
 
 - Fix documentation issue which leads to unnecessary unsafe code: Never use
