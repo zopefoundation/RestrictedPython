@@ -44,7 +44,7 @@ def test_ellipsis_slice_01():
 
 ELLIPSIS_EXAMPLE = """
 def first_last(input_list):
-    first , ..., last = input_list
+    first, ..., last = input_list
     return (first, last)
 """
 
