@@ -7,31 +7,31 @@ matrix:
 environment:
   matrix:
     - PROFILE: py27-conventions
-      PYTHON_VERSION: 2.7"
+      PYTHON_VERSION: "2.7"
       TOXENV: "lint,docs"
     - PROFILE: py35-conventions
-      PYTHON_VERSION: 3.6"
+      PYTHON_VERSION: "3.6"
       TOXENV: "lint,docs"
     - PROFILE: py36-conventions
-      PYTHON_VERSION: 3.6"
+      PYTHON_VERSION: "3.6"
       TOXENV: "lint,docs"
     - PROFILE: py37-conventions
-      PYTHON_VERSION: 3.6"
+      PYTHON_VERSION: "3.6"
       TOXENV: "lint,docs"
     - PROFILE: py27
-      PYTHON_VERSION: 2.7"
+      PYTHON_VERSION: "2.7"
       TOXENV: "py27,py27-datetime"
     - PROFILE: py35
-      PYTHON_VERSION: 3.5"
+      PYTHON_VERSION: "3.5"
       TOXENV: "py35,py35-datetime"
     - PROFILE: py36
-      PYTHON_VERSION: 3.6"
+      PYTHON_VERSION: "3.6"
       TOXENV: "py36,py36-datetime"
     - PROFILE: py37
-      PYTHON_VERSION: 3.7"
+      PYTHON_VERSION: "3.7"
       TOXENV: "py37,py37-datetime"
     - PROFILE: py38
-      PYTHON_VERSION: 3.8"
+      PYTHON_VERSION: "3.8"
       TOXENV: "py38,py38-datetime"
 
 
