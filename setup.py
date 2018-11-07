@@ -40,8 +40,8 @@ setup(
         'allows to provide a program input into a trusted environment.'
     ),
     long_description=(
-        read('README.rst') + '\n' +
-        read('docs', 'CHANGES.rst')
+        read('README.rst') + '\n'
+        + read('docs', 'CHANGES.rst')
     ),
     classifiers=[
         'License :: OSI Approved :: Zope Public License',
