@@ -43,11 +43,13 @@ def test_ellipsis_slice_01():
 
 
 ELLIPSIS_EXAMPLE = """
-from array import Array
+from array import array
 
-data_array = Array('l', [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12])
+def get_data():
+    data_array = array('l', [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12])
 
-data[1, ..., 1]
+    return data_array[1, ..., 1]
+
 """
 
 
@@ -60,3 +62,7 @@ def test_ellipsis_slice_02():
     assert result.errors == ()
     assert result.warnings == []
     assert result.code is not None
+    rglb = {'_getitem_': getitem}  # restricted globals
+    lcs = {}
+    exec(result.code, rglb, lcs)
+    assert lcs['get_data']() == ""
