@@ -43,9 +43,11 @@ def test_ellipsis_slice_01():
 
 
 ELLIPSIS_EXAMPLE = """
-def first_last(input_list):
-    first, ..., last = input_list
-    return (first, last)
+from array import Array
+
+data_array = Array('l', [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12])
+
+data[1, ..., 1]
 """
 
 
