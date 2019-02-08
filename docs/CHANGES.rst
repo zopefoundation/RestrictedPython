@@ -4,7 +4,9 @@ Changes
 4.0b8 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Add preliminary support for Python 3.8. as of 3.8.0a1 is released.
+
+- Allow the ``...`` (Ellipsis) statement. It is needed to support Python 3.8.
 
 
 4.0b7 (2018-10-30)

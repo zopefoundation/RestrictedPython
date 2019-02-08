@@ -2,6 +2,7 @@ from RestrictedPython import compile_restricted
 from RestrictedPython import CompileResult
 from RestrictedPython._compat import IS_PY2
 from RestrictedPython._compat import IS_PY3
+from RestrictedPython._compat import IS_PY38_OR_GREATER
 from tests import c_eval
 from tests import c_exec
 from tests import c_single
@@ -39,7 +40,10 @@ INVALID_ASSINGMENT = """
 def test_compile__invalid_syntax():
     with pytest.raises(SyntaxError) as err:
         compile_restricted(INVALID_ASSINGMENT, '<string>', 'exec')
-    assert "can't assign to literal at statement:" in str(err.value)
+    if IS_PY38_OR_GREATER:
+        assert "cannot assign to literal at statement:" in str(err.value)
+    else:
+        assert "can't assign to literal at statement:" in str(err.value)
 
 
 @pytest.mark.parametrize(*c_exec)
