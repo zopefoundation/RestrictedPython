@@ -206,7 +206,7 @@ def test_compile_restricted_eval():
     """This test checks compile_restricted itself if that raise Python errors.
     """
     with pytest.raises(SyntaxError,
-                       message="Line 3: Eval calls are not allowed."):
+                       match="Line 3: Eval calls are not allowed."):
         compile_restricted(EVAL_EXAMPLE, '<string>', 'exec')
 
 
