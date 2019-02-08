@@ -25,7 +25,8 @@ def _eval(compile_func):
     def _eval(source, glb=None):
         code = _compile(compile_func, source)
         if glb is None:
-            glb = {}
+            glb = {
+                '__builtins__': RestrictedPython.Guards.safe_builtins.copy()}
         return eval(code, glb)
     return _eval
 
