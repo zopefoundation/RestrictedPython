@@ -30,9 +30,9 @@ return printed
     safe_globals = {
         '__name__': 'script',
         '_getattr_': getattr,
-        '_print_': PrintCollector
+        '_print_': PrintCollector,
+        '__builtins__': safe_builtins,
     }
-    safe_globals.update(safe_builtins)
     safe_locals = {}
     exec(result.code, safe_globals, safe_locals)
     hello_world = safe_locals['hello_world']
@@ -64,8 +64,8 @@ return printed
         '__name__': 'script',
         '_getattr_': getattr,
         '_print_': PrintCollector,
+        '__builtins__': safe_builtins,
     }
-    safe_globals.update(safe_builtins)
 
     func = FunctionType(result.code, safe_globals)
     func()
@@ -98,9 +98,9 @@ return printed
     safe_globals = {
         '__name__': 'script',
         '_getattr_': getattr,
-        '_print_': PrintCollector
+        '_print_': PrintCollector,
+        '__builtins__': safe_builtins,
     }
-    safe_globals.update(safe_builtins)
     safe_locals = {}
     exec(result.code, safe_globals, safe_locals)
     hello_world = safe_locals['hello_world']
@@ -133,9 +133,9 @@ return printed
         '__name__': 'script',
         '_getattr_': getattr,
         'input': 'Hello World!',
-        '_print_': PrintCollector
+        '_print_': PrintCollector,
+        '__builtins__': safe_builtins,
     }
-    safe_globals.update(safe_builtins)
     safe_locals = {}
     exec(result.code, safe_globals, safe_locals)
     hello_world = safe_locals['hello_world']
@@ -164,8 +164,8 @@ def test_compile_restricted_function_pretends_the_code_is_executed_in_a_global_s
     safe_globals = {
         '__name__': 'script',
         'output': 'foo',
+        '__builtins__': {},
     }
-    # safe_globals.update(safe_builtins)
     safe_locals = {}
     exec(result.code, safe_globals, safe_locals)
     hello_world = safe_locals['hello_world']
@@ -195,8 +195,8 @@ def test_compile_restricted_function_allows_invalid_python_identifiers_as_functi
     safe_globals = {
         '__name__': 'script',
         'output': 'foo',
+        '__builtins__': {},
     }
-    # safe_globals.update(safe_builtins)
     safe_locals = {}
     exec(result.code, safe_globals, safe_locals)
     generated_function = tuple(safe_locals.values())[0]

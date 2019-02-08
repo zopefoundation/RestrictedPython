@@ -1,4 +1,4 @@
-from RestrictedPython import safe_builtins
+from RestrictedPython import safe_globals
 from RestrictedPython.Eval import default_guarded_getiter
 from RestrictedPython.Guards import guarded_iter_unpack_sequence
 from tests import c_exec
@@ -26,7 +26,7 @@ def test_iterate_over_dict_items_plain(c_exec):
 
 @pytest.mark.parametrize(*c_exec)
 def test_iterate_over_dict_items_safe(c_exec):
-    glb = safe_builtins.copy()
+    glb = safe_globals.copy()
     glb['_getiter_'] = default_guarded_getiter
     glb['_iter_unpack_sequence_'] = guarded_iter_unpack_sequence
     result = c_exec(ITERATE_OVER_DICT_ITEMS)

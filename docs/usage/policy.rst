@@ -24,6 +24,8 @@ Predefined builtins
 * ``limited_builtins`` which provides restricted sequence types,
 * ``utility_builtins`` which provides access for standard modules math, random, string and for sets.
 
+* ``safe_globals`` a shortcut for ``glb = {'__builtins__': safe_builtins}``
+
 Guards
 ......
 
@@ -33,6 +35,7 @@ Guards
 
 RestrictedPython predefines several guarded access and manipulation methods:
 
+* ``safer_getattr``
 * ``guarded_setattr``
 * ``guarded_delattr``
 * ``guarded_iter_unpack_sequence``

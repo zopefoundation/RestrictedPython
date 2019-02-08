@@ -12,7 +12,7 @@ Welcome to RestrictedPython's documentation!
 Supported Python versions
 =========================
 
-RestrictedPython support CPython 2.7, 3.4, 3.5 and 3.6.
+RestrictedPython support CPython 2.7, 3.5, 3.6 and 3.7.
 It does _not_ support PyPy or other alternative Python implementations.
 
 Contents
