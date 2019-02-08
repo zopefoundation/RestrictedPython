@@ -15,9 +15,6 @@ matrix:
         - python: "3.7"
           env: TOXENV=py37,py37-datetime
           dist: xenial
-        - python: "3.7-dev"
-          env: TOXENV=py37,py37-datetime
-          dist: xenial
         - python: "3.8-dev"
           env: TOXENV=py38,py38-datetime
           dist: xenial
