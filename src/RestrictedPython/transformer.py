@@ -537,17 +537,24 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
     # ast for Literals
 
     def visit_Num(self, node):
-        """Allow integer numbers without restrictions."""
+        """Allow integer numbers without restrictions.
+
+        Replaced by Constant in Python 3.8.
+        """
         return self.node_contents_visit(node)
 
     def visit_Str(self, node):
-        """Allow string literals without restrictions."""
+        """Allow string literals without restrictions.
+
+        Replaced by Constant in Python 3.8.
+        """
         return self.node_contents_visit(node)
 
     def visit_Bytes(self, node):
         """Allow bytes literals without restrictions.
 
         Bytes is Python 3 only.
+        Replaced by Constant in Python 3.8.
         """
         return self.node_contents_visit(node)
 
@@ -567,16 +574,27 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         """Allow dict literals without restrictions."""
         return self.node_contents_visit(node)
 
+    def visit_Constant(self, node):
+        """Allow constant literals without restrictions.
+
+        Constant replaces Num, Str, Bytes, NameConstant and Ellipsis in
+        Python 3.8+.
+        :see: https://docs.python.org/dev/whatsnew/3.8.html#deprecated
+        """
+        return self.node_contents_visit(node)
+
     def visit_Ellipsis(self, node):
-        """Deny using `...`.
+        """Allow using `...`.
 
         Ellipsis is exists only in Python 3.
+        Replaced by Constant in Python 3.8.
         """
-        self.not_allowed(node)
+        return self.node_contents_visit(node)
 
     def visit_NameConstant(self, node):
-        """
+        """Allow constant literals (True, False, None) without restrictions.
 
+        Replaced by Constant in Python 3.8.
         """
         return self.node_contents_visit(node)
 
