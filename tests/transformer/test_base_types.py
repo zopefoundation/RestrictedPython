@@ -1,5 +1,4 @@
 from RestrictedPython._compat import IS_PY2
-from tests import c_exec
 from tests import e_eval
 
 import pytest
@@ -25,8 +24,7 @@ def test_Set(e_eval):
 
 @pytest.mark.skipif(IS_PY2,
                     reason="... is new in Python 3")
-@pytest.mark.parametrize(*c_exec)
-def test_Ellipsis(c_exec):
-    """It prevents using the `ellipsis` statement."""
-    result = c_exec('...')
-    assert result.errors == ('Line 1: Ellipsis statements are not allowed.',)
+@pytest.mark.parametrize(*e_eval)
+def test_Ellipsis(e_eval):
+    """It allows using the `...` statement."""
+    assert e_eval('...') == Ellipsis
