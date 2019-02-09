@@ -6,7 +6,7 @@ from RestrictedPython import CompileResult
 from RestrictedPython._compat import IS_PY2
 from RestrictedPython._compat import IS_PY3
 from RestrictedPython._compat import IS_PY38_OR_GREATER
-from tests import e_eval
+from tests.helper import restricted_eval
 
 import platform
 import pytest
@@ -141,10 +141,9 @@ def test_compile__compile_restricted_eval__1():
         "Line 1: SyntaxError: invalid syntax at statement: 'def a():'",)
 
 
-@pytest.mark.parametrize(*e_eval)
-def test_compile__compile_restricted_eval__2(e_eval):
+def test_compile__compile_restricted_eval__2():
     """It compiles code as an Expression."""
-    assert e_eval('4 * 6') == 24
+    assert restricted_eval('4 * 6') == 24
 
 
 def test_compile__compile_restricted_eval__used_names():

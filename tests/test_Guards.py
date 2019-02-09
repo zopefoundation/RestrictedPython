@@ -5,8 +5,8 @@ from RestrictedPython.Guards import guarded_unpack_sequence
 from RestrictedPython.Guards import safe_builtins
 from RestrictedPython.Guards import safe_globals
 from RestrictedPython.Guards import safer_getattr
-from tests import e_eval
 from tests import e_exec
+from tests.helper import restricted_eval
 
 import pytest
 
@@ -15,10 +15,9 @@ def _write_(x):
     return x
 
 
-@pytest.mark.parametrize(*e_eval)
-def test_Guards__safe_builtins__1(e_eval):
+def test_Guards__safe_builtins__1():
     """It contains `slice()`."""
-    assert e_eval('slice(1)', safe_globals) == slice(1)
+    assert restricted_eval('slice(1)') == slice(1)
 
 
 @pytest.mark.parametrize(*e_exec)

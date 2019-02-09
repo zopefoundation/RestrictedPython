@@ -1,13 +1,9 @@
-from tests import e_eval
-
-import pytest
+from tests.helper import restricted_eval
 
 
-@pytest.mark.parametrize(*e_eval)
-def test_Is(e_eval):
-    assert e_eval('True is True') is True
+def test_Is():
+    assert restricted_eval('True is True') is True
 
 
-@pytest.mark.parametrize(*e_eval)
-def test_NotIs(e_eval):
-    assert e_eval('1 is not True') is True
+def test_NotIs():
+    assert restricted_eval('1 is not True') is True

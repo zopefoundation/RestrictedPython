@@ -1,18 +1,13 @@
-from tests import e_eval
-
-import pytest
+from tests.helper import restricted_eval
 
 
-@pytest.mark.parametrize(*e_eval)
-def test_Or(e_eval):
-    assert e_eval('False or True') is True
+def test_Or():
+    assert restricted_eval('False or True') is True
 
 
-@pytest.mark.parametrize(*e_eval)
-def test_And(e_eval):
-    assert e_eval('True and True') is True
+def test_And():
+    assert restricted_eval('True and True') is True
 
 
-@pytest.mark.parametrize(*e_eval)
-def test_Not(e_eval):
-    assert e_eval('not False') is True
+def test_Not():
+    assert restricted_eval('not False') is True
