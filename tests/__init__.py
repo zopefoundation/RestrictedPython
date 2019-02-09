@@ -31,28 +31,6 @@ def _eval(compile_func):
     return _eval
 
 
-def _single(compile_func):
-    """Factory to create an single function."""
-    def _single(source, glb=None):
-        code = _compile(compile_func, source)
-        if glb is None:
-            glb = {}
-        exec(code, glb)
-        return glb
-    return _single
-
-
-def _function(compile_func):
-    """Factory to create a function object."""
-    def _function(source, glb=None):
-        code = _compile(compile_func, source)
-        if glb is None:
-            glb = {}
-        exec(code, glb)
-        return glb
-    return _function
-
-
 # Define the arguments for @pytest.mark.parametrize. This was used to be able
 # to test both the old and the new implementation are equal. It can be
 # refactored into fixtures.
@@ -66,7 +44,4 @@ c_eval = ('c_eval', [RestrictedPython.compile.compile_restricted_eval])
 e_eval = ('e_eval', [_eval(RestrictedPython.compile.compile_restricted_eval)])
 #
 c_function = ('c_function', [RestrictedPython.compile.compile_restricted_function])  # NOQA: E501
-e_function = ('e_function', [_function(RestrictedPython.compile.compile_restricted_function)])  # NOQA: E501
-
 c_single = ('c_single', [RestrictedPython.compile.compile_restricted_single])
-e_single = ('e_single', [_single(RestrictedPython.compile.compile_restricted_single)])  # NOQA: E501

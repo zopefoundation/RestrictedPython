@@ -216,7 +216,7 @@ def test_compile_restricted_eval():
 
 def test_compile___compile_restricted_mode__1(recwarn, mocker):
     """It warns when using another Python implementation than CPython."""
-    if platform.python_implementation() == 'CPython':
+    if platform.python_implementation() == 'CPython':  # pragma: no cover
         # Using CPython we have to fake the check:
         mocker.patch('RestrictedPython.compile.IS_CPYTHON', new=False)
     compile_restricted('42')
@@ -232,7 +232,7 @@ def test_compile___compile_restricted_mode__1(recwarn, mocker):
 @pytest.mark.skipif(
     platform.python_implementation() == 'CPython',
     reason='Warning only present if not CPython.')
-def test_compile_CPython_warning(recwarn, mocker):
+def test_compile_CPython_warning(recwarn, mocker):  # pragma: no cover
     """It warns when using another Python implementation than CPython."""
     assert platform.python_implementation() != 'CPython'
     with pytest.warns(RuntimeWarning) as record:

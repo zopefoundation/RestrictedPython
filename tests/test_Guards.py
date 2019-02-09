@@ -11,6 +11,10 @@ from tests import e_exec
 import pytest
 
 
+def _write_(x):
+    return x
+
+
 @pytest.mark.parametrize(*e_eval)
 def test_Guards__safe_builtins__1(e_eval):
     """It contains `slice()`."""
@@ -37,7 +41,7 @@ result = ob1.display()'''
         result=None,
         __name__='restricted_module',
         __metaclass__=type,
-        _write_=lambda x: x,
+        _write_=_write_,
         _getattr_=getattr)
 
     e_exec(class_can_be_defined_code, restricted_globals)
@@ -64,7 +68,7 @@ setattr(my_object_d, 'value', 9999)'''
         my_object_d=None,
         __name__='restricted_module',
         __metaclass__=type,
-        _write_=lambda x: x,
+        _write_=_write_,
         _getattr_=getattr,)
 
     e_exec(setattr_code, restricted_globals)
@@ -91,7 +95,7 @@ setattr(my_ob, 'my_attr', 'bar')'''
         my_attr=None,
         __name__='restricted_module',
         __metaclass__=type,
-        _write_=lambda x: x,
+        _write_=_write_,
         _getattr_=getattr,)
 
     with pytest.raises(TypeError) as excinfo:
@@ -120,7 +124,7 @@ setattr(myobj_with_guarded_setattr, 'my_attr', 'bar')
         myobj_with_guarded_setattr=None,
         __name__='restricted_module',
         __metaclass__=type,
-        _write_=lambda x: x,
+        _write_=_write_,
         _getattr_=getattr,)
 
     e_exec(set_attribute_using_guarded_setattr_code, restricted_globals)
@@ -210,7 +214,7 @@ def test_Guards__safer_getattr__3(e_exec):
         __builtins__=safe_builtins,
         __name__=None,
         __metaclass__=type,
-        _write_=lambda x: x,
+        _write_=_write_,
         getattr=safer_getattr,
         result=None,
     )
