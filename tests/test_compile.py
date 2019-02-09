@@ -195,7 +195,7 @@ def test_compile_restricted():
         assert len(record) == 2
         assert record[0].message.args[0] == \
             'Line 3: Print statement is deprecated ' \
-            'and not avaliable anymore in Python 3.'
+            'and not available anymore in Python 3.'
         assert record[1].message.args[0] == \
             "Line 2: Prints, but never reads 'printed' variable."
 

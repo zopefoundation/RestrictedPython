@@ -1139,7 +1139,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         self.print_info.print_used = True
         self.warn(node,
                   "Print statement is deprecated and "
-                  "not avaliable anymore in Python 3.")
+                  "not available anymore in Python 3.")
 
         node = self.node_contents_visit(node)
         if node.dest is None:
@@ -1326,7 +1326,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         node = self.node_contents_visit(node)
 
         if IS_PY3:
-            # Implicit Tuple unpacking is not anymore avaliable in Python3
+            # Implicit Tuple unpacking is not anymore available in Python3
             return node
 
         # Check for tuple parameters which need _getiter_ protection
