@@ -1,12 +1,9 @@
 from RestrictedPython import compile_restricted_exec
-from tests import e_exec
-
-import pytest
+from tests.helper import restricted_exec
 
 
-@pytest.mark.parametrize(*e_exec)
 def test_RestrictingNodeTransformer__visit_AugAssign__1(
-        e_exec, mocker):
+        mocker):
     """It allows augmented assign for variables."""
     _inplacevar_ = mocker.stub()
     _inplacevar_.side_effect = lambda op, val, expr: val + expr
@@ -18,7 +15,7 @@ def test_RestrictingNodeTransformer__visit_AugAssign__1(
         'z': 0
     }
 
-    e_exec("a += x + z", glb)
+    restricted_exec("a += x + z", glb)
     assert glb['a'] == 2
     _inplacevar_.assert_called_once_with('+=', 1, 1)
     _inplacevar_.reset_mock()

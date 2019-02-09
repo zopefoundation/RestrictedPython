@@ -1,6 +1,6 @@
 from RestrictedPython import compile_restricted_exec
 from RestrictedPython._compat import IS_PY2
-from tests import e_exec
+from tests.helper import restricted_exec
 
 import pytest
 
@@ -32,10 +32,9 @@ def test_RestrictingNodeTransformer__visit_Name__2():
         'it starts with "_"',)
 
 
-@pytest.mark.parametrize(*e_exec)
-def test_RestrictingNodeTransformer__visit_Name__2_5(e_exec):
+def test_RestrictingNodeTransformer__visit_Name__2_5():
     """It allows `_` as variable name."""
-    glb = e_exec('_ = 2411')
+    glb = restricted_exec('_ = 2411')
     assert glb['_'] == 2411
 
 

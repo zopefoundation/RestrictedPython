@@ -2,7 +2,7 @@ from RestrictedPython import compile_restricted_exec
 from RestrictedPython._compat import IS_PY2
 from RestrictedPython._compat import IS_PY3
 from RestrictedPython.Guards import guarded_unpack_sequence
-from tests import e_exec
+from tests.helper import restricted_exec
 
 import pytest
 
@@ -86,9 +86,8 @@ def nested_with_order((a, b), (c, d)):
 @pytest.mark.skipif(
     IS_PY3,
     reason="tuple parameter unpacking is gone in python 3")
-@pytest.mark.parametrize(*e_exec)
 def test_RestrictingNodeTransformer__visit_FunctionDef__8(
-        e_exec, mocker):
+        mocker):
     _getiter_ = mocker.stub()
     _getiter_.side_effect = lambda it: it
 
@@ -97,7 +96,7 @@ def test_RestrictingNodeTransformer__visit_FunctionDef__8(
         '_unpack_sequence_': guarded_unpack_sequence
     }
 
-    e_exec('def simple((a, b)): return a, b', glb)
+    restricted_exec('def simple((a, b)): return a, b', glb)
 
     val = (1, 2)
     ret = glb['simple'](val)
@@ -105,7 +104,7 @@ def test_RestrictingNodeTransformer__visit_FunctionDef__8(
     _getiter_.assert_called_once_with(val)
     _getiter_.reset_mock()
 
-    e_exec(NESTED_SEQ_UNPACK, glb)
+    restricted_exec(NESTED_SEQ_UNPACK, glb)
 
     val = (1, 2, (3, (4, 5)))
     ret = glb['nested'](val)

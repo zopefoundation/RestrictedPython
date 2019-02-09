@@ -1,9 +1,8 @@
 from RestrictedPython import compile_restricted_exec
 from RestrictedPython.Guards import guarded_unpack_sequence
-from tests import e_exec
+from tests.helper import restricted_exec
 
 import contextlib
-import pytest
 
 
 WITH_STMT_WITH_UNPACK_SEQUENCE = """
@@ -13,8 +12,7 @@ def call(ctx):
 """
 
 
-@pytest.mark.parametrize(*e_exec)
-def test_with_stmt_unpack_sequence(e_exec, mocker):
+def test_with_stmt_unpack_sequence(mocker):
     @contextlib.contextmanager
     def ctx():
         yield (1, (2, 3))
@@ -27,7 +25,7 @@ def test_with_stmt_unpack_sequence(e_exec, mocker):
         '_unpack_sequence_': guarded_unpack_sequence
     }
 
-    e_exec(WITH_STMT_WITH_UNPACK_SEQUENCE, glb)
+    restricted_exec(WITH_STMT_WITH_UNPACK_SEQUENCE, glb)
 
     ret = glb['call'](ctx)
 
@@ -94,8 +92,7 @@ def load_attr(w):
 """
 
 
-@pytest.mark.parametrize(*e_exec)
-def test_with_stmt_attribute_access(e_exec, mocker):
+def test_with_stmt_attribute_access(mocker):
     _getattr_ = mocker.stub()
     _getattr_.side_effect = getattr
 
@@ -103,7 +100,7 @@ def test_with_stmt_attribute_access(e_exec, mocker):
     _write_.side_effect = lambda ob: ob
 
     glb = {'_getattr_': _getattr_, '_write_': _write_}
-    e_exec(WITH_STMT_ATTRIBUTE_ACCESS, glb)
+    restricted_exec(WITH_STMT_ATTRIBUTE_ACCESS, glb)
 
     # Test simple
     ctx = mocker.MagicMock(y=1)
@@ -156,13 +153,12 @@ def slice_key(ctx, x):
 """
 
 
-@pytest.mark.parametrize(*e_exec)
-def test_with_stmt_subscript(e_exec, mocker):
+def test_with_stmt_subscript(mocker):
     _write_ = mocker.stub()
     _write_.side_effect = lambda ob: ob
 
     glb = {'_write_': _write_}
-    e_exec(WITH_STMT_SUBSCRIPT, glb)
+    restricted_exec(WITH_STMT_SUBSCRIPT, glb)
 
     # Test single_key
     ctx = mocker.MagicMock()

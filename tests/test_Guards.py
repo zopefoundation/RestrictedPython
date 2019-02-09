@@ -5,8 +5,8 @@ from RestrictedPython.Guards import guarded_unpack_sequence
 from RestrictedPython.Guards import safe_builtins
 from RestrictedPython.Guards import safe_globals
 from RestrictedPython.Guards import safer_getattr
-from tests import e_exec
 from tests.helper import restricted_eval
+from tests.helper import restricted_exec
 
 import pytest
 
@@ -20,8 +20,7 @@ def test_Guards__safe_builtins__1():
     assert restricted_eval('slice(1)') == slice(1)
 
 
-@pytest.mark.parametrize(*e_exec)
-def test_Guards__safe_builtins__2(e_exec):
+def test_Guards__safe_builtins__2():
     """It allows to define new classes by allowing `__build_class__`.
     """
 
@@ -36,19 +35,17 @@ ob1.value = 2411
 result = ob1.display()'''
 
     restricted_globals = dict(
-        __builtins__=safe_builtins,
         result=None,
         __name__='restricted_module',
         __metaclass__=type,
         _write_=_write_,
         _getattr_=getattr)
 
-    e_exec(class_can_be_defined_code, restricted_globals)
+    restricted_exec(class_can_be_defined_code, restricted_globals)
     assert restricted_globals['result'] == '2411'
 
 
-@pytest.mark.parametrize(*e_exec)
-def test_Guards__guarded_setattr__1(e_exec):
+def test_Guards__guarded_setattr__1():
     """It allows use setattr and delattr when _guarded_writes is True.
     """
     class MyObjectD:
@@ -70,15 +67,14 @@ setattr(my_object_d, 'value', 9999)'''
         _write_=_write_,
         _getattr_=getattr,)
 
-    e_exec(setattr_code, restricted_globals)
+    restricted_exec(setattr_code, restricted_globals)
     assert 9999 == restricted_globals['my_object_d'].value
 
-    e_exec(delattr_code, restricted_globals)
+    restricted_exec(delattr_code, restricted_globals)
     assert None is restricted_globals['my_object_d'].value
 
 
-@pytest.mark.parametrize(*e_exec)
-def test_Guards__write_wrapper__1(e_exec):
+def test_Guards__write_wrapper__1():
     """It wraps the value attribute when it is not
     marked with _guarded_writes."""
     class ObjWithoutGuardedWrites:
@@ -98,12 +94,12 @@ setattr(my_ob, 'my_attr', 'bar')'''
         _getattr_=getattr,)
 
     with pytest.raises(TypeError) as excinfo:
-        e_exec(setattr_without_guarded_writes_code, restricted_globals)
+        restricted_exec(
+            setattr_without_guarded_writes_code, restricted_globals)
     assert 'attribute-less object (assign or del)' in str(excinfo.value)
 
 
-@pytest.mark.parametrize(*e_exec)
-def test_Guards__write_wrapper__2(e_exec):
+def test_Guards__write_wrapper__2():
     """It wraps setattr and it works when guarded_setattr is implemented."""
 
     class ObjWithGuardedSetattr:
@@ -126,12 +122,12 @@ setattr(myobj_with_guarded_setattr, 'my_attr', 'bar')
         _write_=_write_,
         _getattr_=getattr,)
 
-    e_exec(set_attribute_using_guarded_setattr_code, restricted_globals)
+    restricted_exec(
+        set_attribute_using_guarded_setattr_code, restricted_globals)
     assert restricted_globals['myobj_with_guarded_setattr'].my_attr == 'bar'
 
 
-@pytest.mark.parametrize(*e_exec)
-def test_Guards__guarded_unpack_sequence__1(e_exec, mocker):
+def test_Guards__guarded_unpack_sequence__1(mocker):
     """If the sequence is shorter then expected the interpreter will raise
     'ValueError: need more than X value to unpack' anyway
     => No childs are unpacked => nothing to protect."""
@@ -145,7 +141,7 @@ def test_Guards__guarded_unpack_sequence__1(e_exec, mocker):
     }
 
     with pytest.raises(ValueError) as excinfo:
-        e_exec(src, glb)
+        restricted_exec(src, glb)
     assert 'values to unpack' in str(excinfo.value)
     assert _getiter_.call_count == 1
 
@@ -156,8 +152,7 @@ b = a.format('world')
 """
 
 
-@pytest.mark.parametrize(*e_exec)
-def test_Guards__safer_getattr__1(e_exec):
+def test_Guards__safer_getattr__1():
     """It prevents using the format method of a string.
 
     format() is considered harmful:
@@ -167,7 +162,7 @@ def test_Guards__safer_getattr__1(e_exec):
         '__builtins__': safe_builtins,
     }
     with pytest.raises(NotImplementedError) as err:
-        e_exec(STRING_DOT_FORMAT_DENIED, glb)
+        restricted_exec(STRING_DOT_FORMAT_DENIED, glb)
     assert 'Using format() on a str is not safe.' == str(err.value)
 
 
@@ -177,8 +172,7 @@ b = a.format(u'world')
 """
 
 
-@pytest.mark.parametrize(*e_exec)
-def test_Guards__safer_getattr__2(e_exec):
+def test_Guards__safer_getattr__2():
     """It prevents using the format method of a unicode.
 
     format() is considered harmful:
@@ -188,7 +182,7 @@ def test_Guards__safer_getattr__2(e_exec):
         '__builtins__': safe_builtins,
     }
     with pytest.raises(NotImplementedError) as err:
-        e_exec(UNICODE_DOT_FORMAT_DENIED, glb)
+        restricted_exec(UNICODE_DOT_FORMAT_DENIED, glb)
     if IS_PY2:
         assert 'Using format() on a unicode is not safe.' == str(err.value)
     else:
@@ -206,8 +200,7 @@ result = getattr(a, 'value')
 """
 
 
-@pytest.mark.parametrize(*e_exec)
-def test_Guards__safer_getattr__3(e_exec):
+def test_Guards__safer_getattr__3():
     """It allows to use `safer_getattr`."""
     restricted_globals = dict(
         __builtins__=safe_builtins,
@@ -217,7 +210,7 @@ def test_Guards__safer_getattr__3(e_exec):
         getattr=safer_getattr,
         result=None,
     )
-    e_exec(SAFER_GETATTR_ALLOWED, restricted_globals)
+    restricted_exec(SAFER_GETATTR_ALLOWED, restricted_globals)
     assert restricted_globals['result'] == 2
 
 

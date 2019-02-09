@@ -1,9 +1,6 @@
-from tests import e_exec
-
-import pytest
+from tests.helper import restricted_exec
 
 
-@pytest.mark.parametrize(*e_exec)
-def test_RestrictingNodeTransformer__visit_Assert__1(e_exec):
+def test_RestrictingNodeTransformer__visit_Assert__1():
     """It allows assert statements."""
-    e_exec('assert 1')
+    restricted_exec('assert 1')

@@ -6,7 +6,7 @@ from RestrictedPython import compile_restricted_exec
 from RestrictedPython import safe_builtins
 from RestrictedPython._compat import IS_PY2
 from RestrictedPython._compat import IS_PY3
-from tests import e_exec
+from tests.helper import restricted_exec
 
 import pytest
 
@@ -18,8 +18,7 @@ os.listdir('/')
 """
 
 
-@pytest.mark.parametrize(*e_exec)
-def test_os_import(e_exec):
+def test_os_import():
     """It does not allow to import anything by default.
 
     The `__import__` function is not provided as it is not safe.
@@ -30,7 +29,7 @@ def test_os_import(e_exec):
     glb = {'__builtins__': safe_builtins}
 
     with pytest.raises(ImportError) as err:
-        e_exec(OS_IMPORT_EXAMPLE, glb)
+        restricted_exec(OS_IMPORT_EXAMPLE, glb)
     assert '__import__ not found' == str(err.value)
 
 

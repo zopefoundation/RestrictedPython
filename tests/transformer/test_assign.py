@@ -1,12 +1,11 @@
 from RestrictedPython._compat import IS_PY2
 from RestrictedPython.Guards import guarded_unpack_sequence
-from tests import e_exec
+from tests.helper import restricted_exec
 
 import pytest
 
 
-@pytest.mark.parametrize(*e_exec)
-def test_RestrictingNodeTransformer__visit_Assign__1(e_exec, mocker):
+def test_RestrictingNodeTransformer__visit_Assign__1(mocker):
     src = "orig = (a, (x, z)) = (c, d) = g"
 
     _getiter_ = mocker.stub()
@@ -18,7 +17,7 @@ def test_RestrictingNodeTransformer__visit_Assign__1(e_exec, mocker):
         'g': (1, (2, 3)),
     }
 
-    e_exec(src, glb)
+    restricted_exec(src, glb)
     assert glb['a'] == 1
     assert glb['x'] == 2
     assert glb['z'] == 3
@@ -34,9 +33,8 @@ def test_RestrictingNodeTransformer__visit_Assign__1(e_exec, mocker):
 @pytest.mark.skipif(
     IS_PY2,
     reason="starred assignments are python3 only")
-@pytest.mark.parametrize(*e_exec)
 def test_RestrictingNodeTransformer__visit_Assign__2(
-        e_exec, mocker):
+        mocker):
     src = "a, *d, (c, *e), x  = (1, 2, 3, (4, 3, 4), 5)"
 
     _getiter_ = mocker.stub()
@@ -47,7 +45,7 @@ def test_RestrictingNodeTransformer__visit_Assign__2(
         '_unpack_sequence_': guarded_unpack_sequence
     }
 
-    e_exec(src, glb)
+    restricted_exec(src, glb)
     assert glb['a'] == 1
     assert glb['d'] == [2, 3]
     assert glb['c'] == 4

@@ -1,6 +1,6 @@
 from RestrictedPython import compile_restricted_exec
 from RestrictedPython._compat import IS_PY3
-from tests import e_exec
+from tests.helper import restricted_exec
 
 import pytest
 
@@ -13,10 +13,9 @@ x()
 """
 
 
-@pytest.mark.parametrize(*e_exec)
-def test_Global(e_exec):
+def test_Global():
     glb = {'a': None}
-    e_exec(GLOBAL_EXAMPLE, glb)
+    restricted_exec(GLOBAL_EXAMPLE, glb)
     assert glb['a'] == 11
 
 
