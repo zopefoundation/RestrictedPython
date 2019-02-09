@@ -34,8 +34,6 @@ def _eval(compile_func):
 # Define the arguments for @pytest.mark.parametrize. This was used to be able
 # to test both the old and the new implementation are equal. It can be
 # refactored into fixtures.
-# Compile in `exec` mode.
-c_exec = ('c_exec', [RestrictedPython.compile.compile_restricted_exec])
 # Compile and execute in `exec` mode.
 e_exec = ('e_exec', [_exec(RestrictedPython.compile.compile_restricted_exec)])
 # Compile in `eval` mode.

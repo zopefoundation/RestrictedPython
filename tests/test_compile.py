@@ -1,10 +1,10 @@
 from RestrictedPython import compile_restricted
+from RestrictedPython import compile_restricted_exec
 from RestrictedPython import CompileResult
 from RestrictedPython._compat import IS_PY2
 from RestrictedPython._compat import IS_PY3
 from RestrictedPython._compat import IS_PY38_OR_GREATER
 from tests import c_eval
-from tests import c_exec
 from tests import c_single
 from tests import e_eval
 
@@ -46,10 +46,9 @@ def test_compile__invalid_syntax():
         assert "can't assign to literal at statement:" in str(err.value)
 
 
-@pytest.mark.parametrize(*c_exec)
-def test_compile__compile_restricted_exec__1(c_exec):
+def test_compile__compile_restricted_exec__1():
     """It returns a CompileResult on success."""
-    result = c_exec('a = 42')
+    result = compile_restricted_exec('a = 42')
     assert result.__class__ == CompileResult
     assert result.errors == ()
     assert result.warnings == []
@@ -59,10 +58,9 @@ def test_compile__compile_restricted_exec__1(c_exec):
     assert glob['a'] == 42
 
 
-@pytest.mark.parametrize(*c_exec)
-def test_compile__compile_restricted_exec__2(c_exec):
+def test_compile__compile_restricted_exec__2():
     """It compiles without restrictions if there is no policy."""
-    result = c_exec('_a = 42', policy=None)
+    result = compile_restricted_exec('_a = 42', policy=None)
     assert result.errors == ()
     assert result.warnings == []
     assert result.used_names == {}
@@ -71,13 +69,12 @@ def test_compile__compile_restricted_exec__2(c_exec):
     assert glob['_a'] == 42
 
 
-@pytest.mark.parametrize(*c_exec)
-def test_compile__compile_restricted_exec__3(c_exec):
+def test_compile__compile_restricted_exec__3():
     """It returns a tuple of errors if the code is not allowed.
 
     There is no code in this case.
     """
-    result = c_exec('_a = 42\n_b = 43')
+    result = compile_restricted_exec('_a = 42\n_b = 43')
     errors = (
         'Line 1: "_a" is an invalid variable name because it starts with "_"',
         'Line 2: "_b" is an invalid variable name because it starts with "_"')
@@ -87,10 +84,9 @@ def test_compile__compile_restricted_exec__3(c_exec):
     assert result.code is None
 
 
-@pytest.mark.parametrize(*c_exec)
-def test_compile__compile_restricted_exec__4(c_exec):
+def test_compile__compile_restricted_exec__4():
     """It does not return code on a SyntaxError."""
-    result = c_exec('asdf|')
+    result = compile_restricted_exec('asdf|')
     assert result.code is None
     assert result.warnings == []
     assert result.used_names == {}
@@ -98,10 +94,9 @@ def test_compile__compile_restricted_exec__4(c_exec):
         "Line 1: SyntaxError: invalid syntax at statement: 'asdf|'",)
 
 
-@pytest.mark.parametrize(*c_exec)
-def test_compile__compile_restricted_exec__5(c_exec):
+def test_compile__compile_restricted_exec__5():
     """It does not return code if the code contains a NULL byte."""
-    result = c_exec('a = 5\x00')
+    result = compile_restricted_exec('a = 5\x00')
     assert result.code is None
     assert result.warnings == []
     assert result.used_names == {}
@@ -122,10 +117,9 @@ def no_exec():
 @pytest.mark.skipif(
     IS_PY2,
     reason="exec statement in Python 2 is handled by RestrictedPython ")
-@pytest.mark.parametrize(*c_exec)
-def test_compile__compile_restricted_exec__10(c_exec):
+def test_compile__compile_restricted_exec__10():
     """It is a SyntaxError to use the `exec` statement. (Python 3 only)"""
-    result = c_exec(EXEC_STATEMENT)
+    result = compile_restricted_exec(EXEC_STATEMENT)
     assert (
         'Line 2: SyntaxError: Missing parentheses in call to \'exec\' at '
         'statement: "exec \'q = 1\'"',) == result.errors

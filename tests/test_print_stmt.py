@@ -1,6 +1,6 @@
+from RestrictedPython import compile_restricted_exec
 from RestrictedPython._compat import IS_PY3
 from RestrictedPython.PrintCollector import PrintCollector
-from tests import c_exec
 
 import pytest
 
@@ -33,44 +33,43 @@ print('Hello World!', 'Hello Earth!')
 """
 
 
-@pytest.mark.parametrize(*c_exec)
-def test_print_stmt__simple_prints(c_exec):
+def test_print_stmt__simple_prints():
     glb = {'_print_': PrintCollector, '_getattr_': None}
 
-    code, errors = c_exec(ALLOWED_PRINT_STATEMENT)[:2]
+    code, errors = compile_restricted_exec(ALLOWED_PRINT_STATEMENT)[:2]
     assert code is not None
     assert errors == ()
     exec(code, glb)
     assert glb['_print']() == 'Hello World!\n'
 
-    code, errors = c_exec(ALLOWED_PRINT_STATEMENT_WITH_NO_NL)[:2]
+    code, errors = compile_restricted_exec(
+        ALLOWED_PRINT_STATEMENT_WITH_NO_NL)[:2]
     assert code is not None
     assert errors == ()
     exec(code, glb)
     assert glb['_print']() == 'Hello World!'
 
-    code, errors = c_exec(ALLOWED_MULTI_PRINT_STATEMENT)[:2]
+    code, errors = compile_restricted_exec(ALLOWED_MULTI_PRINT_STATEMENT)[:2]
     assert code is not None
     assert errors == ()
     exec(code, glb)
     assert glb['_print']() == 'Hello World! Hello Earth!\n'
 
-    code, errors = c_exec(ALLOWED_PRINT_TUPLE)[:2]
+    code, errors = compile_restricted_exec(ALLOWED_PRINT_TUPLE)[:2]
     assert code is not None
     assert errors == ()
     exec(code, glb)
     assert glb['_print']() == "Hello World!\n"
 
-    code, errors = c_exec(ALLOWED_PRINT_MULTI_TUPLE)[:2]
+    code, errors = compile_restricted_exec(ALLOWED_PRINT_MULTI_TUPLE)[:2]
     assert code is not None
     assert errors == ()
     exec(code, glb)
     assert glb['_print']() == "('Hello World!', 'Hello Earth!')\n"
 
 
-@pytest.mark.parametrize(*c_exec)
-def test_print_stmt__fail_with_none_target(c_exec, mocker):
-    code, errors = c_exec('print >> None, "test"')[:2]
+def test_print_stmt__fail_with_none_target(mocker):
+    code, errors = compile_restricted_exec('print >> None, "test"')[:2]
 
     assert code is not None
     assert errors == ()
@@ -89,9 +88,9 @@ def print_into_stream(stream):
 """
 
 
-@pytest.mark.parametrize(*c_exec)
-def test_print_stmt__protect_chevron_print(c_exec, mocker):
-    code, errors = c_exec(PROTECT_PRINT_STATEMENT_WITH_CHEVRON)[:2]
+def test_print_stmt__protect_chevron_print(mocker):
+    code, errors = compile_restricted_exec(
+        PROTECT_PRINT_STATEMENT_WITH_CHEVRON)[:2]
 
     _getattr_ = mocker.stub()
     _getattr_.side_effect = getattr
@@ -132,9 +131,8 @@ def main():
 """
 
 
-@pytest.mark.parametrize(*c_exec)
-def test_print_stmt__nested_print_collector(c_exec, mocker):
-    code, errors = c_exec(INJECT_PRINT_COLLECTOR_NESTED)[:2]
+def test_print_stmt__nested_print_collector(mocker):
+    code, errors = compile_restricted_exec(INJECT_PRINT_COLLECTOR_NESTED)[:2]
 
     glb = {"_print_": PrintCollector, '_getattr_': None}
     exec(code, glb)
@@ -149,9 +147,8 @@ def foo():
 """
 
 
-@pytest.mark.parametrize(*c_exec)
-def test_print_stmt__with_printed_no_print(c_exec):
-    code, errors, warnings = c_exec(WARN_PRINTED_NO_PRINT)[:3]
+def test_print_stmt__with_printed_no_print():
+    code, errors, warnings = compile_restricted_exec(WARN_PRINTED_NO_PRINT)[:3]
 
     assert code is not None
     assert errors == ()
@@ -167,9 +164,9 @@ printed
 """
 
 
-@pytest.mark.parametrize(*c_exec)
-def test_print_stmt__with_printed_no_print_nested(c_exec):
-    code, errors, warnings = c_exec(WARN_PRINTED_NO_PRINT_NESTED)[:3]
+def test_print_stmt__with_printed_no_print_nested():
+    code, errors, warnings = compile_restricted_exec(
+        WARN_PRINTED_NO_PRINT_NESTED)[:3]
 
     assert code is not None
     assert errors == ()
@@ -185,9 +182,8 @@ def foo():
 """
 
 
-@pytest.mark.parametrize(*c_exec)
-def test_print_stmt__with_print_no_printed(c_exec):
-    code, errors, warnings = c_exec(WARN_PRINT_NO_PRINTED)[:3]
+def test_print_stmt__with_print_no_printed():
+    code, errors, warnings = compile_restricted_exec(WARN_PRINT_NO_PRINTED)[:3]
 
     assert code is not None
     assert errors == ()
@@ -205,9 +201,9 @@ printed
 """
 
 
-@pytest.mark.parametrize(*c_exec)
-def test_print_stmt__with_print_no_printed_nested(c_exec):
-    code, errors, warnings = c_exec(WARN_PRINT_NO_PRINTED_NESTED)[:3]
+def test_print_stmt__with_print_no_printed_nested():
+    code, errors, warnings = compile_restricted_exec(
+        WARN_PRINT_NO_PRINTED_NESTED)[:3]
 
     assert code is not None
     assert errors == ()
@@ -231,9 +227,8 @@ def class_scope():
 """
 
 
-@pytest.mark.parametrize(*c_exec)
-def test_print_stmt_no_new_scope(c_exec):
-    code, errors = c_exec(NO_PRINT_SCOPES)[:2]
+def test_print_stmt_no_new_scope():
+    code, errors = compile_restricted_exec(NO_PRINT_SCOPES)[:2]
     glb = {'_print_': PrintCollector, '_getattr_': None}
     exec(code, glb)
 
@@ -249,9 +244,8 @@ def func(cond):
 """
 
 
-@pytest.mark.parametrize(*c_exec)
-def test_print_stmt_conditional_print(c_exec):
-    code, errors = c_exec(CONDITIONAL_PRINT)[:2]
+def test_print_stmt_conditional_print():
+    code, errors = compile_restricted_exec(CONDITIONAL_PRINT)[:2]
     glb = {'_print_': PrintCollector, '_getattr_': None}
     exec(code, glb)
 

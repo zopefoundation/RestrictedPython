@@ -1,6 +1,6 @@
+from RestrictedPython import compile_restricted_exec
 from RestrictedPython._compat import IS_PY2
 from RestrictedPython.Guards import safe_builtins
-from tests import c_exec
 from tests import e_exec
 
 import pytest
@@ -12,10 +12,9 @@ class Good:
 '''
 
 
-@pytest.mark.parametrize(*c_exec)
-def test_RestrictingNodeTransformer__visit_ClassDef__1(c_exec):
+def test_RestrictingNodeTransformer__visit_ClassDef__1():
     """It allows to define an class."""
-    result = c_exec(GOOD_CLASS)
+    result = compile_restricted_exec(GOOD_CLASS)
     assert result.errors == ()
     assert result.code is not None
 
@@ -26,10 +25,9 @@ class _bad:
 '''
 
 
-@pytest.mark.parametrize(*c_exec)
-def test_RestrictingNodeTransformer__visit_ClassDef__2(c_exec):
+def test_RestrictingNodeTransformer__visit_ClassDef__2():
     """It does not allow class names which start with an underscore."""
-    result = c_exec(BAD_CLASS)
+    result = compile_restricted_exec(BAD_CLASS)
     assert result.errors == (
         'Line 1: "_bad" is an invalid variable name '
         'because it starts with "_"',)
@@ -67,11 +65,10 @@ class WithMeta(metaclass=MyMetaClass):
 
 
 @pytest.mark.skipif(IS_PY2, reason="No valid syntax in Python 2.")
-@pytest.mark.parametrize(*c_exec)
-def test_RestrictingNodeTransformer__visit_ClassDef__4(c_exec):
+def test_RestrictingNodeTransformer__visit_ClassDef__4():
     """It does not allow to pass a metaclass to class definitions."""
 
-    result = c_exec(EXPLICIT_METACLASS)
+    result = compile_restricted_exec(EXPLICIT_METACLASS)
 
     assert result.errors == (
         'Line 2: The keyword argument "metaclass" is not allowed.',)

@@ -1,5 +1,5 @@
+from RestrictedPython import compile_restricted_exec
 from RestrictedPython.Guards import guarded_unpack_sequence
-from tests import c_exec
 from tests import e_exec
 
 import contextlib
@@ -44,9 +44,8 @@ def call(ctx1, ctx2):
 """
 
 
-@pytest.mark.parametrize(*c_exec)
-def test_with_stmt_multi_ctx_unpack_sequence(c_exec, mocker):
-    result = c_exec(WITH_STMT_MULTI_CTX_WITH_UNPACK_SEQUENCE)
+def test_with_stmt_multi_ctx_unpack_sequence(mocker):
+    result = compile_restricted_exec(WITH_STMT_MULTI_CTX_WITH_UNPACK_SEQUENCE)
     assert result.errors == ()
 
     @contextlib.contextmanager

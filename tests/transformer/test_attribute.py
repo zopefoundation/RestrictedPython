@@ -1,4 +1,4 @@
-from tests import c_exec
+from RestrictedPython import compile_restricted_exec
 from tests import e_exec
 
 import pytest
@@ -11,10 +11,9 @@ def bad_attr():
 """
 
 
-@pytest.mark.parametrize(*c_exec)
-def test_RestrictingNodeTransformer__visit_Attribute__1(c_exec):
+def test_RestrictingNodeTransformer__visit_Attribute__1():
     """It is an error if a bad attribute name is used."""
-    result = c_exec(BAD_ATTR_UNDERSCORE)
+    result = compile_restricted_exec(BAD_ATTR_UNDERSCORE)
     assert result.errors == (
         'Line 3: "_some_attr" is an invalid attribute name because it '
         'starts with "_".',)
@@ -27,10 +26,9 @@ def bad_attr():
 """
 
 
-@pytest.mark.parametrize(*c_exec)
-def test_RestrictingNodeTransformer__visit_Attribute__2(c_exec):
+def test_RestrictingNodeTransformer__visit_Attribute__2():
     """It is an error if a bad attribute name is used."""
-    result = c_exec(BAD_ATTR_ROLES)
+    result = compile_restricted_exec(BAD_ATTR_ROLES)
     assert result.errors == (
         'Line 3: "abc__roles__" is an invalid attribute name because it '
         'ends with "__roles__".',)
@@ -63,10 +61,9 @@ def func():
 """
 
 
-@pytest.mark.parametrize(*c_exec)
-def test_RestrictingNodeTransformer__visit_Attribute__4(c_exec):
+def test_RestrictingNodeTransformer__visit_Attribute__4():
     """It allows `_` as attribute name."""
-    result = c_exec(ALLOW_UNDERSCORE_ONLY)
+    result = compile_restricted_exec(ALLOW_UNDERSCORE_ONLY)
     assert result.errors == ()
 
 
@@ -111,10 +108,9 @@ except Exception as e:
 """
 
 
-@pytest.mark.parametrize(*c_exec)
-def test_RestrictingNodeTransformer__visit_Attribute__6(c_exec):
+def test_RestrictingNodeTransformer__visit_Attribute__6():
     """It denies access to the __traceback__ attribute."""
-    result = c_exec(DISALLOW_TRACEBACK_ACCESS)
+    result = compile_restricted_exec(DISALLOW_TRACEBACK_ACCESS)
     assert result.errors == (
         'Line 5: "__traceback__" is an invalid attribute name because '
         'it starts with "_".',)

@@ -1,90 +1,77 @@
-from tests import c_exec
-
-import pytest
+from RestrictedPython import compile_restricted_exec
 
 
 import_errmsg = (
     'Line 1: "%s" is an invalid variable name because it starts with "_"')
 
 
-@pytest.mark.parametrize(*c_exec)
-def test_RestrictingNodeTransformer__visit_Import__1(c_exec):
+def test_RestrictingNodeTransformer__visit_Import__1():
     """It allows importing a module."""
-    result = c_exec('import a')
+    result = compile_restricted_exec('import a')
     assert result.errors == ()
     assert result.code is not None
 
 
-@pytest.mark.parametrize(*c_exec)
-def test_RestrictingNodeTransformer__visit_Import__2(c_exec):
+def test_RestrictingNodeTransformer__visit_Import__2():
     """It denies importing a module starting with `_`."""
-    result = c_exec('import _a')
+    result = compile_restricted_exec('import _a')
     assert result.errors == (import_errmsg % '_a',)
 
 
-@pytest.mark.parametrize(*c_exec)
-def test_RestrictingNodeTransformer__visit_Import__3(c_exec):
+def test_RestrictingNodeTransformer__visit_Import__3():
     """It denies importing a module starting with `_` as something."""
-    result = c_exec('import _a as m')
+    result = compile_restricted_exec('import _a as m')
     assert result.errors == (import_errmsg % '_a',)
 
 
-@pytest.mark.parametrize(*c_exec)
-def test_RestrictingNodeTransformer__visit_Import__4(c_exec):
+def test_RestrictingNodeTransformer__visit_Import__4():
     """It denies importing a module as something starting with `_`."""
-    result = c_exec('import a as _m')
+    result = compile_restricted_exec('import a as _m')
     assert result.errors == (import_errmsg % '_m',)
 
 
-@pytest.mark.parametrize(*c_exec)
-def test_RestrictingNodeTransformer__visit_Import__5(c_exec):
+def test_RestrictingNodeTransformer__visit_Import__5():
     """It allows importing from a module."""
-    result = c_exec('from a import m')
+    result = compile_restricted_exec('from a import m')
     assert result.errors == ()
     assert result.code is not None
 
 
-@pytest.mark.parametrize(*c_exec)
-def test_RestrictingNodeTransformer__visit_Import_6(c_exec):
+def test_RestrictingNodeTransformer__visit_Import_6():
     """It allows importing from a module starting with `_`."""
-    result = c_exec('from _a import m')
+    result = compile_restricted_exec('from _a import m')
     assert result.errors == ()
     assert result.code is not None
 
 
-@pytest.mark.parametrize(*c_exec)
-def test_RestrictingNodeTransformer__visit_Import__7(c_exec):
+def test_RestrictingNodeTransformer__visit_Import__7():
     """It denies importing from a module as something starting with `_`."""
-    result = c_exec('from a import m as _n')
+    result = compile_restricted_exec('from a import m as _n')
     assert result.errors == (import_errmsg % '_n',)
 
 
-@pytest.mark.parametrize(*c_exec)
-def test_RestrictingNodeTransformer__visit_Import__8(c_exec):
+def test_RestrictingNodeTransformer__visit_Import__8():
     """It denies as-importing something starting with `_` from a module."""
-    result = c_exec('from a import _m as n')
+    result = compile_restricted_exec('from a import _m as n')
     assert result.errors == (import_errmsg % '_m',)
 
 
-@pytest.mark.parametrize(*c_exec)
-def test_RestrictingNodeTransformer__visit_Import__9(c_exec):
+def test_RestrictingNodeTransformer__visit_Import__9():
     """It denies relative from importing as something starting with `_`."""
-    result = c_exec('from .x import y as _leading_underscore')
+    result = compile_restricted_exec('from .x import y as _leading_underscore')
     assert result.errors == (import_errmsg % '_leading_underscore',)
 
 
-@pytest.mark.parametrize(*c_exec)
-def test_RestrictingNodeTransformer__visit_Import_star__1(c_exec):
+def test_RestrictingNodeTransformer__visit_Import_star__1():
     """Importing `*` is a SyntaxError in Python itself."""
-    result = c_exec('import *')
+    result = compile_restricted_exec('import *')
     assert result.errors == (
         "Line 1: SyntaxError: invalid syntax at statement: 'import *'",)
     assert result.code is None
 
 
-@pytest.mark.parametrize(*c_exec)
-def test_RestrictingNodeTransformer__visit_Import_star__2(c_exec):
+def test_RestrictingNodeTransformer__visit_Import_star__2():
     """It denies importing `*` from a module."""
-    result = c_exec('from a import *')
+    result = compile_restricted_exec('from a import *')
     assert result.errors == ('Line 1: "*" imports are not allowed.',)
     assert result.code is None

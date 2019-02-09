@@ -1,6 +1,6 @@
+from RestrictedPython import compile_restricted_exec
 from RestrictedPython._compat import IS_PY3
 from RestrictedPython.Guards import guarded_unpack_sequence
-from tests import c_exec
 from tests import e_exec
 
 import pytest
@@ -174,11 +174,9 @@ def except_using_bad_name():
 """
 
 
-@pytest.mark.parametrize(*c_exec)
-def test_RestrictingNodeTransformer__visit_ExceptHandler__2(
-        c_exec):
+def test_RestrictingNodeTransformer__visit_ExceptHandler__2():
     """It denies bad names in the except as statement."""
-    result = c_exec(BAD_TRY_EXCEPT)
+    result = compile_restricted_exec(BAD_TRY_EXCEPT)
     assert result.errors == (
         'Line 5: "_leading_underscore" is an invalid variable name because '
         'it starts with "_"',)

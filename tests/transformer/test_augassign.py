@@ -1,4 +1,4 @@
-from tests import c_exec
+from RestrictedPython import compile_restricted_exec
 from tests import e_exec
 
 import pytest
@@ -24,36 +24,32 @@ def test_RestrictingNodeTransformer__visit_AugAssign__1(
     _inplacevar_.reset_mock()
 
 
-@pytest.mark.parametrize(*c_exec)
-def test_RestrictingNodeTransformer__visit_AugAssign__2(c_exec):
+def test_RestrictingNodeTransformer__visit_AugAssign__2():
     """It forbids augmented assign of attributes."""
-    result = c_exec("a.a += 1")
+    result = compile_restricted_exec("a.a += 1")
     assert result.errors == (
         'Line 1: Augmented assignment of attributes is not allowed.',)
 
 
-@pytest.mark.parametrize(*c_exec)
-def test_RestrictingNodeTransformer__visit_AugAssign__3(c_exec):
+def test_RestrictingNodeTransformer__visit_AugAssign__3():
     """It forbids augmented assign of subscripts."""
-    result = c_exec("a[a] += 1")
+    result = compile_restricted_exec("a[a] += 1")
     assert result.errors == (
         'Line 1: Augmented assignment of object items and slices is not '
         'allowed.',)
 
 
-@pytest.mark.parametrize(*c_exec)
-def test_RestrictingNodeTransformer__visit_AugAssign__4(c_exec):
+def test_RestrictingNodeTransformer__visit_AugAssign__4():
     """It forbids augmented assign of slices."""
-    result = c_exec("a[x:y] += 1")
+    result = compile_restricted_exec("a[x:y] += 1")
     assert result.errors == (
         'Line 1: Augmented assignment of object items and slices is not '
         'allowed.',)
 
 
-@pytest.mark.parametrize(*c_exec)
-def test_RestrictingNodeTransformer__visit_AugAssign__5(c_exec):
+def test_RestrictingNodeTransformer__visit_AugAssign__5():
     """It forbids augmented assign of slices with steps."""
-    result = c_exec("a[x:y:z] += 1")
+    result = compile_restricted_exec("a[x:y:z] += 1")
     assert result.errors == (
         'Line 1: Augmented assignment of object items and slices is not '
         'allowed.',)

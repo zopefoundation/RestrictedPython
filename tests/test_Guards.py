@@ -1,10 +1,10 @@
+from RestrictedPython import compile_restricted_exec
 from RestrictedPython._compat import IS_PY2
 from RestrictedPython._compat import IS_PY3
 from RestrictedPython.Guards import guarded_unpack_sequence
 from RestrictedPython.Guards import safe_builtins
 from RestrictedPython.Guards import safe_globals
 from RestrictedPython.Guards import safer_getattr
-from tests import c_exec
 from tests import e_eval
 from tests import e_exec
 
@@ -227,10 +227,9 @@ def test_Guards__safer_getattr__3(e_exec):
     reason="__builtins__ has been renamed in Python3 to builtins, "
     "and need only to be tested there."
 )
-@pytest.mark.parametrize(*c_exec)
-def test_call_py3_builtins(c_exec):
+def test_call_py3_builtins():
     """It should not be allowed to access global builtins in Python3."""
-    result = c_exec('builtins["getattr"]')
+    result = compile_restricted_exec('builtins["getattr"]')
     assert result.code is None
     assert result.errors == ('Line 1: "builtins" is a reserved name.',)
 
@@ -239,10 +238,9 @@ def test_call_py3_builtins(c_exec):
     IS_PY3,
     reason="__builtins__ has been renamed in Python3 to builtins."
 )
-@pytest.mark.parametrize(*c_exec)
-def test_call_py2_builtins(c_exec):
+def test_call_py2_builtins():
     """It should not be allowed to access global __builtins__ in Python2."""
-    result = c_exec('__builtins__["getattr"]')
+    result = compile_restricted_exec('__builtins__["getattr"]')
     assert result.code is None
     assert result.errors == ('Line 1: "__builtins__" is an invalid variable name because it starts with "_"',)  # NOQA: E501
 
@@ -252,10 +250,9 @@ getattr([], '__class__')
 """
 
 
-@pytest.mark.parametrize(*c_exec)
-def test_safer_getattr__underscore_name(c_exec):
+def test_safer_getattr__underscore_name():
     """It prevents accessing an attribute which starts with an underscore."""
-    result = c_exec(GETATTR_UNDERSCORE_NAME)
+    result = compile_restricted_exec(GETATTR_UNDERSCORE_NAME)
     assert result.errors == ()
     assert result.warnings == []
     glb = safe_globals.copy()
