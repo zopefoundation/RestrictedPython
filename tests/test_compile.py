@@ -1,11 +1,11 @@
 from RestrictedPython import compile_restricted
 from RestrictedPython import compile_restricted_eval
 from RestrictedPython import compile_restricted_exec
+from RestrictedPython import compile_restricted_single
 from RestrictedPython import CompileResult
 from RestrictedPython._compat import IS_PY2
 from RestrictedPython._compat import IS_PY3
 from RestrictedPython._compat import IS_PY38_OR_GREATER
-from tests import c_single
 from tests import e_eval
 
 import platform
@@ -154,10 +154,9 @@ def test_compile__compile_restricted_eval__used_names():
     assert result.used_names == {'a': True, 'b': True, 'x': True, 'func': True}
 
 
-@pytest.mark.parametrize(*c_single)
-def test_compile__compile_restricted_csingle(c_single):
+def test_compile__compile_restricted_csingle():
     """It compiles code as an Interactive."""
-    result = c_single('4 * 6')
+    result = compile_restricted_single('4 * 6')
     assert result.code is None
     assert result.errors == (
         'Line None: Interactive statements are not allowed.',

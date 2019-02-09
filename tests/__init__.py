@@ -38,5 +38,3 @@ def _eval(compile_func):
 e_exec = ('e_exec', [_exec(RestrictedPython.compile.compile_restricted_exec)])
 # Compile and execute in `eval` mode.
 e_eval = ('e_eval', [_eval(RestrictedPython.compile.compile_restricted_eval)])
-#
-c_single = ('c_single', [RestrictedPython.compile.compile_restricted_single])
