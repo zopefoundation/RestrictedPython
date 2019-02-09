@@ -1,7 +1,13 @@
 Changes
 =======
 
-4.0b8 (unreleased)
+4.0b9 (unreleased)
+------------------
+
+- Nothing changed yet.
+
+
+4.0b8 (2019-02-09)
 ------------------
 
 - Add preliminary support for Python 3.8. as of 3.8.0a1 is released.
