@@ -36,8 +36,6 @@ def _eval(compile_func):
 # refactored into fixtures.
 # Compile and execute in `exec` mode.
 e_exec = ('e_exec', [_exec(RestrictedPython.compile.compile_restricted_exec)])
-# Compile in `eval` mode.
-c_eval = ('c_eval', [RestrictedPython.compile.compile_restricted_eval])
 # Compile and execute in `eval` mode.
 e_eval = ('e_eval', [_eval(RestrictedPython.compile.compile_restricted_eval)])
 #

@@ -1,10 +1,10 @@
 from RestrictedPython import compile_restricted
+from RestrictedPython import compile_restricted_eval
 from RestrictedPython import compile_restricted_exec
 from RestrictedPython import CompileResult
 from RestrictedPython._compat import IS_PY2
 from RestrictedPython._compat import IS_PY3
 from RestrictedPython._compat import IS_PY38_OR_GREATER
-from tests import c_eval
 from tests import c_single
 from tests import e_eval
 
@@ -131,13 +131,12 @@ def a():
 """
 
 
-@pytest.mark.parametrize(*c_eval)
-def test_compile__compile_restricted_eval__1(c_eval):
+def test_compile__compile_restricted_eval__1():
     """It compiles code as an Expression.
 
     Function definitions are not allowed in Expressions.
     """
-    result = c_eval(FUNCTION_DEF)
+    result = compile_restricted_eval(FUNCTION_DEF)
     assert result.errors == (
         "Line 1: SyntaxError: invalid syntax at statement: 'def a():'",)
 
@@ -148,9 +147,8 @@ def test_compile__compile_restricted_eval__2(e_eval):
     assert e_eval('4 * 6') == 24
 
 
-@pytest.mark.parametrize(*c_eval)
-def test_compile__compile_restricted_eval__used_names(c_eval):
-    result = c_eval("a + b + func(x)")
+def test_compile__compile_restricted_eval__used_names():
+    result = compile_restricted_eval("a + b + func(x)")
     assert result.errors == ()
     assert result.warnings == []
     assert result.used_names == {'a': True, 'b': True, 'x': True, 'func': True}

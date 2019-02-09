@@ -1,5 +1,5 @@
+from RestrictedPython import compile_restricted_eval
 from RestrictedPython._compat import IS_PY35_OR_GREATER
-from tests import c_eval
 from tests import e_eval
 
 import pytest
@@ -46,9 +46,8 @@ def test_FloorDiv(e_eval):
 @pytest.mark.skipif(
     not IS_PY35_OR_GREATER,
     reason="MatMult was introducted on Python 3.5")
-@pytest.mark.parametrize(*c_eval)
-def test_MatMult(c_eval):
-    result = c_eval('(8, 3, 5) @ (2, 7, 1)')
+def test_MatMult():
+    result = compile_restricted_eval('(8, 3, 5) @ (2, 7, 1)')
     assert result.errors == (
         'Line None: MatMult statements are not allowed.',
     )
