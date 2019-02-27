@@ -1,6 +1,4 @@
-from tests import e_exec
-
-import pytest
+from tests.helper import restricted_exec
 
 
 WHILE = """\
@@ -10,10 +8,9 @@ while a < 7:
 """
 
 
-@pytest.mark.parametrize(*e_exec)
-def test_RestrictingNodeTransformer__visit_While__1(e_exec):
+def test_RestrictingNodeTransformer__visit_While__1():
     """It allows `while` statements."""
-    glb = e_exec(WHILE)
+    glb = restricted_exec(WHILE)
     assert glb['a'] == 8
 
 
@@ -26,10 +23,9 @@ while True:
 """
 
 
-@pytest.mark.parametrize(*e_exec)
-def test_RestrictingNodeTransformer__visit_Break__1(e_exec):
+def test_RestrictingNodeTransformer__visit_Break__1():
     """It allows `break` statements."""
-    glb = e_exec(BREAK)
+    glb = restricted_exec(BREAK)
     assert glb['a'] == 8
 
 
@@ -43,8 +39,7 @@ while a < 10:
 """
 
 
-@pytest.mark.parametrize(*e_exec)
-def test_RestrictingNodeTransformer__visit_Continue__1(e_exec):
+def test_RestrictingNodeTransformer__visit_Continue__1():
     """It allows `continue` statements."""
-    glb = e_exec(CONTINUE)
+    glb = restricted_exec(CONTINUE)
     assert glb['a'] == 15

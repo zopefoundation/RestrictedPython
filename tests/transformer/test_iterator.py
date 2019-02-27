@@ -1,7 +1,6 @@
 from RestrictedPython.Guards import guarded_iter_unpack_sequence
-from tests import e_exec
+from tests.helper import restricted_exec
 
-import pytest
 import types
 
 
@@ -40,13 +39,12 @@ def nested_generator(it1, it2):
 """
 
 
-@pytest.mark.parametrize(*e_exec)
-def test_RestrictingNodeTransformer__guard_iter__1(e_exec, mocker):
+def test_RestrictingNodeTransformer__guard_iter__1(mocker):
     it = (1, 2, 3)
     _getiter_ = mocker.stub()
     _getiter_.side_effect = lambda x: x
     glb = {'_getiter_': _getiter_}
-    e_exec(ITERATORS, glb)
+    restricted_exec(ITERATORS, glb)
 
     ret = glb['for_loop'](it)
     assert 6 == ret
@@ -121,8 +119,7 @@ def generator(it):
 """
 
 
-@pytest.mark.parametrize(*e_exec)
-def test_RestrictingNodeTransformer__guard_iter__2(e_exec, mocker):
+def test_RestrictingNodeTransformer__guard_iter__2(mocker):
     it = ((1, 2), (3, 4), (5, 6))
 
     call_ref = [
@@ -140,7 +137,7 @@ def test_RestrictingNodeTransformer__guard_iter__2(e_exec, mocker):
         '_iter_unpack_sequence_': guarded_iter_unpack_sequence
     }
 
-    e_exec(ITERATORS_WITH_UNPACK_SEQUENCE, glb)
+    restricted_exec(ITERATORS_WITH_UNPACK_SEQUENCE, glb)
 
     ret = glb['for_loop'](it)
     assert ret == 21

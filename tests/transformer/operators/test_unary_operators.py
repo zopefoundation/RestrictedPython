@@ -1,13 +1,9 @@
-from tests import e_eval
-
-import pytest
+from tests.helper import restricted_eval
 
 
-@pytest.mark.parametrize(*e_eval)
-def test_UAdd(e_eval):
-    assert e_eval('+a', {'a': 42}) == 42
+def test_UAdd():
+    assert restricted_eval('+a', {'a': 42}) == 42
 
 
-@pytest.mark.parametrize(*e_eval)
-def test_USub(e_eval):
-    assert e_eval('-a', {'a': 2411}) == -2411
+def test_USub():
+    assert restricted_eval('-a', {'a': 2411}) == -2411

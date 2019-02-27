@@ -1,11 +1,8 @@
-from tests import e_exec
-
-import pytest
+from tests.helper import restricted_exec
 
 
-@pytest.mark.parametrize(*e_exec)
 def test_RestrictingNodeTransformer__test_ternary_if(
-        e_exec, mocker):
+        mocker):
     src = 'x.y = y.a if y.z else y.b'
     _getattr_ = mocker.stub()
     _getattr_.side_effect = lambda ob, key: ob[key]
@@ -20,7 +17,7 @@ def test_RestrictingNodeTransformer__test_ternary_if(
     }
 
     glb['y']['z'] = True
-    e_exec(src, glb)
+    restricted_exec(src, glb)
 
     assert glb['x'].y == 'a'
     _write_.assert_called_once_with(glb['x'])
@@ -32,7 +29,7 @@ def test_RestrictingNodeTransformer__test_ternary_if(
     _getattr_.reset_mock()
 
     glb['y']['z'] = False
-    e_exec(src, glb)
+    restricted_exec(src, glb)
 
     assert glb['x'].y == 'b'
     _write_.assert_called_once_with(glb['x'])

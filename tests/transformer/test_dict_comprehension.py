@@ -1,6 +1,4 @@
-from tests import e_exec
-
-import pytest
+from tests.helper import restricted_exec
 
 
 DICT_COMPREHENSION_WITH_ATTRS = """
@@ -9,8 +7,7 @@ def call(seq):
 """
 
 
-@pytest.mark.parametrize(*e_exec)
-def test_dict_comprehension_with_attrs(e_exec, mocker):
+def test_dict_comprehension_with_attrs(mocker):
     _getattr_ = mocker.Mock()
     _getattr_.side_effect = getattr
 
@@ -18,7 +15,7 @@ def test_dict_comprehension_with_attrs(e_exec, mocker):
     _getiter_.side_effect = lambda ob: ob
 
     glb = {'_getattr_': _getattr_, '_getiter_': _getiter_}
-    e_exec(DICT_COMPREHENSION_WITH_ATTRS, glb)
+    restricted_exec(DICT_COMPREHENSION_WITH_ATTRS, glb)
 
     z = [mocker.Mock(k=0, v='a'), mocker.Mock(k=1, v='b')]
     seq = mocker.Mock(z=z)

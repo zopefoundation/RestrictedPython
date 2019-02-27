@@ -1,13 +1,10 @@
-from tests import c_exec
-from tests import e_exec
-
-import pytest
+from RestrictedPython import compile_restricted_exec
+from tests.helper import restricted_exec
 
 
-@pytest.mark.parametrize(*c_exec)
-def test_RestrictingNodeTransformer__visit_Call__1(c_exec):
+def test_RestrictingNodeTransformer__visit_Call__1():
     """It compiles a function call successfully and returns the used name."""
-    result = c_exec('a = max([1, 2, 3])')
+    result = compile_restricted_exec('a = max([1, 2, 3])')
     assert result.errors == ()
     loc = {}
     exec(result.code, {}, loc)
@@ -50,8 +47,7 @@ def positional_and_star_and_keyword_and_kw_args():
 """
 
 
-@pytest.mark.parametrize(*e_exec)
-def test_RestrictingNodeTransformer__visit_Call__2(e_exec, mocker):
+def test_RestrictingNodeTransformer__visit_Call__2(mocker):
     _apply_ = mocker.stub()
     _apply_.side_effect = lambda func, *args, **kwargs: func(*args, **kwargs)
 
@@ -60,7 +56,7 @@ def test_RestrictingNodeTransformer__visit_Call__2(e_exec, mocker):
         'foo': lambda *args, **kwargs: (args, kwargs)
     }
 
-    e_exec(FUNCTIONC_CALLS, glb)
+    restricted_exec(FUNCTIONC_CALLS, glb)
 
     ret = glb['positional_args']()
     assert ((1, 2), {}) == ret
@@ -104,19 +100,17 @@ def test_RestrictingNodeTransformer__visit_Call__2(e_exec, mocker):
     _apply_.reset_mock()
 
 
-@pytest.mark.parametrize(*c_exec)
-def test_visit_Call__private_function(c_exec):
+def test_visit_Call__private_function():
     """Calling private functions is forbidden."""
-    result = c_exec('__init__(1)')
+    result = compile_restricted_exec('__init__(1)')
     assert result.errors == (
         'Line 1: "__init__" is an invalid variable name because it starts with "_"',  # NOQA: E501
     )
 
 
-@pytest.mark.parametrize(*c_exec)
-def test_visit_Call__private_method(c_exec):
+def test_visit_Call__private_method():
     """Calling private methods is forbidden."""
-    result = c_exec('Int.__init__(1)')
+    result = compile_restricted_exec('Int.__init__(1)')
     assert result.errors == (
         'Line 1: "__init__" is an invalid attribute name because it starts with "_".',  # NOQA: E501
     )

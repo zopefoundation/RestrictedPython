@@ -1,8 +1,8 @@
+from RestrictedPython import compile_restricted_exec
 from RestrictedPython._compat import IS_PY2
 from RestrictedPython._compat import IS_PY3
 from RestrictedPython.Guards import guarded_unpack_sequence
-from tests import c_exec
-from tests import e_exec
+from tests.helper import restricted_exec
 
 import pytest
 
@@ -11,52 +11,42 @@ functiondef_err_msg = 'Line 1: "_bad" is an invalid variable ' \
                       'name because it starts with "_"'
 
 
-@pytest.mark.parametrize(*c_exec)
-def test_RestrictingNodeTransformer__visit_FunctionDef__1(
-        c_exec):
+def test_RestrictingNodeTransformer__visit_FunctionDef__1():
     """It prevents function arguments starting with `_`."""
-    result = c_exec("def foo(_bad): pass")
+    result = compile_restricted_exec("def foo(_bad): pass")
     # RestrictedPython.compile.compile_restricted_exec on Python 2 renders
     # the error message twice. This is necessary as otherwise *_bad and **_bad
     # would be allowed.
     assert functiondef_err_msg in result.errors
 
 
-@pytest.mark.parametrize(*c_exec)
-def test_RestrictingNodeTransformer__visit_FunctionDef__2(
-        c_exec):
+def test_RestrictingNodeTransformer__visit_FunctionDef__2():
     """It prevents function keyword arguments starting with `_`."""
-    result = c_exec("def foo(_bad=1): pass")
+    result = compile_restricted_exec("def foo(_bad=1): pass")
     # RestrictedPython.compile.compile_restricted_exec on Python 2 renders
     # the error message twice. This is necessary as otherwise *_bad and **_bad
     # would be allowed.
     assert functiondef_err_msg in result.errors
 
 
-@pytest.mark.parametrize(*c_exec)
-def test_RestrictingNodeTransformer__visit_FunctionDef__3(
-        c_exec):
+def test_RestrictingNodeTransformer__visit_FunctionDef__3():
     """It prevents function * arguments starting with `_`."""
-    result = c_exec("def foo(*_bad): pass")
+    result = compile_restricted_exec("def foo(*_bad): pass")
     assert result.errors == (functiondef_err_msg,)
 
 
-@pytest.mark.parametrize(*c_exec)
-def test_RestrictingNodeTransformer__visit_FunctionDef__4(
-        c_exec):
+def test_RestrictingNodeTransformer__visit_FunctionDef__4():
     """It prevents function ** arguments starting with `_`."""
-    result = c_exec("def foo(**_bad): pass")
+    result = compile_restricted_exec("def foo(**_bad): pass")
     assert result.errors == (functiondef_err_msg,)
 
 
 @pytest.mark.skipif(
     IS_PY3,
     reason="tuple parameter unpacking is gone in Python 3")
-@pytest.mark.parametrize(*c_exec)
-def test_RestrictingNodeTransformer__visit_FunctionDef__5(
-        c_exec):
+def test_RestrictingNodeTransformer__visit_FunctionDef__5():
     """It prevents function arguments starting with `_` in tuples."""
-    result = c_exec("def foo((a, _bad)): pass")
+    result = compile_restricted_exec("def foo((a, _bad)): pass")
     # RestrictedPython.compile.compile_restricted_exec on Python 2 renders
     # the error message twice. This is necessary as otherwise *_bad and **_bad
     # would be allowed.
@@ -66,11 +56,9 @@ def test_RestrictingNodeTransformer__visit_FunctionDef__5(
 @pytest.mark.skipif(
     IS_PY3,
     reason="tuple parameter unpacking is gone in Python 3")
-@pytest.mark.parametrize(*c_exec)
-def test_RestrictingNodeTransformer__visit_FunctionDef__6(
-        c_exec):
+def test_RestrictingNodeTransformer__visit_FunctionDef__6():
     """It prevents function arguments starting with `_` in tuples."""
-    result = c_exec("def foo(a, (c, (_bad, c))): pass")
+    result = compile_restricted_exec("def foo(a, (c, (_bad, c))): pass")
     # RestrictedPython.compile.compile_restricted_exec on Python 2 renders
     # the error message twice. This is necessary as otherwise *_bad and
     # **_bad would be allowed.
@@ -80,11 +68,9 @@ def test_RestrictingNodeTransformer__visit_FunctionDef__6(
 @pytest.mark.skipif(
     IS_PY2,
     reason="There is no single `*` argument in Python 2")
-@pytest.mark.parametrize(*c_exec)
-def test_RestrictingNodeTransformer__visit_FunctionDef__7(
-        c_exec):
+def test_RestrictingNodeTransformer__visit_FunctionDef__7():
     """It prevents `_` function arguments together with a single `*`."""
-    result = c_exec("def foo(good, *, _bad): pass")
+    result = compile_restricted_exec("def foo(good, *, _bad): pass")
     assert result.errors == (functiondef_err_msg,)
 
 
@@ -100,9 +86,8 @@ def nested_with_order((a, b), (c, d)):
 @pytest.mark.skipif(
     IS_PY3,
     reason="tuple parameter unpacking is gone in python 3")
-@pytest.mark.parametrize(*e_exec)
 def test_RestrictingNodeTransformer__visit_FunctionDef__8(
-        e_exec, mocker):
+        mocker):
     _getiter_ = mocker.stub()
     _getiter_.side_effect = lambda it: it
 
@@ -111,7 +96,7 @@ def test_RestrictingNodeTransformer__visit_FunctionDef__8(
         '_unpack_sequence_': guarded_unpack_sequence
     }
 
-    e_exec('def simple((a, b)): return a, b', glb)
+    restricted_exec('def simple((a, b)): return a, b', glb)
 
     val = (1, 2)
     ret = glb['simple'](val)
@@ -119,7 +104,7 @@ def test_RestrictingNodeTransformer__visit_FunctionDef__8(
     _getiter_.assert_called_once_with(val)
     _getiter_.reset_mock()
 
-    e_exec(NESTED_SEQ_UNPACK, glb)
+    restricted_exec(NESTED_SEQ_UNPACK, glb)
 
     val = (1, 2, (3, (4, 5)))
     ret = glb['nested'](val)
@@ -146,13 +131,12 @@ __init__(1)
 """
 
 
-@pytest.mark.parametrize(*c_exec)
-def test_RestrictingNodeTransformer__module_func_def_name_call(c_exec):
+def test_RestrictingNodeTransformer__module_func_def_name_call():
     """It forbids definition and usage of magic methods as functions ...
 
     ... at module level.
     """
-    result = c_exec(BLACKLISTED_FUNC_NAMES_CALL_TEST)
+    result = compile_restricted_exec(BLACKLISTED_FUNC_NAMES_CALL_TEST)
     # assert result.errors == ('Line 1: ')
     assert result.errors == (
         'Line 2: "__init__" is an invalid variable name because it starts with "_"',  # NOQA: E501

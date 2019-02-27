@@ -2,11 +2,11 @@
 Tests about imports
 """
 
+from RestrictedPython import compile_restricted_exec
 from RestrictedPython import safe_builtins
 from RestrictedPython._compat import IS_PY2
 from RestrictedPython._compat import IS_PY3
-from tests import c_exec
-from tests import e_exec
+from tests.helper import restricted_exec
 
 import pytest
 
@@ -18,8 +18,7 @@ os.listdir('/')
 """
 
 
-@pytest.mark.parametrize(*e_exec)
-def test_os_import(e_exec):
+def test_os_import():
     """It does not allow to import anything by default.
 
     The `__import__` function is not provided as it is not safe.
@@ -30,7 +29,7 @@ def test_os_import(e_exec):
     glb = {'__builtins__': safe_builtins}
 
     with pytest.raises(ImportError) as err:
-        e_exec(OS_IMPORT_EXAMPLE, glb)
+        restricted_exec(OS_IMPORT_EXAMPLE, glb)
     assert '__import__ not found' == str(err.value)
 
 
@@ -46,10 +45,9 @@ mygetattr = __builtins__['getattr']
     reason="__builtins__ has been renamed in Python3 to builtins, "
     "so no __builtins__ in Python3."
 )
-@pytest.mark.parametrize(*c_exec)
-def test_import_py2_builtins(c_exec):
+def test_import_py2_builtins():
     """It should not be allowed to access global __builtins__ in Python2."""
-    result = c_exec(__BUILTINS_EXAMPLE)
+    result = compile_restricted_exec(__BUILTINS_EXAMPLE)
     assert result.code is None
     assert result.errors == (
         'Line 2: "__builtins__" is an invalid variable name because it starts with "_"',  # NOQA: E501
@@ -69,10 +67,9 @@ mygetattr = builtins['getattr']
     reason="__builtins__ has been renamed in Python3 to builtins, "
     "so no __builtins__ in Python3."
 )
-@pytest.mark.parametrize(*c_exec)
-def test_import_py2_as_builtins(c_exec):
+def test_import_py2_as_builtins():
     """It should not be allowed to access global __builtins__ in Python2."""
-    result = c_exec(__BUILTINS_EXAMPLE)
+    result = compile_restricted_exec(__BUILTINS_EXAMPLE)
     assert result.code is None
     assert result.errors == (
         'Line 2: "__builtins__" is an invalid variable name because it starts with "_"',  # NOQA: E501
@@ -92,10 +89,9 @@ mygetattr = builtins['getattr']
     reason="__builtins__ has been renamed in Python3 to builtins, "
     "and need only to be tested there."
 )
-@pytest.mark.parametrize(*c_exec)
-def test_import_py3_builtins(c_exec):
+def test_import_py3_builtins():
     """It should not be allowed to access global builtins in Python3."""
-    result = c_exec(BUILTINS_EXAMPLE)
+    result = compile_restricted_exec(BUILTINS_EXAMPLE)
     assert result.code is None
     assert result.errors == (
         'Line 2: "builtins" is a reserved name.',
@@ -115,9 +111,8 @@ mygetattr = glb['getattr']
     reason="__builtins__ has been renamed in Python3 to builtins, "
     "and need only to be tested there."
 )
-@pytest.mark.parametrize(*c_exec)
-def test_import_py3_as_builtins(c_exec):
+def test_import_py3_as_builtins():
     """It should not be allowed to access global builtins in Python3."""
-    result = c_exec(BUILTINS_AS_EXAMPLE)
+    result = compile_restricted_exec(BUILTINS_AS_EXAMPLE)
     assert result.code is None
     assert result.errors == ('Line 2: "builtins" is a reserved name.',)

@@ -1,7 +1,7 @@
+from RestrictedPython import compile_restricted_exec
 from RestrictedPython._compat import IS_PY3
 from RestrictedPython.Guards import guarded_unpack_sequence
-from tests import c_exec
-from tests import e_exec
+from tests.helper import restricted_exec
 
 import pytest
 
@@ -16,12 +16,11 @@ def try_except(m):
 """
 
 
-@pytest.mark.parametrize(*e_exec)
 def test_RestrictingNodeTransformer__visit_Try__1(
-        e_exec, mocker):
+        mocker):
     """It allows try-except statements."""
     trace = mocker.stub()
-    e_exec(TRY_EXCEPT)['try_except'](trace)
+    restricted_exec(TRY_EXCEPT)['try_except'](trace)
 
     trace.assert_has_calls([
         mocker.call('try'),
@@ -40,12 +39,11 @@ def try_except_else(m):
 """
 
 
-@pytest.mark.parametrize(*e_exec)
 def test_RestrictingNodeTransformer__visit_Try__2(
-        e_exec, mocker):
+        mocker):
     """It allows try-except-else statements."""
     trace = mocker.stub()
-    e_exec(TRY_EXCEPT_ELSE)['try_except_else'](trace)
+    restricted_exec(TRY_EXCEPT_ELSE)['try_except_else'](trace)
 
     trace.assert_has_calls([
         mocker.call('try'),
@@ -64,12 +62,11 @@ def try_finally(m):
 """
 
 
-@pytest.mark.parametrize(*e_exec)
 def test_RestrictingNodeTransformer__visit_TryFinally__1(
-        e_exec, mocker):
+        mocker):
     """It allows try-finally statements."""
     trace = mocker.stub()
-    e_exec(TRY_FINALLY)['try_finally'](trace)
+    restricted_exec(TRY_FINALLY)['try_finally'](trace)
 
     trace.assert_has_calls([
         mocker.call('try'),
@@ -89,12 +86,11 @@ def try_except_finally(m):
 """
 
 
-@pytest.mark.parametrize(*e_exec)
 def test_RestrictingNodeTransformer__visit_TryFinally__2(
-        e_exec, mocker):
+        mocker):
     """It allows try-except-finally statements."""
     trace = mocker.stub()
-    e_exec(TRY_EXCEPT_FINALLY)['try_except_finally'](trace)
+    restricted_exec(TRY_EXCEPT_FINALLY)['try_except_finally'](trace)
 
     trace.assert_has_calls([
         mocker.call('try'),
@@ -116,12 +112,11 @@ def try_except_else_finally(m):
 """
 
 
-@pytest.mark.parametrize(*e_exec)
 def test_RestrictingNodeTransformer__visit_TryFinally__3(
-        e_exec, mocker):
+        mocker):
     """It allows try-except-else-finally statements."""
     trace = mocker.stub()
-    e_exec(TRY_EXCEPT_ELSE_FINALLY)['try_except_else_finally'](trace)
+    restricted_exec(TRY_EXCEPT_ELSE_FINALLY)['try_except_else_finally'](trace)
 
     trace.assert_has_calls([
         mocker.call('try'),
@@ -142,9 +137,8 @@ def tuple_unpack(err):
 @pytest.mark.skipif(
     IS_PY3,
     reason="tuple unpacking on exceptions is gone in python3")
-@pytest.mark.parametrize(*e_exec)
 def test_RestrictingNodeTransformer__visit_ExceptHandler__1(
-        e_exec, mocker):
+        mocker):
     _getiter_ = mocker.stub()
     _getiter_.side_effect = lambda it: it
 
@@ -153,7 +147,7 @@ def test_RestrictingNodeTransformer__visit_ExceptHandler__1(
         '_unpack_sequence_': guarded_unpack_sequence
     }
 
-    e_exec(EXCEPT_WITH_TUPLE_UNPACK, glb)
+    restricted_exec(EXCEPT_WITH_TUPLE_UNPACK, glb)
     err = Exception(1, (2, 3))
     ret = glb['tuple_unpack'](err)
     assert ret == 6
@@ -174,11 +168,9 @@ def except_using_bad_name():
 """
 
 
-@pytest.mark.parametrize(*c_exec)
-def test_RestrictingNodeTransformer__visit_ExceptHandler__2(
-        c_exec):
+def test_RestrictingNodeTransformer__visit_ExceptHandler__2():
     """It denies bad names in the except as statement."""
-    result = c_exec(BAD_TRY_EXCEPT)
+    result = compile_restricted_exec(BAD_TRY_EXCEPT)
     assert result.errors == (
         'Line 5: "_leading_underscore" is an invalid variable name because '
         'it starts with "_"',)

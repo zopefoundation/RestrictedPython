@@ -1,87 +1,71 @@
-from tests import e_eval
-
-import pytest
+from tests.helper import restricted_eval
 
 
-@pytest.mark.parametrize(*e_eval)
-def test_RestrictingNodeTransformer__visit_Eq__1(e_eval):
+def test_RestrictingNodeTransformer__visit_Eq__1():
     """It allows == expressions."""
-    assert e_eval('1 == int("1")') is True
+    assert restricted_eval('1 == int("1")') is True
 
 
-@pytest.mark.parametrize(*e_eval)
-def test_RestrictingNodeTransformer__visit_NotEq__1(e_eval):
+def test_RestrictingNodeTransformer__visit_NotEq__1():
     """It allows != expressions."""
-    assert e_eval('1 != int("1")') is False
+    assert restricted_eval('1 != int("1")') is False
 
 
-@pytest.mark.parametrize(*e_eval)
-def test_RestrictingNodeTransformer__visit_Lt__1(e_eval):
+def test_RestrictingNodeTransformer__visit_Lt__1():
     """It allows < expressions."""
-    assert e_eval('1 < 3') is True
+    assert restricted_eval('1 < 3') is True
 
 
-@pytest.mark.parametrize(*e_eval)
-def test_RestrictingNodeTransformer__visit_LtE__1(e_eval):
+def test_RestrictingNodeTransformer__visit_LtE__1():
     """It allows < expressions."""
-    assert e_eval('1 <= 3') is True
+    assert restricted_eval('1 <= 3') is True
 
 
-@pytest.mark.parametrize(*e_eval)
-def test_RestrictingNodeTransformer__visit_Gt__1(e_eval):
+def test_RestrictingNodeTransformer__visit_Gt__1():
     """It allows > expressions."""
-    assert e_eval('1 > 3') is False
+    assert restricted_eval('1 > 3') is False
 
 
-@pytest.mark.parametrize(*e_eval)
-def test_RestrictingNodeTransformer__visit_GtE__1(e_eval):
+def test_RestrictingNodeTransformer__visit_GtE__1():
     """It allows >= expressions."""
-    assert e_eval('1 >= 3') is False
+    assert restricted_eval('1 >= 3') is False
 
 
-@pytest.mark.parametrize(*e_eval)
-def test_RestrictingNodeTransformer__visit_Is__1(e_eval):
+def test_RestrictingNodeTransformer__visit_Is__1():
     """It allows `is` expressions."""
-    assert e_eval('None is None') is True
+    assert restricted_eval('None is None') is True
 
 
-@pytest.mark.parametrize(*e_eval)
-def test_RestrictingNodeTransformer__visit_IsNot__1(e_eval):
+def test_RestrictingNodeTransformer__visit_IsNot__1():
     """It allows `is not` expressions."""
-    assert e_eval('2 is not None') is True
+    assert restricted_eval('2 is not None') is True
 
 
-@pytest.mark.parametrize(*e_eval)
-def test_RestrictingNodeTransformer__visit_In_List(e_eval):
+def test_RestrictingNodeTransformer__visit_In_List():
     """It allows `in` expressions for lists."""
-    assert e_eval('2 in [1, 2, 3]') is True
+    assert restricted_eval('2 in [1, 2, 3]') is True
 
 
-@pytest.mark.parametrize(*e_eval)
-def test_RestrictingNodeTransformer__visit_NotIn_List(e_eval):
+def test_RestrictingNodeTransformer__visit_NotIn_List():
     """It allows `not in` expressions for lists."""
-    assert e_eval('2 not in [1, 2, 3]') is False
+    assert restricted_eval('2 not in [1, 2, 3]') is False
 
 
-@pytest.mark.parametrize(*e_eval)
-def test_RestrictingNodeTransformer__visit_In_Set(e_eval):
+def test_RestrictingNodeTransformer__visit_In_Set():
     """It allows `in` expressions for sets."""
-    assert e_eval('2 in {1, 1, 2, 3}') is True
+    assert restricted_eval('2 in {1, 1, 2, 3}') is True
 
 
-@pytest.mark.parametrize(*e_eval)
-def test_RestrictingNodeTransformer__visit_NotIn_Set(e_eval):
+def test_RestrictingNodeTransformer__visit_NotIn_Set():
     """It allows `not in` expressions for sets."""
-    assert e_eval('2 not in {1, 2, 3}') is False
+    assert restricted_eval('2 not in {1, 2, 3}') is False
 
 
-@pytest.mark.parametrize(*e_eval)
-def test_RestrictingNodeTransformer__visit_In_Dict(e_eval):
+def test_RestrictingNodeTransformer__visit_In_Dict():
     """It allows `in` expressions for dicts."""
-    assert e_eval('2 in {1: 1, 2: 2, 3: 3}') is True
+    assert restricted_eval('2 in {1: 1, 2: 2, 3: 3}') is True
 
 
-@pytest.mark.parametrize(*e_eval)
-def test_RestrictingNodeTransformer__visit_NotIn_Dict(e_eval):
+def test_RestrictingNodeTransformer__visit_NotIn_Dict():
     """It allows `not in` expressions for dicts."""
-    assert e_eval('2 not in {1: 1, 2: 2, 3: 3}') is False
+    assert restricted_eval('2 not in {1: 1, 2: 2, 3: 3}') is False

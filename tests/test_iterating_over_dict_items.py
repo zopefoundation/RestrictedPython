@@ -1,7 +1,7 @@
+from RestrictedPython import compile_restricted_exec
 from RestrictedPython import safe_globals
 from RestrictedPython.Eval import default_guarded_getiter
 from RestrictedPython.Guards import guarded_iter_unpack_sequence
-from tests import c_exec
 
 import pytest
 
@@ -13,10 +13,9 @@ for k, v in d.items():
 """
 
 
-@pytest.mark.parametrize(*c_exec)
-def test_iterate_over_dict_items_plain(c_exec):
+def test_iterate_over_dict_items_plain():
     glb = {}
-    result = c_exec(ITERATE_OVER_DICT_ITEMS)
+    result = compile_restricted_exec(ITERATE_OVER_DICT_ITEMS)
     assert result.code is not None
     assert result.errors == ()
     with pytest.raises(NameError) as excinfo:
@@ -24,12 +23,11 @@ def test_iterate_over_dict_items_plain(c_exec):
     assert "name '_iter_unpack_sequence_' is not defined" in str(excinfo.value)
 
 
-@pytest.mark.parametrize(*c_exec)
-def test_iterate_over_dict_items_safe(c_exec):
+def test_iterate_over_dict_items_safe():
     glb = safe_globals.copy()
     glb['_getiter_'] = default_guarded_getiter
     glb['_iter_unpack_sequence_'] = guarded_iter_unpack_sequence
-    result = c_exec(ITERATE_OVER_DICT_ITEMS)
+    result = compile_restricted_exec(ITERATE_OVER_DICT_ITEMS)
     assert result.code is not None
     assert result.errors == ()
     exec(result.code, glb, None)

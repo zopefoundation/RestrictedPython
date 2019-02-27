@@ -1,6 +1,6 @@
+from RestrictedPython import compile_restricted_exec
 from RestrictedPython._compat import IS_PY3
-from tests import c_exec
-from tests import e_exec
+from tests.helper import restricted_exec
 
 import pytest
 
@@ -13,10 +13,9 @@ x()
 """
 
 
-@pytest.mark.parametrize(*e_exec)
-def test_Global(e_exec):
+def test_Global():
     glb = {'a': None}
-    e_exec(GLOBAL_EXAMPLE, glb)
+    restricted_exec(GLOBAL_EXAMPLE, glb)
     assert glb['a'] == 11
 
 
@@ -38,8 +37,7 @@ outside()
 @pytest.mark.skipif(
     not IS_PY3,
     reason="The `nonlocal` statement was introduced in Python 3.0.")
-@pytest.mark.parametrize(*c_exec)
-def test_Nonlocal(c_exec):
-    result = c_exec(NONLOCAL_EXAMPLE)
+def test_Nonlocal():
+    result = compile_restricted_exec(NONLOCAL_EXAMPLE)
     assert result.errors == ('Line 5: Nonlocal statements are not allowed.',)
     assert result.code is None

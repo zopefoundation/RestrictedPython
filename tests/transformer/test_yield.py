@@ -1,6 +1,6 @@
+from RestrictedPython import compile_restricted_exec
 from RestrictedPython._compat import IS_PY3
 from RestrictedPython._compat import IS_PY35_OR_GREATER
-from tests import c_exec
 
 import pytest
 
@@ -11,10 +11,9 @@ def test_generator():
 """
 
 
-@pytest.mark.parametrize(*c_exec)
-def test_yield(c_exec):
+def test_yield():
     """`yield` statement should be allowed."""
-    result = c_exec(YIELD_EXAMPLE)
+    result = compile_restricted_exec(YIELD_EXAMPLE)
     assert result.errors == ()
     assert result.code is not None
     local = {}
@@ -33,10 +32,9 @@ def reader_wapper(input):
 @pytest.mark.skipif(
     not IS_PY3,
     reason="`yield from` statement was first introduced in Python 3.3")
-@pytest.mark.parametrize(*c_exec)
-def test_yield_from(c_exec):
+def test_yield_from():
     """`yield from` statement should be allowed."""
-    result = c_exec(YIELD_FORM_EXAMPLE)
+    result = compile_restricted_exec(YIELD_FORM_EXAMPLE)
     assert result.errors == ()
     assert result.code is not None
 
@@ -65,10 +63,9 @@ def get_json(client, url):
 @pytest.mark.skipif(
     not IS_PY3,
     reason="`yield from` statement was first introduced in Python 3.3")
-@pytest.mark.parametrize(*c_exec)
-def test_asyncio_yield_from(c_exec):
+def test_asyncio_yield_from():
     """`yield from` statement should be allowed."""
-    result = c_exec(ASYNCIO_YIELD_FORM_EXAMPLE)
+    result = compile_restricted_exec(ASYNCIO_YIELD_FORM_EXAMPLE)
     assert result.errors == ()
     assert result.code is not None
 
@@ -84,10 +81,9 @@ async def get_json(client, url):
 @pytest.mark.skipif(
     not IS_PY35_OR_GREATER,
     reason="`yield from` statement was first introduced in Python 3.3")
-@pytest.mark.parametrize(*c_exec)
-def test_async_yield_from(c_exec):
+def test_async_yield_from():
     """`yield from` statement should be allowed."""
-    result = c_exec(ASYNC_YIELD_FORM_EXAMPLE)
+    result = compile_restricted_exec(ASYNC_YIELD_FORM_EXAMPLE)
     assert result.errors == (
         'Line 4: AsyncFunctionDef statements are not allowed.',
     )

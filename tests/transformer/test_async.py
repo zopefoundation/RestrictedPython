@@ -1,7 +1,6 @@
 from RestrictedPython import compile_restricted_exec
 from RestrictedPython._compat import IS_PY35_OR_GREATER
 from RestrictedPython.transformer import RestrictingNodeTransformer
-from tests import c_exec
 
 import pytest
 
@@ -25,9 +24,8 @@ loop.close()
 """
 
 
-@pytest.mark.parametrize(*c_exec)
-def test_async_def(c_exec):
-    result = c_exec(ASYNC_DEF_EXMAPLE)
+def test_async_def():
+    result = compile_restricted_exec(ASYNC_DEF_EXMAPLE)
     assert result.errors == (
         'Line 4: AsyncFunctionDef statements are not allowed.',
     )
@@ -66,8 +64,7 @@ loop.close()
 """
 
 
-@pytest.mark.parametrize(*c_exec)
-def test_await(c_exec):
+def test_await():
     result = compile_restricted_exec(
         AWAIT_EXAMPLE,
         policy=RestrictingAsyncNodeTransformer)
@@ -83,8 +80,7 @@ async def square_series(con, to):
 """
 
 
-@pytest.mark.parametrize(*c_exec)
-def test_async_with(c_exec):
+def test_async_with():
     result = compile_restricted_exec(
         ASYNC_WITH_EXAMPLE,
         policy=RestrictingAsyncNodeTransformer)
@@ -100,8 +96,7 @@ async def read_rows(rows):
 """
 
 
-@pytest.mark.parametrize(*c_exec)
-def test_async_for(c_exec):
+def test_async_for():
     result = compile_restricted_exec(
         ASYNC_FOR_EXAMPLE,
         policy=RestrictingAsyncNodeTransformer)

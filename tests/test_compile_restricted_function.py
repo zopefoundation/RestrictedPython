@@ -1,13 +1,10 @@
+from RestrictedPython import compile_restricted_function
 from RestrictedPython import PrintCollector
 from RestrictedPython import safe_builtins
-from tests import c_function
 from types import FunctionType
 
-import pytest
 
-
-@pytest.mark.parametrize(*c_function)
-def test_compile_restricted_function(c_function):
+def test_compile_restricted_function():
     p = ''
     body = """
 print("Hello World!")
@@ -16,7 +13,7 @@ return printed
     name = "hello_world"
     global_symbols = []
 
-    result = c_function(
+    result = compile_restricted_function(
         p,  # parameters
         body,
         name,
@@ -40,8 +37,7 @@ return printed
     assert hello_world() == 'Hello World!\n'
 
 
-@pytest.mark.parametrize(*c_function)
-def test_compile_restricted_function_func_wrapped(c_function):
+def test_compile_restricted_function_func_wrapped():
     p = ''
     body = """
 print("Hello World!")
@@ -50,7 +46,7 @@ return printed
     name = "hello_world"
     global_symbols = []
 
-    result = c_function(
+    result = compile_restricted_function(
         p,  # parameters
         body,
         name,
@@ -74,8 +70,7 @@ return printed
     assert hello_world() == 'Hello World!\n'
 
 
-@pytest.mark.parametrize(*c_function)
-def test_compile_restricted_function_with_arguments(c_function):
+def test_compile_restricted_function_with_arguments():
     p = 'input1, input2'
     body = """
 print(input1 + input2)
@@ -84,7 +79,7 @@ return printed
     name = "hello_world"
     global_symbols = []
 
-    result = c_function(
+    result = compile_restricted_function(
         p,  # parameters
         body,
         name,
@@ -108,8 +103,7 @@ return printed
     assert hello_world('Hello ', 'World!') == 'Hello World!\n'
 
 
-@pytest.mark.parametrize(*c_function)
-def test_compile_restricted_function_can_access_global_variables(c_function):
+def test_compile_restricted_function_can_access_global_variables():
     p = ''
     body = """
 print(input)
@@ -118,7 +112,7 @@ return printed
     name = "hello_world"
     global_symbols = ['input']
 
-    result = c_function(
+    result = compile_restricted_function(
         p,  # parameters
         body,
         name,
@@ -143,14 +137,13 @@ return printed
     assert hello_world() == 'Hello World!\n'
 
 
-@pytest.mark.parametrize(*c_function)
-def test_compile_restricted_function_pretends_the_code_is_executed_in_a_global_scope(c_function):  # NOQA: E501
+def test_compile_restricted_function_pretends_the_code_is_executed_in_a_global_scope():  # NOQA: E501
     p = ''
     body = """output = output + 'bar'"""
     name = "hello_world"
     global_symbols = ['output']
 
-    result = c_function(
+    result = compile_restricted_function(
         p,  # parameters
         body,
         name,
@@ -174,14 +167,13 @@ def test_compile_restricted_function_pretends_the_code_is_executed_in_a_global_s
     assert safe_globals['output'] == 'foobar'
 
 
-@pytest.mark.parametrize(*c_function)
-def test_compile_restricted_function_allows_invalid_python_identifiers_as_function_name(c_function):  # NOQA: E501
+def test_compile_restricted_function_allows_invalid_python_identifiers_as_function_name():  # NOQA: E501
     p = ''
     body = """output = output + 'bar'"""
     name = "<foo>.bar.__baz__"
     global_symbols = ['output']
 
-    result = c_function(
+    result = compile_restricted_function(
         p,  # parameters
         body,
         name,
@@ -205,13 +197,12 @@ def test_compile_restricted_function_allows_invalid_python_identifiers_as_functi
     assert safe_globals['output'] == 'foobar'
 
 
-@pytest.mark.parametrize(*c_function)
-def test_compile_restricted_function_handle_SyntaxError(c_function):
+def test_compile_restricted_function_handle_SyntaxError():
     p = ''
     body = """a("""
     name = "broken"
 
-    result = c_function(
+    result = compile_restricted_function(
         p,  # parameters
         body,
         name,

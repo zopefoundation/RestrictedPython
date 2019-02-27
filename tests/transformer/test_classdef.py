@@ -1,7 +1,7 @@
+from RestrictedPython import compile_restricted_exec
 from RestrictedPython._compat import IS_PY2
 from RestrictedPython.Guards import safe_builtins
-from tests import c_exec
-from tests import e_exec
+from tests.helper import restricted_exec
 
 import pytest
 
@@ -12,10 +12,9 @@ class Good:
 '''
 
 
-@pytest.mark.parametrize(*c_exec)
-def test_RestrictingNodeTransformer__visit_ClassDef__1(c_exec):
+def test_RestrictingNodeTransformer__visit_ClassDef__1():
     """It allows to define an class."""
-    result = c_exec(GOOD_CLASS)
+    result = compile_restricted_exec(GOOD_CLASS)
     assert result.errors == ()
     assert result.code is not None
 
@@ -26,10 +25,9 @@ class _bad:
 '''
 
 
-@pytest.mark.parametrize(*c_exec)
-def test_RestrictingNodeTransformer__visit_ClassDef__2(c_exec):
+def test_RestrictingNodeTransformer__visit_ClassDef__2():
     """It does not allow class names which start with an underscore."""
-    result = c_exec(BAD_CLASS)
+    result = compile_restricted_exec(BAD_CLASS)
     assert result.errors == (
         'Line 1: "_bad" is an invalid variable name '
         'because it starts with "_"',)
@@ -43,8 +41,7 @@ b = Meta().foo
 '''
 
 
-@pytest.mark.parametrize(*e_exec)
-def test_RestrictingNodeTransformer__visit_ClassDef__3(e_exec):
+def test_RestrictingNodeTransformer__visit_ClassDef__3():
     """It applies the global __metaclass__ to all generated classes if present.
     """
     def _metaclass(name, bases, dict):
@@ -53,9 +50,12 @@ def test_RestrictingNodeTransformer__visit_ClassDef__3(e_exec):
         return ob
 
     restricted_globals = dict(
-        __metaclass__=_metaclass, b=None, _getattr_=getattr)
+        __metaclass__=_metaclass,
+        __name__='implicit_metaclass',
+        b=None,
+        _getattr_=getattr)
 
-    e_exec(IMPLICIT_METACLASS, restricted_globals)
+    restricted_exec(IMPLICIT_METACLASS, restricted_globals)
 
     assert restricted_globals['b'] == 2411
 
@@ -67,11 +67,10 @@ class WithMeta(metaclass=MyMetaClass):
 
 
 @pytest.mark.skipif(IS_PY2, reason="No valid syntax in Python 2.")
-@pytest.mark.parametrize(*c_exec)
-def test_RestrictingNodeTransformer__visit_ClassDef__4(c_exec):
+def test_RestrictingNodeTransformer__visit_ClassDef__4():
     """It does not allow to pass a metaclass to class definitions."""
 
-    result = c_exec(EXPLICIT_METACLASS)
+    result = compile_restricted_exec(EXPLICIT_METACLASS)
 
     assert result.errors == (
         'Line 2: The keyword argument "metaclass" is not allowed.',)
@@ -94,15 +93,14 @@ comb = Combined()
 '''
 
 
-@pytest.mark.parametrize(*e_exec)
-def test_RestrictingNodeTransformer__visit_ClassDef__5(e_exec):
+def test_RestrictingNodeTransformer__visit_ClassDef__5():
     """It preserves base classes and decorators for classes."""
 
     restricted_globals = dict(
         comb=None, _getattr_=getattr, _write_=lambda x: x, __metaclass__=type,
         __name__='restricted_module', __builtins__=safe_builtins)
 
-    e_exec(DECORATED_CLASS, restricted_globals)
+    restricted_exec(DECORATED_CLASS, restricted_globals)
 
     comb = restricted_globals['comb']
     assert comb.class_att == 2342
@@ -111,7 +109,7 @@ def test_RestrictingNodeTransformer__visit_ClassDef__5(e_exec):
 
 
 CONSTRUCTOR_TEST = """\
-class Test(object):
+class Test:
     def __init__(self, input):
         self.input = input
 
@@ -119,22 +117,22 @@ t = Test(42)
 """
 
 
-@pytest.mark.parametrize(*e_exec)
-def test_RestrictingNodeTransformer__visit_ClassDef__6(e_exec):
+def test_RestrictingNodeTransformer__visit_ClassDef__6():
     """It allows to define an ``__init__`` method."""
     restricted_globals = dict(
         t=None,
         _write_=lambda x: x,
         __metaclass__=type,
+        __name__='constructor_test',
     )
 
-    e_exec(CONSTRUCTOR_TEST, restricted_globals)
+    restricted_exec(CONSTRUCTOR_TEST, restricted_globals)
     t = restricted_globals['t']
     assert t.input == 42
 
 
 COMPARE_TEST = """\
-class Test(object):
+class Test:
 
     def __init__(self, value):
         self.value = value
@@ -151,8 +149,7 @@ result2 = (b == c)
 """
 
 
-@pytest.mark.parametrize(*e_exec)
-def test_RestrictingNodeTransformer__visit_ClassDef__7(e_exec):
+def test_RestrictingNodeTransformer__visit_ClassDef__7():
     """It allows to define an ``__eq__`` method."""
     restricted_globals = dict(
         result1=None,
@@ -160,9 +157,10 @@ def test_RestrictingNodeTransformer__visit_ClassDef__7(e_exec):
         _getattr_=getattr,
         _write_=lambda x: x,
         __metaclass__=type,
+        __name__='compare_test',
     )
 
-    e_exec(COMPARE_TEST, restricted_globals)
+    restricted_exec(COMPARE_TEST, restricted_globals)
     assert restricted_globals['result1'] is True
     assert restricted_globals['result2'] is False
 
@@ -183,8 +181,7 @@ result2 = (4 not in a)
 """
 
 
-@pytest.mark.parametrize(*e_exec)
-def test_RestrictingNodeTransformer__visit_ClassDef__8(e_exec):
+def test_RestrictingNodeTransformer__visit_ClassDef__8():
     """It allows to define a ``__contains__`` method."""
     restricted_globals = dict(
         result1=None,
@@ -192,8 +189,10 @@ def test_RestrictingNodeTransformer__visit_ClassDef__8(e_exec):
         _getattr_=getattr,
         _write_=lambda x: x,
         __metaclass__=type,
+        __name__='container_test',
+        object=object,
     )
 
-    e_exec(CONTAINER_TEST, restricted_globals)
+    restricted_exec(CONTAINER_TEST, restricted_globals)
     assert restricted_globals['result1'] is True
     assert restricted_globals['result2'] is True
