@@ -182,11 +182,8 @@ def test_compile_restricted():
         # Non-CPython versions have a RuntimeWarning, too.
         if len(record) > 2:  # pragma: no cover
             record.pop()
-        assert len(record) == 2
+        assert len(record) == 1
         assert record[0].message.args[0] == \
-            'Line 3: Print statement is deprecated ' \
-            'and not available anymore in Python 3.'
-        assert record[1].message.args[0] == \
             "Line 2: Prints, but never reads 'printed' variable."
 
 
