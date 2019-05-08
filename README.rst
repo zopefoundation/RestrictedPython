@@ -1,3 +1,5 @@
+.. image:: https://github.com/zopefoundation/RestrictedPython/raw/master/docs/logo.jpg
+
 ================
 RestrictedPython
 ================
