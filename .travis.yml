@@ -1,12 +1,10 @@
 language: python
+dist: xenial
 
 matrix:
     include:
-        - python: "2.7"
-          env: TOXENV=docs,lint
-          before_install:
-          after_success:
-        - python: "3.6"
+        - name: "docs,lint"
+          python: "3.6"
           env: TOXENV=docs,lint
           before_install:
           after_success:
@@ -18,10 +16,8 @@ matrix:
           env: TOXENV=py36,py36-datetime
         - python: "3.7"
           env: TOXENV=py37,py37-datetime
-          dist: xenial
         - python: "3.8-dev"
           env: TOXENV=py38,py38-datetime
-          dist: xenial
 before_install:
     -  travis_retry pip install -U -c constraints.txt coveralls coverage
 install:
