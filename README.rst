@@ -2,6 +2,8 @@
 RestrictedPython
 ================
 
+.. image:: https://github.com/zopefoundation/RestrictedPython/raw/master/docs/logo.jpg
+
 RestrictedPython is a tool that helps to define a subset of the Python language which allows to provide a program input into a trusted environment.
 RestrictedPython is not a sandbox system or a secured environment, but it helps to define a trusted environment and execute untrusted code inside of it.
 
