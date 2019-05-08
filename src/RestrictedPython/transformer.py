@@ -1135,12 +1135,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         templates and scripts; 'write' happens to be the name of the
         method that changes them.
         """
-
         self.print_info.print_used = True
-        self.warn(node,
-                  "Print statement is deprecated and "
-                  "not available anymore in Python 3.")
-
         node = self.node_contents_visit(node)
         if node.dest is None:
             node.dest = ast.Name('_print', ast.Load())

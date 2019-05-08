@@ -171,7 +171,6 @@ def test_print_stmt__with_printed_no_print_nested():
     assert code is not None
     assert errors == ()
     assert warnings == [
-        "Line 2: Print statement is deprecated and not available anymore in Python 3.",  # NOQA: E501
         "Line 3: Doesn't print, but reads 'printed' variable."
     ]
 
@@ -188,7 +187,6 @@ def test_print_stmt__with_print_no_printed():
     assert code is not None
     assert errors == ()
     assert warnings == [
-        "Line 3: Print statement is deprecated and not available anymore in Python 3.",  # NOQA: E501
         "Line 2: Prints, but never reads 'printed' variable."
     ]
 
@@ -208,8 +206,6 @@ def test_print_stmt__with_print_no_printed_nested():
     assert code is not None
     assert errors == ()
     assert warnings == [
-        "Line 2: Print statement is deprecated and not available anymore in Python 3.",  # NOQA: E501
-        "Line 4: Print statement is deprecated and not available anymore in Python 3.",  # NOQA: E501
         "Line 3: Prints, but never reads 'printed' variable.",
     ]
 
