@@ -1,7 +1,9 @@
 Usage of RestrictedPython
 =========================
 
-.. include:: basic_usage.rst
-.. include:: framework_usage.rst
-.. include:: policy.rst
-.. include:: api.rst
+.. toctree::
+   :maxdepth: 1
+
+   basic_usage
+   framework_usage
+   policy

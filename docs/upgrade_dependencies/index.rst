@@ -1,22 +1,9 @@
-Upgrade dependencies
-====================
-
-The following packages used in Zope2 and Plone depend on ``RestricedPython``:
-
-* AccessControl
-* zope.untrustedpython
-* DocumentTemplate
-* Products.PageTemplates
-* Products.PythonScripts
-* Products.PluginIndexes
-* five.pt (wrapping some functions and protection for Chameleon)
-
-Upgrade path
-------------
+Upgrade from 3.x
+----------------
 
 For packages that use RestrictedPython the upgrade path differs on the actual usage.
 If it uses pure RestrictedPython without any additional checks it should be just to check the imports.
-RestrictedPython did move some of the imports to the base namespace, so you should only import directly from ``RestrictedPython.__init__.py``.
+RestrictedPython did move some of the imports to the base namespace, so you should only import directly from ``RestrictedPython``.
 
 * compile_restricted methods:
 

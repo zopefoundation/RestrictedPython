@@ -11,7 +11,7 @@ RestrictedPython is not a sandbox system or a secured environment, but it helps 
 
    RestrictedPython only supports CPython. It does _not_ support PyPy and other Python implementations as it cannot provide its restrictions there.
 
-For full documentation please see http://restrictedpython.readthedocs.io/ or the local ``docs/index``.
+For full documentation please see http://restrictedpython.readthedocs.io/.
 
 Example
 =======
