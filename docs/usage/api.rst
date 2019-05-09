@@ -21,7 +21,7 @@ API overview
     :type flags: int
     :type dont_inherit: int
     :type policy: RestrictingNodeTransformer class
-    :return: Python byte code
+    :return: Python ``code`` object
 
 .. py:method:: compile_restricted_exec(source, filename, flags, dont_inherit, policy)
     :module: RestrictedPython
