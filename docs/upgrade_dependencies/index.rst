@@ -2,7 +2,7 @@ Upgrade from 3.x
 ----------------
 
 For packages that use RestrictedPython the upgrade path differs on the actual usage.
-If it uses pure RestrictedPython without any additional checks it should be just to check the imports.
+If it uses pure RestrictedPython without any additional checks it should be enough to check the imports.
 RestrictedPython did move some of the imports to the base namespace, so you should only import directly from ``RestrictedPython``.
 
 * compile_restricted methods:

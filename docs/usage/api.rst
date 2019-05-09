@@ -27,7 +27,7 @@ API overview
     :module: RestrictedPython
 
     Compiles source code into interpretable byte code with ``mode='exec'``.
-    The meaning and defaaults of the parameters are the same as in
+    The meaning and defaults of the parameters are the same as in
     ``compile_restricted``.
 
     :return: CompileResult (a namedtuple with code, errors, warnings, used_names)
@@ -36,7 +36,7 @@ API overview
     :module: RestrictedPython
 
     Compiles source code into interpretable byte code with ``mode='eval'``.
-    The meaning and defaaults of the parameters are the same as in
+    The meaning and defaults of the parameters are the same as in
     ``compile_restricted``.
 
     :return: CompileResult (a namedtuple with code, errors, warnings, used_names)
@@ -45,7 +45,7 @@ API overview
     :module: RestrictedPython
 
     Compiles source code into interpretable byte code with ``mode='eval'``.
-    The meaning and defaaults of the parameters are the same as in
+    The meaning and defaults of the parameters are the same as in
     ``compile_restricted``.
 
     :return: CompileResult (a namedtuple with code, errors, warnings, used_names)
@@ -119,11 +119,11 @@ RestrictingNodeTransformer
 
 ``RestrictingNodeTransformer`` provides the base policy used by RestrictedPython itself.
 
-It is a subclass of a ``NodeTransformer`` which has as set of ``visit_<AST_Elem>`` methods and a ``generic_visit`` method.
+It is a subclass of a ``NodeTransformer`` which has a set of ``visit_<AST_Elem>`` methods and a ``generic_visit`` method.
 
 ``generic_visit`` is a predefined method of any ``NodeVisitor`` which sequentially visits all sub nodes. In RestrictedPython this behaviour is overwritten to always call a new internal method ``not_allowed(node)``.
-This results in a implicit blacklisting of all not allowed AST elements.
+This results in an implicit blacklisting of all not allowed AST elements.
 
 Any possibly new introduced AST element in Python (new language element) will implicitly be blocked and not allowed in RestrictedPython.
 
-So if new elements should be introduced an explicit ``visit_<new AST elem>`` is necessary.
+So, if new elements should be introduced, an explicit ``visit_<new AST elem>`` is necessary.

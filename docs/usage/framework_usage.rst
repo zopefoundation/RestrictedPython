@@ -22,7 +22,7 @@ Those four methods return a named tuple (``CompileResult``) with four elements:
 ``used_names``
     a dictionary mapping collected used names to ``True``.
 
-This information can be used to provide the user with informations about the compiled source code.
+These details can be used to inform the user about the compiled source code.
 
 Modifying the builtins is straight forward, it is just a dictionary containing the available library elements.
 Modification normally means removing elements from existing builtins or adding allowed elements by copying from globals.

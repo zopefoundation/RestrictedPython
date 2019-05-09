@@ -73,8 +73,8 @@ Specifically:
    RestrictedPython ships with a default implementation
    for ``_getattr_`` which prevents the following actions:
 
-   * accessing an attribute those name start with an underscore
-   * accessing the format method of strings as it is considered harmful.
+   * accessing an attribute whose name start with an underscore
+   * accessing the format method of strings as this is considered harmful.
 
 4. ``__import__`` is the normal Python import hook, and should be used
    to control access to Python packages and modules.
