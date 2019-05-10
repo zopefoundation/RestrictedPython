@@ -108,6 +108,6 @@ To use ``for`` statements and comprehensions
 
 To use ``getattr``
     you have to provide an implementation for it.
-    :func:``RestrictedPython.Guards.safer_getattr`` can be a starting point.
+    :func:`RestrictedPython.Guards.safer_getattr` can be a starting point.
 
 The usage of `RestrictedPython` in :mod:`AccessControl.ZopeGuards` can serve as example.

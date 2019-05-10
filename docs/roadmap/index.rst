@@ -1,5 +1,5 @@
-Roadmap for RestrictedPython
-============================
+Roadmap
+=======
 
 RestrictedPython 4.0
 --------------------

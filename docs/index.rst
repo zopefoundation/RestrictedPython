@@ -9,12 +9,13 @@
 Welcome to RestrictedPython's documentation!
 ============================================
 
-.. include:: idea.rst
+RestrictedPython is a tool that helps to define a subset of the Python language which allows to provide a program input into a trusted environment.
+RestrictedPython is not a sandbox system or a secured environment, but it helps to define a trusted environment and execute untrusted code inside of it.
 
 Supported Python versions
 =========================
 
-RestrictedPython support CPython 2.7, 3.5, 3.6 and 3.7.
+RestrictedPython supports CPython 2.7, 3.5, 3.6, 3.7 and 3.8.
 It does _not_ support PyPy or other alternative Python implementations.
 
 Contents
@@ -24,13 +25,10 @@ Contents
    :maxdepth: 2
 
    idea
-   basics/index
+   install/index
    usage/index
-   api/index
+   usage/api
 
-   RestrictedPython3/index
-   RestrictedPython4/index
-   upgrade/index
    upgrade_dependencies/index
 
    roadmap/index

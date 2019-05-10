@@ -1,87 +1,59 @@
 API overview
 ------------
 
-RestrictedPython has tree major scopes:
-
-1. ``compile_restricted`` methods:
+``compile_restricted`` methods
+++++++++++++++++++++++++++++++
 
 .. py:method:: compile_restricted(source, filename, mode, flags, dont_inherit, policy)
     :module: RestrictedPython
 
     Compiles source code into interpretable byte code.
 
-    :param source: (required). The source code that should be compiled
-    :param filename: (optional).
-    :param mode: (optional).
-    :param flags: (optional).
-    :param dont_inherit: (optional).
-    :param policy: (optional).
-    :type source: str or unicode text
+    :param source: (required). the source code that should be compiled
+    :param filename: (optional). defaults to ``'<unknown>'``
+    :param mode: (optional). defaults to ``'exec'``
+    :param flags: (optional). defaults to ``0``
+    :param dont_inherit: (optional). defaults to ``False``
+    :param policy: (optional). defaults to ``RestrictingNodeTransformer``
+    :type source: str or unicode text or ``ast.AST``
     :type filename: str or unicode text
     :type mode: str or unicode text
     :type flags: int
     :type dont_inherit: int
     :type policy: RestrictingNodeTransformer class
-    :return: Byte Code
+    :return: Python ``code`` object
 
 .. py:method:: compile_restricted_exec(source, filename, flags, dont_inherit, policy)
     :module: RestrictedPython
 
-    Compiles source code into interpretable byte code.
+    Compiles source code into interpretable byte code with ``mode='exec'``.
+    The meaning and defaults of the parameters are the same as in
+    ``compile_restricted``.
 
-    :param source: (required). The source code that should be compiled
-    :param filename: (optional).
-    :param flags: (optional).
-    :param dont_inherit: (optional).
-    :param policy: (optional).
-    :type source: str or unicode text
-    :type filename: str or unicode text
-    :type mode: str or unicode text
-    :type flags: int
-    :type dont_inherit: int
-    :type policy: RestrictingNodeTransformer class
     :return: CompileResult (a namedtuple with code, errors, warnings, used_names)
 
 .. py:method:: compile_restricted_eval(source, filename, flags, dont_inherit, policy)
     :module: RestrictedPython
 
-    Compiles source code into interpretable byte code.
+    Compiles source code into interpretable byte code with ``mode='eval'``.
+    The meaning and defaults of the parameters are the same as in
+    ``compile_restricted``.
 
-    :param source: (required). The source code that should be compiled
-    :param filename: (optional).
-    :param flags: (optional).
-    :param dont_inherit: (optional).
-    :param policy: (optional).
-    :type source: str or unicode text
-    :type filename: str or unicode text
-    :type mode: str or unicode text
-    :type flags: int
-    :type dont_inherit: int
-    :type policy: RestrictingNodeTransformer class
     :return: CompileResult (a namedtuple with code, errors, warnings, used_names)
 
 .. py:method:: compile_restricted_single(source, filename, flags, dont_inherit, policy)
     :module: RestrictedPython
 
-    Compiles source code into interpretable byte code.
+    Compiles source code into interpretable byte code with ``mode='eval'``.
+    The meaning and defaults of the parameters are the same as in
+    ``compile_restricted``.
 
-    :param source: (required). The source code that should be compiled
-    :param filename: (optional).
-    :param flags: (optional).
-    :param dont_inherit: (optional).
-    :param policy: (optional).
-    :type source: str or unicode text
-    :type filename: str or unicode text
-    :type mode: str or unicode text
-    :type flags: int
-    :type dont_inherit: int
-    :type policy: RestrictingNodeTransformer class
     :return: CompileResult (a namedtuple with code, errors, warnings, used_names)
 
 .. py:method:: compile_restricted_function(p, body, name, filename, globalize=None)
     :module: RestrictedPython
 
-    Compiles source code into interpretable byte code.
+    Compiles source code into interpretable byte code with ``mode='function'``.
 
     :param p: (required).
     :param body: (required).
@@ -128,13 +100,30 @@ RestrictedPython has tree major scopes:
     ...     compiled_function.__defaults__ or ())
     >>> result = new_function(*[], **{})
 
-2. restricted builtins
+restricted builtins
++++++++++++++++++++
 
   * ``safe_globals``
   * ``safe_builtins``
   * ``limited_builtins``
   * ``utility_builtins``
 
-3. helper modules
+helper modules
+++++++++++++++
 
   * ``PrintCollector``
+
+
+RestrictingNodeTransformer
+++++++++++++++++++++++++++
+
+``RestrictingNodeTransformer`` provides the base policy used by RestrictedPython itself.
+
+It is a subclass of a ``NodeTransformer`` which has a set of ``visit_<AST_Elem>`` methods and a ``generic_visit`` method.
+
+``generic_visit`` is a predefined method of any ``NodeVisitor`` which sequentially visits all sub nodes. In RestrictedPython this behaviour is overwritten to always call a new internal method ``not_allowed(node)``.
+This results in an implicit blacklisting of all not allowed AST elements.
+
+Any possibly new introduced AST element in Python (new language element) will implicitly be blocked and not allowed in RestrictedPython.
+
+So, if new elements should be introduced, an explicit ``visit_<new AST elem>`` is necessary.

@@ -13,24 +13,21 @@ RestrictedPython provides four specialized compile_restricted methods:
 
 Those four methods return a named tuple (``CompileResult``) with four elements:
 
-* ``code`` ``<code>`` object or ``None`` if ``errors`` is not empty
-* ``errors`` a tuple with error messages
-* ``warnings`` a list with warnings
-* ``used_names`` a set / dictionary with collected used names of library calls
+``code``
+    ``<code>`` object or ``None`` if ``errors`` is not empty
+``errors``
+    a tuple with error messages
+``warnings``
+    a list with warnings
+``used_names``
+    a dictionary mapping collected used names to ``True``.
 
-Those three information "lists" could be used to provide the user with informations about the compiled source code.
+These details can be used to inform the user about the compiled source code.
 
-Typical uses cases for the four specialized methods:
+Modifying the builtins is straight forward, it is just a dictionary containing the available library elements.
+Modification normally means removing elements from existing builtins or adding allowed elements by copying from globals.
 
-* ``compile_restricted_exec`` --> Python Modules or Scripts that should be used or called by the framework itself or from user calls
-* ``compile_restricted_eval`` --> Templates
-* ``compile_restricted_single``
-* ``compile_restricted_function``
-
-Modifying the builtins is straight forward, it is just a dictionary containing access pointers to available library elements.
-Modification is normally removing elements from existing builtins or adding allowed elements by copying from globals.
-
-For frameworks it could possibly also be useful to change handling of specific Python language elements.
+For frameworks it could possibly also be useful to change the handling of specific Python language elements.
 For that use case RestrictedPython provides the possibility to pass an own policy.
 
 A policy is basically a special ``NodeTransformer`` that could be instantiated with three params for ``errors``, ``warnings`` and ``used_names``, it should be a subclass of RestrictedPython.RestrictingNodeTransformer.
@@ -64,7 +61,7 @@ All ``compile_restricted*`` methods do have an optional parameter ``policy``, wh
         source_code,
         filename='<inline code>',
         mode='exec',
-        policy=policy # Policy Class
+        policy=policy # policy class
     )
     exec(byte_code, globals(), None)
 
