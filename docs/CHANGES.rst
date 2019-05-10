@@ -1,56 +1,55 @@
 Changes
 =======
 
-4.0b9 (unreleased)
-------------------
+4.0 (unreleased)
+----------------
 
-- Nothing changed yet.
+Changes since 3.6.0:
 
+Breaking changes
+----------------
 
-4.0b8 (2019-02-09)
-------------------
+- The ``compile_restricted*`` functions now return a
+  ``namedtuple CompileResult`` instead of a simple ``tuple``.
 
-- Add preliminary support for Python 3.8. as of 3.8.0a1 is released.
+- Drop the old implementation of version 3.x: `RCompile.py`,
+  `SelectCompiler.py`, `MutatingWorker.py`, `RestrictionMutator.py` and
+  `tests/verify.py`.
+
+- Drop support for long-deprecated ``sets`` module.
+
+Security related issues
+-----------------------
+
+- RestrictedPython now ships with a default implementation for
+  ``_getattr_`` which prevents from using the ``format()`` method on
+  str/unicode as it is not safe, see:
+  http://lucumr.pocoo.org/2016/12/29/careful-with-str-format/
+
+  **Caution:** If you do not already have secured the access to this
+  ``format()`` method in your ``_getattr_`` implementation use
+  ``RestrictedPython.Guards.safer_getattr()`` in your implementation to
+  benefit from this fix.
+
+Features
+--------
+
+- Mostly complete rewrite based on Python AST module.
+  [loechel (Alexander Loechel), icemac (Michael Howitz),
+  stephan-hof (Stephan Hofmockel), tlotze (Thomas Lotze)]
+
+- Add support for Python 3.5, 3.6, 3.7.
+
+- Add preliminary support for Python 3.8. as of 3.8.0a3 is released.
+
+- Warn when using another Python implementation than CPython as it is not safe
+  to use RestrictedPython with other versions than CPyton.
+  See https://bitbucket.org/pypy/pypy/issues/2653 for PyPy.
 
 - Allow the ``...`` (Ellipsis) statement. It is needed to support Python 3.8.
 
-
-4.0b7 (2018-10-30)
-------------------
-
-- Fix documentation issue which leads to unnecessary unsafe code: Never use
-  ``safe_builtins`` as argument of ``compile_resticted`` but use
-  ``dict(__builtins__=safe_builtins)`` or the newly introduced
-  ``safe_globals``. Otherwise the default Python built-ins which are not in
-  ``safe_builtins`` can still be accessed.
-  (`#142 <https://github.com/zopefoundation/RestrictedPython/issues/142>`_)
-
-- Improve `.Guards.safer_getattr` to prevent accessing names starting with
-  underscore.
-  (`#142 <https://github.com/zopefoundation/RestrictedPython/issues/142>`_)
-
-
-4.0b6 (2018-10-05)
-------------------
-
 - Allow `yield` and `yield from` statements.
   Generator functions would now work in RestrictedPython.
-
-- Add support for Python 3.7.
-
-- Fix possible installation error.
-
-
-4.0b5 (2018-09-05)
-------------------
-
-- When calling ``compile_restricted_function`` with a function body containing
-  a ``SyntaxError`` also a ``CompileResult`` is returned. This fixes
-  `Products.PythonScripts#11 <https://github.com/zopefoundation/Products.PythonScripts/issues/11>`_.
-
-
-4.0b4 (2018-05-18)
-------------------
 
 - Allow the following magic methods to be defined on classes.
   (`#104 <https://github.com/zopefoundation/RestrictedPython/issues/104>`_)
@@ -71,77 +70,20 @@ Changes
   override protected build-ins.
   (`#102 <https://github.com/zopefoundation/RestrictedPython/issues/102>`_)
 
-- Bring test coverage to 100 %.
-
-- Drop support for Python 3.4.
-
-
-4.0b3 (2018-04-12)
-------------------
-
-- Warn when using another Python implementation than CPython as it is not safe to use RestrictedPython with other versions than CPyton.
-  See https://bitbucket.org/pypy/pypy/issues/2653 for PyPy.
-
 - Allow to use list comprehensions in the default implementation of
   ``RestrictionCapableEval.eval()``.
 
-4.0b2 (2017-09-15)
-------------------
+- Switch to pytest as test runner.
 
-- Fix regression in ``RestrictionCapableEval`` which broke when using list comprehensions.
+- Bring test coverage to 100 %.
 
-4.0b1 (2017-09-15)
-------------------
+Bug fixes
+---------
 
-- Security issue: RestrictedPython now ships with a default implementation for
-  ``_getattr_`` which prevents from using the ``format()`` method on
-  str/unicode as it is not safe, see:
-  http://lucumr.pocoo.org/2016/12/29/careful-with-str-format/
+- Improve `.Guards.safer_getattr` to prevent accessing names starting with
+  underscore.
+  (`#142 <https://github.com/zopefoundation/RestrictedPython/issues/142>`_)
 
-  **Caution:** If you do not already have secured the access to this
-  ``format()`` method in your ``_getattr_`` implementation use
-  ``RestrictedPython.Guards.safer_getattr()`` in your implementation to
-  benefit from this fix.
-
-- Drop the old implementation of version 3.x: `RCompile.py`,
-  `SelectCompiler.py`, `MutatingWorker.py`, `RestrictionMutator.py` and
-  `tests/verify.py`.
-
-- Drop support for PyPy as there currently is no way to restrict the builtins.
-  See https://bitbucket.org/pypy/pypy/issues/2653.
-
-- Remove ``__len__`` method in ``.Guards._write_wrapper`` because it is no
-  longer reachable by code using the wrapper.
-
-4.0a3 (2017-06-20)
-------------------
-
-- Fix install problem caused by an invisible non-ASCII character in
-  `README.rst`.
-
-- Update configurations to give better feedback and helpful reports.
-
-4.0a2 (2017-05-26)
-------------------
-
-- Modified README and setup.py to provide a better desciption test for PyPI.
-  [loechel]
-
-- Drop support for long-deprecated ``sets`` module.
-  [tseaver]
-
-4.0a1 (2017-05-05)
-------------------
-
-- Mostly complete rewrite based on Python AST module.
-  [loechel (Alexander Loechel), icemac (Michael Howitz), stephan-hof (Stephan Hofmockel), tlotze (Thomas Lotze)]
-
-- Support Python versions 3.4 up to 3.6.
-
-- switch to pytest
-
-- The ``compile_restricted*`` functions now return a
-  ``namedtuple CompileResult`` instead of a simple ``tuple``.
 
 3.6.0 (2010-07-09)
 ------------------
