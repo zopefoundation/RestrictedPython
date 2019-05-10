@@ -1,7 +1,7 @@
 Changes
 =======
 
-4.0 (unreleased)
+4.0 (2019-05-10)
 ----------------
 
 Changes since 3.6.0:
