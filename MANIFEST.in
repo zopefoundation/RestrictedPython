@@ -10,6 +10,7 @@ exclude appveyor.yml
 
 recursive-include docs *.ast
 recursive-include docs *.bat
+recursive-include docs *.jpg
 recursive-include docs *.py
 recursive-include docs *.rst
 recursive-include docs *.txt
