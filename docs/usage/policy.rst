@@ -4,7 +4,7 @@ Policies & builtins
 -------------------
 
 RestrictedPython provides a way to define policies, by redefining restricted versions of ``print``, ``getattr``, ``setattr``, ``import``, etc..
-As shortcuts it offers three stripped down versions of Pythons ``__builtins__``:
+As shortcuts it offers three stripped down versions of Python's ``__builtins__``:
 
 .. _predefined_builtins:
 
@@ -186,7 +186,7 @@ lists:
     ...
     >>> shed = BikeShed()
 
-Normally accessing attriutes works as expected, because we're using
+Normally accessing attributes works as expected, because we're using
 the standard ``getattr`` function for the ``_getattr_`` guard:
 
 .. code-block:: pycon
