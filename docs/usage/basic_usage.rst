@@ -105,7 +105,7 @@ To use classes in Python 3
 
 To use ``for`` statements and comprehensions:
     * ``_getiter_`` must point to an ``iter`` implementation. As an unguarded variant you might use 
-       :func:`RestrictedPython.Eval.default_guarded_getiter`.
+      :func:`RestrictedPython.Eval.default_guarded_getiter`.
        
     *  ``_iter_unpack_sequence_`` must point to :func:`RestrictedPython.Guards.guarded_iter_unpack_sequence`.
 
