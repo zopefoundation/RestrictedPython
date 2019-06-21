@@ -104,6 +104,7 @@ To use classes in Python 3
     ``__metaclass__`` must be set. Set it to ``type`` to use no custom metaclass.
 
 To use ``for`` statements and comprehensions
+    ``_getiter_`` must point to :func:`RestrictedPython.Eval.default_guarded_getiter` and
     ``_iter_unpack_sequence_`` must point to :func:`RestrictedPython.Guards.guarded_iter_unpack_sequence`.
 
 To use ``getattr``
