@@ -1,5 +1,5 @@
+from RestrictedPython._compat import IS_PY38_OR_GREATER
 from tests.helper import restricted_exec
-from sys import version_info
 
 DICT_COMPREHENSION_WITH_ATTRS = """
 def call(seq):
@@ -28,7 +28,7 @@ def test_dict_comprehension_with_attrs(mocker):
     calls = [mocker.call(seq, 'z')]
 
     # Note: Order changed in PEP 572, starting with Python 3.8.
-    if version_info.major == 3 and version_info.minor >= 8:
+    if IS_PY38_OR_GREATER:
         calls.extend([
             mocker.call(z[0], 'k'),
             mocker.call(z[1], 'k'),
