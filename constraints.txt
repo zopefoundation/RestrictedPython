@@ -2,3 +2,4 @@
 # -----------------------------------------------
 # Pin Versions / Version Ranges if necessary.
 isort >= 4.3.2
+pytest < 5
