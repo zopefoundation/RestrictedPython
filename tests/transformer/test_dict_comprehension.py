@@ -1,5 +1,5 @@
+from RestrictedPython._compat import IS_PY38_OR_GREATER
 from tests.helper import restricted_exec
-
 
 DICT_COMPREHENSION_WITH_ATTRS = """
 def call(seq):
@@ -24,10 +24,23 @@ def test_dict_comprehension_with_attrs(mocker):
     assert ret == {1: 'b'}
 
     _getiter_.assert_called_once_with(z)
-    _getattr_.assert_has_calls([
-        mocker.call(seq, 'z'),
-        mocker.call(z[0], 'k'),
-        mocker.call(z[1], 'k'),
-        mocker.call(z[1], 'v'),
-        mocker.call(z[1], 'k')
-    ])
+
+    calls = [mocker.call(seq, 'z')]
+
+    # Note: Order changed in PEP 572, starting with Python 3.8.
+    if IS_PY38_OR_GREATER:
+        calls.extend([
+            mocker.call(z[0], 'k'),
+            mocker.call(z[1], 'k'),
+            mocker.call(z[1], 'k'),
+            mocker.call(z[1], 'v'),
+        ])
+    else:
+        calls.extend([
+            mocker.call(z[0], 'k'),
+            mocker.call(z[1], 'k'),
+            mocker.call(z[1], 'v'),
+            mocker.call(z[1], 'k'),
+        ])
+
+    _getattr_.assert_has_calls(calls)
