@@ -574,6 +574,14 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         """Allow dict literals without restrictions."""
         return self.node_contents_visit(node)
 
+    def visit_FormattedValue(self, node):
+        """Allow f-strings without restrictions."""
+        return self.node_contents_visit(node)
+
+    def visit_JoinedStr(self, node):
+        """Allow joined string without restrictions."""
+        return self.node_contents_visit(node)
+
     def visit_Constant(self, node):
         """Allow constant literals without restrictions.
 

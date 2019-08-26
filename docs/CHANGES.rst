@@ -4,7 +4,8 @@ Changes
 4.1 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Added support for f-strings in Python 3.6+.
+  (`#123 <https://github.com/zopefoundation/RestrictedPython/issues/123>`_)
 
 
 4.0 (2019-05-10)
