@@ -8,6 +8,14 @@ Changes
   (`#123 <https://github.com/zopefoundation/RestrictedPython/issues/123>`_)
 
 
+Breaking changes
+----------------
+
+- Revert the Allowance of the ``...`` (Ellipsis) statement, as of 4.0. It is not needed to support Python 3.8.
+  The security implications of the Ellipsis Statement is not 100 % clear and is not checked.
+  ``...`` (Ellipsis) is disallowed again.
+
+
 4.0 (2019-05-10)
 ----------------
 
