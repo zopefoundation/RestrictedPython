@@ -2,9 +2,9 @@
 
 environment:
   matrix:
-    - PROFILE: py27-conventions
-      PYTHON_VERSION: "2.7"
-      TOXENV: "lint,docs"
+    - PROFILE: conventions
+      PYTHON_VERSION: "3.6"
+      TOXENV: "docs,lint-py36"
     - PROFILE: py27
       PYTHON_VERSION: "2.7"
       TOXENV: "py27,py27-datetime"
