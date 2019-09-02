@@ -1,13 +1,13 @@
 from RestrictedPython import compile_restricted_exec
 from RestrictedPython._compat import IS_PY36_OR_GREATER
-from tests.helper import restricted_exec
-
-from sys import version_info
 
 import pytest
 
 
-@pytest.mark.skipif(not IS_PY36_OR_GREATER, reason="F-strings added in Python 3.6.")
+@pytest.mark.skipif(
+    not IS_PY36_OR_GREATER,
+    reason="F-strings added in Python 3.6.",
+)
 def test_transform():
     """It compiles a function call successfully and returns the used name."""
 
@@ -19,7 +19,10 @@ def test_transform():
     assert result.used_names == {'max': True}
 
 
-@pytest.mark.skipif(not IS_PY36_OR_GREATER, reason="F-strings added in Python 3.6.")
+@pytest.mark.skipif(
+    not IS_PY36_OR_GREATER,
+    reason="F-strings added in Python 3.6.",
+)
 def test_visit_invalid_variable_name():
     """Accessing private attributes is forbidden.
 
