@@ -1,6 +1,7 @@
 from RestrictedPython._compat import IS_PY38_OR_GREATER
 from tests.helper import restricted_exec
 
+
 DICT_COMPREHENSION_WITH_ATTRS = """
 def call(seq):
     return {y.k: y.v for y in seq.z if y.k}
