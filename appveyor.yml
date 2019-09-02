@@ -30,4 +30,5 @@ install:
 build: off
 
 test_script:
+  - SET PATH=%PYTHON%;%PATH%
   - "tox.exe"
