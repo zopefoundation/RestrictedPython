@@ -5,7 +5,7 @@ matrix:
     include:
         - name: "docs,lint"
           python: "3.6"
-          env: TOXENV=docs,lint
+          env: TOXENV=docs,lint-py36
           before_install:
           after_success:
         - python: "2.7"
@@ -18,8 +18,10 @@ matrix:
           env: TOXENV=py37,py37-datetime
         - python: "3.8-dev"
           env: TOXENV=py38,py38-datetime
+
 before_install:
     -  travis_retry pip install -U -c constraints.txt coveralls coverage
+
 install:
     - travis_retry pip install -U pip setuptools
     - travis_retry pip install -U -c constraints.txt tox
@@ -33,5 +35,6 @@ after_success:
 
 notifications:
     email: false
+
 cache:
   pip: true
