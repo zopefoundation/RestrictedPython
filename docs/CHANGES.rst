@@ -1,10 +1,26 @@
 Changes
 =======
 
-4.1 (unreleased)
+5.1 (unreleased)
 ----------------
 
-- Added support for f-strings in Python 3.6+.
+- Nothing changed yet.
+
+
+5.0 (2019-09-03)
+----------------
+
+Breaking changes
+----------------
+
+- Revert the Allowance of the ``...`` (Ellipsis) statement, as of 4.0. It is not needed to support Python 3.8.
+  The security implications of the Ellipsis Statement is not 100 % clear and is not checked.
+  ``...`` (Ellipsis) is disallowed again.
+
+Features
+--------
+
+- Add support for f-strings in Python 3.6+.
   (`#123 <https://github.com/zopefoundation/RestrictedPython/issues/123>`_)
 
 
