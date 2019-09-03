@@ -1,3 +1,4 @@
+from RestrictedPython import compile_restricted_exec
 from RestrictedPython._compat import IS_PY2
 from tests.helper import restricted_eval
 
@@ -22,5 +23,6 @@ def test_Set():
 @pytest.mark.skipif(IS_PY2,
                     reason="... is new in Python 3")
 def test_Ellipsis():
-    """It allows using the `...` statement."""
-    assert restricted_eval('...') == Ellipsis
+    """It prevents using the `ellipsis` statement."""
+    result = compile_restricted_exec('...')
+    assert result.errors == ('Line 1: Ellipsis statements are not allowed.',)
