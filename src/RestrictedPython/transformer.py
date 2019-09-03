@@ -675,6 +675,12 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         """
         return self.node_contents_visit(node)
 
+    def visit_NamedExpr(self, node):
+        """Allow NamedExpr (AssignmentExpressions -> Walrus-Operator)
+        statements without restrictions.
+        """
+        return self.node_contents_visit(node)
+
     def visit_Expr(self, node):
         """Allow Expr statements (any expression) without restrictions."""
         return self.node_contents_visit(node)
