@@ -10,8 +10,10 @@ module Python version "2.7"
       -- not really an actual node but useful in Jython's typesystem.
       | Suite(stmt* body)
 
-  stmt = FunctionDef(identifier name, arguments args,
-                     stmt* body, expr* decorator_list)
+  stmt = FunctionDef(identifier name,
+                     arguments args,
+                     stmt* body,
+                     expr* decorator_list)
         | ClassDef(identifier name, expr* bases, stmt* body, expr* decorator_list)
         | Return(expr? value)
 
@@ -20,7 +22,7 @@ module Python version "2.7"
         | AugAssign(expr target, operator op, expr value)
 
         -- not sure if bool is allowed, can always use int
- 	      | Print(expr? dest, expr* values, bool nl)
+ 	  | Print(expr? dest, expr* values, bool nl)
 
         -- use 'orelse' because else is a keyword in target languages
         | For(expr target, expr iter, stmt* body, stmt* orelse)
@@ -67,8 +69,7 @@ module Python version "2.7"
        -- need sequences for compare to distinguish between
        -- x < 4 < 3 and (x < 4) < 3
        | Compare(expr left, cmpop* ops, expr* comparators)
-       | Call(expr func, expr* args, keyword* keywords,
-       expr? starargs, expr? kwargs)
+       | Call(expr func, expr* args, keyword* keywords, expr? starargs, expr? kwargs)
        | Repr(expr value)
        | Num(object n) -- a number as a PyObject.
        | Str(string s) -- need to specify raw, unicode, etc?
@@ -96,7 +97,8 @@ module Python version "2.7"
         | ExtSlice(slice* dims)
         | Index(expr value)
 
-  boolop = And | Or
+  boolop = And
+         | Or
 
   operator = Add
            | Sub

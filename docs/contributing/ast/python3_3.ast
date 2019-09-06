@@ -44,7 +44,9 @@ module Python version "3.3"
          | Global(identifier* names)
          | Nonlocal(identifier* names)
          | Expr(expr value)
-         | Pass | Break | Continue
+         | Pass
+         | Break
+         | Continue
 
          -- XXX Jython will be different
          -- col_offset is the byte offset in the utf8 string the parser uses
@@ -68,8 +70,11 @@ module Python version "3.3"
          -- need sequences for compare to distinguish between
          -- x < 4 < 3 and (x < 4) < 3
          | Compare(expr left, cmpop* ops, expr* comparators)
-         | Call(expr func, expr* args, keyword* keywords,
-             expr? starargs, expr? kwargs)
+         | Call(expr func,
+                expr* args,
+                keyword* keywords,
+                expr? starargs,
+                expr? kwargs)
          | Num(object n) -- a number as a PyObject.
          | Str(string s) -- need to specify raw, unicode, etc?
          | Bytes(bytes s)
@@ -84,8 +89,8 @@ module Python version "3.3"
          | List(expr* elts, expr_context ctx)
          | Tuple(expr* elts, expr_context ctx)
 
-          -- col_offset is the byte offset in the utf8 string the parser uses
-          attributes (int lineno, int col_offset)
+         -- col_offset is the byte offset in the utf8 string the parser uses
+         attributes (int lineno, int col_offset)
 
     expr_context = Load
                  | Store

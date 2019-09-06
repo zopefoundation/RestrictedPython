@@ -10,8 +10,11 @@ module Python version "3.0"
         -- not really an actual node but useful in Jython's typesystem.
         | Suite(stmt* body)
 
-    stmt = FunctionDef(identifier name, arguments args,
-                       stmt* body, expr* decorator_list, expr? returns)
+    stmt = FunctionDef(identifier name,
+                       arguments args,
+                       stmt* body,
+                       expr* decorator_list,
+                       expr? returns)
          | ClassDef(identifier name,
                     expr* bases,
                     keyword* keywords,
@@ -42,7 +45,9 @@ module Python version "3.0"
          | Global(identifier* names)
          | Nonlocal(identifier* names)
          | Expr(expr value)
-         | Pass | Break | Continue
+         | Pass
+         | Break
+         | Continue
 
          -- XXX Jython will be different
          -- col_offset is the byte offset in the utf8 string the parser uses
@@ -65,8 +70,11 @@ module Python version "3.0"
          -- need sequences for compare to distinguish between
          -- x < 4 < 3 and (x < 4) < 3
          | Compare(expr left, cmpop* ops, expr* comparators)
-         | Call(expr func, expr* args, keyword* keywords,
-                expr? starargs, expr? kwargs)
+         | Call(expr func,
+                expr* args,
+                keyword* keywords,
+                expr? starargs,
+                expr? kwargs)
          | Num(object n) -- a number as a PyObject.
          | Str(string s) -- need to specify raw, unicode, etc?
          | Bytes(string s)
@@ -81,8 +89,8 @@ module Python version "3.0"
          | List(expr* elts, expr_context ctx)
          | Tuple(expr* elts, expr_context ctx)
 
-          -- col_offset is the byte offset in the utf8 string the parser uses
-          attributes (int lineno, int col_offset)
+         -- col_offset is the byte offset in the utf8 string the parser uses
+         attributes (int lineno, int col_offset)
 
     expr_context = Load
                  | Store
@@ -133,10 +141,14 @@ module Python version "3.0"
     excepthandler = ExceptHandler(expr? type, identifier? name, stmt* body)
                     attributes (int lineno, int col_offset)
 
-    arguments = (arg* args, identifier? vararg, expr? varargannotation,
-                       arg* kwonlyargs, identifier? kwarg,
-                       expr? kwargannotation, expr* defaults,
-                       expr* kw_defaults)
+    arguments = (arg* args,
+                 identifier? vararg,
+                 expr? varargannotation,
+                 arg* kwonlyargs,
+                 identifier? kwarg,
+                 expr? kwargannotation,
+                 expr* defaults,
+                 expr* kw_defaults)
     arg = (identifier arg, expr? annotation)
 
     -- keyword arguments supplied to call

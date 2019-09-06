@@ -52,15 +52,12 @@ The ``ast`` module consists of four areas:
 A ``NodeVisitor`` is a class of a node / AST consumer, it reads the data by stepping through the tree without modifying it.
 In contrast, a ``NodeTransformer`` (which inherits from a ``NodeVisitor``) is allowed to modify the tree and nodes.
 
-Modifying the AST
-+++++++++++++++++
-
 
 Technical Backgrounds - Links to External Documentation
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-* Concept of Immutable Types and Python Example (https://en.wikipedia.org/wiki/Immutable_object#Python)
-* Python 3 Standard Library Documentation on AST module ``ast`` (https://docs.python.org/3/library/ast.html)
+* `Concept of Immutable Types and Python Example`_
+* `Python 3 Standard Library Documentation on AST module`_
 
   * AST Grammar of Python
 
@@ -76,12 +73,37 @@ Technical Backgrounds - Links to External Documentation
     * `Python 2.7 AST`_
     * `Python 2.6 AST`_ (obsolete)
 
-  * ``NodeVistiors``  (https://docs.python.org/3.5/library/ast.html#ast.NodeVisitor)
-  * ``NodeTransformer``  (https://docs.python.org/3.5/library/ast.html#ast.NodeTransformer)
-  * ``dump`` (https://docs.python.org/3.5/library/ast.html#ast.dump)
+  * `AST NodeVistiors Class`_  (https://docs.python.org/3.5/library/ast.html#ast.NodeVisitor)
+  * `AST NodeTransformer Class`_  (https://docs.python.org/3.5/library/ast.html#ast.NodeTransformer)
+  * `AST dump method`_ (https://docs.python.org/3.5/library/ast.html#ast.dump)
 
-* In detail Documentation on the Python AST module ``ast`` (Green Tree Snakes) (https://greentreesnakes.readthedocs.org/en/latest/)
-* Example how to Instrumenting the Python AST (``ast.AST``) (http://www.dalkescientific.com/writings/diary/archive/2010/02/22/instrumenting_the_ast.html)
+* `In detail Documentation on the Python AST module (Green Tree Snakes)`_
+* `Example how to Instrumenting the Python AST`_
+
+Differences between different Python versions
+---------------------------------------------
+
+A (modified style) Copy of all Abstract Grammar Definitions for the Python versions does live in this Documentation (ast Subfolder) to help finding difference quicker by comparing files.
+
+.. toctree::
+   :maxdepth: 2
+
+   changes_from26to27
+   changes_from30to31
+   changes_from31to32
+   changes_from32to33
+   changes_from33to34
+   changes_from34to35
+   changes_from35to36
+   changes_from36to37
+   changes_from37to38
+
+
+.. Links
+
+.. _`Concept of Immutable Types and Python Example`: https://en.wikipedia.org/wiki/Immutable_object#Python
+
+.. _`Python 3 Standard Library Documentation on AST module`: https://docs.python.org/3/library/ast.html
 
 .. _`CamelCase`: https://en.wikipedia.org/wiki/Camel_case
 
@@ -89,7 +111,7 @@ Technical Backgrounds - Links to External Documentation
 
 .. _`Chomsky 3`: https://en.wikipedia.org/wiki/Chomsky_hierarchy#Type-3_grammars
 
-.. _`Python 3.8 AST`: https://docs.python.org/3.7/library/ast.html#abstract-grammar
+.. _`Python 3.8 AST`: https://docs.python.org/3.8/library/ast.html#abstract-grammar
 
 .. _`Python 3.7 AST`: https://docs.python.org/3.7/library/ast.html#abstract-grammar
 
@@ -111,4 +133,13 @@ Technical Backgrounds - Links to External Documentation
 
 .. _`Python 2.6 AST`: https://docs.python.org/2.6/library/ast.html#abstract-grammar
 
-A (modified style) Copy of all Abstract Grammar Definitions for the Python versions does live in this Documentation (ast Subfolder) to help finding difference quicker by comparing files.
+
+.. _`AST NodeVistiors Class`: https://docs.python.org/3.5/library/ast.html#ast.NodeVisitor
+
+.. _`AST NodeTransformer Class`: https://docs.python.org/3.5/library/ast.html#ast.NodeTransformer
+
+.. _`AST dump method`: https://docs.python.org/3.5/library/ast.html#ast.dump
+
+.. _`In detail Documentation on the Python AST module (Green Tree Snakes)`: https://greentreesnakes.readthedocs.org/en/latest/
+
+.. _`Example how to Instrumenting the Python AST`: http://www.dalkescientific.com/writings/diary/archive/2010/02/22/instrumenting_the_ast.html

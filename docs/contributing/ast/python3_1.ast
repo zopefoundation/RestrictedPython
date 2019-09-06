@@ -10,8 +10,11 @@ module Python version "3.1"
         -- not really an actual node but useful in Jython's typesystem.
         | Suite(stmt* body)
 
-    stmt = FunctionDef(identifier name, arguments args,
-                       stmt* body, expr* decorator_list, expr? returns)
+    stmt = FunctionDef(identifier name,
+                       arguments args,
+                       stmt* body,
+                       expr* decorator_list,
+                       expr? returns)
          | ClassDef(identifier name,
                     expr* bases,
                     keyword* keywords,
@@ -67,8 +70,11 @@ module Python version "3.1"
          -- need sequences for compare to distinguish between
          -- x < 4 < 3 and (x < 4) < 3
          | Compare(expr left, cmpop* ops, expr* comparators)
-         | Call(expr func, expr* args, keyword* keywords,
-                expr? starargs, expr? kwargs)
+         | Call(expr func,
+                expr* args,
+                keyword* keywords,
+                expr? starargs,
+                expr? kwargs)
          | Num(object n) -- a number as a PyObject.
          | Str(string s) -- need to specify raw, unicode, etc?
          | Bytes(string s)
@@ -135,9 +141,13 @@ module Python version "3.1"
     excepthandler = ExceptHandler(expr? type, identifier? name, stmt* body)
                     attributes (int lineno, int col_offset)
 
-    arguments = (arg* args, identifier? vararg, expr? varargannotation,
-                 arg* kwonlyargs, identifier? kwarg,
-                 expr? kwargannotation, expr* defaults,
+    arguments = (arg* args,
+                 identifier? vararg,
+                 expr? varargannotation,
+                 arg* kwonlyargs,
+                 identifier? kwarg,
+                 expr? kwargannotation,
+                 expr* defaults,
                  expr* kw_defaults)
     arg = (identifier arg, expr? annotation)
 
