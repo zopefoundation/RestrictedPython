@@ -71,7 +71,7 @@ setup(
     install_requires=[
         'setuptools',
     ],
-    python_requires=">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, <3.9 ",
+    python_requires=">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, <3.9",  # NOQA: E501
     tests_require=tests_require,
     extras_require={
         'test': tests_require,
