@@ -17,6 +17,9 @@ environment:
     - PROFILE: py37
       PYTHON_VERSION: "3.7"
       TOXENV: "py37,py37-datetime"
+    - PROFILE: py38
+      PYTHON_VERSION: "3.8"
+      TOXENV: "py38,py38-datetime"
 
 
 cache:
@@ -25,11 +28,11 @@ cache:
 version: '{branch}.{build}'
 
 install:
-  - "python3.exe -V"
-  - "python3.exe -m pip install tox"
+  - "python.exe -V"
+  - "pip install tox"
 
 build: off
 
 test_script:
-  - "python3.exe -V"
+  - "python.exe -V"
   - "tox.exe"
