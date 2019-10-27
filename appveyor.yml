@@ -2,9 +2,6 @@
 
 environment:
   matrix:
-    - PROFILE: "coding-conventions & docs"
-      PYTHON_VERSION: "3.6"
-      TOXENV: "docs,lint"
     - PROFILE: py27
       PYTHON_VERSION: "2.7"
       TOXENV: "py27,py27-datetime"
@@ -17,10 +14,6 @@ environment:
     - PROFILE: py37
       PYTHON_VERSION: "3.7"
       TOXENV: "py37,py37-datetime"
-    - PROFILE: py38
-      PYTHON_VERSION: "3.8"
-      TOXENV: "py38,py38-datetime"
-
 
 cache:
   - '%LOCALAPPDATA%\pip\Cache'
