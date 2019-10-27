@@ -27,12 +27,11 @@ cache:
 
 version: '{branch}.{build}'
 
-install:
-  - "python.exe -V"
-  - "pip install tox"
-
 build: off
 
+install:
+  - pip install tox
+
 test_script:
-  - "python.exe -V"
-  - "tox.exe"
+  - python -V
+  - tox
