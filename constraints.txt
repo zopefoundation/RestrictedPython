@@ -4,3 +4,4 @@
 isort >= 4.3.2
 # Needed for Appveyor as long as PY2 is supported:
 pytest < 5
+pytest-html < 2

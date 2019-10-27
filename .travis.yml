@@ -3,9 +3,9 @@ dist: xenial
 
 matrix:
     include:
-        - name: "docs,lint"
+        - name: "coding-conventions & docs"
           python: "3.6"
-          env: TOXENV=docs,lint-py36
+          env: TOXENV=docs,lint
           before_install:
           after_success:
         - python: "2.7"
