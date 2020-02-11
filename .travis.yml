@@ -3,9 +3,9 @@ dist: xenial
 
 matrix:
     include:
-        - name: "docs,lint"
+        - name: "coding-conventions & docs"
           python: "3.6"
-          env: TOXENV=docs,lint-py36
+          env: TOXENV=docs,lint
           before_install:
           after_success:
         - python: "2.7"
@@ -16,7 +16,7 @@ matrix:
           env: TOXENV=py36,py36-datetime
         - python: "3.7"
           env: TOXENV=py37,py37-datetime
-        - python: "3.8-dev"
+        - python: "3.8"
           env: TOXENV=py38,py38-datetime
 
 before_install:

@@ -43,6 +43,7 @@ setup(
         read('README.rst') + '\n'
         + read('docs', 'CHANGES.rst')
     ),
+    long_description_content_type='text/x-rst',
     classifiers=[
         'License :: OSI Approved :: Zope Public License',
         'Programming Language :: Python',
@@ -60,11 +61,16 @@ setup(
     keywords='restricted execution security untrusted code',
     author='Zope Foundation and Contributors',
     author_email='zope-dev@zope.org',
+    project_urls={
+        "Documentation": "https://restrictedpython.readthedocs.io/",
+        "Source": "https://github.com/zopefoundation/RestrictedPython",
+        "Tracker": "https://github.com/zopefoundation/RestrictedPython/issues",
+    },
     packages=find_packages('src'),
     package_dir={'': 'src'},
     install_requires=[
-        'setuptools',
     ],
+    python_requires=">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, <3.9",  # NOQA: E501
     tests_require=tests_require,
     extras_require={
         'test': tests_require,

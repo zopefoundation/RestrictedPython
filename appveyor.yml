@@ -2,9 +2,6 @@
 
 environment:
   matrix:
-    - PROFILE: conventions
-      PYTHON_VERSION: "3.6"
-      TOXENV: "docs,lint-py36"
     - PROFILE: py27
       PYTHON_VERSION: "2.7"
       TOXENV: "py27,py27-datetime"
@@ -18,16 +15,16 @@ environment:
       PYTHON_VERSION: "3.7"
       TOXENV: "py37,py37-datetime"
 
-
 cache:
   - '%LOCALAPPDATA%\pip\Cache'
 
 version: '{branch}.{build}'
 
-install:
-  - "python.exe -m pip install tox"
-
 build: off
 
+install:
+  - pip install tox
+
 test_script:
-  - "tox.exe"
+  - python -V
+  - tox
