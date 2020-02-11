@@ -4,7 +4,8 @@ Changes
 5.1 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Drop install dependency on ``setuptools``.
+  (`#189 <https://github.com/zopefoundation/RestrictedPython/issues/189>`_)
 
 
 5.0 (2019-09-03)
