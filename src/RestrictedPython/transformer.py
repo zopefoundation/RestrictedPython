@@ -355,6 +355,9 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         if isinstance(slice_, ast.Index):
             return slice_.value
 
+        elif isinstance(slice_, ast.Name):  # Python 3.9.0a5+ for a[b]
+            return slice_
+
         elif isinstance(slice_, ast.Slice):
             # Create a python slice object.
             args = []

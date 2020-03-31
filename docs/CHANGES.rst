@@ -1,11 +1,15 @@
 Changes
 =======
 
-5.1 (unreleased)
-----------------
+5.1a0 (unreleased)
+------------------
 
 - Drop install dependency on ``setuptools``.
   (`#189 <https://github.com/zopefoundation/RestrictedPython/issues/189>`_)
+
+- Start supporting Python 3.9.0a5. (Be aware that this support currently only
+  makes RestrictedPython usable on Python 3.9. The security implications of
+  using Python 3.9 have not yet been checked.)
 
 
 5.0 (2019-09-03)
