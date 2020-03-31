@@ -355,9 +355,6 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         if isinstance(slice_, ast.Index):
             return slice_.value
 
-        elif isinstance(slice_, ast.Name):  # Python 3.9.0a5+ for a[b]
-            return slice_
-
         elif isinstance(slice_, ast.Slice):
             # Create a python slice object.
             args = []
@@ -387,6 +384,10 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
             for item in slice_.dims:
                 dims.elts.append(self.transform_slice(item))
             return dims
+
+        # Python 3.9.0a5+ for `a[b]`, `a['b']` resp. `a[1,2]`:
+        elif isinstance(slice_, (ast.Name, ast.Constant, ast.Tuple)):
+            return slice_
 
         else:  # pragma: no cover
             # Index, Slice and ExtSlice are only defined Slice types.
