@@ -389,10 +389,6 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
                 dims.elts.append(self.transform_slice(item))
             return dims
 
-        # Python 3.9.0a5+ for `a[b]`, `a['b']` resp. `a[1,2]`:
-        elif isinstance(slice_, (ast.Name, ast.Constant, ast.Tuple)):
-            return slice_
-
         else:  # pragma: no cover
             # Index, Slice and ExtSlice are only defined Slice types.
             raise NotImplementedError("Unknown slice type: {0}".format(slice_))
