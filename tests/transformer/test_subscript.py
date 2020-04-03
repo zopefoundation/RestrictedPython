@@ -17,6 +17,23 @@ def test_read_simple_subscript(mocker):
     assert (value, 'b') == glb['simple_subscript'](value)
 
 
+VAR_SUBSCRIPT = """
+def simple_subscript(a, b):
+    return a[b]
+"""
+
+
+def test_read_subscript_with_variable(mocker):
+    value = [1]
+    idx = 0
+    _getitem_ = mocker.stub()
+    _getitem_.side_effect = lambda ob, index: (ob, index)
+    glb = {'_getitem_': _getitem_}
+    restricted_exec(VAR_SUBSCRIPT, glb)
+
+    assert (value, 0) == glb['simple_subscript'](value, idx)
+
+
 TUPLE_SUBSCRIPTS = """
 def tuple_subscript(a):
     return a[1, 2]

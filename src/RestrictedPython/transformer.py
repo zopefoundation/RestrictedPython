@@ -352,7 +352,11 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         Conversion is done by calling the 'slice' function from builtins
         """
 
-        if isinstance(slice_, ast.Index):
+        if isinstance(slice_, ast.expr):
+            # Python 3.9+
+            return slice_
+
+        elif isinstance(slice_, ast.Index):
             return slice_.value
 
         elif isinstance(slice_, ast.Slice):
