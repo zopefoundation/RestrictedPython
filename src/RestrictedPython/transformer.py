@@ -1485,13 +1485,10 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         # variables. While this may hide global variables, an
         # (implicitly performed) name check guarantees (as usual)
         # that no essential global variable is hidden.
-        node = self.node_contents_visit(node) # this checks ``node.target``
+        node = self.node_contents_visit(node)  # this checks ``node.target``
         target = node.target
         if not isinstance(target, ast.Name):
             self.error(
                 node,
                 "Assignment expressions are only allowed for simple targets")
         return node
-
-
-
