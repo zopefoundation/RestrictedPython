@@ -1473,3 +1473,25 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
     def visit_AsyncWith(self, node):
         """Deny async functionality."""
         self.not_allowed(node)
+
+    # Assignment expressions (walrus operator ``:=``)
+    # New in 3.8
+    def visit_NamedExpr(self, node):
+        """Allow assignment expressions under some circumstances."""
+        # while the grammar requires ``node.target`` to be a ``Name``
+        # the abstract syntax is more permissive and allows an ``expr``.
+        # We support only a ``Name``.
+        # This is safe as the expression can only add/modify local
+        # variables. While this may hide global variables, an
+        # (implicitly performed) name check guarantees (as usual)
+        # that no essential global variable is hidden.
+        node = self.node_contents_visit(node) # this checks ``node.target``
+        target = node.target
+        if not isinstance(target, ast.Name):
+            self.error(
+                node,
+                "Assignment expressions are only allowed for simple targets")
+        return node
+
+
+

@@ -4,6 +4,8 @@ Changes
 5.1a0 (unreleased)
 ------------------
 
+- Add support for (Python 3.8+) assignment expressions (i.e. the ``:=`` operator)
+
 - Drop install dependency on ``setuptools``.
   (`#189 <https://github.com/zopefoundation/RestrictedPython/issues/189>`_)
 
