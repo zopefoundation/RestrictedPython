@@ -1,10 +1,12 @@
 """Assignment expression (``NamedExpr``) tests."""
 
 
-from ast import parse, NodeTransformer
-from unittest import TestCase, skipUnless
-
-from .util import check_version, compile_str
+from .util import check_version
+from .util import compile_str
+from ast import NodeTransformer
+from ast import parse
+from unittest import skipUnless
+from unittest import TestCase
 
 
 @skipUnless(check_version("3.8"), "Feature available for Python 3.8+")
@@ -33,5 +35,3 @@ class TestNamedExpr(TestCase):
                 SyntaxError,
                 "Assignment expressions are only allowed for simple target"):
             code, gs = compile_str(mod)
-
-

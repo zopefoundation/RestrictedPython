@@ -1,6 +1,6 @@
+from .. import compile_restricted
+from .. import safe_globals
 from sys import version_info
-
-from .. import compile_restricted, safe_globals
 
 
 def check_version(tversion, cmp=">="):
@@ -24,6 +24,3 @@ def compile_str(s, name="<unknown>"):
     gs = safe_globals.copy()
     gs["__debug__"] = True  # assert active
     return code, gs
-
-
-    
