@@ -17,6 +17,10 @@ class TestNamedExpr(TestCase):
         exec(code, gs)
         self.assertEqual(gs["x"], 1)
 
+    def test_no_private_target(self):
+        with self.assertRaises(SyntaxError):
+            compile_str("if _x_:= 1: True\n")
+
     def test_simple_only(self):
         # we test here that only a simple variable is allowed
         # as assignemt expression target
