@@ -1,0 +1,37 @@
+"""Assignment expression (``NamedExpr``) tests."""
+
+
+from ast import parse, NodeTransformer
+from unittest import TestCase, skipUnless
+
+from .util import check_version, compile_str
+
+
+@skipUnless(check_version("3.8"), "Feature available for Python 3.8+")
+class TestNamedExpr(TestCase):
+    def test_works(self):
+        code, gs = compile_str("if x:= x + 1: True\n")
+        gs["x"] = 0
+        exec(code, gs)
+        self.assertEqual(gs["x"], 1)
+
+    def test_simple_only(self):
+        # we test here that only a simple variable is allowed
+        # as assignemt expression target
+        # Currently (Python 3.8, 3.9), this is enforced by the
+        # Python concrete syntax; therefore, some (``ast``) trickery is
+        # necessary to produce a test for it.
+        class TransformNamedExprTarget(NodeTransformer):
+            def visit_NamedExpr(self, node):
+                # this is brutal but sufficient for the test
+                node.target = None
+                return node
+
+        mod = parse("if x:= x + 1: True\n")
+        mod = TransformNamedExprTarget().visit(mod)
+        with self.assertRaisesRegexp(
+                SyntaxError,
+                "Assignment expressions are only allowed for simple target"):
+            code, gs = compile_str(mod)
+
+
