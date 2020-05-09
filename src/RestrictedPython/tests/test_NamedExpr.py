@@ -1,15 +1,17 @@
 """Assignment expression (``NamedExpr``) tests."""
 
 
-from .util import check_version
-from .util import compile_str
 from ast import NodeTransformer
 from ast import parse
 from unittest import skipUnless
 from unittest import TestCase
 
+from RestrictedPython._compat import IS_PY38_OR_GREATER
+from RestrictedPython import compile_restricted
+from RestrictedPython import safe_globals
 
-@skipUnless(check_version("3.8"), "Feature available for Python 3.8+")
+
+@skipUnless(IS_PY38_OR_GREATER, "Feature available for Python 3.8+")
 class TestNamedExpr(TestCase):
     def test_works(self):
         code, gs = compile_str("if x:= x + 1: True\n")
@@ -39,3 +41,17 @@ class TestNamedExpr(TestCase):
                 SyntaxError,
                 "Assignment expressions are only allowed for simple target"):
             code, gs = compile_str(mod)
+
+
+def compile_str(s, name="<unknown>"):
+    """code and globals for *s*.
+
+    *s* must be acceptable for ``compile_restricted`` (this is (especially) the
+    case for an ``str`` or ``ast.Module``).
+
+    *name* is a ``str`` used in error messages.
+    """
+    code = compile_restricted(s, name, 'exec')
+    gs = safe_globals.copy()
+    gs["__debug__"] = True  # assert active
+    return code, gs
