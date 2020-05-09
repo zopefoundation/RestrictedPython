@@ -36,7 +36,7 @@ class TestNamedExpr(TestCase):
 
         mod = parse("if x:= x + 1: True\n")
         mod = TransformNamedExprTarget().visit(mod)
-        with self.assertRaisesRegexp(
+        with self.assertRaisesRegex(
                 SyntaxError,
                 "Assignment expressions are only allowed for simple target"):
             code, gs = compile_str(mod)
