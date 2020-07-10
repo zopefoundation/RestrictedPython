@@ -1,24 +1,24 @@
+import math
+import random
+import string
+
 
 def test_string_in_utility_builtins():
-    import string
     from RestrictedPython.Utilities import utility_builtins
     assert utility_builtins['string'] is string
 
 
 def test_math_in_utility_builtins():
-    import math
     from RestrictedPython.Utilities import utility_builtins
     assert utility_builtins['math'] is math
 
 
 def test_whrandom_in_utility_builtins():
-    import random
     from RestrictedPython.Utilities import utility_builtins
     assert utility_builtins['whrandom'] is random
 
 
 def test_random_in_utility_builtins():
-    import random
     from RestrictedPython.Utilities import utility_builtins
     assert utility_builtins['random'] is random
 

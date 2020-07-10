@@ -5,6 +5,7 @@
 
 #PyENV
 /.python-version
+pyvenv.cfg
 
 # Packages / zc.buildout
 *.egg
@@ -70,3 +71,4 @@ node_modules/
 
 # MAC specifics
 .DS_Store
+default.profraw
