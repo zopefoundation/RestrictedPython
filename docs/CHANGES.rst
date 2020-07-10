@@ -7,6 +7,9 @@ Changes
 - Fix ``compile_restricted_function`` with SyntaxErrors that have no text
   (`#181 <https://github.com/zopefoundation/RestrictedPython/issues/181>`_)
 
+- Add support for the ``bytes`` and ``sorted`` builtins
+  (`#186 <https://github.com/zopefoundation/RestrictedPython/issues/186>`_)
+
 - Drop install dependency on ``setuptools``.
   (`#189 <https://github.com/zopefoundation/RestrictedPython/issues/189>`_)
 
