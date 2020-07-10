@@ -6,6 +6,9 @@ Changes
 
 - Add support for (Python 3.8+) assignment expressions (i.e. the ``:=`` operator)
 
+- Fix ``compile_restricted_function`` with SyntaxErrors that have no text
+  (`#181 <https://github.com/zopefoundation/RestrictedPython/issues/181>`_)
+
 - Add support for the ``bytes`` and ``sorted`` builtins
   (`#186 <https://github.com/zopefoundation/RestrictedPython/issues/186>`_)
 
