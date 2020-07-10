@@ -4,6 +4,9 @@ Changes
 5.1a0 (unreleased)
 ------------------
 
+- Fix ``compile_restricted_function`` with SyntaxErrors that have no text
+  (`#181 <https://github.com/zopefoundation/RestrictedPython/issues/181>`_)
+
 - Drop install dependency on ``setuptools``.
   (`#189 <https://github.com/zopefoundation/RestrictedPython/issues/189>`_)
 
