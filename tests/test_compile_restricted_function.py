@@ -1,6 +1,7 @@
 from RestrictedPython import compile_restricted_function
 from RestrictedPython import PrintCollector
 from RestrictedPython import safe_builtins
+from RestrictedPython._compat import IS_PY38_OR_GREATER
 from types import FunctionType
 
 
@@ -212,3 +213,28 @@ def test_compile_restricted_function_handle_SyntaxError():
     assert result.errors == (
         "Line 1: SyntaxError: unexpected EOF while parsing at statement: 'a('",
     )
+
+
+def test_compile_restricted_function_invalid_syntax():
+    p = ''
+    body = '1=1'
+    name = 'broken'
+
+    result = compile_restricted_function(
+        p,  # parameters
+        body,
+        name,
+    )
+
+    assert result.code is None
+    assert len(result.errors) == 1
+    error_msg = result.errors[0]
+
+    if IS_PY38_OR_GREATER:
+        assert error_msg.startswith(
+            "Line 1: SyntaxError: cannot assign to literal at statement:"
+        )
+    else:
+        assert error_msg.startswith(
+            "Line 1: SyntaxError: can't assign to literal at statement:"
+        )
