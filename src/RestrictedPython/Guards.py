@@ -33,6 +33,7 @@ _safe_names = [
     'True',
     'abs',
     'bool',
+    'bytes',
     'callable',
     'chr',
     'complex',
@@ -52,6 +53,7 @@ _safe_names = [
     'repr',
     'round',
     'slice',
+    'sorted',
     'str',
     'tuple',
     'zip'
@@ -174,7 +176,6 @@ for name in _safe_exceptions:
 # one should care.
 
 # buffer
-# bytes
 # bytearray
 # classmethod
 # coerce

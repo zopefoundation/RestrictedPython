@@ -6,6 +6,9 @@ Changes
 
 - Add support for (Python 3.8+) assignment expressions (i.e. the ``:=`` operator)
 
+- Add support for the ``bytes`` and ``sorted`` builtins
+  (`#186 <https://github.com/zopefoundation/RestrictedPython/issues/186>`_)
+
 - Drop install dependency on ``setuptools``.
   (`#189 <https://github.com/zopefoundation/RestrictedPython/issues/189>`_)
 

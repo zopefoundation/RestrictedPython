@@ -15,6 +15,16 @@ def _write_(x):
     return x
 
 
+def test_Guards_bytes():
+    """It contains bytes"""
+    assert restricted_eval('bytes(1)') == bytes(1)
+
+
+def test_Guards_sorted():
+    """It contains sorted"""
+    assert restricted_eval('sorted([5, 2, 8, 1])') == sorted([5, 2, 8, 1])
+
+
 def test_Guards__safe_builtins__1():
     """It contains `slice()`."""
     assert restricted_eval('slice(1)') == slice(1)
