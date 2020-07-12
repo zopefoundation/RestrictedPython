@@ -39,10 +39,7 @@ setup(
         'RestrictedPython is a defined subset of the Python language which '
         'allows to provide a program input into a trusted environment.'
     ),
-    long_description=(
-        read('README.rst') + '\n'
-        + read('docs', 'CHANGES.rst')
-    ),
+    long_description=read('README.rst') + '\n' + read('CHANGES.rst'),
     long_description_content_type='text/x-rst',
     classifiers=[
         'License :: OSI Approved :: Zope Public License',

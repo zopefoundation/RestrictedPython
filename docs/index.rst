@@ -34,7 +34,7 @@ Contents
    roadmap/index
    contributing/index
 
-   CHANGES
+   changes
 
 Indices and tables
 ==================
