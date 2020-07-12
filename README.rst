@@ -1,3 +1,21 @@
+.. image:: https://api.travis-ci.org/zopefoundation/RestrictedPython.svg?branch=master
+    :target: https://travis-ci.org/zopefoundation/RestrictedPython
+
+.. image:: https://coveralls.io/repos/github/zopefoundation/RestrictedPython/badge.svg?branch=master
+    :target: https://coveralls.io/github/zopefoundation/RestrictedPython?branch=master
+
+.. image:: https://readthedocs.org/projects/restrictedpython/badge/
+    :target: https://restrictedpython.readthedocs.org/
+    :alt: Documentation Status
+
+.. image:: https://img.shields.io/pypi/v/RestrictedPython.svg
+    :target: https://pypi.org/project/RestrictedPython/
+    :alt: Current version on PyPI
+
+.. image:: https://img.shields.io/pypi/pyversions/RestrictedPython.svg
+    :target: https://pypi.org/project/RestrictedPython/
+    :alt: Supported Python versions
+
 .. image:: https://github.com/zopefoundation/RestrictedPython/raw/master/docs/logo.jpg
 
 ================
