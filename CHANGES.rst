@@ -4,6 +4,9 @@ Changes
 5.1a0 (unreleased)
 ------------------
 
+- Fix documentation for ``compile_restricted_function``
+  (`#158 <https://github.com/zopefoundation/RestrictedPython/issues/158>`_)
+
 - Add support for (Python 3.8+) assignment expressions (i.e. the ``:=`` operator)
 
 - Fix ``compile_restricted_function`` with SyntaxErrors that have no text

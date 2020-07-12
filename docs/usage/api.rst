@@ -55,16 +55,22 @@ API overview
 
     Compiles source code into interpretable byte code with ``mode='function'``.
 
-    :param p: (required).
-    :param body: (required).
-    :param name: (required).
-    :param filename: (required).
-    :param globalize: (optional).
-    :type p:
-    :type body:
+    :param p: (required). a string representing the function parameters
+    :param body: (required). the function body
+    :param name: (required). the function name
+    :param filename: (optional). defaults to ``'<string>'``
+    :param globalize: (optional). list of globals. defaults to ``None``
+    :param flags: (optional). defaults to ``0``
+    :param dont_inherit: (optional). defaults to ``False``
+    :param policy: (optional). defaults to ``RestrictingNodeTransformer``
+    :type p: str or unicode text
+    :type body: str or unicode text
     :type name: str or unicode text
     :type filename: str or unicode text
-    :type globalize:
+    :type globalize: None or list
+    :type flags: int
+    :type dont_inherit: int
+    :type policy: RestrictingNodeTransformer class
     :return: byte code
 
     The globalize argument, if specified, is a list of variable names to be
