@@ -4,6 +4,9 @@ Changes
 5.1a0 (unreleased)
 ------------------
 
+- Document parameter ``mode`` for the ``compile_restricted`` functions
+  (`#157 <https://github.com/zopefoundation/RestrictedPython/issues/157>`_)
+
 - Fix documentation for ``compile_restricted_function``
   (`#158 <https://github.com/zopefoundation/RestrictedPython/issues/158>`_)
 

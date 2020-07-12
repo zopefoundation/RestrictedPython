@@ -11,7 +11,7 @@ API overview
 
     :param source: (required). the source code that should be compiled
     :param filename: (optional). defaults to ``'<unknown>'``
-    :param mode: (optional). defaults to ``'exec'``
+    :param mode: (optional). Use ``'exec'``, ``'eval'``, ``'single'`` or ``'function'``. defaults to ``'exec'``
     :param flags: (optional). defaults to ``0``
     :param dont_inherit: (optional). defaults to ``False``
     :param policy: (optional). defaults to ``RestrictingNodeTransformer``
@@ -27,6 +27,7 @@ API overview
     :module: RestrictedPython
 
     Compiles source code into interpretable byte code with ``mode='exec'``.
+    Use mode ``'exec'`` if the source contains a sequence of statements.
     The meaning and defaults of the parameters are the same as in
     ``compile_restricted``.
 
@@ -36,6 +37,7 @@ API overview
     :module: RestrictedPython
 
     Compiles source code into interpretable byte code with ``mode='eval'``.
+    Use mode ``'eval'`` if the source contains a single expression.
     The meaning and defaults of the parameters are the same as in
     ``compile_restricted``.
 
@@ -45,6 +47,7 @@ API overview
     :module: RestrictedPython
 
     Compiles source code into interpretable byte code with ``mode='eval'``.
+    Use mode ``'single'`` if the source contains a single interactive statement.
     The meaning and defaults of the parameters are the same as in
     ``compile_restricted``.
 
@@ -54,6 +57,7 @@ API overview
     :module: RestrictedPython
 
     Compiles source code into interpretable byte code with ``mode='function'``.
+    Use mode ``'function'`` for full functions.
 
     :param p: (required). a string representing the function parameters
     :param body: (required). the function body
