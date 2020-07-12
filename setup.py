@@ -71,6 +71,7 @@ setup(
     tests_require=tests_require,
     extras_require={
         'test': tests_require,
+        'docs': ['Sphinx', 'sphinx_rtd_theme'],
     },
     include_package_data=True,
     zip_safe=False
