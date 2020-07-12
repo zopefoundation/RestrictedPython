@@ -17,6 +17,7 @@ pyvenv.cfg
 /_build/
 /bin/
 /_build/
+/build/
 /develop-eggs/
 /dist/
 /eggs/
