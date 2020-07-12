@@ -1,19 +1,25 @@
+include *.py
+include *.rst
 include *.txt
-include .coveragerc
+include buildout.cfg
 include tox.ini
 
 include .editorconfig
 exclude .editorconfig
 
-include appveyor.yml
-exclude appveyor.yml
+include *.yml
+exclude *.yml
+
+include .gitignore
+exclude .gitignore
+
+exclude MANIFEST.in
 
 recursive-include docs *.ast
 recursive-include docs *.bat
 recursive-include docs *.jpg
 recursive-include docs *.py
 recursive-include docs *.rst
-recursive-include docs *.txt
 recursive-include docs Makefile
-recursive-include src *.rst
+recursive-include src *.py
 recursive-include tests *.py
