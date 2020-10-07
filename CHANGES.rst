@@ -4,39 +4,48 @@ Changes
 5.1a0 (unreleased)
 ------------------
 
+Features
+++++++++
+
+- Add support for (Python 3.8+) assignment expressions (i.e. the ``:=`` operator)
+
+- Add support for Python 3.9 after checking the security implications of the
+  syntax changes made in that version.
+
+- Add support for the ``bytes`` and ``sorted`` builtins
+  (`#186 <https://github.com/zopefoundation/RestrictedPython/issues/186>`_)
+
+Documentation
++++++++++++++
+
 - Document parameter ``mode`` for the ``compile_restricted`` functions
   (`#157 <https://github.com/zopefoundation/RestrictedPython/issues/157>`_)
 
 - Fix documentation for ``compile_restricted_function``
   (`#158 <https://github.com/zopefoundation/RestrictedPython/issues/158>`_)
 
-- Add support for (Python 3.8+) assignment expressions (i.e. the ``:=`` operator)
+Fixes
++++++
 
 - Fix ``compile_restricted_function`` with SyntaxErrors that have no text
   (`#181 <https://github.com/zopefoundation/RestrictedPython/issues/181>`_)
 
-- Add support for the ``bytes`` and ``sorted`` builtins
-  (`#186 <https://github.com/zopefoundation/RestrictedPython/issues/186>`_)
-
 - Drop install dependency on ``setuptools``.
   (`#189 <https://github.com/zopefoundation/RestrictedPython/issues/189>`_)
-
-- Add support for Python 3.9 after checking the security implications of the
-  syntax changes made in that version.
 
 
 5.0 (2019-09-03)
 ----------------
 
 Breaking changes
-----------------
+++++++++++++++++
 
 - Revert the Allowance of the ``...`` (Ellipsis) statement, as of 4.0. It is not needed to support Python 3.8.
   The security implications of the Ellipsis Statement is not 100 % clear and is not checked.
   ``...`` (Ellipsis) is disallowed again.
 
 Features
---------
+++++++++
 
 - Add support for f-strings in Python 3.6+.
   (`#123 <https://github.com/zopefoundation/RestrictedPython/issues/123>`_)
@@ -48,7 +57,7 @@ Features
 Changes since 3.6.0:
 
 Breaking changes
-----------------
+++++++++++++++++
 
 - The ``compile_restricted*`` functions now return a
   ``namedtuple CompileResult`` instead of a simple ``tuple``.
@@ -60,7 +69,7 @@ Breaking changes
 - Drop support for long-deprecated ``sets`` module.
 
 Security related issues
------------------------
++++++++++++++++++++++++
 
 - RestrictedPython now ships with a default implementation for
   ``_getattr_`` which prevents from using the ``format()`` method on
@@ -73,7 +82,7 @@ Security related issues
   benefit from this fix.
 
 Features
---------
+++++++++
 
 - Mostly complete rewrite based on Python AST module.
   [loechel (Alexander Loechel), icemac (Michael Howitz),
@@ -119,7 +128,7 @@ Features
 - Bring test coverage to 100 %.
 
 Bug fixes
----------
++++++++++
 
 - Improve `.Guards.safer_getattr` to prevent accessing names starting with
   underscore.
