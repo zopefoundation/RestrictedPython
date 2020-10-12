@@ -16,7 +16,7 @@ matrix:
           env: TOXENV=py37,py37-datetime
         - python: "3.8"
           env: TOXENV=py38,py38-datetime
-        - python: "3.9"
+        - python: "3.9-dev"
           env: TOXENV=py39,py39-datetime
 #        - python: "3.10-dev"
 #          env: TOXENV=py310,py310-datetime
