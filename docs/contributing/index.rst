@@ -61,10 +61,11 @@ Technical Backgrounds - Links to External Documentation
 
   * AST Grammar of Python
 
+    * `Python 3.9 AST`_
     * `Python 3.8 AST`_
     * `Python 3.7 AST`_
     * `Python 3.6 AST`_
-    * `Python 3.5 AST`_
+    * `Python 3.5 AST`_ (becoming obsolete)
     * `Python 3.4 AST`_ (obsolete)
     * `Python 3.3 AST`_ (obsolete)
     * `Python 3.2 AST`_ (obsolete)
@@ -73,9 +74,9 @@ Technical Backgrounds - Links to External Documentation
     * `Python 2.7 AST`_
     * `Python 2.6 AST`_ (obsolete)
 
-  * `AST NodeVistiors Class`_  (https://docs.python.org/3.5/library/ast.html#ast.NodeVisitor)
-  * `AST NodeTransformer Class`_  (https://docs.python.org/3.5/library/ast.html#ast.NodeTransformer)
-  * `AST dump method`_ (https://docs.python.org/3.5/library/ast.html#ast.dump)
+  * `AST NodeVistiors Class`_  (https://docs.python.org/3.9/library/ast.html#ast.NodeVisitor)
+  * `AST NodeTransformer Class`_  (https://docs.python.org/3.9/library/ast.html#ast.NodeTransformer)
+  * `AST dump method`_ (https://docs.python.org/3.9/library/ast.html#ast.dump)
 
 * `In detail Documentation on the Python AST module (Green Tree Snakes)`_
 * `Example how to Instrumenting the Python AST`_
@@ -97,7 +98,7 @@ A (modified style) Copy of all Abstract Grammar Definitions for the Python versi
    changes_from35to36
    changes_from36to37
    changes_from37to38
-
+   changes_from38to39
 
 .. Links
 

@@ -5,7 +5,6 @@ matrix:
         - name: "coding-conventions & docs"
           python: "3.6"
           env: TOXENV=docs,lint
-          before_install:
           after_success:
         - python: "2.7"
           env: TOXENV=py27,py27-datetime
@@ -19,13 +18,11 @@ matrix:
           env: TOXENV=py38,py38-datetime
         - python: "3.9-dev"
           env: TOXENV=py39,py39-datetime
-
-before_install:
-    -  travis_retry pip install -U -c constraints.txt coveralls coverage
+#        - python: "3.10-dev"
+#          env: TOXENV=py310,py310-datetime
 
 install:
-    - travis_retry pip install -U pip setuptools
-    - travis_retry pip install -U -c constraints.txt tox
+    - travis_retry pip install -U -c constraints.txt pip setuptools coveralls coverage tox
 
 script:
     - travis_retry tox
