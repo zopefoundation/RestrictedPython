@@ -18,8 +18,8 @@ matrix:
           env: TOXENV=py38,py38-datetime
         - python: "3.9"
           env: TOXENV=py39,py39-datetime
-        - python: "3.10-dev"
-          env: TOXENV=py310,py310-datetime
+#        - python: "3.10-dev"
+#          env: TOXENV=py310,py310-datetime
 
 install:
     - travis_retry pip install -U -c constraints.txt pip setuptools coveralls coverage tox
