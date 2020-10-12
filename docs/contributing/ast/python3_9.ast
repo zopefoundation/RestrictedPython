@@ -1,4 +1,4 @@
--- Python 3.8 AST
+-- Python 3.9 AST
 -- ASDL's 4 builtin types are:
 -- identifier, int, string, constant
 
@@ -10,57 +10,57 @@ module Python version "3.9"
         | FunctionType(expr* argtypes, expr returns)
 
     stmt = FunctionDef(identifier name,
-                       arguments args,
-                       stmt* body,
-                       expr* decorator_list,
-                       expr? returns,
-                       string? type_comment)
-          | AsyncFunctionDef(identifier name,
-                             arguments args,
-                             stmt* body,
-                             expr* decorator_list,
-                             expr? returns,
-                             string? type_comment)
-
-          | ClassDef(identifier name,
-                     expr* bases,
-                     keyword* keywords,
+                     arguments args,
                      stmt* body,
-                     expr* decorator_list)
-          | Return(expr? value)
+                     expr* decorator_list,
+                     expr? returns,
+                     string? type_comment)
+         | AsyncFunctionDef(identifier name,
+                            arguments args,
+                            stmt* body,
+                            expr* decorator_list,
+                            expr? returns,
+                            string? type_comment)
 
-          | Delete(expr* targets)
-          | Assign(expr* targets, expr value, string? type_comment)
-          | AugAssign(expr target, operator op, expr value)
-          -- 'simple' indicates that we annotate simple name without parens
-          | AnnAssign(expr target, expr annotation, expr? value, int simple)
+         | ClassDef(identifier name,
+                    expr* bases,
+                    keyword* keywords,
+                    stmt* body,
+                    expr* decorator_list)
+         | Return(expr? value)
 
-          -- use 'orelse' because else is a keyword in target languages
-          | For(expr target, expr iter, stmt* body, stmt* orelse, string? type_comment)
-          | AsyncFor(expr target, expr iter, stmt* body, stmt* orelse, string? type_comment)
-          | While(expr test, stmt* body, stmt* orelse)
-          | If(expr test, stmt* body, stmt* orelse)
-          | With(withitem* items, stmt* body, string? type_comment)
-          | AsyncWith(withitem* items, stmt* body, string? type_comment)
+         | Delete(expr* targets)
+         | Assign(expr* targets, expr value, string? type_comment)
+         | AugAssign(expr target, operator op, expr value)
+         -- 'simple' indicates that we annotate simple name without parens
+         | AnnAssign(expr target, expr annotation, expr? value, int simple)
 
-          | Raise(expr? exc, expr? cause)
-          | Try(stmt* body, excepthandler* handlers, stmt* orelse, stmt* finalbody)
-          | Assert(expr test, expr? msg)
+         -- use 'orelse' because else is a keyword in target languages
+         | For(expr target, expr iter, stmt* body, stmt* orelse, string? type_comment)
+         | AsyncFor(expr target, expr iter, stmt* body, stmt* orelse, string? type_comment)
+         | While(expr test, stmt* body, stmt* orelse)
+         | If(expr test, stmt* body, stmt* orelse)
+         | With(withitem* items, stmt* body, string? type_comment)
+         | AsyncWith(withitem* items, stmt* body, string? type_comment)
 
-          | Import(alias* names)
-          | ImportFrom(identifier? module, alias* names, int? level)
+         | Raise(expr? exc, expr? cause)
+         | Try(stmt* body, excepthandler* handlers, stmt* orelse, stmt* finalbody)
+         | Assert(expr test, expr? msg)
 
-          | Global(identifier* names)
-          | Nonlocal(identifier* names)
-          | Expr(expr value)
-          | Pass
-          | Break
-          | Continue
+         | Import(alias* names)
+         | ImportFrom(identifier? module, alias* names, int? level)
 
-          -- col_offset is the byte offset in the utf8 string the parser uses
-          attributes (int lineno, int col_offset, int? end_lineno, int? end_col_offset)
+         | Global(identifier* names)
+         | Nonlocal(identifier* names)
+         | Expr(expr value)
+         | Pass
+         | Break
+         | Continue
 
-          -- BoolOp() can use left & right?
+         -- col_offset is the byte offset in the utf8 string the parser uses
+         attributes (int lineno, int col_offset, int? end_lineno, int? end_col_offset)
+
+         -- BoolOp() can use left & right?
     expr = BoolOp(boolop op, expr* values)
          | NamedExpr(expr target, expr value)
          | BinOp(expr left, operator op, expr right)
