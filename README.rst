@@ -1,5 +1,5 @@
-.. image:: https://api.travis-ci.org/zopefoundation/RestrictedPython.svg?branch=master
-    :target: https://travis-ci.org/zopefoundation/RestrictedPython
+.. image:: https://api.travis-ci.com/zopefoundation/RestrictedPython.svg?branch=master
+    :target: https://travis-ci.com/zopefoundation/RestrictedPython
 
 .. image:: https://coveralls.io/repos/github/zopefoundation/RestrictedPython/badge.svg?branch=master
     :target: https://coveralls.io/github/zopefoundation/RestrictedPython?branch=master
