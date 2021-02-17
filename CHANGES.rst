@@ -4,7 +4,7 @@ Changes
 5.2 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Document that ``__name__`` is needed to define classes.
 
 
 5.1 (2020-10-07)
