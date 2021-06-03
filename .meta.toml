@@ -64,3 +64,37 @@ additional-ignores = [
 additional-config = [
     "- [\"3.6\",   \"py36-datetime\"]",
     ]
+
+[appveyor]
+replacement = [
+    "# AppVeyor CI settings (Windows Machine CI Tests)",
+    "environment:",
+    "  matrix:",
+    "    - PROFILE: py27",
+    "      PYTHON_VERSION: \"2.7\"",
+    "      TOXENV: \"py27\"",
+    "    - PROFILE: py35",
+    "      PYTHON_VERSION: \"3.5\"",
+    "      TOXENV: \"py35\"",
+    "    - PROFILE: py36",
+    "      PYTHON_VERSION: \"3.6\"",
+    "      TOXENV: \"py36,py36-datetime\"",
+    "    - PROFILE: py37",
+    "      PYTHON_VERSION: \"3.7\"",
+    "      TOXENV: \"py37\"",
+    "    - PROFILE: py38",
+    "      PYTHON_VERSION: \"3.8\"",
+    "      TOXENV: \"py38\"",
+    "    - PROFILE: py39",
+    "      PYTHON_VERSION: \"3.9\"",
+    "      TOXENV: \"py39\"",
+    "cache:",
+    "  - '%LOCALAPPDATA%\\pip\\Cache'",
+    "version: '{branch}.{build}'",
+    "build: off",
+    "install:",
+    "  - pip install tox",
+    "test_script:",
+    "  - python -V",
+    "  - tox",
+    ]
