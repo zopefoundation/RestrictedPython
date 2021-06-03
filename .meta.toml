@@ -59,3 +59,8 @@ additional-ignores = [
     "docs/_build/html/_sources/upgrade_dependencies/*",
     "docs/_build/html/_sources/usage/*",
     ]
+
+[github-actions]
+additional-config = [
+    "- [\"3.6\",   \"py36-datetime\"]",
+    ]
