@@ -193,9 +193,9 @@ def test_Guards__safer_getattr__2():
     }
     with pytest.raises(NotImplementedError) as err:
         restricted_exec(UNICODE_DOT_FORMAT_DENIED, glb)
-    if IS_PY2:
+    if IS_PY2:  # pragma: PY2
         assert 'Using format() on a unicode is not safe.' == str(err.value)
-    else:
+    else:  # pragma: PY3
         assert 'Using format() on a str is not safe.' == str(err.value)
 
 
@@ -227,9 +227,8 @@ def test_Guards__safer_getattr__3():
 @pytest.mark.skipif(
     IS_PY2,
     reason="__builtins__ has been renamed in Python3 to builtins, "
-    "and need only to be tested there."
-)
-def test_call_py3_builtins():
+    "and need only to be tested there.")
+def test_call_py3_builtins():  # pragma: PY3
     """It should not be allowed to access global builtins in Python3."""
     result = compile_restricted_exec('builtins["getattr"]')
     assert result.code is None
@@ -238,9 +237,8 @@ def test_call_py3_builtins():
 
 @pytest.mark.skipif(
     IS_PY3,
-    reason="__builtins__ has been renamed in Python3 to builtins."
-)
-def test_call_py2_builtins():
+    reason="__builtins__ has been renamed in Python3 to builtins.")
+def test_call_py2_builtins():  # pragma: PY2
     """It should not be allowed to access global __builtins__ in Python2."""
     result = compile_restricted_exec('__builtins__["getattr"]')
     assert result.code is None

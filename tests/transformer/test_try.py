@@ -138,7 +138,7 @@ def tuple_unpack(err):
     IS_PY3,
     reason="tuple unpacking on exceptions is gone in python3")
 def test_RestrictingNodeTransformer__visit_ExceptHandler__1(
-        mocker):
+        mocker):  # pragma: PY2
     _getiter_ = mocker.stub()
     _getiter_.side_effect = lambda it: it
 

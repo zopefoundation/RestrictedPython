@@ -45,7 +45,7 @@ def test_RestrictingNodeTransformer__visit_Lambda__4():
 @pytest.mark.skipif(
     IS_PY3,
     reason="tuple parameter unpacking is gone in Python 3")
-def test_RestrictingNodeTransformer__visit_Lambda__5():
+def test_RestrictingNodeTransformer__visit_Lambda__5():  # pragma: PY2
     """It prevents arguments starting with `_` in tuple unpacking."""
     result = compile_restricted_exec("lambda (a, _bad): None")
     # RestrictedPython.compile.compile_restricted_exec on Python 2 renders
@@ -57,7 +57,7 @@ def test_RestrictingNodeTransformer__visit_Lambda__5():
 @pytest.mark.skipif(
     IS_PY3,
     reason="tuple parameter unpacking is gone in Python 3")
-def test_RestrictingNodeTransformer__visit_Lambda__6():
+def test_RestrictingNodeTransformer__visit_Lambda__6():  # pragma: PY2
     """It prevents arguments starting with `_` in nested tuple unpacking."""
     result = compile_restricted_exec("lambda (a, (c, (_bad, c))): None")
     # RestrictedPython.compile.compile_restricted_exec on Python 2 renders
@@ -69,7 +69,7 @@ def test_RestrictingNodeTransformer__visit_Lambda__6():
 @pytest.mark.skipif(
     IS_PY2,
     reason="There is no single `*` argument in Python 2")
-def test_RestrictingNodeTransformer__visit_Lambda__7():
+def test_RestrictingNodeTransformer__visit_Lambda__7():  # pragma: PY3
     """It prevents arguments starting with `_` together with a single `*`."""
     result = compile_restricted_exec("lambda good, *, _bad: None")
     assert result.errors == (lambda_err_msg,)
@@ -92,7 +92,7 @@ def test_RestrictingNodeTransformer__visit_Lambda__8():
     IS_PY3,
     reason="tuple parameter unpacking is gone in python 3")
 def test_RestrictingNodeTransformer__visit_Lambda__9(
-        mocker):
+        mocker):  # pragma: PY2
     _getiter_ = mocker.stub()
     _getiter_.side_effect = lambda it: it
 
@@ -135,7 +135,7 @@ g = lambda (x, y) : (x ** 2, x + y)
 @pytest.mark.skipif(
     IS_PY3,
     reason="tuple parameter unpacking is gone in python 3")
-def test_RestrictingNodeTransformer__visit_Lambda__11():
+def test_RestrictingNodeTransformer__visit_Lambda__11():  # pragma: PY2
     """Lambda functions with tuple unpacking are allowed."""
     restricted_globals = dict(
         g=None,
@@ -154,7 +154,7 @@ g = lambda (x, y), z : (x ** y, x + z)
 @pytest.mark.skipif(
     IS_PY3,
     reason="tuple parameter unpacking is gone in python 3")
-def test_RestrictingNodeTransformer__visit_Lambda__12():
+def test_RestrictingNodeTransformer__visit_Lambda__12():  # pragma: PY2
     """Lambda functions with tuple unpacking and simple params are allowed."""
     restricted_globals = dict(
         g=None,

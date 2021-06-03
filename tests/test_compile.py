@@ -100,10 +100,10 @@ def test_compile__compile_restricted_exec__5():
     assert result.code is None
     assert result.warnings == []
     assert result.used_names == {}
-    if IS_PY2:
+    if IS_PY2:  # pragma: PY2
         assert result.errors == (
             'compile() expected string without null bytes',)
-    else:
+    else:  # pragma: PY3
         assert result.errors == (
             'source code string cannot contain null bytes',)
 
@@ -117,7 +117,7 @@ def no_exec():
 @pytest.mark.skipif(
     IS_PY2,
     reason="exec statement in Python 2 is handled by RestrictedPython ")
-def test_compile__compile_restricted_exec__10():
+def test_compile__compile_restricted_exec__10():  # pragma: PY3
     """It is a SyntaxError to use the `exec` statement. (Python 3 only)"""
     result = compile_restricted_exec(EXEC_STATEMENT)
     assert (
@@ -172,7 +172,7 @@ def a():
     IS_PY3,
     reason="Print statement is gone in Python 3."
            "Test Deprecation Warming in Python 2")
-def test_compile_restricted():
+def test_compile_restricted():  # pragma: PY2
     """This test checks compile_restricted itself if that emit Python warnings.
     For actual tests for print statement see: test_print_stmt.py
     """
