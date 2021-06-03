@@ -18,9 +18,16 @@ environment:
     - PROFILE: py38
       PYTHON_VERSION: "3.8"
       TOXENV: "py38"
+    - PROFILE: py39
+      PYTHON_VERSION: "3.9"
+      TOXENV: "py39"
 cache:
   - '%LOCALAPPDATA%\pip\Cache'
 version: '{branch}.{build}'
+matrix:
+  fast_finish: true
+  allow_failures:
+    - TOXENV: py39
 build: off
 install:
   - pip install tox
