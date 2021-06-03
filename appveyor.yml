@@ -1,34 +1,43 @@
-# AppVeyor CI settings (Windows Machine CI Tests)
-
+# Generated from:
+# https://github.com/zopefoundation/meta/tree/master/config/pure-python
 environment:
+
   matrix:
-    - PROFILE: py27
-      PYTHON_VERSION: "2.7"
-      TOXENV: "py27,py27-datetime"
-    - PROFILE: py35
-      PYTHON_VERSION: "3.5"
-      TOXENV: "py35,py35-datetime"
-    - PROFILE: py36
-      PYTHON_VERSION: "3.6"
-      TOXENV: "py36,py36-datetime"
-    - PROFILE: py37
-      PYTHON_VERSION: "3.7"
-      TOXENV: "py37,py37-datetime"
-    - PROFILE: py38
-      PYTHON_VERSION: "3.8"
-      TOXENV: "py38,py38-datetime"
-
-
-cache:
-  - '%LOCALAPPDATA%\pip\Cache'
-
-version: '{branch}.{build}'
-
-build: off
+    - python: 27
+    - python: 27-x64
+    - python: 35
+    - python: 35-x64
+    - python: 36
+    - python: 36-x64
+    - python: 37
+    - python: 37-x64
+    - python: 38
+    - python: 38-x64
+    - python: 39
+    - python: 39-x64
 
 install:
-  - pip install tox
+  - "SET PYTHONVERSION=%PYTHON%"
+  - "SET PATH=C:\\Python%PYTHON%;c:\\Python%PYTHON%\\scripts;%PATH%"
+  - ps: |
+      $env:PYTHON = "C:\\Python${env:PYTHON}"
+      if (-not (Test-Path $env:PYTHON)) {
+        curl -o install_python.ps1 https://raw.githubusercontent.com/matthew-brett/multibuild/11a389d78892cf90addac8f69433d5e22bfa422a/install_python.ps1
+        .\install_python.ps1
+      }
+  - ps: if (-not (Test-Path $env:PYTHON)) { throw "No $env:PYTHON" }
+  - echo "C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.cmd" /x64 > "C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\amd64\vcvars64.bat"
+  - python -m pip install -U pip
+  - pip install -U setuptools wheel
+  - pip install -U -e .[test]
+
+matrix:
+  fast_finish: true
+
+build: false
 
 test_script:
-  - python -V
-  - tox
+  - zope-testrunner --test-path=src
+
+on_success:
+  - echo Build succesful!

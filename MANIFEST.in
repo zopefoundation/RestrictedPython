@@ -1,25 +1,18 @@
-include *.py
+# Generated from:
+# https://github.com/zopefoundation/meta/tree/master/config/pure-python
 include *.rst
 include *.txt
 include buildout.cfg
 include tox.ini
+include appveyor.yml
 
-include .editorconfig
-exclude .editorconfig
+recursive-include docs *.py
+recursive-include docs *.rst
+recursive-include docs *.txt
+recursive-include docs Makefile
 
-include *.yml
-exclude *.yml
-
-include .gitignore
-exclude .gitignore
-
-exclude MANIFEST.in
-
+recursive-include src *.py
 recursive-include docs *.ast
 recursive-include docs *.bat
 recursive-include docs *.jpg
-recursive-include docs *.py
-recursive-include docs *.rst
-recursive-include docs Makefile
-recursive-include src *.py
 recursive-include tests *.py
