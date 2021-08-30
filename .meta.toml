@@ -15,7 +15,7 @@ with-future-python = false
 [tox]
 use-flake8 = true
 additional-envlist = [
-    "py36-datetime",
+    "py38-datetime",
     "combined-coverage",
     ]
 testenv-deps = [
@@ -51,7 +51,7 @@ testenv-additional = [
     "    coverage combine",
     "    coverage html",
     "    coverage report -m --fail-under=100",
-    "depends = py27,py35,py36,py36-datetime,py37,py38,py39,coverage",
+    "depends = py27,py35,py36,py38-datetime,py37,py38,py39,coverage",
     ]
 coverage-basepython = "python3.8"
 coverage-command = "pytest --cov=src --cov=tests --cov-report= {posargs}"
@@ -83,5 +83,5 @@ additional-ignores = [
 
 [github-actions]
 additional-config = [
-    "- [\"3.6\",   \"py36-datetime\"]",
+    "- [\"3.8\",   \"py38-datetime\"]",
     ]
