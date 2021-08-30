@@ -16,6 +16,9 @@ jobs:
       # We want to see all failures:
       fail-fast: false
       matrix:
+        os:
+        - ubuntu
+        - windows
         config:
         # [Python version, tox env]
         - ["3.8",   "lint"]
@@ -28,9 +31,13 @@ jobs:
         - ["3.8",   "docs"]
         - ["3.8",   "coverage"]
         - ["3.6",   "py36-datetime"]
+        exclude:
+          - { os: windows, config: ["3.8",   "lint"] }
+          - { os: windows, config: ["3.8",   "docs"] }
+          - { os: windows, config: ["3.8",   "coverage"] }
 
-    runs-on: ubuntu-latest
-    name: ${{ matrix.config[1] }}
+    runs-on: ${{ matrix.os }}-latest
+    name: ${{ matrix.os }}-${{ matrix.config[1] }}
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python

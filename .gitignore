@@ -1,9 +1,11 @@
 # Generated from:
 # https://github.com/zopefoundation/meta/tree/master/config/pure-python
+*.dll
 *.egg-info/
 *.profraw
 *.pyc
 *.pyo
+*.so
 .coverage
 .coverage.*
 .eggs/
