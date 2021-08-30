@@ -43,9 +43,8 @@ mygetattr = __builtins__['getattr']
 @pytest.mark.skipif(
     IS_PY3,
     reason="__builtins__ has been renamed in Python3 to builtins, "
-    "so no __builtins__ in Python3."
-)
-def test_import_py2_builtins():
+    "so no __builtins__ in Python3.")
+def test_import_py2_builtins():  # pragma: PY2
     """It should not be allowed to access global __builtins__ in Python2."""
     result = compile_restricted_exec(__BUILTINS_EXAMPLE)
     assert result.code is None
@@ -65,9 +64,8 @@ mygetattr = builtins['getattr']
 @pytest.mark.skipif(
     IS_PY3,
     reason="__builtins__ has been renamed in Python3 to builtins, "
-    "so no __builtins__ in Python3."
-)
-def test_import_py2_as_builtins():
+    "so no __builtins__ in Python3.")
+def test_import_py2_as_builtins():  # pragma: PY2
     """It should not be allowed to access global __builtins__ in Python2."""
     result = compile_restricted_exec(__BUILTINS_EXAMPLE)
     assert result.code is None
@@ -87,9 +85,8 @@ mygetattr = builtins['getattr']
 @pytest.mark.skipif(
     IS_PY2,
     reason="__builtins__ has been renamed in Python3 to builtins, "
-    "and need only to be tested there."
-)
-def test_import_py3_builtins():
+    "and need only to be tested there.")
+def test_import_py3_builtins():  # pragma: PY3
     """It should not be allowed to access global builtins in Python3."""
     result = compile_restricted_exec(BUILTINS_EXAMPLE)
     assert result.code is None
@@ -109,9 +106,8 @@ mygetattr = glb['getattr']
 @pytest.mark.skipif(
     IS_PY2,
     reason="__builtins__ has been renamed in Python3 to builtins, "
-    "and need only to be tested there."
-)
-def test_import_py3_as_builtins():
+    "and need only to be tested there.")
+def test_import_py3_as_builtins():  # pragma: PY3
     """It should not be allowed to access global builtins in Python3."""
     result = compile_restricted_exec(BUILTINS_AS_EXAMPLE)
     assert result.code is None

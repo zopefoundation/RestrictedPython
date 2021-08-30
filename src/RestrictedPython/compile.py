@@ -41,7 +41,7 @@ def _compile_restricted_mode(
     elif issubclass(policy, RestrictingNodeTransformer):
         c_ast = None
         allowed_source_types = [str, ast.Module]
-        if IS_PY2:
+        if IS_PY2:  # pragma: PY2
             allowed_source_types.append(unicode)  # NOQA: F821,E501  # PY2 only statement, in Python 2 only module
         if not issubclass(type(source), tuple(allowed_source_types)):
             raise TypeError('Not allowed source type: '

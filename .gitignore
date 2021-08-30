@@ -1,74 +1,31 @@
-# Python
-*.py[cod]
-.cache
-/.Python
-
-#PyENV
-/.python-version
-pyvenv.cfg
-
-# Packages / zc.buildout
-*.egg
-*.egg-info
-/local.cfg
-/.eggs/
-/.installed.cfg
-/.mr.developer.cfg
-/_build/
-/bin/
-/_build/
-/develop-eggs/
-/dist/
-/eggs/
-/etc/
-/include/
-/lib/
-/local/
-/parts/
-/sdist/
-/share/
-/src-mrd/
-/var/
-
-# Installer logs
-pip-log.txt
-pip-selfcheck.json
-.plone.versioncheck.cache
-.plone.versioncheck.tracked.json
-
-# Unit test / coverage reports
-/.coverage*
-/coverage.xml
-/.tox
-.pytest_cache
-
-#Translations
-*.mo
-
-#Mr Developer
+# Generated from:
+# https://github.com/zopefoundation/meta/tree/master/config/pure-python
+*.dll
+*.egg-info/
+*.profraw
+*.pyc
+*.pyo
+*.so
+.coverage
+.coverage.*
+.eggs/
+.installed.cfg
 .mr.developer.cfg
-
-# local config
-local.cfg
-secret.cfg
-
-# Codeintel
-.codeintel
-
-# Editors specific
-/.idea/
-/.Python
-/.ropeproject/
-/.project
-/.pydevproject
-.mypy_cache/
-
-# Import Data
-/*.csv
-
-# JavaScript specific
-node_modules/
-
-# MAC specifics
-.DS_Store
-default.profraw
+.tox/
+.vscode/
+__pycache__/
+bin/
+build/
+coverage.xml
+develop-eggs/
+develop/
+dist/
+docs/_build
+eggs/
+etc/
+lib/
+lib64
+log/
+parts/
+pyvenv.cfg
+var/

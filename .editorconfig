@@ -1,4 +1,7 @@
-# EditorConfig Configurtaion file, for more details see:
+# Generated from:
+# https://github.com/zopefoundation/meta/tree/master/config/pure-python
+#
+# EditorConfig Configuration file, for more details see:
 # http://EditorConfig.org
 # EditorConfig is a convention description, that could be interpreted
 # by multiple editors to enforce common coding conventions for specific
@@ -25,7 +28,7 @@ max_line_length = off
 # 4 space indentation
 indent_size = 4
 
-[*.{yml}]
+[*.{yml,zpt,pt,dtml,zcml}]
 # 2 space indentation
 indent_size = 2
 
@@ -34,10 +37,3 @@ indent_size = 2
 indent_style = tab
 indent_size = unset
 tab_width = unset
-
-[*.bat]
-indent_style = tab
-end_of_line = crlf
-
-[LICENSE]
-insert_final_newline = false

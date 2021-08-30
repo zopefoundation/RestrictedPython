@@ -18,9 +18,9 @@
 from RestrictedPython import _compat
 
 
-if _compat.IS_PY2:
+if _compat.IS_PY2:  # pragma: PY2
     import __builtin__ as builtins
-else:
+else:  # pragma: PY3
     # Do not attempt to use this package on Python2.7 as there
     # might be backports for this package such as future.
     import builtins
@@ -109,7 +109,7 @@ _safe_exceptions = [
     'ZeroDivisionError',
 ]
 
-if _compat.IS_PY2:
+if _compat.IS_PY2:  # pragma: PY2
     _safe_names.extend([
         'basestring',
         'cmp',
@@ -121,7 +121,7 @@ if _compat.IS_PY2:
     _safe_exceptions.extend([
         'StandardError',
     ])
-else:
+else:  # pragma: PY3
     _safe_names.extend([
         '__build_class__',  # needed to define new classes
     ])

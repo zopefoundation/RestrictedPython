@@ -18,9 +18,9 @@ from .compile import compile_restricted_eval
 import ast
 
 
-if IS_PY2:
+if IS_PY2:  # pragma: PY2
     from string import maketrans
-else:
+else:  # pragma: PY3
     maketrans = str.maketrans
 
 

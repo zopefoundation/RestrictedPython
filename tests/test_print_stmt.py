@@ -33,7 +33,7 @@ print('Hello World!', 'Hello Earth!')
 """
 
 
-def test_print_stmt__simple_prints():
+def test_print_stmt__simple_prints():  # pragma: PY2
     glb = {'_print_': PrintCollector, '_getattr_': None}
 
     code, errors = compile_restricted_exec(ALLOWED_PRINT_STATEMENT)[:2]
@@ -68,7 +68,7 @@ def test_print_stmt__simple_prints():
     assert glb['_print']() == "('Hello World!', 'Hello Earth!')\n"
 
 
-def test_print_stmt__fail_with_none_target(mocker):
+def test_print_stmt__fail_with_none_target(mocker):  # pragma: PY2
     code, errors = compile_restricted_exec('print >> None, "test"')[:2]
 
     assert code is not None
@@ -88,7 +88,7 @@ def print_into_stream(stream):
 """
 
 
-def test_print_stmt__protect_chevron_print(mocker):
+def test_print_stmt__protect_chevron_print(mocker):  # pragma: PY2
     code, errors = compile_restricted_exec(
         PROTECT_PRINT_STATEMENT_WITH_CHEVRON)[:2]
 
@@ -131,7 +131,7 @@ def main():
 """
 
 
-def test_print_stmt__nested_print_collector(mocker):
+def test_print_stmt__nested_print_collector(mocker):  # pragma: PY2
     code, errors = compile_restricted_exec(INJECT_PRINT_COLLECTOR_NESTED)[:2]
 
     glb = {"_print_": PrintCollector, '_getattr_': None}
@@ -147,7 +147,7 @@ def foo():
 """
 
 
-def test_print_stmt__with_printed_no_print():
+def test_print_stmt__with_printed_no_print():  # pragma: PY2
     code, errors, warnings = compile_restricted_exec(WARN_PRINTED_NO_PRINT)[:3]
 
     assert code is not None
@@ -164,7 +164,7 @@ printed
 """
 
 
-def test_print_stmt__with_printed_no_print_nested():
+def test_print_stmt__with_printed_no_print_nested():  # pragma: PY2
     code, errors, warnings = compile_restricted_exec(
         WARN_PRINTED_NO_PRINT_NESTED)[:3]
 
@@ -181,7 +181,7 @@ def foo():
 """
 
 
-def test_print_stmt__with_print_no_printed():
+def test_print_stmt__with_print_no_printed():  # pragma: PY2
     code, errors, warnings = compile_restricted_exec(WARN_PRINT_NO_PRINTED)[:3]
 
     assert code is not None
@@ -199,7 +199,7 @@ printed
 """
 
 
-def test_print_stmt__with_print_no_printed_nested():
+def test_print_stmt__with_print_no_printed_nested():  # pragma: PY2
     code, errors, warnings = compile_restricted_exec(
         WARN_PRINT_NO_PRINTED_NESTED)[:3]
 
@@ -223,7 +223,7 @@ def class_scope():
 """
 
 
-def test_print_stmt_no_new_scope():
+def test_print_stmt_no_new_scope():  # pragma: PY2
     code, errors = compile_restricted_exec(NO_PRINT_SCOPES)[:2]
     glb = {'_print_': PrintCollector, '_getattr_': None}
     exec(code, glb)
@@ -240,7 +240,7 @@ def func(cond):
 """
 
 
-def test_print_stmt_conditional_print():
+def test_print_stmt_conditional_print():  # pragma: PY2
     code, errors = compile_restricted_exec(CONDITIONAL_PRINT)[:2]
     glb = {'_print_': PrintCollector, '_getattr_': None}
     exec(code, glb)

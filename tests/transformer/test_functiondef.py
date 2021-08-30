@@ -44,7 +44,7 @@ def test_RestrictingNodeTransformer__visit_FunctionDef__4():
 @pytest.mark.skipif(
     IS_PY3,
     reason="tuple parameter unpacking is gone in Python 3")
-def test_RestrictingNodeTransformer__visit_FunctionDef__5():
+def test_RestrictingNodeTransformer__visit_FunctionDef__5():  # pragma: PY2
     """It prevents function arguments starting with `_` in tuples."""
     result = compile_restricted_exec("def foo((a, _bad)): pass")
     # RestrictedPython.compile.compile_restricted_exec on Python 2 renders
@@ -56,7 +56,7 @@ def test_RestrictingNodeTransformer__visit_FunctionDef__5():
 @pytest.mark.skipif(
     IS_PY3,
     reason="tuple parameter unpacking is gone in Python 3")
-def test_RestrictingNodeTransformer__visit_FunctionDef__6():
+def test_RestrictingNodeTransformer__visit_FunctionDef__6():  # pragma: PY2
     """It prevents function arguments starting with `_` in tuples."""
     result = compile_restricted_exec("def foo(a, (c, (_bad, c))): pass")
     # RestrictedPython.compile.compile_restricted_exec on Python 2 renders
@@ -68,7 +68,7 @@ def test_RestrictingNodeTransformer__visit_FunctionDef__6():
 @pytest.mark.skipif(
     IS_PY2,
     reason="There is no single `*` argument in Python 2")
-def test_RestrictingNodeTransformer__visit_FunctionDef__7():
+def test_RestrictingNodeTransformer__visit_FunctionDef__7():  # pragma: PY3
     """It prevents `_` function arguments together with a single `*`."""
     result = compile_restricted_exec("def foo(good, *, _bad): pass")
     assert result.errors == (functiondef_err_msg,)
@@ -87,7 +87,7 @@ def nested_with_order((a, b), (c, d)):
     IS_PY3,
     reason="tuple parameter unpacking is gone in python 3")
 def test_RestrictingNodeTransformer__visit_FunctionDef__8(
-        mocker):
+        mocker):  # pragma: PY2
     _getiter_ = mocker.stub()
     _getiter_.side_effect = lambda it: it
 
