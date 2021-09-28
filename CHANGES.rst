@@ -6,6 +6,9 @@ Changes
 
 - Document that ``__name__`` is needed to define classes.
 
+- Allow to use the package with Python 3.10 -- Caution: No security audit has
+  been done so far.
+
 
 5.1 (2020-10-07)
 ----------------
