@@ -60,7 +60,7 @@ coverage-setenv = [
     ]
 
 [coverage]
-fail-under = 99.2
+fail-under = 98.9
 
 [manifest]
 additional-rules = [
