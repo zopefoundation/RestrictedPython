@@ -31,7 +31,7 @@ jobs:
         - ["3.10",  "py310"]
         - ["3.9",   "docs"]
         - ["3.9",   "coverage"]
-        - ["3.8",   "py38-datetime"]
+        - ["3.9",   "py39-datetime"]
         exclude:
           - { os: windows, config: ["3.9",   "lint"] }
           - { os: windows, config: ["3.9",   "docs"] }
