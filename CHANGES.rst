@@ -1,8 +1,8 @@
 Changes
 =======
 
-5.2a1.dev0 (2021-10-28)
------------------------
+5.2 (unreleased)
+----------------
 
 - Document that ``__name__`` is needed to define classes.
 
