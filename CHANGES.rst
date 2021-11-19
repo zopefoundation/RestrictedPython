@@ -9,6 +9,9 @@ Changes
 - Add support for Python 3.10. Auditing the Python 3.10 change log did not
   reveal any changes which require actions in RestrictedPython.
 
+- Avoid deprecation warnings when using Python 3.8+.
+  (`#192 <https://github.com/zopefoundation/RestrictedPython/issues/192>`_)
+
 
 5.1 (2020-10-07)
 ----------------
