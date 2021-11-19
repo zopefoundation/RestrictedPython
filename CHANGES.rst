@@ -6,6 +6,9 @@ Changes
 
 - Document that ``__name__`` is needed to define classes.
 
+- Avoid deprecation warnings when using Python 3.8+.
+  (`#192 <https://github.com/zopefoundation/RestrictedPython/issues/192>`_)
+
 - Allow to use the package with Python 3.10 -- Caution: No security audit has
   been done so far.
 
