@@ -1,8 +1,8 @@
 Changes
 =======
 
-5.3 (unreleased)
-----------------
+5.3a1.dev0 (2022-04-13)
+-----------------------
 
 - Allow to use the package with Python 3.11 -- Caution: No security audit has
   been done so far.
