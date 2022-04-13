@@ -2,7 +2,7 @@
 # https://github.com/zopefoundation/meta/tree/master/config/pure-python
 [meta]
 template = "pure-python"
-commit-id = "886173bf647a6e80a985544c32053c932b1949e2"
+commit-id = "3a251aab94eff9cf2aa2fd87d7266593251e4b76"
 
 [python]
 with-pypy = false
@@ -10,7 +10,7 @@ with-legacy-python = true
 with-docs = true
 with-sphinx-doctests = true
 with-windows = true
-with-future-python = false
+with-future-python = true
 
 [tox]
 use-flake8 = true
@@ -41,8 +41,6 @@ testenv-additional = [
     "deps =",
     "    coverage",
     "    coverage-python-version",
-    "    # Until repoze.sphinx.autointerface supports Sphinx 4.x we cannot use it:",
-    "    Sphinx < 4",
     "    -cconstraints.txt",
     "setenv =",
     "    COVERAGE_FILE=.coverage",

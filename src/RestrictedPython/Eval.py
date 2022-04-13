@@ -12,10 +12,10 @@
 ##############################################################################
 """Restricted Python Expressions."""
 
+import ast
+
 from ._compat import IS_PY2
 from .compile import compile_restricted_eval
-
-import ast
 
 
 if IS_PY2:  # pragma: PY2

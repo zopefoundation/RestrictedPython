@@ -1,10 +1,10 @@
+import ast
+import warnings
 from collections import namedtuple
+
 from RestrictedPython._compat import IS_CPYTHON
 from RestrictedPython._compat import IS_PY2
 from RestrictedPython.transformer import RestrictingNodeTransformer
-
-import ast
-import warnings
 
 
 CompileResult = namedtuple(

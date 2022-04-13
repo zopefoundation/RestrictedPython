@@ -4,7 +4,8 @@ Changes
 5.3 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Allow to use the package with Python 3.11 -- Caution: No security audit has
+  been done so far.
 
 
 5.2 (2021-11-19)
