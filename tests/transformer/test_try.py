@@ -1,9 +1,5 @@
 from RestrictedPython import compile_restricted_exec
-from RestrictedPython._compat import IS_PY3
-from RestrictedPython.Guards import guarded_unpack_sequence
 from tests.helper import restricted_exec
-
-import pytest
 
 
 TRY_EXCEPT = """
@@ -123,38 +119,6 @@ def test_RestrictingNodeTransformer__visit_TryFinally__3(
         mocker.call('else'),
         mocker.call('finally')
     ])
-
-
-EXCEPT_WITH_TUPLE_UNPACK = """
-def tuple_unpack(err):
-    try:
-        raise err
-    except Exception as (a, (b, c)):
-        return a + b + c
-"""
-
-
-@pytest.mark.skipif(
-    IS_PY3,
-    reason="tuple unpacking on exceptions is gone in python3")
-def test_RestrictingNodeTransformer__visit_ExceptHandler__1(
-        mocker):  # pragma: PY2
-    _getiter_ = mocker.stub()
-    _getiter_.side_effect = lambda it: it
-
-    glb = {
-        '_getiter_': _getiter_,
-        '_unpack_sequence_': guarded_unpack_sequence
-    }
-
-    restricted_exec(EXCEPT_WITH_TUPLE_UNPACK, glb)
-    err = Exception(1, (2, 3))
-    ret = glb['tuple_unpack'](err)
-    assert ret == 6
-
-    _getiter_.assert_has_calls([
-        mocker.call(err),
-        mocker.call((2, 3))])
 
 
 BAD_TRY_EXCEPT = """

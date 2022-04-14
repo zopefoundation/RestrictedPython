@@ -1,8 +1,5 @@
 from RestrictedPython import compile_restricted_eval
-from RestrictedPython._compat import IS_PY35_OR_GREATER
 from tests.helper import restricted_eval
-
-import pytest
 
 
 # Arithmetic Operators
@@ -35,9 +32,6 @@ def test_FloorDiv():
     assert restricted_eval('7 // 2') == 3
 
 
-@pytest.mark.skipif(
-    not IS_PY35_OR_GREATER,
-    reason="MatMult was introducted on Python 3.5")
 def test_MatMult():
     result = compile_restricted_eval('(8, 3, 5) @ (2, 7, 1)')
     assert result.errors == (

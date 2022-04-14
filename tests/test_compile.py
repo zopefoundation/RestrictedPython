@@ -3,8 +3,6 @@ from RestrictedPython import compile_restricted_eval
 from RestrictedPython import compile_restricted_exec
 from RestrictedPython import compile_restricted_single
 from RestrictedPython import CompileResult
-from RestrictedPython._compat import IS_PY2
-from RestrictedPython._compat import IS_PY3
 from RestrictedPython._compat import IS_PY38_OR_GREATER
 from RestrictedPython._compat import IS_PY310_OR_GREATER
 from tests.helper import restricted_eval
@@ -103,12 +101,7 @@ def test_compile__compile_restricted_exec__5():
     assert result.code is None
     assert result.warnings == []
     assert result.used_names == {}
-    if IS_PY2:  # pragma: PY2
-        assert result.errors == (
-            'compile() expected string without null bytes',)
-    else:  # pragma: PY3
-        assert result.errors == (
-            'source code string cannot contain null bytes',)
+    assert result.errors == ('source code string cannot contain null bytes',)
 
 
 EXEC_STATEMENT = """\
@@ -117,11 +110,8 @@ def no_exec():
 """
 
 
-@pytest.mark.skipif(
-    IS_PY2,
-    reason="exec statement in Python 2 is handled by RestrictedPython ")
-def test_compile__compile_restricted_exec__10():  # pragma: PY3
-    """It is a SyntaxError to use the `exec` statement. (Python 3 only)"""
+def test_compile__compile_restricted_exec__10():
+    """It is a SyntaxError to use the `exec` statement."""
     result = compile_restricted_exec(EXEC_STATEMENT)
     if IS_PY310_OR_GREATER:
         assert (
@@ -173,24 +163,18 @@ def test_compile__compile_restricted_csingle():
 
 PRINT_EXAMPLE = """
 def a():
-    print 'Hello World!'
+    print('Hello World!')
 """
 
 
-@pytest.mark.skipif(
-    IS_PY3,
-    reason="Print statement is gone in Python 3."
-           "Test Deprecation Warming in Python 2")
-def test_compile_restricted():  # pragma: PY2
-    """This test checks compile_restricted itself if that emit Python warnings.
+def test_compile_restricted():
+    """It emits Python warnings.
+
     For actual tests for print statement see: test_print_stmt.py
     """
     with pytest.warns(SyntaxWarning) as record:
         result = compile_restricted(PRINT_EXAMPLE, '<string>', 'exec')
         assert isinstance(result, types.CodeType)
-        # Non-CPython versions have a RuntimeWarning, too.
-        if len(record) > 2:  # pragma: no cover
-            record.pop()
         assert len(record) == 1
         assert record[0].message.args[0] == \
             "Line 2: Prints, but never reads 'printed' variable."

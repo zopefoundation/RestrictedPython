@@ -1,8 +1,5 @@
 from RestrictedPython import compile_restricted_exec
-from RestrictedPython._compat import IS_PY2
 from tests.helper import restricted_eval
-
-import pytest
 
 
 def test_Num():
@@ -20,8 +17,6 @@ def test_Set():
     assert restricted_eval('{1, 2, 3}') == set([1, 2, 3])
 
 
-@pytest.mark.skipif(IS_PY2,
-                    reason="... is new in Python 3")
 def test_Ellipsis():
     """It prevents using the `ellipsis` statement."""
     result = compile_restricted_exec('...')

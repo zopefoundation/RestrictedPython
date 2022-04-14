@@ -1,8 +1,4 @@
 from RestrictedPython import compile_restricted_exec
-from RestrictedPython._compat import IS_PY3
-from RestrictedPython._compat import IS_PY35_OR_GREATER
-
-import pytest
 
 
 YIELD_EXAMPLE = """\
@@ -29,9 +25,6 @@ def reader_wapper(input):
 """
 
 
-@pytest.mark.skipif(
-    not IS_PY3,
-    reason="`yield from` statement was first introduced in Python 3.3")
 def test_yield_from():
     """`yield from` statement should be allowed."""
     result = compile_restricted_exec(YIELD_FORM_EXAMPLE)
@@ -60,9 +53,6 @@ def get_json(client, url):
 """
 
 
-@pytest.mark.skipif(
-    not IS_PY3,
-    reason="`yield from` statement was first introduced in Python 3.3")
 def test_asyncio_yield_from():
     """`yield from` statement should be allowed."""
     result = compile_restricted_exec(ASYNCIO_YIELD_FORM_EXAMPLE)
@@ -78,9 +68,6 @@ async def get_json(client, url):
 """
 
 
-@pytest.mark.skipif(
-    not IS_PY35_OR_GREATER,
-    reason="`yield from` statement was first introduced in Python 3.3")
 def test_async_yield_from():
     """`yield from` statement should be allowed."""
     result = compile_restricted_exec(ASYNC_YIELD_FORM_EXAMPLE)
