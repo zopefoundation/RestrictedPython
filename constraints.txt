@@ -1,13 +1,6 @@
-# Constraints for Python Packages
-# -----------------------------------------------
-# Pin Versions / Version Ranges if necessary.
+# Constraints for Python packages
+# -------------------------------
+# Pin versions / version ranges if necessary.
 isort >= 4.3.2
-# Needed for Appveyor as long as PY2 is supported:
-pytest < 5 ; python_version < '3.11'
-# Python 3.11 needs pytest > 5
-pytest >= 5 ; python_version >= '3.11'
-# coverage 6+ no longer supports Python 2 and coverage results of older
-# versions cannot not combined with newer ones:
-coverage < 6; python_version < '3.11'
-# Python 3.11 requires coverage >= 6,
-coverage >= 6; python_version >= '3.11'
+pytest >= 5
+coverage >= 6

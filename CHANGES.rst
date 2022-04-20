@@ -1,8 +1,16 @@
 Changes
 =======
 
-5.3 (unreleased)
+6.0 (unreleased)
 ----------------
+
+Backwards incompatible changes
+++++++++++++++++++++++++++++++
+
+- Drop support for Python 2.7 and 3.5.
+
+Features
+++++++++
 
 - Allow to use the package with Python 3.11 -- Caution: No security audit has
   been done so far.

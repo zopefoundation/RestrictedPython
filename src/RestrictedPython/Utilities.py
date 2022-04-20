@@ -27,7 +27,7 @@ utility_builtins['frozenset'] = frozenset
 
 try:
     import DateTime
-    utility_builtins['DateTime'] = DateTime.DateTime  # pragma: no cover
+    utility_builtins['DateTime'] = DateTime.DateTime
 except ImportError:
     pass
 

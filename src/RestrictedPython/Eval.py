@@ -14,17 +14,10 @@
 
 import ast
 
-from ._compat import IS_PY2
 from .compile import compile_restricted_eval
 
 
-if IS_PY2:  # pragma: PY2
-    from string import maketrans
-else:  # pragma: PY3
-    maketrans = str.maketrans
-
-
-nltosp = maketrans('\r\n', '  ')
+nltosp = str.maketrans('\r\n', '  ')
 
 # No restrictions.
 default_guarded_getattr = getattr
@@ -40,7 +33,7 @@ def default_guarded_getiter(ob):
     return ob
 
 
-class RestrictionCapableEval(object):
+class RestrictionCapableEval:
     """A base class for restricted code."""
 
     globals = {'__builtins__': None}

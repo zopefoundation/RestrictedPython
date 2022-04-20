@@ -10,10 +10,9 @@
 # FOR A PARTICULAR PURPOSE
 #
 ##############################################################################
-from __future__ import print_function
 
 
-class PrintCollector(object):
+class PrintCollector:
     """Collect written text, and return it when called."""
 
     def __init__(self, _getattr_=None):

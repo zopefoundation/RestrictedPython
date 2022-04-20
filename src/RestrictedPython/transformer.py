@@ -17,25 +17,16 @@ uses Python standard library ast module and its containing classes to transform
 the parsed python code to create a modified AST for a byte code generation.
 """
 
-# This package should follow the Plone Sytleguide for Python,
-# which differ from PEP8:
-# http://docs.plone.org/develop/styleguide/python.html
-
 
 import ast
 import contextlib
 import textwrap
 
-from ._compat import IS_PY2
-from ._compat import IS_PY3
-from ._compat import IS_PY34_OR_GREATER
-from ._compat import IS_PY35_OR_GREATER
 from ._compat import IS_PY38_OR_GREATER
 
 
 # For AugAssign the operator must be converted to a string.
 IOPERATOR_TO_STR = {
-    # Shared by python2 and python3
     ast.Add: '+=',
     ast.Sub: '-=',
     ast.Mult: '*=',
@@ -47,14 +38,9 @@ IOPERATOR_TO_STR = {
     ast.BitOr: '|=',
     ast.BitXor: '^=',
     ast.BitAnd: '&=',
-    ast.FloorDiv: '//='
+    ast.FloorDiv: '//=',
+    ast.MatMult: '@=',
 }
-
-if IS_PY2:  # pragma: PY2
-    pass  # trick branch coverage
-else:  # pragma: PY3
-    IOPERATOR_TO_STR[ast.MatMult] = '@='
-
 
 # For creation allowed magic method names. See also
 # https://docs.python.org/3/reference/datamodel.html#special-method-names
@@ -90,7 +76,7 @@ def copy_locations(new_node, old_node):
     ast.fix_missing_locations(new_node)
 
 
-class PrintInfo(object):
+class PrintInfo:
     def __init__(self):
         self.print_used = False
         self.printed_used = False
@@ -113,7 +99,7 @@ class PrintInfo(object):
 class RestrictingNodeTransformer(ast.NodeTransformer):
 
     def __init__(self, errors=None, warnings=None, used_names=None):
-        super(RestrictingNodeTransformer, self).__init__()
+        super().__init__()
         self.errors = [] if errors is None else errors
         self.warnings = [] if warnings is None else warnings
 
@@ -140,13 +126,13 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         """Record a security error discovered during transformation."""
         lineno = getattr(node, 'lineno', None)
         self.errors.append(
-            'Line {lineno}: {info}'.format(lineno=lineno, info=info))
+            f'Line {lineno}: {info}')
 
     def warn(self, node, info):
         """Record a security error discovered during transformation."""
         lineno = getattr(node, 'lineno', None)
         self.warnings.append(
-            'Line {lineno}: {info}'.format(lineno=lineno, info=info))
+            f'Line {lineno}: {info}')
 
     def guard_iter(self, node):
         """
@@ -180,10 +166,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         return node
 
     def is_starred(self, ob):
-        if IS_PY3:  # pragma: PY3
-            return isinstance(ob, ast.Starred)
-        else:  # pragma: PY2
-            return False
+        return isinstance(ob, ast.Starred)
 
     def gen_unpack_spec(self, tpl):
         """Generate a specification for 'guarded_unpack_sequence'.
@@ -268,12 +251,11 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
             args=[value, spec, ast.Name('_getiter_', ast.Load())],
             keywords=[])
 
-    def gen_unpack_wrapper(self, node, target, ctx='store'):
+    def gen_unpack_wrapper(self, node, target):
         """Helper function to protect tuple unpacks.
 
         node: used to copy the locations for the new nodes.
         target: is the tuple which must be protected.
-        ctx: Defines the context of the returned temporary node.
 
         It returns a tuple with two element.
 
@@ -307,25 +289,11 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         #     del tmp_arg
         try_body = [ast.Assign(targets=[target], value=converter)]
         finalbody = [self.gen_del_stmt(tmp_name)]
-
-        if IS_PY2:  # pragma: PY2
-            cleanup = ast.TryFinally(body=try_body, finalbody=finalbody)
-        else:  # pragma: PY3
-            cleanup = ast.Try(
-                body=try_body, finalbody=finalbody, handlers=[], orelse=[])
-
-        if ctx == 'store':
-            ctx = ast.Store()
-        elif ctx == 'param':
-            ctx = ast.Param()
-        else:  # pragma: no cover
-            # Only store and param are defined ctx.
-            raise NotImplementedError(
-                'Unsupported context type: "{name}".'.format(name=type(ctx)),
-            )
+        cleanup = ast.Try(
+            body=try_body, finalbody=finalbody, handlers=[], orelse=[])
 
         # This node is used to catch the tuple in a tmp variable.
-        tmp_target = ast.Name(tmp_name, ctx)
+        tmp_target = ast.Name(tmp_name, ast.Store())
 
         copy_locations(tmp_target, node)
         copy_locations(cleanup, node)
@@ -333,16 +301,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         return (tmp_target, cleanup)
 
     def gen_none_node(self):
-        if IS_PY34_OR_GREATER:  # pragma: PY3
-            return ast.NameConstant(value=None)
-        else:  # pragma: PY2
-            return ast.Name(id='None', ctx=ast.Load())
-
-    def gen_lambda(self, args, body):  # pragma: PY2
-        return ast.Lambda(
-            args=ast.arguments(
-                args=args, vararg=None, kwarg=None, defaults=[]),
-            body=body)
+        return ast.NameConstant(value=None)
 
     def gen_del_stmt(self, name_to_del):
         return ast.Delete(targets=[ast.Name(name_to_del, ast.Del())])
@@ -394,7 +353,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
 
         else:  # pragma: no cover
             # Index, Slice and ExtSlice are only defined Slice types.
-            raise NotImplementedError("Unknown slice type: {0}".format(slice_))
+            raise NotImplementedError(f"Unknown slice type: {slice_}")
 
     def check_name(self, node, name, allow_magic_methods=False):
         """Check names if they are allowed.
@@ -419,41 +378,20 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
             self.error(node, '"%s" is an invalid variable name because '
                        'it ends with "__roles__".' % name)
         elif name in FORBIDDEN_FUNC_NAMES:
-            self.error(node, '"{name}" is a reserved name.'.format(name=name))
+            self.error(node, f'"{name}" is a reserved name.')
 
     def check_function_argument_names(self, node):
-        # In python3 arguments are always identifiers.
-        # In python2 the 'Python.asdl' specifies expressions, but
-        # the python grammer allows only identifiers or a tuple of
-        # identifiers. If its a tuple 'tuple parameter unpacking' is used,
-        # which is gone in python3.
-        # See https://www.python.org/dev/peps/pep-3113/
+        for arg in node.args.args:
+            self.check_name(node, arg.arg)
 
-        if IS_PY2:  # pragma: PY2
-            # Needed to handle nested 'tuple parameter unpacking'.
-            # For example 'def foo((a, b, (c, (d, e)))): pass'
-            to_check = list(node.args.args)
-            while to_check:
-                item = to_check.pop()
-                if isinstance(item, ast.Tuple):
-                    to_check.extend(item.elts)
-                else:
-                    self.check_name(node, item.id)
+        if node.args.vararg:
+            self.check_name(node, node.args.vararg.arg)
 
-            self.check_name(node, node.args.vararg)
-            self.check_name(node, node.args.kwarg)
-        else:  # pragma: PY3
-            for arg in node.args.args:
-                self.check_name(node, arg.arg)
+        if node.args.kwarg:
+            self.check_name(node, node.args.kwarg.arg)
 
-            if node.args.vararg:
-                self.check_name(node, node.args.vararg.arg)
-
-            if node.args.kwarg:
-                self.check_name(node, node.args.kwarg.arg)
-
-            for arg in node.args.kwonlyargs:
-                self.check_name(node, arg.arg)
+        for arg in node.args.kwonlyargs:
+            self.check_name(node, arg.arg)
 
     def check_import_names(self, node):
         """Check the names being imported.
@@ -501,19 +439,6 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
             elif not print_used:
                 self.warn(node, "Doesn't print, but reads 'printed' variable.")
 
-    def gen_attr_check(self, node, attr_name):  # pragma: PY2
-        """Check if 'attr_name' is allowed on the object in node.
-
-        It generates (_getattr_(node, attr_name) and node).
-        """
-
-        call_getattr = ast.Call(
-            func=ast.Name('_getattr_', ast.Load()),
-            args=[node, ast.Str(attr_name)],
-            keywords=[])
-
-        return ast.BoolOp(op=ast.And(), values=[call_getattr, node])
-
     # Special Functions for an ast.NodeTransformer
 
     def generic_visit(self, node):
@@ -534,11 +459,11 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
     def not_allowed(self, node):
         self.error(
             node,
-            '{0.__class__.__name__} statements are not allowed.'.format(node))
+            f'{node.__class__.__name__} statements are not allowed.')
 
     def node_contents_visit(self, node):
         """Visit the contents of a node."""
-        return super(RestrictingNodeTransformer, self).generic_visit(node)
+        return super().generic_visit(node)
 
     # ast for Literals
 
@@ -580,7 +505,6 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         def visit_Bytes(self, node):
             """Allow bytes literals without restrictions.
 
-            Bytes is Python 3 only.
             Replaced by Constant in Python 3.8.
             """
             return self.node_contents_visit(node)
@@ -588,7 +512,6 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         def visit_Ellipsis(self, node):
             """Deny using `...`.
 
-            Ellipsis exists only in Python 3.
             Replaced by Constant in Python 3.8.
             """
             return self.not_allowed(node)
@@ -777,10 +700,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         return self.node_contents_visit(node)
 
     def visit_MatMult(self, node):
-        """Matrix multiplication (`@`) is currently not allowed.
-
-        Matrix multiplication is a Python 3.5+ feature.
-        """
+        """Matrix multiplication (`@`) is currently not allowed."""
         self.not_allowed(node)
 
     def visit_BoolOp(self, node):
@@ -863,23 +783,12 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
 
         needs_wrap = False
 
-        # In python2.7 till python3.4 '*args', '**kwargs' have dedicated
-        # attributes on the ast.Call node.
-        # In python 3.5 and greater this has changed due to the fact that
-        # multiple '*args' and '**kwargs' are possible.
-        # '*args' can be detected by 'ast.Starred' nodes.
-        # '**kwargs' can be deteced by 'keyword' nodes with 'arg=None'.
+        for pos_arg in node.args:
+            if isinstance(pos_arg, ast.Starred):
+                needs_wrap = True
 
-        if IS_PY35_OR_GREATER:  # pragma: PY3
-            for pos_arg in node.args:
-                if isinstance(pos_arg, ast.Starred):
-                    needs_wrap = True
-
-            for keyword_arg in node.keywords:
-                if keyword_arg.arg is None:
-                    needs_wrap = True
-        else:  # pragma: PY2
-            if (node.starargs is not None) or (node.kwargs is not None):
+        for keyword_arg in node.keywords:
+            if keyword_arg.arg is None:
                 needs_wrap = True
 
         node = self.node_contents_visit(node)
@@ -947,7 +856,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         else:  # pragma: no cover
             # Impossible Case only ctx Load, Store and Del are defined in ast.
             raise NotImplementedError(
-                "Unknown ctx type: {0}".format(type(node.ctx)))
+                f"Unknown ctx type: {type(node.ctx)}")
 
     # Subscripting
 
@@ -994,7 +903,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         else:  # pragma: no cover
             # Impossible Case only ctx Load, Store and Del are defined in ast.
             raise NotImplementedError(
-                "Unknown ctx type: {0}".format(type(node.ctx)))
+                f"Unknown ctx type: {type(node.ctx)}")
 
     def visit_Index(self, node):
         """
@@ -1146,33 +1055,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
             # * Subscript
             # defined, those are checked before.
             raise NotImplementedError(
-                "Unknown target type: {0}".format(type(node.target)))
-
-    def visit_Print(self, node):  # pragma: PY2
-        """Checks and mutates a print statement.
-
-        Adds a target to all print statements.  'print foo' becomes
-        'print >> _print, foo', where _print is the default print
-        target defined for this scope.
-
-        Alternatively, if the untrusted code provides its own target,
-        we have to check the 'write' method of the target.
-        'print >> ob, foo' becomes
-        'print >> (_getattr_(ob, 'write') and ob), foo'.
-        Otherwise, it would be possible to call the write method of
-        templates and scripts; 'write' happens to be the name of the
-        method that changes them.
-        """
-        self.print_info.print_used = True
-        node = self.node_contents_visit(node)
-        if node.dest is None:
-            node.dest = ast.Name('_print', ast.Load())
-        else:
-            # Pre-validate access to the 'write' attribute.
-            node.dest = self.gen_attr_check(node.dest, 'write')
-
-        copy_locations(node.dest, node)
-        return node
+                f"Unknown target type: {type(node.target)}")
 
     def visit_Raise(self, node):
         """Allow `raise` statements without restrictions."""
@@ -1206,13 +1089,6 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         """Allow `as` statements in import and import from statements."""
         return self.node_contents_visit(node)
 
-    def visit_Exec(self, node):  # pragma: PY2
-        """Deny the usage of the exec statement.
-
-        Exists only in Python 2.
-        """
-        self.not_allowed(node)
-
     # Control flow
 
     def visit_If(self, node):
@@ -1236,66 +1112,20 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         return self.node_contents_visit(node)
 
     def visit_Try(self, node):
-        """Allow `try` without restrictions.
-
-        This is Python 3 only, Python 2 uses TryExcept.
-        """
-        return self.node_contents_visit(node)
-
-    def visit_TryFinally(self, node):  # pragma: PY2
-        """Allow `try ... finally` without restrictions."""
-        return self.node_contents_visit(node)
-
-    def visit_TryExcept(self, node):  # pragma: PY2
-        """Allow `try ... except` without restrictions."""
+        """Allow `try` without restrictions."""
         return self.node_contents_visit(node)
 
     def visit_ExceptHandler(self, node):
-        """Protect tuple unpacking on exception handlers.
-
-        try:
-            .....
-        except Exception as (a, b):
-            ....
-
-        becomes
-
-        try:
-            .....
-        except Exception as tmp:
-            try:
-                (a, b) = _getiter_(tmp)
-            finally:
-                del tmp
-        """
+        """Protect exception handlers."""
         node = self.node_contents_visit(node)
-
-        if IS_PY3:  # pragma: PY3
-            self.check_name(node, node.name)
-        else:   # pragma: PY2
-            if not isinstance(node.name, ast.Tuple):
-                return node
-
-            tmp_target, unpack = self.gen_unpack_wrapper(node, node.name)
-
-            # Replace the tuple with the temporary variable.
-            node.name = tmp_target
-
-            # Insert the unpack code within the body of the except clause.
-            node.body.insert(0, unpack)
-
+        self.check_name(node, node.name)
         return node
 
     def visit_With(self, node):
         """Protect tuple unpacking on with statements."""
         node = self.node_contents_visit(node)
 
-        if IS_PY2:  # pragma: PY2
-            items = [node]
-        else:  # pragma: PY3
-            items = node.items
-
-        for item in reversed(items):
+        for item in reversed(node.items):
             if isinstance(item.optional_vars, ast.Tuple):
                 tmp_target, unpack = self.gen_unpack_wrapper(
                     node,
@@ -1320,71 +1150,12 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         with self.print_info.new_print_scope():
             node = self.node_contents_visit(node)
             self.inject_print_collector(node)
-
-        if IS_PY2:  # pragma: PY2
-            # Protect 'tuple parameter unpacking' with '_getiter_'.
-
-            unpacks = []
-            for index, arg in enumerate(list(node.args.args)):
-                if isinstance(arg, ast.Tuple):
-                    tmp_target, unpack = self.gen_unpack_wrapper(
-                        node, arg, 'param')
-
-                    # Replace the tuple with a single (temporary) parameter.
-                    node.args.args[index] = tmp_target
-                    unpacks.append(unpack)
-
-            # Add the unpacks at the front of the body.
-            # Keep the order, so that tuple one is unpacked first.
-            node.body[0:0] = unpacks
         return node
 
     def visit_Lambda(self, node):
         """Allow lambda with some restrictions."""
         self.check_function_argument_names(node)
-
-        node = self.node_contents_visit(node)
-
-        if IS_PY3:  # pragma: PY3
-            # Implicit Tuple unpacking is not anymore available in Python3
-            return node
-        else:  # pragma: PY2
-            # Check for tuple parameters which need _getiter_ protection
-            if not any(isinstance(arg, ast.Tuple) for arg in node.args.args):
-                return node
-
-            # Wrap this lambda function with another. Via this wrapping it is
-            # possible to protect the 'tuple arguments' with _getiter_
-            outer_params = []
-            inner_args = []
-
-            for arg in node.args.args:
-                if isinstance(arg, ast.Tuple):
-                    tmp_name = self.gen_tmp_name()
-                    converter = self.protect_unpack_sequence(
-                        arg,
-                        ast.Name(tmp_name, ast.Load()))
-
-                    outer_params.append(ast.Name(tmp_name, ast.Param()))
-                    inner_args.append(converter)
-
-                else:
-                    outer_params.append(arg)
-                    inner_args.append(ast.Name(arg.id, ast.Load()))
-
-            body = ast.Call(func=node, args=inner_args, keywords=[])
-            new_node = self.gen_lambda(outer_params, body)
-
-            if node.args.vararg:
-                new_node.args.vararg = node.args.vararg
-                body.starargs = ast.Name(node.args.vararg, ast.Load())
-
-            if node.args.kwarg:
-                new_node.args.kwarg = node.args.kwarg
-                body.kwargs = ast.Name(node.args.kwarg, ast.Load())
-
-            copy_locations(new_node, node)
-            return new_node
+        return self.node_contents_visit(node)
 
     def visit_arguments(self, node):
         """
@@ -1415,30 +1186,24 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         return self.node_contents_visit(node)
 
     def visit_Nonlocal(self, node):
-        """Deny `nonlocal` statements.
-
-        This statement was introduced in Python 3.
-        """
+        """Deny `nonlocal` statements."""
         self.not_allowed(node)
 
     def visit_ClassDef(self, node):
         """Check the name of a class definition."""
         self.check_name(node, node.name)
         node = self.node_contents_visit(node)
-        if IS_PY2:  # pragma: PY2
-            new_class_node = node
-        else:  # pragma: PY3
-            if any(keyword.arg == 'metaclass' for keyword in node.keywords):
-                self.error(
-                    node, 'The keyword argument "metaclass" is not allowed.')
-            CLASS_DEF = textwrap.dedent('''\
-                class {0.name}(metaclass=__metaclass__):
-                    pass
-            '''.format(node))
-            new_class_node = ast.parse(CLASS_DEF).body[0]
-            new_class_node.body = node.body
-            new_class_node.bases = node.bases
-            new_class_node.decorator_list = node.decorator_list
+        if any(keyword.arg == 'metaclass' for keyword in node.keywords):
+            self.error(
+                node, 'The keyword argument "metaclass" is not allowed.')
+        CLASS_DEF = textwrap.dedent('''\
+            class {0.name}(metaclass=__metaclass__):
+                pass
+        '''.format(node))
+        new_class_node = ast.parse(CLASS_DEF).body[0]
+        new_class_node.body = node.body
+        new_class_node.bases = node.bases
+        new_class_node.decorator_list = node.decorator_list
         return new_class_node
 
     def visit_Module(self, node):
@@ -1456,10 +1221,6 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
 
         self.inject_print_collector(node, position)
         return node
-
-    def visit_Param(self, node):
-        """Allow parameters without restrictions."""
-        return self.node_contents_visit(node)
 
     # Async und await
 

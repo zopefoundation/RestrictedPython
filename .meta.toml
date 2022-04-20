@@ -2,11 +2,11 @@
 # https://github.com/zopefoundation/meta/tree/master/config/pure-python
 [meta]
 template = "pure-python"
-commit-id = "3a251aab94eff9cf2aa2fd87d7266593251e4b76"
+commit-id = "387516cfda91ee38cde868ef0d6205314a6a9bef"
 
 [python]
 with-pypy = false
-with-legacy-python = true
+with-legacy-python = false
 with-docs = true
 with-sphinx-doctests = true
 with-windows = true
@@ -22,7 +22,6 @@ testenv-deps = [
     "datetime: DateTime",
     "-cconstraints.txt",
     "pytest-cov",
-    "coverage-python-version",
     ]
 testenv-setenv = [
     "COVERAGE_FILE=.coverage.{envname}",
@@ -40,7 +39,6 @@ testenv-additional = [
     "    mkdir",
     "deps =",
     "    coverage",
-    "    coverage-python-version",
     "    -cconstraints.txt",
     "setenv =",
     "    COVERAGE_FILE=.coverage",
@@ -49,7 +47,7 @@ testenv-additional = [
     "    coverage combine",
     "    coverage html",
     "    coverage report -m --fail-under=100",
-    "depends = py27,py35,py36,py37,py38,py39,py39-datetime,py310,coverage",
+    "depends = py36,py37,py38,py39,py39-datetime,py310,py311,coverage",
     ]
 coverage-basepython = "python3.8"
 coverage-command = "pytest --cov=src --cov=tests --cov-report= {posargs}"

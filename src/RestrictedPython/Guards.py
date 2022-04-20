@@ -15,19 +15,13 @@
 # AccessControl.ZopeGuards contains a large set of wrappers for builtins.
 # DocumentTemplate.DT_UTil contains a few.
 
-from RestrictedPython import _compat
+import builtins
 
-
-if _compat.IS_PY2:  # pragma: PY2
-    import __builtin__ as builtins
-else:  # pragma: PY3
-    # Do not attempt to use this package on Python2.7 as there
-    # might be backports for this package such as future.
-    import builtins
 
 safe_builtins = {}
 
 _safe_names = [
+    '__build_class__',
     'None',
     'False',
     'True',
@@ -109,23 +103,6 @@ _safe_exceptions = [
     'ZeroDivisionError',
 ]
 
-if _compat.IS_PY2:  # pragma: PY2
-    _safe_names.extend([
-        'basestring',
-        'cmp',
-        'long',
-        'unichr',
-        'unicode',
-        'xrange',
-    ])
-    _safe_exceptions.extend([
-        'StandardError',
-    ])
-else:  # pragma: PY3
-    _safe_names.extend([
-        '__build_class__',  # needed to define new classes
-    ])
-
 for name in _safe_names:
     safe_builtins[name] = getattr(builtins, name)
 
@@ -202,7 +179,7 @@ def _write_wrapper():
             f(*args)
         return handler
 
-    class Wrapper(object):
+    class Wrapper:
         def __init__(self, ob):
             self.__dict__['ob'] = ob
 
@@ -264,7 +241,7 @@ def safer_getattr(object, name, default=None, getattr=getattr):
     http://lucumr.pocoo.org/2016/12/29/careful-with-str-format/
 
     """
-    if isinstance(object, _compat.basestring) and name == 'format':
+    if isinstance(object, str) and name == 'format':
         raise NotImplementedError(
             'Using format() on a %s is not safe.' % object.__class__.__name__)
     if name.startswith('_'):

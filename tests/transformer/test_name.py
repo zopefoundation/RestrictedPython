@@ -1,8 +1,5 @@
 from RestrictedPython import compile_restricted_exec
-from RestrictedPython._compat import IS_PY2
 from tests.helper import restricted_exec
-
-import pytest
 
 
 BAD_NAME_STARTING_WITH_UNDERSCORE = """\
@@ -160,8 +157,6 @@ def bad_name():
 """
 
 
-@pytest.mark.skipif(IS_PY2,
-                    reason="print is a statement in Python 2")
 def test_RestrictingNodeTransformer__visit_Name__7():
     """It denies a variable named `print`."""
     result = compile_restricted_exec(BAD_NAME_PRINT)

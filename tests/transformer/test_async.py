@@ -1,13 +1,5 @@
 from RestrictedPython import compile_restricted_exec
-from RestrictedPython._compat import IS_PY35_OR_GREATER
 from RestrictedPython.transformer import RestrictingNodeTransformer
-
-import pytest
-
-
-pytestmark = pytest.mark.skipif(
-    not IS_PY35_OR_GREATER,
-    reason="async statement was first introduced in Python 3.5")
 
 
 # Example from https://docs.python.org/3/library/asyncio-task.html

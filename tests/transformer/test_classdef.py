@@ -1,9 +1,6 @@
 from RestrictedPython import compile_restricted_exec
-from RestrictedPython._compat import IS_PY2
 from RestrictedPython.Guards import safe_builtins
 from tests.helper import restricted_exec
-
-import pytest
 
 
 GOOD_CLASS = '''
@@ -66,7 +63,6 @@ class WithMeta(metaclass=MyMetaClass):
 '''
 
 
-@pytest.mark.skipif(IS_PY2, reason="No valid syntax in Python 2.")
 def test_RestrictingNodeTransformer__visit_ClassDef__4():
     """It does not allow to pass a metaclass to class definitions."""
 

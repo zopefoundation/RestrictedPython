@@ -1,8 +1,5 @@
-from RestrictedPython._compat import IS_PY2
 from RestrictedPython.Guards import guarded_unpack_sequence
 from tests.helper import restricted_exec
-
-import pytest
 
 
 def test_RestrictingNodeTransformer__visit_Assign__1(mocker):
@@ -30,9 +27,6 @@ def test_RestrictingNodeTransformer__visit_Assign__1(mocker):
     _getiter_.reset_mock()
 
 
-@pytest.mark.skipif(
-    IS_PY2,
-    reason="starred assignments are python3 only")
 def test_RestrictingNodeTransformer__visit_Assign__2(
         mocker):
     src = "a, *d, (c, *e), x  = (1, 2, 3, (4, 3, 4), 5)"

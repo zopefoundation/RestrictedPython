@@ -1,8 +1,5 @@
 from RestrictedPython import compile_restricted_exec
-from RestrictedPython._compat import IS_PY3
 from tests.helper import restricted_exec
-
-import pytest
 
 
 GLOBAL_EXAMPLE = """
@@ -34,9 +31,6 @@ outside()
 """
 
 
-@pytest.mark.skipif(
-    not IS_PY3,
-    reason="The `nonlocal` statement was introduced in Python 3.0.")
 def test_Nonlocal():
     result = compile_restricted_exec(NONLOCAL_EXAMPLE)
     assert result.errors == ('Line 5: Nonlocal statements are not allowed.',)
