@@ -44,6 +44,7 @@ testenv-additional = [
     "    COVERAGE_FILE=.coverage",
     "commands =",
     "    mkdir -p {toxinidir}/parts/htmlcov",
+    "    coverage erase",
     "    coverage combine",
     "    coverage html",
     "    coverage report -m --fail-under=100",
@@ -51,6 +52,9 @@ testenv-additional = [
     ]
 coverage-basepython = "python3.8"
 coverage-command = "pytest --cov=src --cov=tests --cov-report= {posargs}"
+coverage-setenv = [
+    "COVERAGE_FILE=.coverage",
+    ]
 
 [coverage]
 fail-under = 98.8
