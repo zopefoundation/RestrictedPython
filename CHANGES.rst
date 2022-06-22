@@ -4,12 +4,6 @@ Changes
 6.0 (unreleased)
 ----------------
 
-- Nothing changed yet.
-
-
-6.0a1.dev0 (2022-06-22)
------------------------
-
 Backwards incompatible changes
 ++++++++++++++++++++++++++++++
 
