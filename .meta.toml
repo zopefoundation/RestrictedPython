@@ -2,7 +2,7 @@
 # https://github.com/zopefoundation/meta/tree/master/config/pure-python
 [meta]
 template = "pure-python"
-commit-id = "5461bae88c19d8d771ba2bd5f00c69540580335d"
+commit-id = "b4cfc9ca6065ca82646fa69d04ee4c15c58035e1"
 
 [python]
 with-pypy = false
@@ -44,6 +44,7 @@ testenv-additional = [
     "    COVERAGE_FILE=.coverage",
     "commands =",
     "    mkdir -p {toxinidir}/parts/htmlcov",
+    "    coverage erase",
     "    coverage combine",
     "    coverage html",
     "    coverage report -m --fail-under=100",
@@ -56,7 +57,7 @@ coverage-setenv = [
     ]
 
 [coverage]
-fail-under = 98.7
+fail-under = 98.8
 
 [manifest]
 additional-rules = [
