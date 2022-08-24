@@ -29,7 +29,7 @@ testenv-setenv = [
 testenv-commands = [
     "python -V",
     "pip list",
-    "pytest --cov=src --cov=tests --cov-report= {posargs}",
+    "pytest --cov=src --cov-report= {posargs}",
     ]
 testenv-additional = [
     "",
@@ -51,7 +51,7 @@ testenv-additional = [
     "depends = py36,py37,py38,py39,py39-datetime,py310,py311,coverage",
     ]
 coverage-basepython = "python3.8"
-coverage-command = "pytest --cov=src --cov=tests --cov-report= {posargs}"
+coverage-command = "pytest --cov=src --cov-report= {posargs}"
 coverage-setenv = [
     "COVERAGE_FILE=.coverage",
     ]
@@ -64,7 +64,6 @@ additional-rules = [
     "recursive-include docs *.ast",
     "recursive-include docs *.bat",
     "recursive-include docs *.jpg",
-    "recursive-include tests *.py",
     ]
 
 [check-manifest]
