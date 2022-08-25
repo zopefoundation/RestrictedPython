@@ -17,6 +17,9 @@ Features
 
 - Fix code to run on Python 3.11.0b3.
 
+- Move ``tests`` directory into ``src``.
+  (`#232 <https://github.com/zopefoundation/RestrictedPython/pull/232>`_)
+
 
 5.2 (2021-11-19)
 ----------------
