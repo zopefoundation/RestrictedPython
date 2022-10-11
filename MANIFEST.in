@@ -15,3 +15,4 @@ recursive-include src *.py
 recursive-include docs *.ast
 recursive-include docs *.bat
 recursive-include docs *.jpg
+recursive-include tests *.py
