@@ -1,6 +1,6 @@
-from RestrictedPython.Eval import RestrictionCapableEval
-
 import pytest
+
+from RestrictedPython.Eval import RestrictionCapableEval
 
 
 exp = """

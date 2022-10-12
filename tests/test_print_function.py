@@ -1,6 +1,5 @@
-from RestrictedPython.PrintCollector import PrintCollector
-
 import RestrictedPython
+from RestrictedPython.PrintCollector import PrintCollector
 
 
 compiler = RestrictedPython.compile.compile_restricted_exec

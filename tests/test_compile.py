@@ -1,15 +1,16 @@
+import platform
+import types
+
+import pytest
+
+from RestrictedPython import CompileResult
 from RestrictedPython import compile_restricted
 from RestrictedPython import compile_restricted_eval
 from RestrictedPython import compile_restricted_exec
 from RestrictedPython import compile_restricted_single
-from RestrictedPython import CompileResult
 from RestrictedPython._compat import IS_PY38_OR_GREATER
 from RestrictedPython._compat import IS_PY310_OR_GREATER
 from tests.helper import restricted_eval
-
-import platform
-import pytest
-import types
 
 
 def test_compile__compile_restricted_invalid_code_input():
