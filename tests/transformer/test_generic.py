@@ -1,6 +1,6 @@
-from RestrictedPython import RestrictingNodeTransformer
-
 import ast
+
+from RestrictedPython import RestrictingNodeTransformer
 
 
 def test_RestrictingNodeTransformer__generic_visit__1():

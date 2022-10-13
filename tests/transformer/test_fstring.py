@@ -1,8 +1,8 @@
+import pytest
+
 from RestrictedPython import compile_restricted_exec
 from RestrictedPython._compat import IS_PY38_OR_GREATER
 from RestrictedPython.PrintCollector import PrintCollector
-
-import pytest
 
 
 def test_transform():

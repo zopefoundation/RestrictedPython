@@ -1,9 +1,9 @@
+import pytest
+
 from RestrictedPython import compile_restricted_exec
 from RestrictedPython import safe_globals
 from RestrictedPython.Eval import default_guarded_getiter
 from RestrictedPython.Guards import guarded_iter_unpack_sequence
-
-import pytest
 
 
 ITERATE_OVER_DICT_ITEMS = """

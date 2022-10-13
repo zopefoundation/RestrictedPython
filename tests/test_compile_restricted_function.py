@@ -1,9 +1,10 @@
-from RestrictedPython import compile_restricted_function
+from types import FunctionType
+
 from RestrictedPython import PrintCollector
+from RestrictedPython import compile_restricted_function
 from RestrictedPython import safe_builtins
 from RestrictedPython._compat import IS_PY38_OR_GREATER
 from RestrictedPython._compat import IS_PY310_OR_GREATER
-from types import FunctionType
 
 
 def test_compile_restricted_function():

@@ -1,7 +1,6 @@
+import RestrictedPython.Guards
 from RestrictedPython import compile_restricted_eval
 from RestrictedPython import compile_restricted_exec
-
-import RestrictedPython.Guards
 
 
 def _compile(compile_func, source):

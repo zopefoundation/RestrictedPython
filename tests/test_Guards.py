@@ -1,3 +1,5 @@
+import pytest
+
 from RestrictedPython import compile_restricted_exec
 from RestrictedPython.Guards import guarded_unpack_sequence
 from RestrictedPython.Guards import safe_builtins
@@ -5,8 +7,6 @@ from RestrictedPython.Guards import safe_globals
 from RestrictedPython.Guards import safer_getattr
 from tests.helper import restricted_eval
 from tests.helper import restricted_exec
-
-import pytest
 
 
 def _write_(x):
