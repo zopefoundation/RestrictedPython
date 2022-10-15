@@ -114,9 +114,9 @@ A (modified style) Copy of all Abstract Grammar Definitions for the Python versi
 
 .. _`Chomsky 3`: https://en.wikipedia.org/wiki/Chomsky_hierarchy#Type-3_grammars
 
-.. _`Python 3.11 AST`: https://docs.python.org/3.9/library/ast.html#abstract-grammar
+.. _`Python 3.11 AST`: https://docs.python.org/3.11/library/ast.html#abstract-grammar
 
-.. _`Python 3.10 AST`: https://docs.python.org/3.9/library/ast.html#abstract-grammar
+.. _`Python 3.10 AST`: https://docs.python.org/3.10/library/ast.html#abstract-grammar
 
 .. _`Python 3.9 AST`: https://docs.python.org/3.9/library/ast.html#abstract-grammar
 
