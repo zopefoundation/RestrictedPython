@@ -31,22 +31,13 @@ testenv-commands = [
     "pytest --cov=src --cov=tests --cov-report= {posargs}",
     ]
 coverage-basepython = "python3"
-coverage-deps = [
-    "coverage",
-    "-cconstraints.txt",
-    ]
 coverage-command = [
-    "mkdir -p {toxinidir}/parts/htmlcov",
-    "coverage combine",
-    "coverage html",
-    "coverage report -m --fail-under=100",
-    ]
+    "coverage erase",
+    "coverage combine"
+]
 coverage-depends = "py36,py37,py38,py39,py39-datetime,py310,py311"
 coverage-setenv = [
     "COVERAGE_FILE=.coverage",
-    ]
-coverage-allowlist_externals = [
-    "mkdir",
     ]
 
 [coverage]

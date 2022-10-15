@@ -58,10 +58,12 @@ jobs:
         python -m pip install --upgrade pip
         pip install tox
     - name: Test
+      if: matrix.config[1] != 'coverage'
       run: tox -e ${{ matrix.config[1] }}
     - name: Coverage
       if: matrix.config[1] == 'coverage'
       run: |
+        tox -e py36,py37,py38,py39,py39-datetime,py310,py311,coverage
         pip install coveralls
         coveralls --service=github
       env:
