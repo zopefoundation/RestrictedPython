@@ -74,7 +74,7 @@ def test_sametype_only_two_args_same():
 def test_sametype_only_two_args_different():
     from RestrictedPython.Utilities import same_type
 
-    class Foo(object):
+    class Foo:
         pass
     assert same_type(object(), Foo()) is False
 
@@ -87,7 +87,7 @@ def test_sametype_only_multiple_args_same():
 def test_sametype_only_multipe_args_one_different():
     from RestrictedPython.Utilities import same_type
 
-    class Foo(object):
+    class Foo:
         pass
     assert same_type(object(), object(), Foo()) is False
 

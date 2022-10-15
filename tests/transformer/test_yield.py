@@ -33,8 +33,7 @@ def test_yield_from():
 
     def my_external_generator():
         my_list = [1, 2, 3, 4, 5]
-        for elem in my_list:
-            yield elem
+        yield from my_list
 
     local = {}
     exec(result.code, {}, local)

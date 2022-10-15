@@ -14,7 +14,7 @@ def test_Bytes():
 
 def test_Set():
     """It allows to use set literals."""
-    assert restricted_eval('{1, 2, 3}') == set([1, 2, 3])
+    assert restricted_eval('{1, 2, 3}') == {1, 2, 3}
 
 
 def test_Ellipsis():
