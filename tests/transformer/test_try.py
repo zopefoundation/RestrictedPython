@@ -59,15 +59,17 @@ def try_except_star(m):
         m('IndentationError')
     except* ValueError:
         m('ValueError')
+    except* RuntimeError:
+        m('RuntimeError')
 """
 
 
 @pytest.mark.skipif(
     not IS_PY311_OR_GREATER,
-    reason="ExceptionGroup class are added in Python 3.11.",
+    reason="ExceptionGroup class was added in Python 3.11.",
 )
 def test_RestrictingNodeTransformer__visit_Try__3(mocker):
-    """It allows try-except statements."""
+    """It allows try-except* PEP 654 statements."""
     trace = mocker.stub()
     restricted_exec(TRY_EXCEPT_STAR)['try_except_star'](trace)
 
@@ -76,6 +78,9 @@ def test_RestrictingNodeTransformer__visit_Try__3(mocker):
         mocker.call('IndentationError'),
         mocker.call('ValueError')
     ])
+
+    with pytest.raises(AssertionError):
+        trace.assert_has_calls([mocker.call('RuntimeError')])
 
 
 TRY_FINALLY = """
