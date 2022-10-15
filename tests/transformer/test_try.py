@@ -1,4 +1,5 @@
 from RestrictedPython import compile_restricted_exec
+from RestrictedPython._compat import IS_PY311_OR_GREATER
 from tests.helper import restricted_exec
 
 
@@ -45,6 +46,31 @@ def test_RestrictingNodeTransformer__visit_Try__2(
         mocker.call('try'),
         mocker.call('else')
     ])
+
+
+TRY_EXCEPT_STAR = """
+def try_except_star(m):
+    try:
+        m('try')
+        raise ExceptionGroup("group", [IndentationError('f1'), ValueError(65)])
+    except* IndentationError:
+        m('IndentetionError')
+    except* ValueError:
+        m('ValueError')
+"""
+
+
+def test_RestrictingNodeTransformer__visit_Try__3(mocker):
+    """It allows try-except statements."""
+    if IS_PY311_OR_GREATER:
+        trace = mocker.stub()
+        restricted_exec(TRY_EXCEPT_STAR)['try_except_star'](trace)
+
+        trace.assert_has_calls([
+            mocker.call('try'),
+            mocker.call('IndentetionError'),
+            mocker.call('ValueError')
+        ])
 
 
 TRY_FINALLY = """

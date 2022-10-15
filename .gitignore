@@ -9,8 +9,10 @@
 .coverage
 .coverage.*
 .eggs/
+.idea/
 .installed.cfg
 .mr.developer.cfg
+.python-version
 .tox/
 .vscode/
 __pycache__/

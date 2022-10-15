@@ -64,6 +64,7 @@ _safe_exceptions = [
     'EOFError',
     'EnvironmentError',
     'Exception',
+    'ExceptionGroup',
     'FloatingPointError',
     'FutureWarning',
     'GeneratorExit',
@@ -107,7 +108,9 @@ for name in _safe_names:
     safe_builtins[name] = getattr(builtins, name)
 
 for name in _safe_exceptions:
-    safe_builtins[name] = getattr(builtins, name)
+    builtin = getattr(builtins, name, None)
+    if builtin:
+        safe_builtins[name] = getattr(builtins, name)
 
 
 # Wrappers provided by this module:
