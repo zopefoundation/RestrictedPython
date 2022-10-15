@@ -2,7 +2,7 @@
 # https://github.com/zopefoundation/meta/tree/master/config/pure-python
 [meta]
 template = "pure-python"
-commit-id = "b5df3766ff8923477f3d24729b19504f0c401a2e"
+commit-id = "54e37f7de7149c0d4003e40bbe300d012a851ce7"
 
 [python]
 with-pypy = false
@@ -16,7 +16,6 @@ with-future-python = true
 use-flake8 = true
 additional-envlist = [
     "py39-datetime",
-    "combined-coverage",
     ]
 testenv-deps = [
     "datetime: DateTime",
@@ -31,33 +30,27 @@ testenv-commands = [
     "pip list",
     "pytest --cov=src --cov=tests --cov-report= {posargs}",
     ]
-testenv-additional = [
-    "",
-    "[testenv:combined-coverage]",
-    "basepython = python3",
-    "allowlist_externals =",
-    "    mkdir",
-    "deps =",
-    "    coverage",
-    "    -cconstraints.txt",
-    "setenv =",
-    "    COVERAGE_FILE=.coverage",
-    "commands =",
-    "    mkdir -p {toxinidir}/parts/htmlcov",
-    "    coverage erase",
-    "    coverage combine",
-    "    coverage html",
-    "    coverage report -m --fail-under=100",
-    "depends = py36,py37,py38,py39,py39-datetime,py310,py311,coverage",
+coverage-basepython = "python3"
+coverage-deps = [
+    "coverage",
+    "-cconstraints.txt",
     ]
-coverage-basepython = "python3.8"
-coverage-command = "pytest --cov=src --cov=tests --cov-report= {posargs}"
+coverage-command = [
+    "mkdir -p {toxinidir}/parts/htmlcov",
+    "coverage combine",
+    "coverage html",
+    "coverage report -m --fail-under=100",
+    ]
+coverage-depends = "py36,py37,py38,py39,py39-datetime,py310,py311"
 coverage-setenv = [
     "COVERAGE_FILE=.coverage",
     ]
+coverage-allowlist_externals = [
+    "mkdir",
+    ]
 
 [coverage]
-fail-under = 98.8
+fail-under = 100.0
 
 [isort]
 additional-sources = "{toxinidir}/tests"
