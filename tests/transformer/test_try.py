@@ -1,3 +1,5 @@
+import pytest
+
 from RestrictedPython import compile_restricted_exec
 from RestrictedPython._compat import IS_PY311_OR_GREATER
 from tests.helper import restricted_exec
@@ -59,18 +61,20 @@ def try_except_star(m):
         m('ValueError')
 """
 
-
+@pytest.mark.skipif(
+    not IS_PY311_OR_GREATER,
+    reason="ExceptionGroup class are added in Python 3.11.",
+)
 def test_RestrictingNodeTransformer__visit_Try__3(mocker):
     """It allows try-except statements."""
-    if IS_PY311_OR_GREATER:
-        trace = mocker.stub()
-        restricted_exec(TRY_EXCEPT_STAR)['try_except_star'](trace)
+    trace = mocker.stub()
+    restricted_exec(TRY_EXCEPT_STAR)['try_except_star'](trace)
 
-        trace.assert_has_calls([
-            mocker.call('try'),
-            mocker.call('IndentetionError'),
-            mocker.call('ValueError')
-        ])
+    trace.assert_has_calls([
+        mocker.call('try'),
+        mocker.call('IndentetionError'),
+        mocker.call('ValueError')
+    ])
 
 
 TRY_FINALLY = """
