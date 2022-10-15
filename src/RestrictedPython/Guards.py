@@ -17,6 +17,8 @@
 
 import builtins
 
+from RestrictedPython._compat import IS_PY311_OR_GREATER
+
 
 safe_builtins = {}
 
@@ -64,7 +66,6 @@ _safe_exceptions = [
     'EOFError',
     'EnvironmentError',
     'Exception',
-    'ExceptionGroup',
     'FloatingPointError',
     'FutureWarning',
     'GeneratorExit',
@@ -104,15 +105,14 @@ _safe_exceptions = [
     'ZeroDivisionError',
 ]
 
+if IS_PY311_OR_GREATER:
+    _safe_exceptions.append("ExceptionGroup")
+
 for name in _safe_names:
     safe_builtins[name] = getattr(builtins, name)
 
 for name in _safe_exceptions:
-    builtin = getattr(builtins, name, None)
-    # PR:237 add because import of class ExceptionGroup in python smaller
-    # than 3.11 cause an error
-    if builtin:
-        safe_builtins[name] = getattr(builtins, name)
+    safe_builtins[name] = getattr(builtins, name)
 
 
 # Wrappers provided by this module:
