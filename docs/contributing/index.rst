@@ -99,6 +99,8 @@ A (modified style) Copy of all Abstract Grammar Definitions for the Python versi
    changes_from36to37
    changes_from37to38
    changes_from38to39
+   changes_from39to310
+   changes_from310to311
 
 .. Links
 
@@ -111,6 +113,10 @@ A (modified style) Copy of all Abstract Grammar Definitions for the Python versi
 .. _`EBNF`: https://en.wikipedia.org/wiki/Extended_Backus%E2%80%93Naur_form
 
 .. _`Chomsky 3`: https://en.wikipedia.org/wiki/Chomsky_hierarchy#Type-3_grammars
+
+.. _`Python 3.11 AST`: https://docs.python.org/3.9/library/ast.html#abstract-grammar
+
+.. _`Python 3.10 AST`: https://docs.python.org/3.9/library/ast.html#abstract-grammar
 
 .. _`Python 3.9 AST`: https://docs.python.org/3.9/library/ast.html#abstract-grammar
 
