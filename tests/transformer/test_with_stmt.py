@@ -1,8 +1,8 @@
+import contextlib
+
 from RestrictedPython import compile_restricted_exec
 from RestrictedPython.Guards import guarded_unpack_sequence
 from tests.helper import restricted_exec
-
-import contextlib
 
 
 WITH_STMT_WITH_UNPACK_SEQUENCE = """

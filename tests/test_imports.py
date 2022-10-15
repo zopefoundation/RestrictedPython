@@ -2,11 +2,11 @@
 Tests about imports
 """
 
+import pytest
+
 from RestrictedPython import compile_restricted_exec
 from RestrictedPython import safe_builtins
 from tests.helper import restricted_exec
-
-import pytest
 
 
 OS_IMPORT_EXAMPLE = """

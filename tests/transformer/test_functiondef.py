@@ -35,7 +35,6 @@ def test_RestrictingNodeTransformer__visit_FunctionDef__7():
     assert result.errors == (functiondef_err_msg,)
 
 
-
 BLACKLISTED_FUNC_NAMES_CALL_TEST = """
 def __init__(test):
     test
