@@ -47,7 +47,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'RestrictedPython'
-copyright = '2017-2020, Zope Foundation and Contributors'
+copyright = '2017-2022, Zope Foundation and Contributors'
 author = 'The Zope developer community'
 
 # The version info for the project you're documenting, acts as replacement for
