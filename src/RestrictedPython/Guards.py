@@ -109,6 +109,8 @@ for name in _safe_names:
 
 for name in _safe_exceptions:
     builtin = getattr(builtins, name, None)
+    # PR:237 add because import of class ExceptionGroup in python smaller
+    # than 3.11 cause an error
     if builtin:
         safe_builtins[name] = getattr(builtins, name)
 

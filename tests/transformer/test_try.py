@@ -61,6 +61,7 @@ def try_except_star(m):
         m('ValueError')
 """
 
+
 @pytest.mark.skipif(
     not IS_PY311_OR_GREATER,
     reason="ExceptionGroup class are added in Python 3.11.",
