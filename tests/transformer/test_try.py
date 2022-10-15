@@ -56,7 +56,7 @@ def try_except_star(m):
         m('try')
         raise ExceptionGroup("group", [IndentationError('f1'), ValueError(65)])
     except* IndentationError:
-        m('IndentetionError')
+        m('IndentationError')
     except* ValueError:
         m('ValueError')
 """
@@ -73,7 +73,7 @@ def test_RestrictingNodeTransformer__visit_Try__3(mocker):
 
     trace.assert_has_calls([
         mocker.call('try'),
-        mocker.call('IndentetionError'),
+        mocker.call('IndentationError'),
         mocker.call('ValueError')
     ])
 
