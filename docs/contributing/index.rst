@@ -102,7 +102,7 @@ Enable a Python Feature in RestrictedPython
 To enable a certain functionality in RestrictedPython, please follow the folloing steps:
 
 #. Add a feature request on GitHub
-#. Create a Pull-Request on Github
+#. Create a pull request on GitHub.
   * In ``/src/RestrictedPython/transformer.py`` change the corresponding ``visit_<AST Node>`` method
   * In ``/tests/`` add / change the corresponding tests for this functionality
   * Add a changelog entry
