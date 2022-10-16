@@ -49,7 +49,10 @@ To do so:
 -   Add a new file ``changes_from<old_version>to<new_version>.rst`` in the directory ``/docs/contributing/``.
 -   Add those files to the ``toctree`` directive in ``index.rst``.
 
-For each new *AST Node* please add a ``visit_<AST Node>`` to ``/src/RestrictedPython/transformer.py`` and add tests to ``/tests/``.
+For each new *AST Node*:
+
+ -   Add a ``visit_<AST Node>`` to ``/src/RestrictedPython/transformer.py``.
+ -   Add tests to ``/tests/``.
 
 If the new AST Node should be disabled by default, please add a ``visit_<AST Node>`` methode like:
 
