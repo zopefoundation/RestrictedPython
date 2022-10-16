@@ -1,10 +1,22 @@
 Contributing
 ============
 
-.. toctree::
+* `Contributing to RestrictedPython`_
+
+  * `Legal requirements to contribute to RestrictedPython`_
+  * `Preperations for Contributing`_
+  * `Preperations for a new Python version`_
+  * `Enable a Python Feature in RestrictedPython`_
+
+* `Understanding How RestrictedPython works internally`_
+* `Differences between different Python versions`_
+
+.. _Contributing to RestrictedPython::
 
 Contributing to RestrictedPython
 --------------------------------
+
+.. _Legal requirements to contribute to RestrictedPython::
 
 Legal requirements to contribute to RestrictedPython
 ++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -25,6 +37,8 @@ Please visit our `Developer Guidelines`_ if you'd like to contribute code change
 
 .. _`Developer Guidelines`: https://www.zope.dev/developer/guidelines.html
 .. _`guidelines for reporting bugs`: https://www.zope.dev/developer/reporting-bugs.html
+
+.. _Preperations for Contributing::
 
 Preperations for Contributing
 +++++++++++++++++++++++++++++
@@ -80,6 +94,7 @@ Run the test via ``tox``.
 
 Create a Pull Request.
 
+.. _Enable a Python Feature in RestrictedPython::
 
 Enable a Python Feature in RestrictedPython
 +++++++++++++++++++++++++++++++++++++++++++
@@ -180,6 +195,8 @@ Technical Backgrounds - Links to External Documentation
 * `In detail Documentation on the Python AST module (Green Tree Snakes)`_
 * `Example how to Instrumenting the Python AST`_
 * `Status of Python Versions`_
+
+.. _Differences between different Python versions::
 
 Differences between different Python versions
 ---------------------------------------------
