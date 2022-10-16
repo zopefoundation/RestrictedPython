@@ -29,7 +29,13 @@ Preperations for Contributing
 +++++++++++++++++++++++++++++
 
 If you want to contribute to this package, please prapare an development entvironment, that includes ``git``, ``tox`` and a posibility to have several Python Versions avaliable, for example ``pyenv``.
-Please read the part of `ref`Understanding How RestrictedPython works internally` first.
+Please read the part of `Understanding How RestrictedPython works internally`_ first.
+
+For all commits, please run the tests locally (with ``tox``) before pushing the the central repository.
+
+.. code-block:: console
+
+    tox
 
 Preperations for a new Python Version
 +++++++++++++++++++++++++++++++++++++
@@ -47,9 +53,9 @@ If the new AST Node should be disabled by default, please add a ``visit_<AST Nod
         """`<AST Node>` expression currently not allowed."""
         self.not_allowed(node)
 
-Please note, that for all AST Nodes that has no explicite ``visit_<AST Node>`` methode a default applies, that denies the usage of this expression / functionality.
+Please note, that for all AST Nodes that has no explicite ``visit_<AST Node>`` method a default applies, that denies the usage of this expression / functionality.
 
-If the new AST Node should be enabled by default, with out any modification, please add a ``visit_<AST Node>``methode like:
+If the new AST Node should be enabled by default, with out any modification, please add a ``visit_<AST Node>`` method like:
 
 .. code-block:: python
 
@@ -57,15 +63,41 @@ If the new AST Node should be enabled by default, with out any modification, ple
         """Allow `<AST Node>` expressions."""
         return self.node_contents_visit(node)
 
+Add a corresponding changelog entry.
+
+Additionally modify ``.meta.toml`` and run the ``meta/config`` script to update the following files:
+
+* ``/setup.py`` <-- please check afterwards the *classifiers* list if it contains the new Python Version as a ``"Programming Language :: Python :: <Version>",`` element, and if ``python_requires`` is correctly updated.
+* ``/tox.ini`` <-- please check that a testenv entry is added to the general ``envlist`` statement
+* ``/.github/workflows/tests.yml`` <-- check if a corresponding python version entry is added to the matrix definition.
+
+Run the test via ``tox``.
+
+Create a Pull Request.
+
 
 Enable a Python Feature in RestrictedPython
 +++++++++++++++++++++++++++++++++++++++++++
+
+To enable a certain functionality in RestrictedPython, please follow the folloing steps:
+
+#. Add a feature request on GitHub
+#. Create a Pull-Request on Github
+  * In ``/src/RestrictedPython/transformer.py`` change the corresponding ``visit_<AST Node>`` method
+  * In ``/tests/`` add / change the corresponding tests for this functionality
+  * Add a changelog entry
+  * request a review by a core maintainer, e.g.:
+
+    * icemac
+    * loechel
 
 
 Todos
 -----
 
 .. todolist::
+
+.. _Understanding How RestrictedPython works internally:
 
 Understanding How RestrictedPython works internally
 ---------------------------------------------------
