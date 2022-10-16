@@ -38,7 +38,7 @@ For all commits, please run the tests locally (with ``tox``) before pushing the 
 
     tox
 
-Preperations for a new Python Version
+Preperations for a new Python version
 +++++++++++++++++++++++++++++++++++++
 
 RestrictedPython should be updated for each new Version of Python.
