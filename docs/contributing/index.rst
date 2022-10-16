@@ -34,10 +34,6 @@ Please read the part of `Understanding How RestrictedPython works internally`_ f
 
 For all commits, please run the tests locally (with ``tox``) before pushing the the central repository.
 
-.. code-block:: console
-
-    tox
-
 Preperations for a new Python version
 +++++++++++++++++++++++++++++++++++++
 
@@ -62,9 +58,9 @@ If the new AST Node should be disabled by default, add a ``visit_<AST Node>`` me
         """`<AST Node>` expression currently not allowed."""
         self.not_allowed(node)
 
-Please note, that for all AST Nodes that has no explicite ``visit_<AST Node>`` method a default applies, that denies the usage of this expression / functionality.
+Please note, that for all AST Nodes without an explicit ``visit_<AST Node>`` method, a default applies which denies the usage of this expression and functionality.
 
-If the new AST Node should be enabled by default, with out any modification, please add a ``visit_<AST Node>`` method like:
+If the new AST Node should be enabled by default, without any modification, please add a ``visit_<AST Node>`` method such as the following:
 
 .. code-block:: python
 
