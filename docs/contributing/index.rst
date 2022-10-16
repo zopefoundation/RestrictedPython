@@ -39,7 +39,23 @@ To do so, please read the Changelog (`What's new in Python`_) and copy and adjus
 
 For each new *AST Node* please add a ``visit_<AST Node>`` to ``/src/RestrictedPython/transformer.py`` and add tests to ``/tests/``.
 
+If the new AST Node should be disabled by default, please add a ``visit_<AST Node>`` methode like:
 
+.. code-block:: python
+
+    def visit_<AST Node>(self, node):
+        """`<AST Node>` expression currently not allowed."""
+        self.not_allowed(node)
+
+Please note, that for all AST Nodes that has no explicite ``visit_<AST Node>`` methode a default applies, that denies the usage of this expression / functionality.
+
+If the new AST Node should be enabled by default, with out any modification, please add a ``visit_<AST Node>``methode like:
+
+.. code-block:: python
+
+    def visit_<AST Node>(self, node):
+        """Allow `<AST Node>` expressions."""
+        return self.node_contents_visit(node)
 
 
 Enable a Python Feature in RestrictedPython
