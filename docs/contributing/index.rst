@@ -30,7 +30,7 @@ Preperations for Contributing
 +++++++++++++++++++++++++++++
 
 If you want to contribute to this package, please prepare a development environment that includes ``git``, ``tox``, and several Python versions available through a Python manager such as ``pyenv``.
-Please read the part of :ref:`understand` first.
+Please read the section :ref:`understand` first.
 
 For all commits, you must run the tests locally with ``tox`` before pushing to the central repository.
 
