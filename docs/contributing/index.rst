@@ -1,7 +1,50 @@
 Contributing
 ============
 
+.. toctree::
+
 Contributing to RestrictedPython
+--------------------------------
+
+Legal requirements to contribute to RestrictedPython
+++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+The projects under the zopefoundation GitHub organization, and therefore RestrictedPython, are open source and welcome contributions in different forms:
+
+* bug reports
+* code improvements and bug fixes
+* documentation improvements
+* pull request reviews
+
+For any changes in the repository besides trivial typo fixes you are required to sign the contributor agreement.
+See https://www.zope.dev/developer/becoming-a-committer.html for details.
+
+Please visit our `Developer Guidelines`_ if you'd like to contribute code changes and our `guidelines for reporting bugs`_ if you want to file a bug report.
+
+
+.. _`Developer Guidelines`: https://www.zope.dev/developer/guidelines.html
+.. _`guidelines for reporting bugs`: https://www.zope.dev/developer/reporting-bugs.html
+
+Preperations for Contributing
++++++++++++++++++++++++++++++
+
+If you want to contribute to this package, please prapare an development entvironment, that includes ``git``, ``tox`` and a posibility to have several Python Versions avaliable, for example ``pyenv``.
+Please read the part of `ref`Understanding How RestrictedPython works internally` first.
+
+Preperations for a new Python Version
++++++++++++++++++++++++++++++++++++++
+
+RestrictedPython should be updated for each new Version of Python.
+To do so, please read the Changelog (`What's new in Python`_) and copy and adjust the new AST Grammar (can be found under: `Python 3 AST`_) to ``/docs/contributing/ast/python<version>.ast`` and add a new ``changes_from<old_version>to<new_version>.rst to /docs/contributing`` and add those to ``index.rst``.
+
+For each new *AST Node* please add a ``visit_<AST Node>`` to ``/src/RestrictedPython/transformer.py`` and add tests to ``/tests/``.
+
+
+
+
+Enable a Python Feature in RestrictedPython
++++++++++++++++++++++++++++++++++++++++++++
+
 
 Todos
 -----
@@ -61,18 +104,21 @@ Technical Backgrounds - Links to External Documentation
 
   * AST Grammar of Python
 
-    * `Python 3.9 AST`_
-    * `Python 3.8 AST`_
-    * `Python 3.7 AST`_
-    * `Python 3.6 AST`_
-    * `Python 3.5 AST`_ (becoming obsolete)
-    * `Python 3.4 AST`_ (obsolete)
-    * `Python 3.3 AST`_ (obsolete)
-    * `Python 3.2 AST`_ (obsolete)
-    * `Python 3.1 AST`_ (obsolete)
-    * `Python 3.0 AST`_ (obsolete)
-    * `Python 2.7 AST`_
-    * `Python 2.6 AST`_ (obsolete)
+    * `Python 3.12 AST`_ (development branch - EOL 2028-10)
+    * `Python 3.11 AST`_ (in bugfix phase - EOL 2027-10)
+    * `Python 3.10 AST`_ (in bugfix phase - EOL 2026-10)
+    * `Python 3.9 AST`_ (in security phase - EOL 2025-10)
+    * `Python 3.8 AST`_ (in security phase - EOL 2024-10)
+    * `Python 3.7 AST`_ (in security phase - EOL 2023-06-27)
+    * `Python 3.6 AST`_ (obsolete - EOL 2021-12-23)
+    * `Python 3.5 AST`_ (obsolete - EOL 2020-09-30)
+    * `Python 3.4 AST`_ (obsolete - EOL 2019-03-18)
+    * `Python 3.3 AST`_ (obsolete - EOL 2017-09-29)
+    * `Python 3.2 AST`_ (obsolete - EOL 2016-02-20)
+    * `Python 3.1 AST`_ (obsolete - EOL 2012-04-09)
+    * `Python 3.0 AST`_ (obsolete - EOL 2009-06-27)
+    * `Python 2.7 AST`_ (obsolete - EOL 2020-01-01)
+    * `Python 2.6 AST`_ (obsolete - EOL 2013-10.29)
 
   * `AST NodeVistiors Class`_  (https://docs.python.org/3.9/library/ast.html#ast.NodeVisitor)
   * `AST NodeTransformer Class`_  (https://docs.python.org/3.9/library/ast.html#ast.NodeTransformer)
@@ -80,6 +126,7 @@ Technical Backgrounds - Links to External Documentation
 
 * `In detail Documentation on the Python AST module (Green Tree Snakes)`_
 * `Example how to Instrumenting the Python AST`_
+* `Status of Python Versions`_
 
 Differences between different Python versions
 ---------------------------------------------
@@ -101,8 +148,33 @@ A (modified style) Copy of all Abstract Grammar Definitions for the Python versi
    changes_from38to39
    changes_from39to310
    changes_from310to311
+   changes_from311to312
 
 .. Links
+
+.. _`What's new in Python`: https://docs.python.org/3/whatsnew/
+
+.. _`What's new in Python 3.12`: https://docs.python.org/3.11/whatsnew/3.12.html
+
+.. _`What's new in Python 3.11`: https://docs.python.org/3.11/whatsnew/3.11.html
+
+.. _`What's new in Python 3.10`: https://docs.python.org/3.10/whatsnew/3.10.html
+
+.. _`What's new in Python 3.9`: https://docs.python.org/3.9/whatsnew/3.9.html
+
+.. _`What's new in Python 3.8`: https://docs.python.org/3.8/whatsnew/3.8.html
+
+.. _`What's new in Python 3.7`: https://docs.python.org/3.7/whatsnew/3.7.html
+
+.. _`What's new in Python 3.6`: https://docs.python.org/3.6/whatsnew/3.6.html
+
+.. _`What's new in Python 3.5`: https://docs.python.org/3.5/whatsnew/3.5.html
+
+.. _`What's new in Python 3.4`: https://docs.python.org/3.4/whatsnew/3.4.html
+
+.. _`What's new in Python 2.7`: https://docs.python.org/2.7/whatsnew/2.7.html
+
+.. _`Status of Python Versions`: https://devguide.python.org/versions/
 
 .. _`Concept of Immutable Types and Python Example`: https://en.wikipedia.org/wiki/Immutable_object#Python
 
@@ -113,6 +185,10 @@ A (modified style) Copy of all Abstract Grammar Definitions for the Python versi
 .. _`EBNF`: https://en.wikipedia.org/wiki/Extended_Backus%E2%80%93Naur_form
 
 .. _`Chomsky 3`: https://en.wikipedia.org/wiki/Chomsky_hierarchy#Type-3_grammars
+
+.. _`Python 3 AST`: https://docs.python.org/3/library/ast.html#abstract-grammar
+
+.. _`Python 3.12 AST`: https://docs.python.org/3.12/library/ast.html#abstract-grammar
 
 .. _`Python 3.11 AST`: https://docs.python.org/3.11/library/ast.html#abstract-grammar
 
@@ -141,7 +217,6 @@ A (modified style) Copy of all Abstract Grammar Definitions for the Python versi
 .. _`Python 2.7 AST`: https://docs.python.org/2.7/library/ast.html#abstract-grammar
 
 .. _`Python 2.6 AST`: https://docs.python.org/2.6/library/ast.html#abstract-grammar
-
 
 .. _`AST NodeVistiors Class`: https://docs.python.org/3.5/library/ast.html#ast.NodeVisitor
 
