@@ -46,7 +46,7 @@ Preperations for Contributing
 If you want to contribute to this package, please prepare a development environment that includes ``git``, ``tox``, and several Python versions available through a Python manager such as ``pyenv``.
 Please read the part of `Understanding How RestrictedPython works internally`_ first.
 
-For all commits, please run the tests locally (with ``tox``) before pushing the the central repository.
+For all commits, you must run the tests locally with ``tox`` before pushing to the central repository.
 
 Preperations for a new Python version
 +++++++++++++++++++++++++++++++++++++
