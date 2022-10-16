@@ -9,7 +9,8 @@ Contributing to RestrictedPython
 Legal requirements to contribute to RestrictedPython
 ++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-The projects under the zopefoundation GitHub organization, and therefore RestrictedPython, are open source and welcome contributions in different forms:
+The projects under the zopefoundation GitHub organization, and therefore RestrictedPython, are open source.
+We welcome contributions in different forms:
 
 * bug reports
 * code improvements and bug fixes
