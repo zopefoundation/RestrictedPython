@@ -42,7 +42,12 @@ Preperations for a new Python version
 +++++++++++++++++++++++++++++++++++++
 
 RestrictedPython should be updated for each new version of Python.
-To do so, please read the Changelog (`What's new in Python`_) and copy and adjust the new AST Grammar (can be found under: `Python 3 AST`_) to ``/docs/contributing/ast/python<version>.ast`` and add a new ``changes_from<old_version>to<new_version>.rst to /docs/contributing`` and add those to ``index.rst``.
+To do so:
+
+-   Read the Changelog (`What's new in Python`_).
+-   Copy and adjust the new AST Grammar (found under: `Python 3 AST`_) to ``/docs/contributing/ast/python<version>.ast``.
+-   Add a new file ``changes_from<old_version>to<new_version>.rst`` in the directory ``/docs/contributing/``.
+-   Add those files to the ``toctree`` directive in ``index.rst``.
 
 For each new *AST Node* please add a ``visit_<AST Node>`` to ``/src/RestrictedPython/transformer.py`` and add tests to ``/tests/``.
 
