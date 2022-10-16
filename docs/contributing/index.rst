@@ -54,7 +54,7 @@ For each new *AST Node*:
  -   Add a ``visit_<AST Node>`` to ``/src/RestrictedPython/transformer.py``.
  -   Add tests to ``/tests/``.
 
-If the new AST Node should be disabled by default, please add a ``visit_<AST Node>`` methode like:
+If the new AST Node should be disabled by default, add a ``visit_<AST Node>`` method such as the following:
 
 .. code-block:: python
 
