@@ -17,7 +17,7 @@ We welcome contributions in different forms:
 * documentation improvements
 * pull request reviews
 
-For any changes in the repository besides trivial typo fixes you are required to sign the contributor agreement.
+For any changes in the repository besides trivial typo fixes, you are required to sign the contributor agreement.
 See https://www.zope.dev/developer/becoming-a-committer.html for details.
 
 Please visit our `Developer Guidelines`_ if you'd like to contribute code changes and our `guidelines for reporting bugs`_ if you want to file a bug report.
