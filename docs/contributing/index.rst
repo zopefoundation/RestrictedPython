@@ -54,7 +54,7 @@ Preperations for a new Python version
 RestrictedPython should be updated for each new version of Python.
 To do so:
 
--   Read the Changelog (`What's new in Python`_).
+-   Read the changelog (`What's new in Python`_).
 -   Copy and adjust the new AST Grammar (found under: `Python 3 AST`_) to ``/docs/contributing/ast/python<version>.ast``.
 -   Add a new file ``changes_from<old_version>to<new_version>.rst`` in the directory ``/docs/contributing/``.
 -   Add those files to the ``toctree`` directive in ``index.rst``.
@@ -86,27 +86,27 @@ Add a corresponding changelog entry.
 
 Additionally modify ``.meta.toml`` and run the ``meta/config`` script to update the following files:
 
-* ``/setup.py`` <-- please check afterwards the *classifiers* list if it contains the new Python Version as a ``"Programming Language :: Python :: <Version>",`` element, and if ``python_requires`` is correctly updated.
-* ``/tox.ini`` <-- please check that a testenv entry is added to the general ``envlist`` statement
-* ``/.github/workflows/tests.yml`` <-- check if a corresponding python version entry is added to the matrix definition.
+* ``/setup.py`` - Check that the new Python version classifier has been added ``"Programming Language :: Python :: <version>",``, and that the ``python_requires`` section has been updated correctly.
+* ``/tox.ini`` - Check that a ``testenv`` entry is added to the general ``envlist`` statement.
+* ``/.github/workflows/tests.yml`` - Check that a corresponding Python version entry has been added to the matrix definition.
 
-Run the test via ``tox``.
+Run the tests via ``tox``.
 
-Create a Pull Request.
+Create a pull request.
 
 .. _Enable a Python Feature in RestrictedPython::
 
 Enable a Python Feature in RestrictedPython
 +++++++++++++++++++++++++++++++++++++++++++
 
-To enable a certain functionality in RestrictedPython, please follow the folloing steps:
+To enable a certain functionality in RestrictedPython, do the following:
 
-#. Add a feature request on GitHub
+#. Add a feature request on GitHub.
 #. Create a pull request on GitHub.
-  * In ``/src/RestrictedPython/transformer.py`` change the corresponding ``visit_<AST Node>`` method
-  * In ``/tests/`` add / change the corresponding tests for this functionality
-  * Add a changelog entry
-  * request a review by a core maintainer, e.g.:
+  * In ``/src/RestrictedPython/transformer.py``, change the corresponding ``visit_<AST Node>`` method.
+  * In ``/tests/``, add or change the corresponding tests for this functionality.
+  * Add a changelog entry.
+  * Request a review by a core maintainer, e.g.:
 
     * icemac
     * loechel
