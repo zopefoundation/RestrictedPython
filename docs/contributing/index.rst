@@ -29,7 +29,7 @@ Please visit our `Developer Guidelines`_ if you'd like to contribute code change
 Preperations for Contributing
 +++++++++++++++++++++++++++++
 
-If you want to contribute to this package, please prapare an development entvironment, that includes ``git``, ``tox`` and a posibility to have several Python Versions avaliable, for example ``pyenv``.
+If you want to contribute to this package, please prepare a development environment that includes ``git``, ``tox``, and several Python versions available through a Python manager such as ``pyenv``.
 Please read the part of `Understanding How RestrictedPython works internally`_ first.
 
 For all commits, please run the tests locally (with ``tox``) before pushing the the central repository.
