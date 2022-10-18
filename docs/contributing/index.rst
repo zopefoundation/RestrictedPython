@@ -45,8 +45,7 @@ To do so:
 
   * Copy and adjust the new AST Grammar (found under: `Python 3 AST`_) to ``/docs/contributing/ast/python<version>.ast``.
   * Add a new file ``changes_from<old_version>to<new_version>.rst`` in the directory ``/docs/contributing/``.
-    Maybe add an additional description of changes in that file.
-    Especially on security relevent elements.
+    If the changes are significant, especially if related to security, then add a description of the changes in that file.
 
   * Add those files to the ``toctree`` directive in ``index.rst``.
   * For each new **AST Node** or functionality:
@@ -74,7 +73,7 @@ To do so:
       As we try to be **as explicit as possible**, all language features should have a corresponding ``visit_<AST Node>``.
       That follows the Zen of Python:
 
-      .. code-block:: python
+      .. code-block:: pycon
           :emphasize-lines: 5
 
           >>> import this
@@ -106,7 +105,7 @@ To do so:
     * ``/setup.py`` - Check that the new Python version classifier has been added ``"Programming Language :: Python :: <version>",``, and that the ``python_requires`` section has been updated correctly.
     * ``/tox.ini`` - Check that a ``testenv`` entry is added to the general ``envlist`` statement.
     * ``/.github/workflows/tests.yml`` - Check that a corresponding Python version entry has been added to the matrix definition.
-    * ``/docs/conf.py`` - Add Python version to ``intersphinx_mapping`` list
+    * ``/docs/conf.py`` - Add the Python version to the ``intersphinx_mapping`` list.
 
   * Run the tests via ``tox`` locally before push.
 
@@ -115,7 +114,7 @@ Enable a Python Feature in RestrictedPython
 
 To enable a certain functionality in RestrictedPython, do the following:
 
-#. Add a feature request on GitHub to discuss.
+#. [Create a new issue on GitHub](https://github.com/zopefoundation/RestrictedPython/issues/new/choose), requesting the new feature, for discussion.
 #. Create a pull request on GitHub.
 
   * In ``/src/RestrictedPython/transformer.py``, change the corresponding ``visit_<AST Node>`` method.
