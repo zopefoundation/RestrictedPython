@@ -101,7 +101,7 @@ To do so:
           Namespaces are one honking great idea -- let's do more of those!
 
   * Add a corresponding changelog entry.
-  * Additionally modify ``.meta.toml`` and run the ``meta/config`` script to update the following files:
+  * Additionally modify ``.meta.toml`` and run the ``meta/config`` script (for details see: https://github.com/mgedmin/check-python-versions) to update the following files:
 
     * ``/setup.py`` - Check that the new Python version classifier has been added ``"Programming Language :: Python :: <version>",``, and that the ``python_requires`` section has been updated correctly.
     * ``/tox.ini`` - Check that a ``testenv`` entry is added to the general ``envlist`` statement.
