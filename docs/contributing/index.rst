@@ -207,7 +207,7 @@ A (modified style) Copy of all Abstract Grammar Definitions for the Python versi
 
 .. _`What's new in Python`: https://docs.python.org/3/whatsnew/
 
-.. _`What's new in Python 3.12`: https://docs.python.org/3.11/whatsnew/3.12.html
+.. _`What's new in Python 3.12`: https://docs.python.org/3.12/whatsnew/3.12.html
 
 .. _`What's new in Python 3.11`: https://docs.python.org/3.11/whatsnew/3.11.html
 
