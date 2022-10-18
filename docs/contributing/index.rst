@@ -40,8 +40,8 @@ Preperations for a new Python version
 RestrictedPython should be updated for each new version of Python.
 To do so:
 
-* Read the changelog (`What's new in Python`_).
-* Create a pull request containing:
+* Read the changelog (`What's new in Python`_) and review modification in the AST Grammar (`Python 3 AST`_).
+* Implement necessary changes:
 
   * Copy and adjust the new AST Grammar (found under: `Python 3 AST`_) to ``/docs/contributing/ast/python<version>.ast``.
   * Add a new file ``changes_from<old_version>to<new_version>.rst`` in the directory ``/docs/contributing/``.
@@ -108,6 +108,8 @@ To do so:
     * ``/docs/conf.py`` - Add the Python version to the ``intersphinx_mapping`` list.
 
   * Run the tests via ``tox`` locally before push.
+
+* Create a pull request containing:
 
 Enable a Python Feature in RestrictedPython
 +++++++++++++++++++++++++++++++++++++++++++
