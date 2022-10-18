@@ -107,21 +107,22 @@ To do so:
     * ``/.github/workflows/tests.yml`` - Check that a corresponding Python version entry has been added to the matrix definition.
     * ``/docs/conf.py`` - Add the Python version to the ``intersphinx_mapping`` list.
 
-  * Run the tests via ``tox`` locally before push.
+  * Run the tests, linting and docs generation via ``tox`` locally before push.
 
-* Create a pull request containing:
+* Create a pull request.
 
 Enable a Python Feature in RestrictedPython
 +++++++++++++++++++++++++++++++++++++++++++
 
 To enable a certain functionality in RestrictedPython, do the following:
 
-#. [Create a new issue on GitHub](https://github.com/zopefoundation/RestrictedPython/issues/new/choose), requesting the new feature, for discussion.
+#. `Create a new issue on GitHub <https://github.com/zopefoundation/RestrictedPython/issues/new/choose>`__, requesting the new feature, for discussion.
 #. Create a pull request on GitHub.
 
   * In ``/src/RestrictedPython/transformer.py``, change the corresponding ``visit_<AST Node>`` method.
   * In ``/tests/``, add or change the corresponding tests for this functionality.
   * Add a changelog entry.
+  * Run the tests, linting and docs generation via ``tox`` locally before push.
   * Request a review by a core maintainer, e.g.:
 
     * icemac
