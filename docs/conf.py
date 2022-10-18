@@ -63,7 +63,7 @@ release = '5.0'
 # for a list of supported languages.
 #
 # This is also used if you do content translation via gettext catalogs.
-# Usually you set 'language' from the command line for these cases.
+# Usually you set "language" from the command line for these cases.
 language = 'en'
 
 # There are two options for replacing |today|: either, you set today to some
@@ -98,7 +98,7 @@ pygments_style = 'sphinx'
 # A list of ignored prefixes for module index sorting.
 # modindex_common_prefix = []
 
-# If true, keep warnings as 'system message' paragraphs in the built documents.
+# If true, keep warnings as "system message" paragraphs in the built documents.
 # keep_warnings = False
 
 # If true, `todo` and `todoList` produce output, else they produce nothing.
@@ -113,6 +113,10 @@ intersphinx_mapping = {
     'python36': ('https://docs.python.org/3.6', None),
     'python37': ('https://docs.python.org/3.7', None),
     'python38': ('https://docs.python.org/3.8', None),
+    'python39': ('https://docs.python.org/3.9', None),
+    'python310': ('https://docs.python.org/3.10', None),
+    'python311': ('https://docs.python.org/3.11', None),
+    'python312': ('https://docs.python.org/3.12', None),
 }
 
 # Options for sphinx.ext.todo:
@@ -134,7 +138,7 @@ html_theme = 'sphinx_rtd_theme'
 # html_theme_path = []
 
 # The name for this set of Sphinx documents.
-# '<project> v<release> documentation' by default.
+# "<project> v<release> documentation" by default.
 # html_title = u'RestrictedPython v4.0.0.a1'
 
 # A shorter title for the navigation bar.  Default is the same as html_title.
@@ -151,7 +155,7 @@ html_theme = 'sphinx_rtd_theme'
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
-# so a file named 'default.css' will overwrite the builtin 'default.css'.
+# so a file named "default.css" will overwrite the builtin 'default.css'.
 # html_static_path = ['_static']
 
 # Add any extra paths that contain custom files (such as robots.txt or
@@ -187,10 +191,10 @@ html_theme = 'sphinx_rtd_theme'
 # If true, links to the reST sources are added to the pages.
 # html_show_sourcelink = True
 
-# If true, 'Created using Sphinx' is shown in the HTML footer. Default is True.
+# If true, "Created using Sphinx" is shown in the HTML footer. Default is True.
 # html_show_sphinx = True
 
-# If true, '(C) Copyright ...' is shown in the HTML footer. Default is True.
+# If true, "(C) Copyright ..." is shown in the HTML footer. Default is True.
 # html_show_copyright = True
 
 # If true, an OpenSearch description file will be output, and all pages will
@@ -198,7 +202,7 @@ html_theme = 'sphinx_rtd_theme'
 # base URL from which the finished HTML is served.
 # html_use_opensearch = ''
 
-# This is the file name suffix for HTML files (e.g. '.xhtml').
+# This is the file name suffix for HTML files (e.g. ".xhtml").
 # html_file_suffix = None
 
 # Language to be used for generating the HTML full-text search index.
@@ -224,10 +228,13 @@ htmlhelp_basename = 'RestrictedPythondoc'
 latex_elements = {
     # The paper size ('letterpaper' or 'a4paper').
     # 'papersize': 'letterpaper',
+
     # The font size ('10pt', '11pt' or '12pt').
     # 'pointsize': '10pt',
+
     # Additional stuff for the LaTeX preamble.
     # 'preamble': '',
+
     # Latex figure (float) alignment
     # 'figure_align': 'htbp',
 }
@@ -240,7 +247,7 @@ latex_documents = [
         master_doc,
         'RestrictedPython.tex',
         'RestrictedPython Documentation',
-        'Alexander Loechel',
+        author,
         'manual',
     ),
 ]
@@ -304,5 +311,5 @@ texinfo_documents = [
 # How to display URL addresses: 'footnote', 'no', or 'inline'.
 # texinfo_show_urls = 'footnote'
 
-# If true, do not generate a @detailmenu in the 'Top' node's menu.
+# If true, do not generate a @detailmenu in the "Top" node's menu.
 # texinfo_no_detailmenu = False
