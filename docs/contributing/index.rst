@@ -71,7 +71,7 @@ To do so:
               self.not_allowed(node)
 
       Please note, that for all AST Nodes without an explicit ``visit_<AST Node>`` method, a default applies which denies the usage of this expression and functionality.
-      As we try to be **as explizit as possible**, all language features should have a corresponding ``visit_<AST Node>``.
+      As we try to be **as explicit as possible**, all language features should have a corresponding ``visit_<AST Node>``.
       That follows the Zen of Python:
 
       .. code-block:: python
