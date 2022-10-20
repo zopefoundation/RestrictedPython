@@ -122,7 +122,7 @@ To enable a certain functionality in RestrictedPython, do the following:
   * In ``/src/RestrictedPython/transformer.py``, change the corresponding ``visit_<AST Node>`` method.
   * In ``/tests/``, add or change the corresponding tests for this functionality.
   * Add a changelog entry.
-  * Run the tests, linting and docs generation via ``tox`` locally before push.
+* On your local environment, use ``tox`` to run tests and lint, and build the docs, before pushing your commit to the remote repository. 
   * Request a review by a core maintainer, e.g.:
 
     * icemac
