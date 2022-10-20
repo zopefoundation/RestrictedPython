@@ -40,75 +40,71 @@ Preperations for a new Python version
 RestrictedPython should be updated for each new version of Python.
 To do so:
 
-* Read the changelog (`What's new in Python`_) and review modification in the AST Grammar (`Python 3 AST`_).
-* Implement necessary changes:
+* Read the changelog (`What's new in Python`_).
+* Copy and adjust the new AST Grammar (found under: `Python 3 AST`_) to ``/docs/contributing/ast/python<version>.ast``.
+* Add a new file ``changes_from<old_version>to<new_version>.rst`` in the directory ``/docs/contributing/``.
+  If the changes are significant, especially if related to security, then add a description of the changes in that file.
+* Add those files to the ``toctree`` directive in ``index.rst``.
+* For each new **AST Node** or functionality:
 
-  * Copy and adjust the new AST Grammar (found under: `Python 3 AST`_) to ``/docs/contributing/ast/python<version>.ast``.
-  * Add a new file ``changes_from<old_version>to<new_version>.rst`` in the directory ``/docs/contributing/``.
-    If the changes are significant, especially if related to security, then add a description of the changes in that file.
+  * Add tests to ``/tests/``.
+  * Add a ``visit_<AST Node>`` to ``/src/RestrictedPython/transformer.py``.
 
-  * Add those files to the ``toctree`` directive in ``index.rst``.
-  * For each new **AST Node** or functionality:
+    If the new AST Node should be enabled by default, without any modification, please add a ``visit_<AST Node>`` method such as the following:
 
-    * Add tests to ``/tests/``.
-    * Add a ``visit_<AST Node>`` to ``/src/RestrictedPython/transformer.py``.
+    .. code-block:: python
 
-      If the new AST Node should be enabled by default, without any modification, please add a ``visit_<AST Node>`` method such as the following:
+        def visit_<AST Node>(self, node):
+            """Allow `<AST Node>` expressions."""
+            return self.node_contents_visit(node)
 
-      .. code-block:: python
+    If the new AST Node should be disabled by default, add a ``visit_<AST Node>`` method such as the following:
 
-          def visit_<AST Node>(self, node):
-              """Allow `<AST Node>` expressions."""
-              return self.node_contents_visit(node)
+    .. code-block:: python
 
-      If the new AST Node should be disabled by default, add a ``visit_<AST Node>`` method such as the following:
+        def visit_<AST Node>(self, node):
+            """`<AST Node>` expression currently not allowed."""
+            self.not_allowed(node)
 
-      .. code-block:: python
+    Please note, that for all AST Nodes without an explicit ``visit_<AST Node>`` method, a default applies which denies the usage of this expression and functionality.
+    As we try to be **as explicit as possible**, all language features should have a corresponding ``visit_<AST Node>``.
+    That follows the Zen of Python:
 
-          def visit_<AST Node>(self, node):
-              """`<AST Node>` expression currently not allowed."""
-              self.not_allowed(node)
+    .. code-block:: pycon
+        :emphasize-lines: 5
 
-      Please note, that for all AST Nodes without an explicit ``visit_<AST Node>`` method, a default applies which denies the usage of this expression and functionality.
-      As we try to be **as explicit as possible**, all language features should have a corresponding ``visit_<AST Node>``.
-      That follows the Zen of Python:
+        >>> import this
+        The Zen of Python, by Tim Peters
 
-      .. code-block:: pycon
-          :emphasize-lines: 5
+        Beautiful is better than ugly.
+        Explicit is better than implicit.
+        Simple is better than complex.
+        Complex is better than complicated.
+        Flat is better than nested.
+        Sparse is better than dense.
+        Readability counts.
+        Special cases aren't special enough to break the rules.
+        Although practicality beats purity.
+        Errors should never pass silently.
+        Unless explicitly silenced.
+        In the face of ambiguity, refuse the temptation to guess.
+        There should be one-- and preferably only one --obvious way to do it.
+        Although that way may not be obvious at first unless you're Dutch.
+        Now is better than never.
+        Although never is often better than *right* now.
+        If the implementation is hard to explain, it's a bad idea.
+        If the implementation is easy to explain, it may be a good idea.
+        Namespaces are one honking great idea -- let's do more of those!
 
-          >>> import this
-          The Zen of Python, by Tim Peters
+* Add a corresponding changelog entry.
+* Additionally modify ``.meta.toml`` and run the ``meta/config`` script (for details see: https://github.com/mgedmin/check-python-versions) to update the following files:
 
-          Beautiful is better than ugly.
-          Explicit is better than implicit.
-          Simple is better than complex.
-          Complex is better than complicated.
-          Flat is better than nested.
-          Sparse is better than dense.
-          Readability counts.
-          Special cases aren't special enough to break the rules.
-          Although practicality beats purity.
-          Errors should never pass silently.
-          Unless explicitly silenced.
-          In the face of ambiguity, refuse the temptation to guess.
-          There should be one-- and preferably only one --obvious way to do it.
-          Although that way may not be obvious at first unless you're Dutch.
-          Now is better than never.
-          Although never is often better than *right* now.
-          If the implementation is hard to explain, it's a bad idea.
-          If the implementation is easy to explain, it may be a good idea.
-          Namespaces are one honking great idea -- let's do more of those!
+  * ``/setup.py`` - Check that the new Python version classifier has been added ``"Programming Language :: Python :: <version>",``, and that the ``python_requires`` section has been updated correctly.
+  * ``/tox.ini`` - Check that a ``testenv`` entry is added to the general ``envlist`` statement.
+  * ``/.github/workflows/tests.yml`` - Check that a corresponding Python version entry has been added to the matrix definition.
+  * ``/docs/conf.py`` - Add the Python version to the ``intersphinx_mapping`` list.
 
-  * Add a corresponding changelog entry.
-  * Additionally modify ``.meta.toml`` and run the ``meta/config`` script (for details see: https://github.com/mgedmin/check-python-versions) to update the following files:
-
-    * ``/setup.py`` - Check that the new Python version classifier has been added ``"Programming Language :: Python :: <version>",``, and that the ``python_requires`` section has been updated correctly.
-    * ``/tox.ini`` - Check that a ``testenv`` entry is added to the general ``envlist`` statement.
-    * ``/.github/workflows/tests.yml`` - Check that a corresponding Python version entry has been added to the matrix definition.
-    * ``/docs/conf.py`` - Add the Python version to the ``intersphinx_mapping`` list.
-
-  * On your local environment, use ``tox`` to run tests and lint, and build the docs, before pushing your commit to the remote repository.
-
+* On your local environment, use ``tox`` to run tests and lint, and build the docs, before pushing your commit to the remote repository.
 * Create a pull request.
 
 Enable a Python Feature in RestrictedPython
@@ -116,17 +112,15 @@ Enable a Python Feature in RestrictedPython
 
 To enable a certain functionality in RestrictedPython, do the following:
 
-#. `Create a new issue on GitHub <https://github.com/zopefoundation/RestrictedPython/issues/new/choose>`__, requesting the new feature, for discussion.
-#. Create a pull request on GitHub.
+* `Create a new issue on GitHub <https://github.com/zopefoundation/RestrictedPython/issues/new/choose>`__, requesting the new feature, for discussion.
+* In ``/src/RestrictedPython/transformer.py``, change the corresponding ``visit_<AST Node>`` method.
+* In ``/tests/``, add or change the corresponding tests for this functionality.
+* Add a changelog entry.
+* On your local environment, use ``tox`` to run tests and lint, and build the docs, before pushing your commit to the remote repository.
+* Create a pull request and request a review by a core maintainer, e.g.:
 
-  * In ``/src/RestrictedPython/transformer.py``, change the corresponding ``visit_<AST Node>`` method.
-  * In ``/tests/``, add or change the corresponding tests for this functionality.
-  * Add a changelog entry.
-* On your local environment, use ``tox`` to run tests and lint, and build the docs, before pushing your commit to the remote repository. 
-  * Request a review by a core maintainer, e.g.:
-
-    * icemac
-    * loechel
+  * icemac
+  * loechel
 
 
 Todos
