@@ -107,7 +107,7 @@ To do so:
     * ``/.github/workflows/tests.yml`` - Check that a corresponding Python version entry has been added to the matrix definition.
     * ``/docs/conf.py`` - Add the Python version to the ``intersphinx_mapping`` list.
 
-  * Run the tests, linting and docs generation via ``tox`` locally before push.
+  * On your local environment, use ``tox`` to run tests and lint, and build the docs, before pushing your commit to the remote repository.
 
 * Create a pull request.
 
