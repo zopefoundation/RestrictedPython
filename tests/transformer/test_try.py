@@ -68,7 +68,7 @@ def try_except_star(m):
     not IS_PY311_OR_GREATER,
     reason="ExceptionGroup class was added in Python 3.11.",
 )
-def test_RestrictingNodeTransformer__visit_Try__3(mocker):
+def test_RestrictingNodeTransformer__visit_TryStar__1(mocker):
     """It allows try-except* PEP 654 statements."""
     trace = mocker.stub()
     restricted_exec(TRY_EXCEPT_STAR)['try_except_star'](trace)
