@@ -78,3 +78,8 @@ This example directly executed in Python could harm your system.
     >>> exec(byte_code, safe_globals, {})
     Traceback (most recent call last):
     ImportError: __import__ not found
+
+Contributing to RestrictedPython
+--------------------------------
+
+If you want to help maintain RestrictedPython and contribute, please refere to `Contributing <https://restrictedpython.readthedocs.io/en/latest/contributing/index.html>`.

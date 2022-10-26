@@ -48,7 +48,7 @@ master_doc = 'index'
 # General information about the project.
 project = 'RestrictedPython'
 copyright = '2017-2022, Zope Foundation and Contributors'
-author = 'The Zope developer community'
+author = 'The Zope & Plone developer community'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -64,7 +64,7 @@ release = '5.0'
 #
 # This is also used if you do content translation via gettext catalogs.
 # Usually you set "language" from the command line for these cases.
-language = None
+language = 'en'
 
 # There are two options for replacing |today|: either, you set today to some
 # non-false value, then it is used:
@@ -113,6 +113,10 @@ intersphinx_mapping = {
     'python36': ('https://docs.python.org/3.6', None),
     'python37': ('https://docs.python.org/3.7', None),
     'python38': ('https://docs.python.org/3.8', None),
+    'python39': ('https://docs.python.org/3.9', None),
+    'python310': ('https://docs.python.org/3.10', None),
+    'python311': ('https://docs.python.org/3.11', None),
+    'python312': ('https://docs.python.org/3.12', None),
 }
 
 # Options for sphinx.ext.todo:
@@ -239,8 +243,13 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'RestrictedPython.tex', 'RestrictedPython Documentation',
-     'Alexander Loechel', 'manual'),
+    (
+        master_doc,
+        'RestrictedPython.tex',
+        'RestrictedPython Documentation',
+        author,
+        'manual',
+    ),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -269,8 +278,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'restrictedpython', 'RestrictedPython Documentation',
-     [author], 1)
+    (master_doc, 'restrictedpython', 'RestrictedPython Documentation', [author], 1)
 ]
 
 # If true, show URL addresses after external links.
@@ -283,9 +291,15 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'RestrictedPython', 'RestrictedPython Documentation',
-     author, 'RestrictedPython', 'One line description of project.',
-     'Miscellaneous'),
+    (
+        master_doc,
+        'RestrictedPython',
+        'RestrictedPython Documentation',
+        author,
+        'RestrictedPython',
+        'One line description of project.',
+        'Miscellaneous',
+    ),
 ]
 
 # Documents to append as an appendix to all manuals.
