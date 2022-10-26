@@ -10,11 +10,11 @@ module Python version "3.10"
         | FunctionType(expr* argtypes, expr returns)
 
     stmt = FunctionDef(identifier name,
-                     arguments args,
-                     stmt* body,
-                     expr* decorator_list,
-                     expr? returns,
-                     string? type_comment)
+                       arguments args,
+                       stmt* body,
+                       expr* decorator_list,
+                       expr? returns,
+                       string? type_comment)
          | AsyncFunctionDef(identifier name,
                             arguments args,
                             stmt* body,
