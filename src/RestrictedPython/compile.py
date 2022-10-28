@@ -8,13 +8,15 @@ from RestrictedPython.transformer import RestrictingNodeTransformer
 
 CompileResult = namedtuple(
     'CompileResult', 'code, errors, warnings, used_names')
-syntax_error_template = (
-    'Line {lineno}: {type}: {msg} at statement: {statement!r}')
 
 NOT_CPYTHON_WARNING = (
     'RestrictedPython is only supported on CPython: use on other Python '
     'implementations may create security issues.'
 )
+
+
+def gen_syntax_error(lineno, type, msg, statement):
+    return f"Line {lineno}: {type}: {msg} at statement: {statement!r}"
 
 
 def _compile_restricted_mode(
@@ -41,8 +43,9 @@ def _compile_restricted_mode(
         c_ast = None
         allowed_source_types = [str, ast.Module]
         if not issubclass(type(source), tuple(allowed_source_types)):
-            raise TypeError('Not allowed source type: '
-                            '"{0.__class__.__name__}".'.format(source))
+            raise TypeError(
+                f'Not allowed source type: "{source.__class__.__name__}"'
+            )
         c_ast = None
         # workaround for pypy issue https://bitbucket.org/pypy/pypy/issues/2552
         if isinstance(source, ast.Module):
@@ -53,12 +56,15 @@ def _compile_restricted_mode(
             except (TypeError, ValueError) as e:
                 collected_errors.append(str(e))
             except SyntaxError as v:
-                collected_errors.append(syntax_error_template.format(
-                    lineno=v.lineno,
-                    type=v.__class__.__name__,
-                    msg=v.msg,
-                    statement=v.text.strip() if v.text else None
-                ))
+                statement = v.text.strip() if v.text else None
+                collected_errors.append(
+                    gen_syntax_error(
+                        lineno=v.lineno,
+                        type=v.__class__.__name__,
+                        msg=v.msg,
+                        statement=statement,
+                    )
+                )
         if c_ast:
             policy_instance = policy(
                 collected_errors, collected_warnings, used_names)
@@ -143,11 +149,13 @@ def compile_restricted_function(
     try:
         body_ast = ast.parse(body, '<func code>', 'exec')
     except SyntaxError as v:
-        error = syntax_error_template.format(
+        statement = v.text.strip() if v.text else None
+        error = gen_syntax_error(
             lineno=v.lineno,
             type=v.__class__.__name__,
             msg=v.msg,
-            statement=v.text.strip() if v.text else None)
+            statement=statement,
+        )
         return CompileResult(
             code=None, errors=(error,), warnings=(), used_names=())
 
