@@ -17,6 +17,8 @@ Features
 
 - Fix code to run on Python 3.11.0rc2.
 
+- Add test for trystar syntax.
+
 
 5.2 (2021-11-19)
 ----------------
