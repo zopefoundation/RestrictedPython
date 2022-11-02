@@ -1,4 +1,7 @@
+import pytest
+
 from RestrictedPython import compile_restricted_exec
+from RestrictedPython._compat import IS_PY311_OR_GREATER
 from tests.helper import restricted_exec
 
 
@@ -45,6 +48,39 @@ def test_RestrictingNodeTransformer__visit_Try__2(
         mocker.call('try'),
         mocker.call('else')
     ])
+
+
+TRY_EXCEPT_STAR = """
+def try_except_star(m):
+    try:
+        m('try')
+        raise ExceptionGroup("group", [IndentationError('f1'), ValueError(65)])
+    except* IndentationError:
+        m('IndentationError')
+    except* ValueError:
+        m('ValueError')
+    except* RuntimeError:
+        m('RuntimeError')
+"""
+
+
+@pytest.mark.skipif(
+    not IS_PY311_OR_GREATER,
+    reason="ExceptionGroup class was added in Python 3.11.",
+)
+def test_RestrictingNodeTransformer__visit_TryStar__1(mocker):
+    """It allows try-except* PEP 654 statements."""
+    trace = mocker.stub()
+    restricted_exec(TRY_EXCEPT_STAR)['try_except_star'](trace)
+
+    trace.assert_has_calls([
+        mocker.call('try'),
+        mocker.call('IndentationError'),
+        mocker.call('ValueError')
+    ])
+
+    with pytest.raises(AssertionError):
+        trace.assert_has_calls([mocker.call('RuntimeError')])
 
 
 TRY_FINALLY = """

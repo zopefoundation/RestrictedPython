@@ -1127,6 +1127,10 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         """Allow `try` without restrictions."""
         return self.node_contents_visit(node)
 
+    def visit_TryStar(self, node):
+        """Allow `ExceptionGroup` without restrictions."""
+        return self.node_contents_visit(node)
+
     def visit_ExceptHandler(self, node):
         """Protect exception handlers."""
         node = self.node_contents_visit(node)
