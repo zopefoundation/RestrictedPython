@@ -12,12 +12,7 @@ Backwards incompatible changes
 Features
 ++++++++
 
-- Allow to use the package with Python 3.11 -- Caution: No security audit has
-  been done so far.
-
-- Fix code to run on Python 3.11.0rc2.
-
-- Add test for trystar syntax.
+- Officially support Python 3.11.
 
 
 5.2 (2021-11-19)
