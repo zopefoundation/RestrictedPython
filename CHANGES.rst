@@ -14,6 +14,8 @@ Features
 
 - Officially support Python 3.11.
 
+- Add test for trystar syntax.
+
 
 5.2 (2021-11-19)
 ----------------
