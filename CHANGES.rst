@@ -14,7 +14,8 @@ Features
 
 - Officially support Python 3.11.
 
-- Add test for trystar syntax.
+- Allow to use the Python 3.11 feature of exception groups and except\*
+  (PEP 654).
 
 
 5.2 (2021-11-19)
