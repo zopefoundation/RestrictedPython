@@ -1,7 +1,7 @@
 Changes
 =======
 
-6.0 (unreleased)
+6.0 (2022-11-03)
 ----------------
 
 Backwards incompatible changes
