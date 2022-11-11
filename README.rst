@@ -82,4 +82,6 @@ This example directly executed in Python could harm your system.
 Contributing to RestrictedPython
 --------------------------------
 
-If you want to help maintain RestrictedPython and contribute, please refere to `Contributing <https://restrictedpython.readthedocs.io/en/latest/contributing/index.html>`.
+If you want to help maintain RestrictedPython and contribute, please refer to
+the documentation `Contributing page 
+<https://restrictedpython.readthedocs.io/en/latest/contributing/index.html>`_.
