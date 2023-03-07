@@ -1,10 +1,14 @@
 Changes
 =======
 
-6.1 (unreleased)
+7.0 (unreleased)
 ----------------
 
-- Nothing changed yet.
+Backwards incompatible changes
+++++++++++++++++++++++++++++++
+
+- Drop support for Python 3.6.
+
 
 
 6.0 (2022-11-03)

@@ -22,7 +22,6 @@ jobs:
         config:
         # [Python version, tox env]
         - ["3.9",   "lint"]
-        - ["3.6",   "py36"]
         - ["3.7",   "py37"]
         - ["3.8",   "py38"]
         - ["3.9",   "py39"]
