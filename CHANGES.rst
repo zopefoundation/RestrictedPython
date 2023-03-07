@@ -9,6 +9,11 @@ Backwards incompatible changes
 
 - Drop support for Python 3.6.
 
+Features
+++++++++
+
+- Allow to use the package with Python 3.12 -- Caution: No security audit has
+  been done so far.
 
 
 6.0 (2022-11-03)
