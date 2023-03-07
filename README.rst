@@ -1,5 +1,5 @@
-.. image:: https://api.travis-ci.com/zopefoundation/RestrictedPython.svg?branch=master
-    :target: https://travis-ci.com/zopefoundation/RestrictedPython
+.. image:: https://github.com/zopefoundation/RestrictedPython/actions/workflows/tests.yml/badge.svg
+    :target: https://github.com/zopefoundation/RestrictedPython/actions/workflows/tests.yml
 
 .. image:: https://coveralls.io/repos/github/zopefoundation/RestrictedPython/badge.svg?branch=master
     :target: https://coveralls.io/github/zopefoundation/RestrictedPython?branch=master
@@ -83,5 +83,5 @@ Contributing to RestrictedPython
 --------------------------------
 
 If you want to help maintain RestrictedPython and contribute, please refer to
-the documentation `Contributing page 
+the documentation `Contributing page
 <https://restrictedpython.readthedocs.io/en/latest/contributing/index.html>`_.
