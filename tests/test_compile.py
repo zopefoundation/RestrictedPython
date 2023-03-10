@@ -103,7 +103,13 @@ def test_compile__compile_restricted_exec__5():
     assert result.code is None
     assert result.warnings == []
     assert result.used_names == {}
-    assert 'source code string cannot contain null bytes' in result.errors
+    if IS_PY312_OR_GREATER:
+        assert result.errors == (
+            'Line None: SyntaxError: source code string cannot contain null'
+            ' bytes at statement: None',)
+    else:
+        assert result.errors == (
+            'source code string cannot contain null bytes',)
 
 
 EXEC_STATEMENT = """\
