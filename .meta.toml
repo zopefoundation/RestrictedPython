@@ -9,7 +9,7 @@ with-pypy = false
 with-docs = true
 with-sphinx-doctests = true
 with-windows = true
-with-future-python = false
+with-future-python = true
 with-macos = false
 
 [tox]
@@ -28,7 +28,6 @@ testenv-setenv = [
     ]
 testenv-commands = [
     "python -V",
-    "pip list",
     "pytest --cov=src --cov=tests --cov-report= {posargs}",
     ]
 testenv-additional = [
@@ -57,7 +56,7 @@ coverage-setenv = [
     ]
 
 [coverage]
-fail-under = 98.5
+fail-under = 98.4
 
 [isort]
 additional-sources = "{toxinidir}/tests"

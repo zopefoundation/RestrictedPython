@@ -10,6 +10,7 @@ from RestrictedPython import compile_restricted_exec
 from RestrictedPython import compile_restricted_single
 from RestrictedPython._compat import IS_PY38_OR_GREATER
 from RestrictedPython._compat import IS_PY310_OR_GREATER
+from RestrictedPython._compat import IS_PY312_OR_GREATER
 from tests.helper import restricted_eval
 
 
@@ -102,7 +103,13 @@ def test_compile__compile_restricted_exec__5():
     assert result.code is None
     assert result.warnings == []
     assert result.used_names == {}
-    assert result.errors == ('source code string cannot contain null bytes',)
+    if IS_PY312_OR_GREATER:
+        assert result.errors == (
+            'Line None: SyntaxError: source code string cannot contain null'
+            ' bytes at statement: None',)
+    else:
+        assert result.errors == (
+            'source code string cannot contain null bytes',)
 
 
 EXEC_STATEMENT = """\
