@@ -28,7 +28,6 @@ testenv-setenv = [
     ]
 testenv-commands = [
     "python -V",
-    "pip list",
     "pytest --cov=src --cov=tests --cov-report= {posargs}",
     ]
 testenv-additional = [
