@@ -98,13 +98,6 @@ A (modified style) Copy of all Abstract Grammar Definitions for the Python versi
 .. toctree::
    :maxdepth: 2
 
-   changes_from26to27
-   changes_from30to31
-   changes_from31to32
-   changes_from32to33
-   changes_from33to34
-   changes_from34to35
-   changes_from35to36
    changes_from36to37
    changes_from37to38
    changes_from38to39
@@ -249,15 +242,6 @@ Technical Backgrounds - Links to External Documentation
     * `Python 3.9 AST`_ (in security phase - EOL 2025-10)
     * `Python 3.8 AST`_ (in security phase - EOL 2024-10)
     * `Python 3.7 AST`_ (in security phase - EOL 2023-06-27)
-    * `Python 3.6 AST`_ (obsolete - EOL 2021-12-23)
-    * `Python 3.5 AST`_ (obsolete - EOL 2020-09-30)
-    * `Python 3.4 AST`_ (obsolete - EOL 2019-03-18)
-    * `Python 3.3 AST`_ (obsolete - EOL 2017-09-29)
-    * `Python 3.2 AST`_ (obsolete - EOL 2016-02-20)
-    * `Python 3.1 AST`_ (obsolete - EOL 2012-04-09)
-    * `Python 3.0 AST`_ (obsolete - EOL 2009-06-27)
-    * `Python 2.7 AST`_ (obsolete - EOL 2020-01-01)
-    * `Python 2.6 AST`_ (obsolete - EOL 2013-10.29)
 
   * `AST NodeVistiors Class`_
   * `AST NodeTransformer Class`_
@@ -287,14 +271,6 @@ Todos
 
 .. _`What's new in Python 3.7`: https://docs.python.org/3.7/whatsnew/3.7.html
 
-.. _`What's new in Python 3.6`: https://docs.python.org/3.6/whatsnew/3.6.html
-
-.. _`What's new in Python 3.5`: https://docs.python.org/3.5/whatsnew/3.5.html
-
-.. _`What's new in Python 3.4`: https://docs.python.org/3.4/whatsnew/3.4.html
-
-.. _`What's new in Python 2.7`: https://docs.python.org/2.7/whatsnew/2.7.html
-
 .. _`Status of Python Versions`: https://devguide.python.org/versions/
 
 .. _`Concept of Immutable Types and Python Example`: https://en.wikipedia.org/wiki/Immutable_object#Python
@@ -320,24 +296,6 @@ Todos
 .. _`Python 3.8 AST`: https://docs.python.org/3.8/library/ast.html#abstract-grammar
 
 .. _`Python 3.7 AST`: https://docs.python.org/3.7/library/ast.html#abstract-grammar
-
-.. _`Python 3.6 AST`: https://docs.python.org/3.6/library/ast.html#abstract-grammar
-
-.. _`Python 3.5 AST`: https://docs.python.org/3.5/library/ast.html#abstract-grammar
-
-.. _`Python 3.4 AST`: https://docs.python.org/3.4/library/ast.html#abstract-grammar
-
-.. _`Python 3.3 AST`: https://docs.python.org/3.3/library/ast.html#abstract-grammar
-
-.. _`Python 3.2 AST`: https://docs.python.org/3.2/library/ast.html#abstract-grammar
-
-.. _`Python 3.1 AST`: https://docs.python.org/3.1/library/ast.html#abstract-grammar
-
-.. _`Python 3.0 AST`: https://docs.python.org/3.0/library/ast.html#abstract-grammar
-
-.. _`Python 2.7 AST`: https://docs.python.org/2.7/library/ast.html#abstract-grammar
-
-.. _`Python 2.6 AST`: https://docs.python.org/2.6/library/ast.html#abstract-grammar
 
 .. _`AST NodeVistiors Class`: https://docs.python.org/3/library/ast.html#ast.NodeVisitor
 
