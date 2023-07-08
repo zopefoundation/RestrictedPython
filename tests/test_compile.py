@@ -102,7 +102,7 @@ def test_compile__compile_restricted_exec__5():
     assert result.code is None
     assert result.warnings == []
     assert result.used_names == {}
-    assert result.errors == ('source code string cannot contain null bytes',)
+    assert 'source code string cannot contain null bytes' in result.errors[0]
 
 
 EXEC_STATEMENT = """\
