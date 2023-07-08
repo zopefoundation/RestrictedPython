@@ -15,6 +15,11 @@ Features
 - Allow to use the package with Python 3.12 -- Caution: No security audit has
   been done so far.
 
+Fixes
++++++
+
+- Restrict access to some attributes accessible via the ``inspect`` module.
+
 
 6.0 (2022-11-03)
 ----------------

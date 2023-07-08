@@ -64,6 +64,7 @@ To do so:
     All AST Nodes without an explicit ``visit_<AST Node>`` method, are denied by default.
     So the usage of this expression and functionality is not allowed.
 
+* Check the documentation for `inspect <https://docs.python.org/3/library/inspect.html>`_ and adjust the ``transformer.py:INSPECT_ATTRIBUTES`` list.
 * Add a corresponding changelog entry.
 * Additionally modify ``.meta.toml`` and run the ``meta/config`` script (for details see: https://github.com/mgedmin/check-python-versions) to update the following files:
 
