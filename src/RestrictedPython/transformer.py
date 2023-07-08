@@ -63,6 +63,32 @@ FORBIDDEN_FUNC_NAMES = frozenset([
     'breakpoint',
 ])
 
+# inspect attributes. See also
+# https://docs.python.org/3/library/inspect.html
+INSPECT_ATTRIBUTES = frozenset([
+    # traceback
+    "tb_frame",
+    "tb_next",
+    # code
+    "co_code",
+    # frame
+    "f_back",
+    "f_builtins",
+    "f_code",
+    "f_globals",
+    "f_locals",
+    "f_trace",
+    # generator
+    "gi_frame",
+    "gi_code",
+    "gi_yieldfrom",
+    # coroutine
+    "cr_await",
+    "cr_frame",
+    "cr_code",
+    "cr_origin",
+])
+
 
 # When new ast nodes are generated they have no 'lineno', 'end_lineno',
 # 'col_offset' and 'end_col_offset'. This function copies these fields from the
@@ -843,6 +869,13 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
                 node,
                 '"{name}" is an invalid attribute name because it ends '
                 'with "__roles__".'.format(name=node.attr))
+
+        if node.attr in INSPECT_ATTRIBUTES:
+            self.error(
+                node,
+                f'"{node.attr}" is a restricted name,'
+                ' that is forbidden to access in RestrictedPython.',
+            )
 
         if isinstance(node.ctx, ast.Load):
             node = self.node_contents_visit(node)

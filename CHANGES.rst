@@ -4,7 +4,7 @@ Changes
 6.1 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Restrict access to some attributes accessible via the ``inspect`` module.
 
 
 6.0 (2022-11-03)
