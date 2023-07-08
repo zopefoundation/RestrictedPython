@@ -4,7 +4,7 @@ Changes
 5.3 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Restrict access to some attributes accessible via the ``inspect`` module.
 
 
 5.2 (2021-11-19)
