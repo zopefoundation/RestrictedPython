@@ -950,10 +950,11 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
                 'with "__roles__".'.format(name=node.attr))
 
         if node.attr in INSPECT_ATTRIBUTES:
+            msg = ('"{node.attr}" is a restricted name,'
+                   ' that is forbidden to access in RestrictedPython.')
             self.error(
                 node,
-                f'"{node.attr}" is a restricted name,'
-                ' that is forbidden to access in RestrictedPython.',
+                msg % node.attr,
             )
 
         if isinstance(node.ctx, ast.Load):
