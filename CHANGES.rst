@@ -1,7 +1,7 @@
 Changes
 =======
 
-5.3 (unreleased)
+5.3 (2023-07-08)
 ----------------
 
 - Restrict access to some attributes accessible via the ``inspect`` module.
