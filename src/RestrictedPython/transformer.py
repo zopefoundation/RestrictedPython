@@ -63,28 +63,50 @@ FORBIDDEN_FUNC_NAMES = frozenset([
     'breakpoint',
 ])
 
-# inspect attributes. See also
-# https://docs.python.org/3/library/inspect.html
+# Attributes documented in the `inspect` module, but defined on the listed
+# objects. See also https://docs.python.org/3/library/inspect.html
 INSPECT_ATTRIBUTES = frozenset([
-    # traceback
+    # on traceback objects:
     "tb_frame",
+    # "tb_lasti",  # int
+    # "tb_lineno",  # int
     "tb_next",
-    # code
-    "co_code",
-    # frame
+    # on frame objects:
     "f_back",
     "f_builtins",
     "f_code",
     "f_globals",
+    # "f_lasti",  # int
+    # "f_lineno",  # int
     "f_locals",
     "f_trace",
-    # generator
+    # on code objects:
+    # "co_argcount",  # int
+    "co_code",
+    # "co_cellvars",  # tuple of str
+    # "co_consts",   # tuple of str
+    # "co_filename",  # str
+    # "co_firstlineno",  # int
+    # "co_flags",  # int
+    # "co_lnotab",  # mapping between ints and indices
+    # "co_freevars",  # tuple of strings
+    # "co_posonlyargcount",  # int
+    # "co_kwonlyargcount",  # int
+    # "co_name",  # str
+    # "co_qualname",  # str
+    # "co_names",  # str
+    # "co_nlocals",  # int
+    # "co_stacksize",  # int
+    # "co_varnames",  # tuple of str
+    # on generator objects:
     "gi_frame",
+    # "gi_running",  # bool
     "gi_code",
     "gi_yieldfrom",
-    # coroutine
+    # on coroutine objects:
     "cr_await",
     "cr_frame",
+    # "cr_running",  # bool
     "cr_code",
     "cr_origin",
 ])

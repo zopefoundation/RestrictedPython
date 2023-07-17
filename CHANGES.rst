@@ -18,7 +18,7 @@ Features
 Fixes
 +++++
 
-- Restrict access to some attributes accessible via the ``inspect`` module.
+- Forbid using some attributes providing access to restricted Python internals.
 
 
 6.0 (2022-11-03)
