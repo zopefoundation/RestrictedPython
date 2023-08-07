@@ -246,7 +246,7 @@ def test_compile_restricted_function_invalid_syntax():
         assert error_msg.startswith(
             "Line 1: SyntaxError: cannot assign to literal at statement:"
         )
-    else:
+    else:  # pragma: no cover
         assert error_msg.startswith(
             "Line 1: SyntaxError: can't assign to literal at statement:"
         )

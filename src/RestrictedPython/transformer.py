@@ -28,7 +28,7 @@ from ._compat import IS_PY38_OR_GREATER
 if IS_PY38_OR_GREATER:
     astStr = ast.Constant
     astNum = ast.Constant
-else:
+else:  # pragma: no cover
     astStr = ast.Str
     astNum = ast.Num
 
@@ -127,14 +127,14 @@ def copy_locations(new_node, old_node):
     assert 'lineno' in new_node._attributes
     new_node.lineno = old_node.lineno
 
-    if IS_PY38_OR_GREATER:
+    if IS_PY38_OR_GREATER:  # pragma: no branch
         assert 'end_lineno' in new_node._attributes
         new_node.end_lineno = old_node.end_lineno
 
     assert 'col_offset' in new_node._attributes
     new_node.col_offset = old_node.col_offset
 
-    if IS_PY38_OR_GREATER:
+    if IS_PY38_OR_GREATER:  # pragma: no branch
         assert 'end_col_offset' in new_node._attributes
         new_node.end_col_offset = old_node.end_col_offset
 
@@ -492,7 +492,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
             if isinstance(node, ast.Module):
                 _print.lineno = position
                 _print.col_offset = position
-                if IS_PY38_OR_GREATER:
+                if IS_PY38_OR_GREATER:  # pragma: no branch
                     _print.end_lineno = position
                     _print.end_col_offset = position
                 ast.fix_missing_locations(_print)
@@ -554,7 +554,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
                 return
             return self.node_contents_visit(node)
 
-    else:
+    else:  # pragma: no cover
 
         def visit_Num(self, node):
             """Allow integer numbers without restrictions.

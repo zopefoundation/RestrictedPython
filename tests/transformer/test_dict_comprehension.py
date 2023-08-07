@@ -36,7 +36,7 @@ def test_dict_comprehension_with_attrs(mocker):
             mocker.call(z[1], 'k'),
             mocker.call(z[1], 'v'),
         ])
-    else:
+    else:  # praga: no cover
         calls.extend([
             mocker.call(z[0], 'k'),
             mocker.call(z[1], 'k'),

@@ -45,7 +45,7 @@ def test_compile__invalid_syntax():
         assert "SyntaxError: cannot assign to literal here." in str(err.value)
     elif IS_PY38_OR_GREATER:
         assert "cannot assign to literal at statement:" in str(err.value)
-    else:
+    else:  # pragma: no cover
         assert "can't assign to literal at statement:" in str(err.value)
 
 
