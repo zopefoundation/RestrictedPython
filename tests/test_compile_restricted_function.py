@@ -36,7 +36,7 @@ return printed
     safe_locals = {}
     exec(result.code, safe_globals, safe_locals)
     hello_world = safe_locals['hello_world']
-    assert type(hello_world) == FunctionType
+    assert isinstance(hello_world, FunctionType)
     assert hello_world() == 'Hello World!\n'
 
 
@@ -102,7 +102,7 @@ return printed
     safe_locals = {}
     exec(result.code, safe_globals, safe_locals)
     hello_world = safe_locals['hello_world']
-    assert type(hello_world) == FunctionType
+    assert isinstance(hello_world, FunctionType)
     assert hello_world('Hello ', 'World!') == 'Hello World!\n'
 
 
@@ -136,7 +136,7 @@ return printed
     safe_locals = {}
     exec(result.code, safe_globals, safe_locals)
     hello_world = safe_locals['hello_world']
-    assert type(hello_world) == FunctionType
+    assert isinstance(hello_world, FunctionType)
     assert hello_world() == 'Hello World!\n'
 
 
@@ -165,7 +165,7 @@ def test_compile_restricted_function_pretends_the_code_is_executed_in_a_global_s
     safe_locals = {}
     exec(result.code, safe_globals, safe_locals)
     hello_world = safe_locals['hello_world']
-    assert type(hello_world) == FunctionType
+    assert isinstance(hello_world, FunctionType)
     hello_world()
     assert safe_globals['output'] == 'foobar'
 
@@ -195,7 +195,7 @@ def test_compile_restricted_function_allows_invalid_python_identifiers_as_functi
     safe_locals = {}
     exec(result.code, safe_globals, safe_locals)
     generated_function = tuple(safe_locals.values())[0]
-    assert type(generated_function) == FunctionType
+    assert isinstance(generated_function, FunctionType)
     generated_function()
     assert safe_globals['output'] == 'foobar'
 
