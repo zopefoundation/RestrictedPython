@@ -29,7 +29,7 @@ from ._compat import IS_PY38_OR_GREATER
 if IS_PY38_OR_GREATER:
     astStr = ast.Constant
     astNum = ast.Constant
-else:
+else:  # pragma: no cover
     astStr = ast.Str
     astNum = ast.Num
 
