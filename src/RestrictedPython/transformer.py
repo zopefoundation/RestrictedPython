@@ -25,6 +25,14 @@ import textwrap
 from ._compat import IS_PY38_OR_GREATER
 
 
+# Avoid DeprecationWarnings under Python 3.12 and up
+if IS_PY38_OR_GREATER:
+    astStr = ast.Constant
+    astNum = ast.Constant
+else:  # pragma: no cover
+    astStr = ast.Str
+    astNum = ast.Num
+
 # For AugAssign the operator must be converted to a string.
 IOPERATOR_TO_STR = {
     ast.Add: '+=',
@@ -272,7 +280,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         """
         spec = ast.Dict(keys=[], values=[])
 
-        spec.keys.append(ast.Str('childs'))
+        spec.keys.append(astStr('childs'))
         spec.values.append(ast.Tuple([], ast.Load()))
 
         # starred elements in a sequence do not contribute into the min_len.
@@ -292,12 +300,12 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
 
             elif isinstance(val, ast.Tuple):
                 el = ast.Tuple([], ast.Load())
-                el.elts.append(ast.Num(idx - offset))
+                el.elts.append(astNum(idx - offset))
                 el.elts.append(self.gen_unpack_spec(val))
                 spec.values[0].elts.append(el)
 
-        spec.keys.append(ast.Str('min_len'))
-        spec.values.append(ast.Num(min_len))
+        spec.keys.append(astStr('min_len'))
+        spec.values.append(astNum(min_len))
 
         return spec
 
@@ -903,7 +911,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
             node = self.node_contents_visit(node)
             new_node = ast.Call(
                 func=ast.Name('_getattr_', ast.Load()),
-                args=[node.value, ast.Str(node.attr)],
+                args=[node.value, astStr(node.attr)],
                 keywords=[])
 
             copy_locations(new_node, node)
@@ -1107,7 +1115,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
                 value=ast.Call(
                     func=ast.Name('_inplacevar_', ast.Load()),
                     args=[
-                        ast.Str(IOPERATOR_TO_STR[type(node.op)]),
+                        astStr(IOPERATOR_TO_STR[type(node.op)]),
                         ast.Name(node.target.id, ast.Load()),
                         node.value
                     ],

@@ -18,6 +18,8 @@ Features
 Fixes
 +++++
 
+- Prevent DeprecationWarnings from ``ast.Str`` and ``ast.Num`` on Python 3.12
+
 - Forbid using some attributes providing access to restricted Python internals.
 
 
