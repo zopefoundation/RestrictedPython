@@ -1,7 +1,7 @@
 Changes
 =======
 
-6.2 (unreleased)
+6.2 (2023-08-30)
 ----------------
 
 - Fix information disclosure problems through
