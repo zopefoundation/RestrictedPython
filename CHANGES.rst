@@ -22,6 +22,11 @@ Fixes
 
 - Forbid using some attributes providing access to restricted Python internals.
 
+- Fix information disclosure problems through
+  Python's "format" functionality
+  (``format`` and ``format_map`` methods on ``str`` and its instances,
+  ``string.Formatter``).
+
 
 6.0 (2022-11-03)
 ----------------
