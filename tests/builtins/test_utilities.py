@@ -5,7 +5,10 @@ import string
 
 def test_string_in_utility_builtins():
     from RestrictedPython.Utilities import utility_builtins
-    assert utility_builtins['string'] is string
+
+    # we no longer provide access to ``string`` itself, only to
+    # a restricted view of it
+    assert utility_builtins['string'].__name__ == string.__name__
 
 
 def test_math_in_utility_builtins():

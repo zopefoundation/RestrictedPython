@@ -162,7 +162,7 @@ b = a.format('world')
 """
 
 
-def test_Guards__safer_getattr__1():
+def test_Guards__safer_getattr__1a():
     """It prevents using the format method of a string.
 
     format() is considered harmful:
@@ -173,16 +173,120 @@ def test_Guards__safer_getattr__1():
     }
     with pytest.raises(NotImplementedError) as err:
         restricted_exec(STRING_DOT_FORMAT_DENIED, glb)
-    assert 'Using format() on a str is not safe.' == str(err.value)
+    assert 'Using the string format* methods is not safe' == str(err.value)
 
 
-UNICODE_DOT_FORMAT_DENIED = """\
-a = u'Hello {}'
-b = a.format(u'world')
+# contributed by Ward Theunisse
+STRING_DOT_FORMAT_MAP_DENIED = """\
+a = 'Hello {foo.__dict__}'
+b = a.format_map({foo:str})
 """
 
 
-def test_Guards__safer_getattr__2():
+def test_Guards__safer_getattr__1b():
+    """It prevents using the format method of a string.
+
+    format() is considered harmful:
+    http://lucumr.pocoo.org/2016/12/29/careful-with-str-format/
+    """
+    glb = {
+        '__builtins__': safe_builtins,
+    }
+    with pytest.raises(NotImplementedError) as err:
+        restricted_exec(STRING_DOT_FORMAT_MAP_DENIED, glb)
+    assert 'Using the string format* methods is not safe' == str(err.value)
+
+
+# contributed by Abhishek Govindarasu
+STR_DOT_FORMAT_DENIED = """\
+str.format('{0.__class__.__mro__[1]}', int)
+"""
+
+
+def test_Guards__safer_getattr__1c():
+    """It prevents using the format method of a string.
+
+    format() is considered harmful:
+    http://lucumr.pocoo.org/2016/12/29/careful-with-str-format/
+    """
+    glb = {
+        '__builtins__': safe_builtins,
+    }
+    with pytest.raises(NotImplementedError) as err:
+        restricted_exec(STR_DOT_FORMAT_DENIED, glb)
+    assert 'Using the string format* methods is not safe' == str(err.value)
+
+
+STR_DOT_FORMAT_MAP_DENIED = """\
+str.format_map('Hello {foo.__dict__}', {'foo':str})
+"""
+
+
+def test_Guards__safer_getattr__1d():
+    """It prevents using the format method of a string.
+
+    format() is considered harmful:
+    http://lucumr.pocoo.org/2016/12/29/careful-with-str-format/
+    """
+    glb = {
+        '__builtins__': safe_builtins,
+    }
+    with pytest.raises(NotImplementedError) as err:
+        restricted_exec(STR_DOT_FORMAT_MAP_DENIED, glb)
+    assert 'Using the string format* methods is not safe' == str(err.value)
+
+
+USTRING_DOT_FORMAT_DENIED = """\
+a = u'Hello {}'
+b = a.format('world')
+"""
+
+
+@pytest.mark.skipif(IS_PY3, reason="Python 3 lacks unicode")
+def test_Guards__safer_getattr__2a():
+    """It prevents using the format method of a unicode.
+
+    format() is considered harmful:
+    http://lucumr.pocoo.org/2016/12/29/careful-with-str-format/
+    """
+    glb = {
+        '__builtins__': safe_builtins,
+    }
+    with pytest.raises(NotImplementedError) as err:
+        restricted_exec(USTRING_DOT_FORMAT_DENIED, glb)
+    assert 'Using the string format* methods is not safe' == str(err.value)
+
+
+# contributed by Ward Theunisse
+USTRING_DOT_FORMAT_MAP_DENIED = """\
+a = u'Hello {foo.__dict__}'
+b = a.format_map({foo:str})
+"""
+
+
+@pytest.mark.skipif(IS_PY3, reason="Python 3 lacks unicode")
+def test_Guards__safer_getattr__2b():
+    """It prevents using the format method of a unicode.
+
+    format() is considered harmful:
+    http://lucumr.pocoo.org/2016/12/29/careful-with-str-format/
+    """
+    glb = {
+        '__builtins__': safe_builtins,
+    }
+    with pytest.raises(NotImplementedError) as err:
+        restricted_exec(USTRING_DOT_FORMAT_MAP_DENIED, glb)
+    assert 'Using the string format* methods is not safe' == str(err.value)
+
+
+# contributed by Abhishek Govindarasu
+UNICODE_DOT_FORMAT_DENIED = """\
+unicode.format(u'{0.__class__.__mro__[1]}', int)
+"""
+
+
+@pytest.mark.skipif(IS_PY3, reason="Python 3 lacks unicode")
+def test_Guards__safer_getattr__2c():
     """It prevents using the format method of a unicode.
 
     format() is considered harmful:
@@ -193,10 +297,27 @@ def test_Guards__safer_getattr__2():
     }
     with pytest.raises(NotImplementedError) as err:
         restricted_exec(UNICODE_DOT_FORMAT_DENIED, glb)
-    if IS_PY2:  # pragma: PY2
-        assert 'Using format() on a unicode is not safe.' == str(err.value)
-    else:  # pragma: PY3
-        assert 'Using format() on a str is not safe.' == str(err.value)
+    assert 'Using the string format* methods is not safe' == str(err.value)
+
+
+UNICODE_DOT_FORMAT_MAP_DENIED = """\
+unicode.format_map(u'Hello {foo.__dict__}', {'foo':str})
+"""
+
+
+@pytest.mark.skipif(IS_PY3, reason="Python 3 lacks unicode")
+def test_Guards__safer_getattr__2d():
+    """It prevents using the format method of a unicode.
+
+    format() is considered harmful:
+    http://lucumr.pocoo.org/2016/12/29/careful-with-str-format/
+    """
+    glb = {
+        '__builtins__': safe_builtins,
+    }
+    with pytest.raises(NotImplementedError) as err:
+        restricted_exec(UNICODE_DOT_FORMAT_MAP_DENIED, glb)
+    assert 'Using the string format* methods is not safe' == str(err.value)
 
 
 SAFER_GETATTR_ALLOWED = """\

@@ -1,5 +1,8 @@
+import pytest
+
 from RestrictedPython.Utilities import reorder
 from RestrictedPython.Utilities import test
+from RestrictedPython.Utilities import utility_builtins
 
 
 def test_Utilities__test_1():
@@ -30,3 +33,13 @@ def test_Utilities__reorder_1():
     _with = [('k2', 'v2'), ('k3', 'v3')]
     without = [('k2', 'v2'), ('k4', 'v4')]
     assert reorder(s, _with, without) == [('k3', 'v3')]
+
+
+def test_Utilities_string_Formatter():
+    """Access to ``string.Formatter`` is denied."""
+    string = utility_builtins["string"]
+    # access successful in principle
+    assert string.ascii_lowercase == 'abcdefghijklmnopqrstuvwxyz'
+    with pytest.raises(NotImplementedError) as exc:
+        string.Formatter
+    assert 'string.Formatter is not safe' == str(exc.value)

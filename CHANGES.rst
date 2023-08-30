@@ -4,6 +4,15 @@ Changes
 5.4 (unreleased)
 ----------------
 
+Fixes
++++++
+
+- Fix information disclosure problems through
+  Python's "format" functionality
+  (``format`` and ``format_map`` methods on ``str``/``unicode`` and
+  their instances,
+  ``string.Formatter``).
+
 
 5.3 (2023-07-08)
 ----------------
