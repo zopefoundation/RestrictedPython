@@ -246,9 +246,11 @@ def safer_getattr(object, name, default=None, getattr=getattr):
     http://lucumr.pocoo.org/2016/12/29/careful-with-str-format/
 
     """
-    if isinstance(object, str) and name == 'format':
+    if name in ('format', 'format_map') and (
+            isinstance(object, str) or
+            (isinstance(object, type) and issubclass(object, str))):
         raise NotImplementedError(
-            'Using format() on a %s is not safe.' % object.__class__.__name__)
+            'Using the format*() methods of `str` is not safe')
     if name.startswith('_'):
         raise AttributeError(
             '"{name}" is an invalid attribute name because it '

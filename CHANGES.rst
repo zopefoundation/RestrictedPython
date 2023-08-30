@@ -4,6 +4,11 @@ Changes
 6.2 (unreleased)
 ----------------
 
+- Fix information disclosure problems through
+  Python's "format" functionality
+  (``format`` and ``format_map`` methods on ``str`` and its instances,
+  ``string.Formatter``).
+
 
 6.1 (2023-07-08)
 ----------------

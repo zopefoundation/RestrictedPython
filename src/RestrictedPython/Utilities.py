@@ -18,7 +18,21 @@ import string
 
 utility_builtins = {}
 
-utility_builtins['string'] = string
+
+class _AttributeDelegator:
+    def __init__(self, mod, *excludes):
+        """delegate attribute lookups outside *excludes* to module *mod*."""
+        self.__mod = mod
+        self.__excludes = excludes
+
+    def __getattr__(self, attr):
+        if attr in self.__excludes:
+            raise NotImplementedError(
+                f"{self.__mod.__name__}.{attr} is not safe")
+        return getattr(self.__mod, attr)
+
+
+utility_builtins['string'] = _AttributeDelegator(string, "Formatter")
 utility_builtins['math'] = math
 utility_builtins['random'] = random
 utility_builtins['whrandom'] = random
