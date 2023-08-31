@@ -13,13 +13,14 @@ Changes
 - Fix information disclosure problems through
   Python's "format" functionality
   (``format`` and ``format_map`` methods on ``str`` and its instances,
-  ``string.Formatter``).
+  ``string.Formatter``). (CVE-2023-41039)
 
 
 6.1 (2023-07-08)
 ----------------
 
 - Forbid using some attributes providing access to restricted Python internals.
+  (CVE-2023-37271)
 
 
 6.0 (2022-11-03)
