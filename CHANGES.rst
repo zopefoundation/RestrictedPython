@@ -21,11 +21,12 @@ Fixes
 - Prevent DeprecationWarnings from ``ast.Str`` and ``ast.Num`` on Python 3.12
 
 - Forbid using some attributes providing access to restricted Python internals.
+  (CVE-2023-37271)
 
 - Fix information disclosure problems through
   Python's "format" functionality
   (``format`` and ``format_map`` methods on ``str`` and its instances,
-  ``string.Formatter``).
+  ``string.Formatter``). (CVE-2023-41039)
 
 
 6.0 (2022-11-03)
