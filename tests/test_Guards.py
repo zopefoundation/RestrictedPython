@@ -243,7 +243,7 @@ b = a.format('world')
 
 
 @pytest.mark.skipif(IS_PY3, reason="Python 3 lacks unicode")
-def test_Guards__safer_getattr__2a():
+def test_Guards__safer_getattr__2a():  # pragma: PY2
     """It prevents using the format method of a unicode.
 
     format() is considered harmful:
@@ -265,7 +265,7 @@ b = a.format_map({foo:str})
 
 
 @pytest.mark.skipif(IS_PY3, reason="Python 3 lacks unicode")
-def test_Guards__safer_getattr__2b():
+def test_Guards__safer_getattr__2b():  # pragma: PY2
     """It prevents using the format method of a unicode.
 
     format() is considered harmful:
@@ -286,7 +286,7 @@ unicode.format(u'{0.__class__.__mro__[1]}', int)
 
 
 @pytest.mark.skipif(IS_PY3, reason="Python 3 lacks unicode")
-def test_Guards__safer_getattr__2c():
+def test_Guards__safer_getattr__2c():  # pragma: PY2
     """It prevents using the format method of a unicode.
 
     format() is considered harmful:
@@ -306,7 +306,7 @@ unicode.format_map(u'Hello {foo.__dict__}', {'foo':str})
 
 
 @pytest.mark.skipif(IS_PY3, reason="Python 3 lacks unicode")
-def test_Guards__safer_getattr__2d():
+def test_Guards__safer_getattr__2d():  # pragma: PY2
     """It prevents using the format method of a unicode.
 
     format() is considered harmful:
