@@ -17,13 +17,14 @@ Fixes
   Python's "format" functionality
   (``format`` and ``format_map`` methods on ``str``/``unicode`` and
   their instances,
-  ``string.Formatter``).
+  ``string.Formatter``). (CVE-2023-41039)
 
 
 5.3 (2023-07-08)
 ----------------
 
 - Forbid using some attributes providing access to restricted Python internals.
+  (CVE-2023-37271)
 
 
 5.2 (2021-11-19)
