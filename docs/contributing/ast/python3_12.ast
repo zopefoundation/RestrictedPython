@@ -23,12 +23,13 @@ module Python version "3.12"
                             expr? returns,
                             string? type_comment,
                             type_param* type_params)
+
          | ClassDef(identifier name,
                     expr* bases,
                     keyword* keywords,
                     stmt* body,
                     expr* decorator_list,
-                  type_param* type_params)
+                    type_param* type_params)
          | Return(expr? value)
 
          | Delete(expr* targets)
@@ -156,15 +157,15 @@ module Python version "3.12"
                  expr* defaults)
 
     arg = (identifier arg, expr? annotation, string? type_comment)
-           attributes (int lineno, int col_offset, int? end_lineno, int? end_col_offset)
+          attributes (int lineno, int col_offset, int? end_lineno, int? end_col_offset)
 
     -- keyword arguments supplied to call (NULL identifier for **kwargs)
     keyword = (identifier? arg, expr value)
-               attributes (int lineno, int col_offset, int? end_lineno, int? end_col_offset)
+              attributes (int lineno, int col_offset, int? end_lineno, int? end_col_offset)
 
     -- import name with optional 'as' alias.
     alias = (identifier name, identifier? asname)
-             attributes (int lineno, int col_offset, int? end_lineno, int? end_col_offset)
+            attributes (int lineno, int col_offset, int? end_lineno, int? end_col_offset)
 
     withitem = (expr context_expr, expr? optional_vars)
 
