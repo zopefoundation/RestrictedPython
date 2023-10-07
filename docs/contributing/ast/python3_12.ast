@@ -14,23 +14,26 @@ module Python version "3.12"
                        stmt* body,
                        expr* decorator_list,
                        expr? returns,
-                       string? type_comment)
+                       string? type_comment,
+                       type_param* type_params)
          | AsyncFunctionDef(identifier name,
                             arguments args,
                             stmt* body,
                             expr* decorator_list,
                             expr? returns,
-                            string? type_comment)
-
+                            string? type_comment,
+                            type_param* type_params)
          | ClassDef(identifier name,
                     expr* bases,
                     keyword* keywords,
                     stmt* body,
-                    expr* decorator_list)
+                    expr* decorator_list,
+                  type_param* type_params)
          | Return(expr? value)
 
          | Delete(expr* targets)
          | Assign(expr* targets, expr value, string? type_comment)
+         | TypeAlias(expr name, type_param* type_params, expr value)
          | AugAssign(expr target, operator op, expr value)
          -- 'simple' indicates that we annotate simple name without parens
          | AnnAssign(expr target, expr annotation, expr? value, int simple)
@@ -153,15 +156,15 @@ module Python version "3.12"
                  expr* defaults)
 
     arg = (identifier arg, expr? annotation, string? type_comment)
-          attributes (int lineno, int col_offset, int? end_lineno, int? end_col_offset)
+           attributes (int lineno, int col_offset, int? end_lineno, int? end_col_offset)
 
     -- keyword arguments supplied to call (NULL identifier for **kwargs)
     keyword = (identifier? arg, expr value)
-              attributes (int lineno, int col_offset, int? end_lineno, int? end_col_offset)
+               attributes (int lineno, int col_offset, int? end_lineno, int? end_col_offset)
 
     -- import name with optional 'as' alias.
     alias = (identifier name, identifier? asname)
-            attributes (int lineno, int col_offset, int? end_lineno, int? end_col_offset)
+             attributes (int lineno, int col_offset, int? end_lineno, int? end_col_offset)
 
     withitem = (expr context_expr, expr? optional_vars)
 
@@ -182,4 +185,9 @@ module Python version "3.12"
              attributes (int lineno, int col_offset, int end_lineno, int end_col_offset)
 
     type_ignore = TypeIgnore(int lineno, string tag)
+
+    type_param = TypeVar(identifier name, expr? bound)
+               | ParamSpec(identifier name)
+               | TypeVarTuple(identifier name)
+               attributes (int lineno, int col_offset, int end_lineno, int end_col_offset)
 }
