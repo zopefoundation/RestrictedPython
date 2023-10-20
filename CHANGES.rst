@@ -12,8 +12,8 @@ Backwards incompatible changes
 Features
 ++++++++
 
-- Allow to use the package with Python 3.12 -- Caution: No security audit has
-  been done so far.
+- Allow to use the package with Python 3.12 and 3.13 -- Caution: No security
+  audit has been done so far.
 
 Fixes
 +++++

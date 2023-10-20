@@ -67,7 +67,7 @@ setup(
     package_dir={'': 'src'},
     install_requires=[
     ],
-    python_requires=">=3.7, <3.13",
+    python_requires=">=3.7, <3.14",
     tests_require=tests_require,
     extras_require={
         'test': tests_require,
