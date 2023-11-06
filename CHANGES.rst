@@ -4,12 +4,6 @@ Changes
 7.0 (unreleased)
 ----------------
 
-- Nothing changed yet.
-
-
-7.0a2.dev0 (2023-11-06)
------------------------
-
 Backwards incompatible changes
 ++++++++++++++++++++++++++++++
 
