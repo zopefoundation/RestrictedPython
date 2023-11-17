@@ -21,6 +21,7 @@ jobs:
         - ["windows", "windows-latest"]
         config:
         # [Python version, tox env]
+        - ["3.9",   "release-check"]
         - ["3.9",   "lint"]
         - ["3.7",   "py37"]
         - ["3.8",   "py38"]
@@ -32,6 +33,7 @@ jobs:
         - ["3.9",   "coverage"]
         - ["3.9",   "py39-datetime"]
         exclude:
+          - { os: ["windows", "windows-latest"], config: ["3.9",   "release-check"] }
           - { os: ["windows", "windows-latest"], config: ["3.9",   "lint"] }
           - { os: ["windows", "windows-latest"], config: ["3.9",   "docs"] }
           - { os: ["windows", "windows-latest"], config: ["3.9",   "coverage"] }
