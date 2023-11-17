@@ -4,7 +4,8 @@ Changes
 7.1 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Allow to use the package with Python 3.13 -- Caution: No security
+  audit has been done so far.
 
 
 7.0 (2023-11-17)
