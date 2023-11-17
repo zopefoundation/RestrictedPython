@@ -1,7 +1,7 @@
 Changes
 =======
 
-7.0 (unreleased)
+7.0 (2023-11-17)
 ----------------
 
 Backwards incompatible changes
