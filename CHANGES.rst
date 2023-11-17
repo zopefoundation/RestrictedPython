@@ -12,8 +12,7 @@ Backwards incompatible changes
 Features
 ++++++++
 
-- Allow to use the package with Python 3.12 and 3.13 -- Caution: No security
-  audit has been done so far.
+- Officially support Python 3.12.
 
 Fixes
 +++++
@@ -23,8 +22,7 @@ Fixes
 - Forbid using some attributes providing access to restricted Python internals.
   (CVE-2023-37271)
 
-- Fix information disclosure problems through
-  Python's "format" functionality
+- Fix information disclosure problems through Python's "format" functionality
   (``format`` and ``format_map`` methods on ``str`` and its instances,
   ``string.Formatter``). (CVE-2023-41039)
 
