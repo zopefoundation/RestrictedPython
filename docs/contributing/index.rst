@@ -91,8 +91,8 @@ To enable a certain functionality in RestrictedPython, do the following:
   * icemac
   * loechel
 
-Differences between different Python versions
----------------------------------------------
+Differences between Python versions
+-----------------------------------
 
 A (modified style) Copy of all Abstract Grammar Definitions for the Python versions does live in this Documentation (ast Subfolder) to help finding difference quicker by comparing files.
 
@@ -152,14 +152,14 @@ The ``ast`` module consists of four areas:
 A ``NodeVisitor`` is a class of a node / AST consumer, it reads the data by stepping through the tree without modifying it.
 In contrast, a ``NodeTransformer`` (which inherits from a ``NodeVisitor``) is allowed to modify the tree and nodes.
 
-Technical decissions on how to implement / maintain RestrictedPython (Design, Structure, Tools, ...)
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Technical decisions on how to implement / maintain RestrictedPython (Design, Structure, Tools, ...)
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 RestrictedPython is a core Package of the Zope & Plone Stack.
 Until Version 3.6 RestrictedPython was Python 2 only, and a critical blocker for Zope & Plone.
-With RestrictedPython 4.0 an API compatible rewrite has happend, which supports modern Python Versions.
+With RestrictedPython 4.0 an API compatible rewrite has happened, which supports modern Python Versions.
 
-* Use modern python tool stack for maintainance and tests
+* Use modern python tool stack for maintenance and tests
 
   * tox
   * pytest
@@ -179,7 +179,7 @@ With RestrictedPython 4.0 an API compatible rewrite has happend, which supports 
   Resolve discussion about how RestrictedPython should be treat new expressions / ``ast.Nodes``.
   This belongs to :ref:`new_python_version`.
 
-  **Option 1 - reduce maintainance burden (prefered by icemac)**
+  **Option 1 - reduce maintenance burden (preferred by icemac)**
 
 
   All AST Nodes without an explicit ``visit_<AST Node>`` method, are denied by default.
@@ -187,7 +187,7 @@ With RestrictedPython 4.0 an API compatible rewrite has happend, which supports 
 
   *This is currently the promoted version.*
 
-  **Option 2 - be as explicite as possible (prefered by loechel)**
+  **Option 2 - be as explicit as possible (preferred by loechel)**
 
   If the new AST Node should be disabled by default, add a ``visit_<AST Node>`` method such as the following:
 
@@ -237,12 +237,12 @@ Technical Backgrounds - Links to External Documentation
 
   * AST Grammar of Python (`Status of Python Versions`_)
 
-    * `Python 3.12 AST`_ (development branch - EOL 2028-10)
-    * `Python 3.11 AST`_ (in bugfix phase - EOL 2027-10)
-    * `Python 3.10 AST`_ (in bugfix phase - EOL 2026-10)
-    * `Python 3.9 AST`_ (in security phase - EOL 2025-10)
-    * `Python 3.8 AST`_ (in security phase - EOL 2024-10)
-    * `Python 3.7 AST`_ (in security phase - EOL 2023-06-27)
+    * `Python 3.12 AST`_ (EOL 2028-10)
+    * `Python 3.11 AST`_ (EOL 2027-10)
+    * `Python 3.10 AST`_ (EOL 2026-10)
+    * `Python 3.9 AST`_ (EOL 2025-10)
+    * `Python 3.8 AST`_ (EOL 2024-10)
+    * `Python 3.7 AST`_ (EOL 2023-06-27)
 
   * `AST NodeVistiors Class`_
   * `AST NodeTransformer Class`_
