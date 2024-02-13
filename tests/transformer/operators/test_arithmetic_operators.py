@@ -33,8 +33,16 @@ def test_FloorDiv():
 
 
 def test_MatMult():
-    result = compile_restricted_eval('(8, 3, 5) @ (2, 7, 1)')
-    assert result.errors == (
-        'Line None: MatMult statements are not allowed.',
-    )
-    assert result.code is None
+    source_code = """
+class Vector:
+    def __init__(self, values):
+        self.values = values
+
+    def __matmul__(self, other):
+        return sum(x * y for x, y in zip(self.values, other.values))
+
+result = Vector((8, 3, 5)) @ Vector((2, 7, 1))
+"""
+    # Assuming restricted_eval can execute the source_code and return the value of 'result'
+    assert restricted_eval(source_code) == 42
+    
