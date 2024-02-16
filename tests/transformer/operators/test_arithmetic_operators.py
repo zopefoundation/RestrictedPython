@@ -32,8 +32,7 @@ def test_FloorDiv():
     assert restricted_eval('7 // 2') == 3
 
 
-def test_MatMult():
-    source_code = """
+test_matmult = """\
 class Vector:
     def __init__(self, values):
         self.values = values
@@ -43,6 +42,7 @@ class Vector:
 
 result = Vector((8, 3, 5)) @ Vector((2, 7, 1))
 """
-    # Assuming restricted_eval can execute the source_code and return the value of 'result'
-    assert restricted_eval(source_code) == 42
+
+def test_MatMult():
+    assert restricted_eval(test_matmult) == 42
     
