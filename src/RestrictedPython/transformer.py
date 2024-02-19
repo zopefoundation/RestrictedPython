@@ -768,8 +768,8 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         return self.node_contents_visit(node)
 
     def visit_MatMult(self, node):
-        """Matrix multiplication (`@`) is currently not allowed."""
-        self.not_allowed(node)
+        """Allow multiplication (`@`)."""
+        return self.node_contents_visit(node)
 
     def visit_BoolOp(self, node):
         """Allow bool operator without restrictions."""

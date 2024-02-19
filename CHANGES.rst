@@ -7,6 +7,8 @@ Changes
 - Allow to use the package with Python 3.13 -- Caution: No security
   audit has been done so far.
 
+- Add support for the matmul (``@``) operator.
+
 
 7.0 (2023-11-17)
 ----------------
