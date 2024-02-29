@@ -160,13 +160,24 @@ def test_compile__compile_restricted_eval__used_names():
     assert result.used_names == {'a': True, 'b': True, 'x': True, 'func': True}
 
 
-def test_compile__compile_restricted_csingle():
+def test_compile__compile_restricted_csingle_allowed():
     """It compiles code as an Interactive."""
-    result = compile_restricted_single('4 * 6')
-    assert result.code is None
-    assert result.errors == (
-        'Line None: Interactive statements are not allowed.',
-    )
+    result = compile_restricted_single('x = 4 * 6')
+
+    assert result.errors == ()
+    assert result.warnings == []
+    assert result.code is not None
+    locals = {}
+    exec(result.code, {}, locals)
+    assert locals["x"] == 24
+
+
+def test_compile__compile_restricted_csingle_allowed2():
+    """It compiles code as an Interactive."""
+    code = compile_restricted('x = 4 * 6', filename="<string>", mode="single")
+    locals = {}
+    exec(code, {}, locals)
+    assert locals["x"] == 24
 
 
 PRINT_EXAMPLE = """
