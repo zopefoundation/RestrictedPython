@@ -160,7 +160,7 @@ def test_compile__compile_restricted_eval__used_names():
     assert result.used_names == {'a': True, 'b': True, 'x': True, 'func': True}
 
 
-def test_compile__compile_restricted_csingle_allowed():
+def test_compile__compile_restricted_single__1():
     """It compiles code as an Interactive."""
     result = compile_restricted_single('x = 4 * 6')
 
@@ -172,7 +172,7 @@ def test_compile__compile_restricted_csingle_allowed():
     assert locals["x"] == 24
 
 
-def test_compile__compile_restricted_csingle_allowed2():
+def test_compile__compile_restricted__2():
     """It compiles code as an Interactive."""
     code = compile_restricted('x = 4 * 6', filename="<string>", mode="single")
     locals = {}
