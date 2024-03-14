@@ -4,12 +4,6 @@ Changes
 7.2 (unreleased)
 ----------------
 
-- Nothing changed yet.
-
-
-7.2a1.dev0 (2024-03-14)
------------------------
-
 - Allow to use the package with Python 3.13 -- Caution: No security
   audit has been done so far.
 
