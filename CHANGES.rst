@@ -4,9 +4,6 @@ Changes
 7.1 (unreleased)
 ----------------
 
-- Allow to use the package with Python 3.13 -- Caution: No security
-  audit has been done so far.
-
 - Add support for the matmul (``@``) operator.
 
 
