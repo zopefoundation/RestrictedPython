@@ -1,11 +1,15 @@
 Changes
 =======
 
-7.1 (unreleased)
+7.2 (unreleased)
 ----------------
 
 - Allow to use the package with Python 3.13 -- Caution: No security
   audit has been done so far.
+
+
+7.1 (2024-03-14)
+----------------
 
 - Add support for the matmul (``@``) operator.
 - Add support for single mode statements / execution.
