@@ -6,13 +6,13 @@ Changes
 
 - Allow to use the package with Python 3.13 -- Caution: No security
   audit has been done so far.
+- Add support for single mode statements / execution.
 
 
 7.1 (2024-03-14)
 ----------------
 
 - Add support for the matmul (``@``) operator.
-- Add support for single mode statements / execution.
 
 
 7.0 (2023-11-17)
