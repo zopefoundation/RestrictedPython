@@ -1,7 +1,7 @@
 Changes
 =======
 
-7.1 (unreleased)
+7.1 (2024-03-14)
 ----------------
 
 - Add support for the matmul (``@``) operator.
