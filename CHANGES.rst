@@ -8,6 +8,7 @@ Changes
   audit has been done so far.
 
 - Add support for the matmul (``@``) operator.
+- Add support for single mode statements / execution.
 
 
 7.0 (2023-11-17)
