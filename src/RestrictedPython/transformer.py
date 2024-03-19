@@ -593,6 +593,10 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
             """
             return self.node_contents_visit(node)
 
+    def visit_Interactive(self, node):
+        """Allow single mode without restrictions."""
+        return self.node_contents_visit(node)
+
     def visit_List(self, node):
         """Allow list literals without restrictions."""
         return self.node_contents_visit(node)
