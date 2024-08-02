@@ -292,7 +292,7 @@ def test_Guards__safer_getattr__4():
 
     with pytest.raises(TypeError) as err:
         restricted_exec(SAFER_GETATTR_BREAKOUT, restricted_globals)
-    assert 'name is not of type str' == str(err.value)
+    assert 'type(name) must be str' == str(err.value)
 
 
 def test_call_py3_builtins():
