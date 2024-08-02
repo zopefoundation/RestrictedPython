@@ -246,6 +246,8 @@ def safer_getattr(object, name, default=None, getattr=getattr):
     http://lucumr.pocoo.org/2016/12/29/careful-with-str-format/
 
     """
+    if type(name) is not str:
+        raise TypeError('type(name) must be str')
     if name in ('format', 'format_map') and (
             isinstance(object, str) or
             (isinstance(object, type) and issubclass(object, str))):

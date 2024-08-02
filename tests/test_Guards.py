@@ -259,6 +259,42 @@ def test_Guards__safer_getattr__3():
     assert restricted_globals['result'] == 2
 
 
+SAFER_GETATTR_BREAKOUT = """\
+def g(obj, name):
+    # create class FakeString which inherits from str
+    class FakeString(str):
+        # overload startswith() to always return false
+        def startswith(self, _):
+            return False
+    return getattr(obj, FakeString(name))
+
+# call str.__class__.__base__.__subclasses__()
+subclasses = g(g(g(str, "__class__"), "__base__"), "__subclasses__")()
+# traverse list of subclasses until we reach the BuiltinImporter class
+x = "test"
+while "BuiltinImporter" not in str(x):
+    x = subclasses.pop()
+    continue
+# use BuiltinImporter to import 'os' and access to a not allowed function
+result = x.load_module('os').getgid()
+"""
+
+
+def test_Guards__safer_getattr__4():
+    restricted_globals = dict(
+        __builtins__=safe_builtins,
+        __name__=None,
+        __metaclass__=type,
+        # _write_=_write_,
+        getattr=safer_getattr,
+        result=None,
+    )
+
+    with pytest.raises(TypeError) as err:
+        restricted_exec(SAFER_GETATTR_BREAKOUT, restricted_globals)
+    assert 'type(name) must be str' == str(err.value)
+
+
 def test_call_py3_builtins():
     """It should not be allowed to access global builtins in Python3."""
     result = compile_restricted_exec('builtins["getattr"]')
