@@ -1,7 +1,7 @@
 Changes
 =======
 
-7.2 (unreleased)
+7.2 (2024-08-02)
 ----------------
 
 - Remove unneeded setuptools fossils that may cause installation problems
