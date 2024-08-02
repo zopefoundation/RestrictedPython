@@ -6,8 +6,6 @@ Changes
 
 - Remove unneeded setuptools fossils that may cause installation problems
   with recent setuptools versions.
-- Allow to use the package with Python 3.13 -- Caution: No security
-  audit has been done so far.
 - Add support for single mode statements / execution.
 - Fix a potential breakout capability in the provided ``safer_getattr`` method
   that is part of the ``safer_builtins``.

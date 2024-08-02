@@ -29,50 +29,46 @@ tests_require = [
     'pytest-mock',
 ]
 
-
-setup(
-    name='RestrictedPython',
-    version='7.2.dev0',
-    url='https://github.com/zopefoundation/RestrictedPython',
-    license='ZPL 2.1',
-    description=(
-        'RestrictedPython is a defined subset of the Python language which '
-        'allows to provide a program input into a trusted environment.'
-    ),
-    long_description=read('README.rst') + '\n' + read('CHANGES.rst'),
-    long_description_content_type='text/x-rst',
-    classifiers=[
-        'Development Status :: 6 - Mature',
-        'License :: OSI Approved :: Zope Public License',
-        'Programming Language :: Python',
-        'Operating System :: OS Independent',
-        'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.7',
-        'Programming Language :: Python :: 3.8',
-        'Programming Language :: Python :: 3.9',
-        'Programming Language :: Python :: 3.10',
-        'Programming Language :: Python :: 3.11',
-        'Programming Language :: Python :: 3.12',
-        'Programming Language :: Python :: Implementation :: CPython',
-        'Topic :: Security',
-    ],
-    keywords='restricted execution security untrusted code',
-    author='Zope Foundation and Contributors',
-    author_email='zope-dev@zope.org',
-    project_urls={
-        "Documentation": "https://restrictedpython.readthedocs.io/",
-        "Source": "https://github.com/zopefoundation/RestrictedPython",
-        "Tracker": "https://github.com/zopefoundation/RestrictedPython/issues",
-    },
-    packages=find_packages('src'),
-    package_dir={'': 'src'},
-    install_requires=[
-    ],
-    python_requires=">=3.7, <3.14",
-    extras_require={
-        'test': tests_require,
-        'docs': ['Sphinx', 'sphinx_rtd_theme'],
-    },
-    include_package_data=True,
-    zip_safe=False
-)
+setup(name='RestrictedPython',
+      version='7.2.dev0',
+      url='https://github.com/zopefoundation/RestrictedPython',
+      license='ZPL 2.1',
+      description=(
+          'RestrictedPython is a defined subset of the Python language which '
+          'allows to provide a program input into a trusted environment.'),
+      long_description=read('README.rst') + '\n' + read('CHANGES.rst'),
+      long_description_content_type='text/x-rst',
+      classifiers=[
+          'Development Status :: 6 - Mature',
+          'License :: OSI Approved :: Zope Public License',
+          'Programming Language :: Python',
+          'Operating System :: OS Independent',
+          'Programming Language :: Python :: 3',
+          'Programming Language :: Python :: 3.7',
+          'Programming Language :: Python :: 3.8',
+          'Programming Language :: Python :: 3.9',
+          'Programming Language :: Python :: 3.10',
+          'Programming Language :: Python :: 3.11',
+          'Programming Language :: Python :: 3.12',
+          'Programming Language :: Python :: Implementation :: CPython',
+          'Topic :: Security',
+      ],
+      keywords='restricted execution security untrusted code',
+      author='Zope Foundation and Contributors',
+      author_email='zope-dev@zope.org',
+      project_urls={
+          "Documentation": "https://restrictedpython.readthedocs.io/",
+          "Source": "https://github.com/zopefoundation/RestrictedPython",
+          "Tracker":
+          "https://github.com/zopefoundation/RestrictedPython/issues",
+      },
+      packages=find_packages('src'),
+      package_dir={'': 'src'},
+      install_requires=[],
+      python_requires=">=3.7, <3.13",
+      extras_require={
+          'test': tests_require,
+          'docs': ['Sphinx', 'sphinx_rtd_theme'],
+      },
+      include_package_data=True,
+      zip_safe=False)
