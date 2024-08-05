@@ -6,6 +6,8 @@ Changes
 
 - Allow to use the package with Python 3.13 -- Caution: No security
   audit has been done so far.
+- Add an additional check for potential breakout capability via inspection attribute names
+  in the provided ``safer_getattr`` method that is part of the ``safer_builtins``.
 
 
 7.2 (2024-08-02)
