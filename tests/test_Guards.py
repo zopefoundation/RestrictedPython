@@ -56,7 +56,6 @@ result = ob1.display()'''
 def test_Guards__guarded_setattr__1():
     """It allows use setattr and delattr when _guarded_writes is True.
     """
-
     class MyObjectD:
         value = None
         _guarded_writes = 1
@@ -74,8 +73,7 @@ setattr(my_object_d, 'value', 9999)'''
         __name__='restricted_module',
         __metaclass__=type,
         _write_=_write_,
-        _getattr_=getattr,
-    )
+        _getattr_=getattr,)
 
     restricted_exec(setattr_code, restricted_globals)
     assert 9999 == restricted_globals['my_object_d'].value
