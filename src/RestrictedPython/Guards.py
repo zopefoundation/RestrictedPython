@@ -257,8 +257,7 @@ def safer_getattr(object, name, default=None, getattr=getattr):
     if name in INSPECT_ATTRIBUTES:
         raise AttributeError(
             f'"{name}" is a restricted name,'
-            ' that is forbidden to access in RestrictedPython.',
-        )
+            ' that is forbidden to access in RestrictedPython.')
     if name.startswith('_'):
         raise AttributeError(
             '"{name}" is an invalid attribute name because it '
