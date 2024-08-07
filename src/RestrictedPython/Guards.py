@@ -18,6 +18,7 @@
 import builtins
 
 from RestrictedPython._compat import IS_PY311_OR_GREATER
+from RestrictedPython.transformer import INSPECT_ATTRIBUTES
 
 
 safe_builtins = {}
@@ -253,6 +254,10 @@ def safer_getattr(object, name, default=None, getattr=getattr):
             (isinstance(object, type) and issubclass(object, str))):
         raise NotImplementedError(
             'Using the format*() methods of `str` is not safe')
+    if name in INSPECT_ATTRIBUTES:
+        raise AttributeError(
+            f'"{name}" is a restricted name,'
+            ' that is forbidden to access in RestrictedPython.')
     if name.startswith('_'):
         raise AttributeError(
             '"{name}" is an invalid attribute name because it '

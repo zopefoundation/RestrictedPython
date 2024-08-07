@@ -295,6 +295,40 @@ def test_Guards__safer_getattr__4():
     assert 'type(name) must be str' == str(err.value)
 
 
+SAFER_GETATTR_BREAKOUT2 = """\
+g = None
+leak = None
+def test():
+    global g, leak
+    leak = getattr(getattr(getattr(g, "gi_frame"), "f_back"), "f_back")
+    yield leak
+g = test()
+g.send(None)
+os = getattr(leak, "f_builtins").get('__import__')('os')
+result = os.getgid()
+"""
+
+
+def test_Guards__safer_getattr__5():
+    restricted_globals = dict(
+        __builtins__=safe_builtins,
+        __name__=None,
+        __metaclass__=type,
+        # _write_=_write_,
+        getattr=safer_getattr,
+        result=None,
+    )
+
+    # restricted_exec(SAFER_GETATTR_BREAKOUT2, restricted_globals)
+    # assert restricted_globals['result'] == 20
+    with pytest.raises(AttributeError) as err:
+        restricted_exec(SAFER_GETATTR_BREAKOUT2, restricted_globals)
+    assert (
+        '"gi_frame" is a restricted name, '
+        'that is forbidden to access in RestrictedPython.'
+    ) == str(err.value)
+
+
 def test_call_py3_builtins():
     """It should not be allowed to access global builtins in Python3."""
     result = compile_restricted_exec('builtins["getattr"]')
