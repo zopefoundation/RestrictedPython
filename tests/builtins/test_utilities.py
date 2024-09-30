@@ -17,7 +17,6 @@ def test_string_in_utility_builtins():
         rstring.unexisting_attribute
     except AttributeError as e:
         assert e.obj is rstring
-        
 
 
 def test_math_in_utility_builtins():
