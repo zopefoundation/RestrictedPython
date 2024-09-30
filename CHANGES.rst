@@ -1,7 +1,7 @@
 Changes
 =======
 
-7.3 (unreleased)
+7.3 (2024-09-30)
 ----------------
 
 - Increase the safety level of ``safer_getattr`` allowing applications to use
