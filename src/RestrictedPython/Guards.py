@@ -240,6 +240,9 @@ def guarded_delattr(object, name):
 safe_builtins['delattr'] = guarded_delattr
 
 
+raise_ = object()
+
+
 def safer_getattr(object, name, default=None, getattr=getattr):
     """Getattr implementation which prevents using format on string objects.
 
@@ -263,10 +266,16 @@ def safer_getattr(object, name, default=None, getattr=getattr):
             '"{name}" is an invalid attribute name because it '
             'starts with "_"'.format(name=name)
         )
-    return getattr(object, name, default)
+    args = (object, name) + (() if default is raise_ else (default,))
+    return getattr(*args)
 
 
 safe_builtins['_getattr_'] = safer_getattr
+
+
+def safer_getattr_raise(object, name, default=raise_):
+    """like ``safer_getattr`` but raising ``AttributeError`` if failing."""
+    return safer_getattr(object, name, default)
 
 
 def guarded_iter_unpack_sequence(it, spec, _getiter_):
