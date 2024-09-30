@@ -30,7 +30,7 @@ tests_require = [
 ]
 
 setup(name='RestrictedPython',
-      version='7.3',
+      version='7.4.dev0',
       url='https://github.com/zopefoundation/RestrictedPython',
       license='ZPL 2.1',
       description=(
