@@ -65,7 +65,7 @@ setup(name='RestrictedPython',
       packages=find_packages('src'),
       package_dir={'': 'src'},
       install_requires=[],
-      python_requires=">=3.7, <3.14",
+      python_requires=">=3.7, <3.13",
       extras_require={
           'test': tests_require,
           'docs': ['Sphinx', 'sphinx_rtd_theme'],

@@ -4,8 +4,6 @@ Changes
 7.3 (unreleased)
 ----------------
 
-- Allow to use the package with Python 3.13 -- Caution: No security
-  audit has been done so far.
 - Increase the safety level of ``safer_getattr`` allowing applications to use
   it as ``getattr`` implementation. Such use should now follow the same policy
   and give the same level of protection as direct attribute access in an
