@@ -29,7 +29,11 @@ class _AttributeDelegator:
         if attr in self.__excludes:
             raise NotImplementedError(
                 f"{self.__mod.__name__}.{attr} is not safe")
-        return getattr(self.__mod, attr)
+        try:
+            return getattr(self.__mod, attr)
+        except AttributeError as e:
+            e.obj = self
+            raise
 
 
 utility_builtins['string'] = _AttributeDelegator(string, "Formatter")

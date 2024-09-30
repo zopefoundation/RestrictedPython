@@ -7,8 +7,17 @@ def test_string_in_utility_builtins():
     from RestrictedPython.Utilities import utility_builtins
 
     # we no longer provide access to ``string`` itself, only to
-    # a restricted view of it
-    assert utility_builtins['string'].__name__ == string.__name__
+    # a restricted view of it (``rstring``)
+    rstring = utility_builtins['string']
+    assert rstring.__name__ == string.__name__
+
+    # ensure it does not provide access to ``string`` via
+    # ``AttributeError.obj``
+    try:
+        rstring.unexisting_attribute
+    except AttributeError as e:
+        assert e.obj is rstring
+        
 
 
 def test_math_in_utility_builtins():

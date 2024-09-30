@@ -10,6 +10,8 @@ Changes
   it as ``getattr`` implementation. Such use should now follow the same policy
   and give the same level of protection as direct attribute access in an
   environment based on ``RestrictedPython``'s ``safe_builtints``.
+- Prevent information leakage via ``AttributeError.obj``
+  and the ``string`` module.
 
 
 7.2 (2024-08-02)
