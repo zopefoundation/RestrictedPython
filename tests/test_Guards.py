@@ -332,13 +332,13 @@ def test_Guards__safer_getattr__5():
 def test_Guards__safer_getattr_raise():
     from types import SimpleNamespace
 
-    from RestrictedPython.Guards import safer_getattr_raise as ga
+    from RestrictedPython.Guards import safer_getattr_raise
 
     o = SimpleNamespace(a="a")
-    assert ga(o, "a") == "a"
-    assert ga(o, "b", None) is None
+    assert safer_getattr_raise(o, "a") == "a"
+    assert safer_getattr_raise(o, "b", None) is None
     with pytest.raises(AttributeError):
-        ga(o, "b")
+        safer_getattr_raise(o, "b")
 
 
 def test_call_py3_builtins():
