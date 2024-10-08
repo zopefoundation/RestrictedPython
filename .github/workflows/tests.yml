@@ -29,7 +29,7 @@ jobs:
         - ["3.10",  "py310"]
         - ["3.11",  "py311"]
         - ["3.12",  "py312"]
-        - ["3.13.0-alpha - 3.13.0",  "py313"]
+        - ["3.13",  "py313"]
         - ["3.9",   "docs"]
         - ["3.9",   "coverage"]
         - ["3.9",   "py39-datetime"]
@@ -48,6 +48,7 @@ jobs:
       uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.config[0] }}
+        allow-prereleases: true
     - name: Pip cache
       uses: actions/cache@v3
       with:

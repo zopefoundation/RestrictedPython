@@ -37,7 +37,7 @@ templates_path = ['_templates']
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
 # source_suffix = ['.rst', '.md']
-source_suffix = '.rst'
+source_suffix = {'.rst': 'restructuredtext'}
 
 # The encoding of source files.
 # source_encoding = 'utf-8-sig'
@@ -113,6 +113,7 @@ intersphinx_mapping = {
     'python310': ('https://docs.python.org/3.10', None),
     'python311': ('https://docs.python.org/3.11', None),
     'python312': ('https://docs.python.org/3.12', None),
+    'python313': ('https://docs.python.org/3.13', None),
 }
 
 # Options for sphinx.ext.todo:

@@ -4,8 +4,7 @@ Changes
 7.4 (unreleased)
 ----------------
 
-- Allow to use the package with Python 3.13 -- Caution: No security
-  audit has been done so far.
+- Allow to use the package with Python 3.13.
 
 
 7.3 (2024-09-30)
