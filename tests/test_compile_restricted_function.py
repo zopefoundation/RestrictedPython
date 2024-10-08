@@ -3,7 +3,6 @@ from types import FunctionType
 from RestrictedPython import PrintCollector
 from RestrictedPython import compile_restricted_function
 from RestrictedPython import safe_builtins
-from RestrictedPython._compat import IS_PY38_OR_GREATER
 from RestrictedPython._compat import IS_PY310_OR_GREATER
 
 
@@ -242,11 +241,7 @@ def test_compile_restricted_function_invalid_syntax():
         assert error_msg.startswith(
             "Line 1: SyntaxError: cannot assign to literal here. Maybe "
         )
-    elif IS_PY38_OR_GREATER:
-        assert error_msg.startswith(
-            "Line 1: SyntaxError: cannot assign to literal at statement:"
-        )
     else:
         assert error_msg.startswith(
-            "Line 1: SyntaxError: can't assign to literal at statement:"
+            "Line 1: SyntaxError: cannot assign to literal at statement:"
         )

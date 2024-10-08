@@ -11,7 +11,7 @@ branch = true
 source = ["RestrictedPython"]
 
 [tool.coverage.report]
-fail_under = 97
+fail_under = 97.9
 precision = 2
 ignore_errors = true
 show_missing = true

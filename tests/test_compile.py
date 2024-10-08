@@ -8,7 +8,6 @@ from RestrictedPython import compile_restricted
 from RestrictedPython import compile_restricted_eval
 from RestrictedPython import compile_restricted_exec
 from RestrictedPython import compile_restricted_single
-from RestrictedPython._compat import IS_PY38_OR_GREATER
 from RestrictedPython._compat import IS_PY310_OR_GREATER
 from RestrictedPython._compat import IS_PY311_OR_GREATER
 from tests.helper import restricted_eval
@@ -43,10 +42,8 @@ def test_compile__invalid_syntax():
         compile_restricted(INVALID_ASSINGMENT, '<string>', 'exec')
     if IS_PY310_OR_GREATER:
         assert "SyntaxError: cannot assign to literal here." in str(err.value)
-    elif IS_PY38_OR_GREATER:
-        assert "cannot assign to literal at statement:" in str(err.value)
     else:
-        assert "can't assign to literal at statement:" in str(err.value)
+        assert "cannot assign to literal at statement:" in str(err.value)
 
 
 def test_compile__compile_restricted_exec__1():
