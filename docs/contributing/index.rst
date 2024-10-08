@@ -99,7 +99,6 @@ A (modified style) Copy of all Abstract Grammar Definitions for the Python versi
 .. toctree::
    :maxdepth: 2
 
-   changes_from36to37
    changes_from37to38
    changes_from38to39
    changes_from39to310

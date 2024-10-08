@@ -2,20 +2,20 @@
 # https://github.com/zopefoundation/meta/tree/master/config/pure-python
 [meta]
 template = "pure-python"
-commit-id = "cb0568c7"
+commit-id = "d3455844"
 
 [python]
 with-pypy = false
 with-docs = true
 with-sphinx-doctests = true
 with-windows = true
-with-future-python = true
+with-future-python = false
 with-macos = false
 
 [tox]
 use-flake8 = true
 additional-envlist = [
-    "py39-datetime",
+    "py311-datetime",
     "combined-coverage",
     ]
 testenv-deps = [
@@ -47,7 +47,7 @@ testenv-additional = [
     "    coverage combine",
     "    coverage html",
     "    coverage report -m --fail-under=100",
-    "depends = py37,py38,py39,py39-datetime,py310,py311,py312,py313,coverage",
+    "depends = py38,py39,py310,py311,py311-datetime,py312,py313,coverage",
     ]
 coverage-basepython = "python3.8"
 coverage-command = "pytest --cov=src --cov=tests --cov-report= {posargs}"
@@ -86,5 +86,5 @@ additional-ignores = [
 
 [github-actions]
 additional-config = [
-    "- [\"3.9\",   \"py39-datetime\"]",
+    "- [\"3.11\", \"py311-datetime\"]",
     ]

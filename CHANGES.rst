@@ -6,6 +6,8 @@ Changes
 
 - Allow to use the package with Python 3.13.
 
+- Drop support for Python 3.7.
+
 
 7.3 (2024-09-30)
 ----------------

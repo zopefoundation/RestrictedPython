@@ -107,7 +107,6 @@ todo_include_todos = True
 # Intersphinx Mapping for Links between different Documentations
 intersphinx_mapping = {
     'python3': ('https://docs.python.org/3', None),
-    'python37': ('https://docs.python.org/3.7', None),
     'python38': ('https://docs.python.org/3.8', None),
     'python39': ('https://docs.python.org/3.9', None),
     'python310': ('https://docs.python.org/3.10', None),
@@ -275,8 +274,11 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'restrictedpython', 'RestrictedPython Documentation', [author], 1)
-]
+    (master_doc,
+     'restrictedpython',
+     'RestrictedPython Documentation',
+     [author],
+     1)]
 
 # If true, show URL addresses after external links.
 # man_show_urls = False

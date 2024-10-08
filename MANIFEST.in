@@ -5,6 +5,7 @@ include *.rst
 include *.txt
 include buildout.cfg
 include tox.ini
+include .pre-commit-config.yaml
 
 recursive-include docs *.py
 recursive-include docs *.rst
