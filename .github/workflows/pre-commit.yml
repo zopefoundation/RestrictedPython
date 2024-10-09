@@ -1,0 +1,33 @@
+# Generated from:
+# https://github.com/zopefoundation/meta/tree/master/config/pure-python
+name: pre-commit
+
+on:
+  pull_request:
+  push:
+    branches:
+    - master
+  # Allow to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+env:
+  FORCE_COLOR: 1
+
+jobs:
+  pre-commit:
+    name: linting
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-python@v5
+      with:
+        python-version: 3.x
+    - uses: pre-commit/action@v3.0.1
+      with:
+        extra_args: --all-files --show-diff-on-failure
+      env:
+        PRE_COMMIT_COLOR: always
+    - uses: pre-commit-ci/lite-action@v1.0.2
+      if: always()
+      with:
+        msg: Apply pre-commit code formatting

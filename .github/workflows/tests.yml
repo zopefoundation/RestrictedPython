@@ -17,39 +17,37 @@ jobs:
       fail-fast: false
       matrix:
         os:
-        - ["ubuntu", "ubuntu-20.04"]
+        - ["ubuntu", "ubuntu-latest"]
         - ["windows", "windows-latest"]
         config:
         # [Python version, tox env]
-        - ["3.9",   "release-check"]
-        - ["3.9",   "lint"]
-        - ["3.7",   "py37"]
-        - ["3.8",   "py38"]
-        - ["3.9",   "py39"]
-        - ["3.10",  "py310"]
-        - ["3.11",  "py311"]
-        - ["3.12",  "py312"]
-        - ["3.13.0-alpha - 3.13.0",  "py313"]
-        - ["3.9",   "docs"]
-        - ["3.9",   "coverage"]
-        - ["3.9",   "py39-datetime"]
+        - ["3.11", "release-check"]
+        - ["3.8", "py38"]
+        - ["3.9", "py39"]
+        - ["3.10", "py310"]
+        - ["3.11", "py311"]
+        - ["3.12", "py312"]
+        - ["3.13", "py313"]
+        - ["3.11", "docs"]
+        - ["3.11", "coverage"]
+        - ["3.11", "py311-datetime"]
         exclude:
-          - { os: ["windows", "windows-latest"], config: ["3.9",   "release-check"] }
-          - { os: ["windows", "windows-latest"], config: ["3.9",   "lint"] }
-          - { os: ["windows", "windows-latest"], config: ["3.9",   "docs"] }
-          - { os: ["windows", "windows-latest"], config: ["3.9",   "coverage"] }
+          - { os: ["windows", "windows-latest"], config: ["3.11", "release-check"] }
+          - { os: ["windows", "windows-latest"], config: ["3.11", "docs"] }
+          - { os: ["windows", "windows-latest"], config: ["3.11", "coverage"] }
 
     runs-on: ${{ matrix.os[1] }}
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.event.pull_request.base.repo.full_name
     name: ${{ matrix.os[0] }}-${{ matrix.config[1] }}
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.config[0] }}
+        allow-prereleases: true
     - name: Pip cache
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ~/.cache/pip
         key: ${{ runner.os }}-pip-${{ matrix.config[0] }}-${{ hashFiles('setup.*', 'tox.ini') }}
@@ -61,7 +59,11 @@ jobs:
         python -m pip install --upgrade pip
         pip install tox
     - name: Test
+      if: ${{ !startsWith(runner.os, 'Mac') }}
       run: tox -e ${{ matrix.config[1] }}
+    - name: Test (macOS)
+      if: ${{ startsWith(runner.os, 'Mac') }}
+      run: tox -e ${{ matrix.config[1] }}-universal2
     - name: Coverage
       if: matrix.config[1] == 'coverage'
       run: |

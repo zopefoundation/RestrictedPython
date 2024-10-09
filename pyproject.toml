@@ -1,0 +1,21 @@
+# 
+# Generated from:
+# https://github.com/zopefoundation/meta/tree/master/config/pure-python
+
+[build-system]
+requires = ["setuptools<74"]
+build-backend = "setuptools.build_meta"
+
+[tool.coverage.run]
+branch = true
+source = ["RestrictedPython"]
+
+[tool.coverage.report]
+fail_under = 97.9
+precision = 2
+ignore_errors = true
+show_missing = true
+exclude_lines = ["pragma: no cover", "pragma: nocover", "except ImportError:", "raise NotImplementedError", "if __name__ == '__main__':", "self.fail", "raise AssertionError", "raise unittest.Skip"]
+
+[tool.coverage.html]
+directory = "parts/htmlcov"

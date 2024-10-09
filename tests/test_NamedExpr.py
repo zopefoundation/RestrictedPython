@@ -4,14 +4,11 @@
 from ast import NodeTransformer
 from ast import parse
 from unittest import TestCase
-from unittest import skipUnless
 
 from RestrictedPython import compile_restricted
 from RestrictedPython import safe_globals
-from RestrictedPython._compat import IS_PY38_OR_GREATER
 
 
-@skipUnless(IS_PY38_OR_GREATER, "Feature available for Python 3.8+")
 class TestNamedExpr(TestCase):
     def test_works(self):
         code, gs = compile_str("if x:= x + 1: True\n")

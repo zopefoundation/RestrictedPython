@@ -4,8 +4,9 @@ Changes
 7.4 (unreleased)
 ----------------
 
-- Allow to use the package with Python 3.13 -- Caution: No security
-  audit has been done so far.
+- Allow to use the package with Python 3.13.
+
+- Drop support for Python 3.7.
 
 - Provide new function ``RestrictedPython.Guards.safer_getattr_raise``.
   It is similar to ``safer_getattr`` but handles its parameter

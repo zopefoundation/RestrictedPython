@@ -1,0 +1,28 @@
+# Generated from:
+# https://github.com/zopefoundation/meta/tree/master/config/pure-python
+minimum_pre_commit_version: '3.6'
+repos:
+  - repo: https://github.com/pycqa/isort
+    rev: "5.13.2"
+    hooks:
+    - id: isort
+  - repo: https://github.com/hhatto/autopep8
+    rev: "v2.3.1"
+    hooks:
+    - id: autopep8
+      args: [--in-place, --aggressive, --aggressive]
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v3.17.0
+    hooks:
+    - id: pyupgrade
+      args: [--py38-plus]
+  - repo: https://github.com/isidentical/teyit
+    rev: 0.4.3
+    hooks:
+    - id: teyit
+  - repo: https://github.com/PyCQA/flake8
+    rev: "7.1.1"
+    hooks:
+    - id: flake8
+      additional_dependencies:
+        - flake8-debugger == 4.1.2
