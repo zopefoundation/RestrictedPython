@@ -1,7 +1,7 @@
 Changes
 =======
 
-7.4 (unreleased)
+7.4 (2024-10-09)
 ----------------
 
 - Allow to use the package with Python 3.13.
@@ -13,7 +13,6 @@ Changes
   ``default`` like ``getattr``, i.e. it raises ``AttributeError``
   if the attribute lookup fails and this parameter is not provided,
   fixes `#287 <https://github.com/zopefoundation/RestrictedPython/issues/287>`_.
-  
 
 
 7.3 (2024-09-30)
