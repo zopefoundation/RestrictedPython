@@ -1,7 +1,6 @@
 Contributing
 ============
 
-.. contents::
 
 Contributing to RestrictedPython
 --------------------------------

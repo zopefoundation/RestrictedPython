@@ -24,11 +24,6 @@ def read(*rnames):
         return f.read()
 
 
-tests_require = [
-    'pytest',
-    'pytest-mock',
-]
-
 setup(name='RestrictedPython',
       version='7.4.dev0',
       url='https://github.com/zopefoundation/RestrictedPython',
@@ -55,7 +50,7 @@ setup(name='RestrictedPython',
       ],
       keywords='restricted execution security untrusted code',
       author='Zope Foundation and Contributors',
-      author_email='zope-dev@zope.org',
+      author_email='zope-dev@zope.dev',
       project_urls={
           "Documentation": "https://restrictedpython.readthedocs.io/",
           "Source": "https://github.com/zopefoundation/RestrictedPython",
@@ -67,8 +62,8 @@ setup(name='RestrictedPython',
       install_requires=[],
       python_requires=">=3.8, <3.14",
       extras_require={
-          'test': tests_require,
-          'docs': ['Sphinx', 'sphinx_rtd_theme'],
+          'test': ['pytest', 'pytest-mock'],
+          'docs': ['Sphinx', 'furo'],
       },
       include_package_data=True,
       zip_safe=False)

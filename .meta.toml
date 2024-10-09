@@ -81,6 +81,7 @@ additional-ignores = [
     "docs/_build/html/_sources/roadmap/*",
     "docs/_build/html/_sources/upgrade_dependencies/*",
     "docs/_build/html/_sources/usage/*",
+    "docs/_build/html/_static/scripts/*",
     ]
 
 [github-actions]

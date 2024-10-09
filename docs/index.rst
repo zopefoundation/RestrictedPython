@@ -29,8 +29,6 @@ Contents
    usage/index
    usage/api
 
-   upgrade_dependencies/index
-
    roadmap/index
    contributing/index
 
