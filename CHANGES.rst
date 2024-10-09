@@ -8,6 +8,13 @@ Changes
 
 - Drop support for Python 3.7.
 
+- Provide new function ``RestrictedPython.Guards.safer_getattr_raise``.
+  It is similar to ``safer_getattr`` but handles its parameter
+  ``default`` like ``getattr``, i.e. it raises ``AttributeError``
+  if the attribute lookup fails and this parameter is not provided,
+  fixes `#287 <https://github.com/zopefoundation/RestrictedPython/issues/287>`_.
+  
+
 
 7.3 (2024-09-30)
 ----------------

@@ -329,6 +329,18 @@ def test_Guards__safer_getattr__5():
     ) == str(err.value)
 
 
+def test_Guards__safer_getattr_raise():
+    from types import SimpleNamespace
+
+    from RestrictedPython.Guards import safer_getattr_raise
+
+    o = SimpleNamespace(a="a")
+    assert safer_getattr_raise(o, "a") == "a"
+    assert safer_getattr_raise(o, "b", None) is None
+    with pytest.raises(AttributeError):
+        safer_getattr_raise(o, "b")
+
+
 def test_call_py3_builtins():
     """It should not be allowed to access global builtins in Python3."""
     result = compile_restricted_exec('builtins["getattr"]')
