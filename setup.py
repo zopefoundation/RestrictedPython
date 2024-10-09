@@ -25,7 +25,7 @@ def read(*rnames):
 
 
 setup(name='RestrictedPython',
-      version='7.4',
+      version='7.5.dev0',
       url='https://github.com/zopefoundation/RestrictedPython',
       license='ZPL 2.1',
       description=(
