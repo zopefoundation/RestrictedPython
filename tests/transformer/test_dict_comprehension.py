@@ -27,7 +27,6 @@ def test_dict_comprehension_with_attrs(mocker):
 
     calls = [mocker.call(seq, 'z')]
 
-    # Note: Order changed in PEP 572, starting with Python 3.8.
     calls.extend([
         mocker.call(z[0], 'k'),
         mocker.call(z[1], 'k'),
