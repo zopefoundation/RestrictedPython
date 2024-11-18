@@ -27,7 +27,7 @@ def read(*rnames):
 setup(name='RestrictedPython',
       version='7.5.dev0',
       url='https://github.com/zopefoundation/RestrictedPython',
-      license='ZPL 2.1',
+      license='ZPL-2.1',
       description=(
           'RestrictedPython is a defined subset of the Python language which '
           'allows to provide a program input into a trusted environment.'),
