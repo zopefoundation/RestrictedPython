@@ -3,7 +3,7 @@
 # https://github.com/zopefoundation/meta/tree/master/config/pure-python
 
 [build-system]
-requires = ["setuptools<74"]
+requires = ["setuptools <= 75.6.0"]
 build-backend = "setuptools.build_meta"
 
 [tool.coverage.run]

@@ -4,6 +4,11 @@ Changes
 7.5 (unreleased)
 ----------------
 
+- Drop support for Python 3.8.
+
+- Update setuptools version pin.
+  (`#292 <https://github.com/zopefoundation/RestrictedPython/issues/292>`_)
+
 
 7.4 (2024-10-09)
 ----------------
