@@ -98,7 +98,6 @@ A (modified style) Copy of all Abstract Grammar Definitions for the Python versi
 .. toctree::
    :maxdepth: 2
 
-   changes_from37to38
    changes_from38to39
    changes_from39to310
    changes_from310to311
@@ -236,12 +235,11 @@ Technical Backgrounds - Links to External Documentation
 
   * AST Grammar of Python (`Status of Python Versions`_)
 
+    * `Python 3.13 AST`_ (EOL 2029-10)
     * `Python 3.12 AST`_ (EOL 2028-10)
     * `Python 3.11 AST`_ (EOL 2027-10)
     * `Python 3.10 AST`_ (EOL 2026-10)
     * `Python 3.9 AST`_ (EOL 2025-10)
-    * `Python 3.8 AST`_ (EOL 2024-10)
-    * `Python 3.7 AST`_ (EOL 2023-06-27)
 
   * `AST NodeVistiors Class`_
   * `AST NodeTransformer Class`_
@@ -259,6 +257,8 @@ Todos
 
 .. _`What's new in Python`: https://docs.python.org/3/whatsnew/
 
+.. _`What's new in Python 3.13`: https://docs.python.org/3.13/whatsnew/3.13.html
+
 .. _`What's new in Python 3.12`: https://docs.python.org/3.12/whatsnew/3.12.html
 
 .. _`What's new in Python 3.11`: https://docs.python.org/3.11/whatsnew/3.11.html
@@ -266,10 +266,6 @@ Todos
 .. _`What's new in Python 3.10`: https://docs.python.org/3.10/whatsnew/3.10.html
 
 .. _`What's new in Python 3.9`: https://docs.python.org/3.9/whatsnew/3.9.html
-
-.. _`What's new in Python 3.8`: https://docs.python.org/3.8/whatsnew/3.8.html
-
-.. _`What's new in Python 3.7`: https://docs.python.org/3.7/whatsnew/3.7.html
 
 .. _`Status of Python Versions`: https://devguide.python.org/versions/
 
@@ -285,6 +281,8 @@ Todos
 
 .. _`Python 3 AST`: https://docs.python.org/3/library/ast.html#abstract-grammar
 
+.. _`Python 3.13 AST`: https://docs.python.org/3.13/library/ast.html#abstract-grammar
+
 .. _`Python 3.12 AST`: https://docs.python.org/3.12/library/ast.html#abstract-grammar
 
 .. _`Python 3.11 AST`: https://docs.python.org/3.11/library/ast.html#abstract-grammar
@@ -292,10 +290,6 @@ Todos
 .. _`Python 3.10 AST`: https://docs.python.org/3.10/library/ast.html#abstract-grammar
 
 .. _`Python 3.9 AST`: https://docs.python.org/3.9/library/ast.html#abstract-grammar
-
-.. _`Python 3.8 AST`: https://docs.python.org/3.8/library/ast.html#abstract-grammar
-
-.. _`Python 3.7 AST`: https://docs.python.org/3.7/library/ast.html#abstract-grammar
 
 .. _`AST NodeVistiors Class`: https://docs.python.org/3/library/ast.html#ast.NodeVisitor
 

@@ -112,7 +112,6 @@ todo_include_todos = True
 # Intersphinx Mapping for Links between different Documentations
 intersphinx_mapping = {
     'python3': ('https://docs.python.org/3', None),
-    'python38': ('https://docs.python.org/3.8', None),
     'python39': ('https://docs.python.org/3.9', None),
     'python310': ('https://docs.python.org/3.10', None),
     'python311': ('https://docs.python.org/3.11', None),
