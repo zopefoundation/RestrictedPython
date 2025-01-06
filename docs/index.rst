@@ -15,7 +15,7 @@ RestrictedPython is not a sandbox system or a secured environment, but it helps 
 Supported Python versions
 =========================
 
-RestrictedPython supports CPython 3.7 up to 3.12.
+RestrictedPython supports CPython 3.9 up to 3.13.
 It does _not_ support PyPy or other alternative Python implementations.
 
 Contents

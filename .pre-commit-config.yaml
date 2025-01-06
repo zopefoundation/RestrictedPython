@@ -12,10 +12,10 @@ repos:
     - id: autopep8
       args: [--in-place, --aggressive, --aggressive]
   - repo: https://github.com/asottile/pyupgrade
-    rev: v3.17.0
+    rev: v3.19.0
     hooks:
     - id: pyupgrade
-      args: [--py38-plus]
+      args: [--py39-plus]
   - repo: https://github.com/isidentical/teyit
     rev: 0.4.3
     hooks:
