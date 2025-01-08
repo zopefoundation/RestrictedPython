@@ -19,4 +19,4 @@ jobs:
       with:
         languages: python
         queries: python
-        packs: githubsecuritylab/codeql-python-extensions,githubsecuritylab/codeql-python-queries
+        packs: githubsecuritylab/codeql-python-queries
