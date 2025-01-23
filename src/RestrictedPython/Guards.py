@@ -17,7 +17,6 @@
 
 import builtins
 
-from RestrictedPython._compat import IS_PY311_OR_GREATER
 from RestrictedPython.transformer import INSPECT_ATTRIBUTES
 
 
@@ -105,9 +104,6 @@ _safe_exceptions = [
     'Warning',
     'ZeroDivisionError',
 ]
-
-if IS_PY311_OR_GREATER:
-    _safe_exceptions.append("ExceptionGroup")
 
 for name in _safe_names:
     safe_builtins[name] = getattr(builtins, name)

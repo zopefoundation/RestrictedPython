@@ -1,10 +1,22 @@
 Changes
 =======
 
-7.5 (unreleased)
+8.0 (unreleased)
 ----------------
 
+Backwards incompatible changes
+++++++++++++++++++++++++++++++
+
+- Disallow ``try/except*`` clauses due to a possible sandbox escape and
+  probable uselessness of this feature in the context of ``RestrictedPython``.
+  In addition, remove ``ExceptionGroup`` from ``safe_builtins`` (as useful only
+  with ``try/except*``). - This feature was introduced into
+  ``RestrictedPython`` in version 6.0 for Python 3.11+. (CVE-2025-22153)
+
 - Drop support for Python 3.8.
+
+Features
+++++++++
 
 - Update setuptools version pin.
   (`#292 <https://github.com/zopefoundation/RestrictedPython/issues/292>`_)

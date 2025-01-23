@@ -1141,8 +1141,8 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         return self.node_contents_visit(node)
 
     def visit_TryStar(self, node):
-        """Allow `ExceptionGroup` without restrictions."""
-        return self.node_contents_visit(node)
+        """Disallow `ExceptionGroup` due to a potential sandbox escape."""
+        self.not_allowed(node)
 
     def visit_ExceptHandler(self, node):
         """Protect exception handlers."""

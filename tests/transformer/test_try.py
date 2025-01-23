@@ -68,19 +68,13 @@ def try_except_star(m):
     not IS_PY311_OR_GREATER,
     reason="ExceptionGroup class was added in Python 3.11.",
 )
-def test_RestrictingNodeTransformer__visit_TryStar__1(mocker):
-    """It allows try-except* PEP 654 statements."""
-    trace = mocker.stub()
-    restricted_exec(TRY_EXCEPT_STAR)['try_except_star'](trace)
-
-    trace.assert_has_calls([
-        mocker.call('try'),
-        mocker.call('IndentationError'),
-        mocker.call('ValueError')
-    ])
-
-    with pytest.raises(AssertionError):
-        trace.assert_has_calls([mocker.call('RuntimeError')])
+def test_RestrictingNodeTransformer__visit_TryStar__1():
+    """It denies try-except* PEP 654 statements."""
+    result = compile_restricted_exec(TRY_EXCEPT_STAR)
+    assert result.errors == (
+        'Line 3: TryStar statements are not allowed.',
+    )
+    assert result.code is None
 
 
 TRY_FINALLY = """
