@@ -1,7 +1,7 @@
 Changes
 =======
 
-8.0 (unreleased)
+8.0 (2025-01-23)
 ----------------
 
 Backwards incompatible changes
