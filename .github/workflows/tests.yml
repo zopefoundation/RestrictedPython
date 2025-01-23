@@ -12,6 +12,9 @@ on:
 
 jobs:
   build:
+    permissions:
+      contents: read
+      pull-requests: write
     strategy:
       # We want to see all failures:
       fail-fast: false

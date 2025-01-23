@@ -1,7 +1,7 @@
 <!--
 Generated from:
 https://github.com/zopefoundation/meta/tree/master/config/pure-python
---> 
+-->
 # Contributing to zopefoundation projects
 
 The projects under the zopefoundation GitHub organization are open source and
