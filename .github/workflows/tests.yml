@@ -30,6 +30,7 @@ jobs:
         - ["3.11", "py311"]
         - ["3.12", "py312"]
         - ["3.13", "py313"]
+        - ["3.14", "py314"]
         - ["3.11", "docs"]
         - ["3.11", "coverage"]
         - ["3.11", "py311-datetime"]
@@ -43,33 +44,26 @@ jobs:
     name: ${{ matrix.os[0] }}-${{ matrix.config[1] }}
     steps:
     - uses: actions/checkout@v4
-    - name: Set up Python
-      uses: actions/setup-python@v5
       with:
-        python-version: ${{ matrix.config[0] }}
-        allow-prereleases: true
-    - name: Pip cache
-      uses: actions/cache@v4
+        persist-credentials: false
+    - name: Install uv + caching
+      uses: astral-sh/setup-uv@v5
       with:
-        path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ matrix.config[0] }}-${{ hashFiles('setup.*', 'tox.ini') }}
-        restore-keys: |
-          ${{ runner.os }}-pip-${{ matrix.config[0] }}-
-          ${{ runner.os }}-pip-
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install tox
+        enable-cache: true
+        cache-dependency-glob: |
+          setup.*
+          tox.ini
+        python-version: ${{ matrix.matrix.config[0] }}
+        github-token: ${{ secrets.GITHUB_TOKEN }}
     - name: Test
       if: ${{ !startsWith(runner.os, 'Mac') }}
-      run: tox -e ${{ matrix.config[1] }}
+      run: uvx --with tox-uv tox -e ${{ matrix.config[1] }}
     - name: Test (macOS)
       if: ${{ startsWith(runner.os, 'Mac') }}
-      run: tox -e ${{ matrix.config[1] }}-universal2
+      run: uvx --with tox-uv tox -e ${{ matrix.config[1] }}-universal2
     - name: Coverage
       if: matrix.config[1] == 'coverage'
       run: |
-        pip install coveralls
-        coveralls --service=github
+        uvx coveralls --service=github
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
