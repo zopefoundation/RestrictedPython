@@ -59,7 +59,7 @@ setup(name='RestrictedPython',
       packages=find_packages('src'),
       package_dir={'': 'src'},
       install_requires=[],
-      python_requires=">=3.9, <3.14",
+      python_requires=">=3.9, <3.15",
       extras_require={
           'test': ['pytest', 'pytest-mock'],
           'docs': ['Sphinx', 'furo'],
