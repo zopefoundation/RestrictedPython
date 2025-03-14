@@ -4,7 +4,8 @@ Changes
 8.1 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Allow to use the package with Python 3.14 -- Caution: No security
+  audit has been done so far.
 
 
 8.0 (2025-01-23)
