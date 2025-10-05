@@ -4,7 +4,11 @@ Changes
 8.1 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Advertise support for Python 3.14 by adding the classifier and updating
+  the documentation.
+
+- Fix CI workflow matrix expression so the configured Python version is used
+  for each job, keeping the 3.14 job working.
 
 
 8.1a1.dev0 (2025-03-20)
