@@ -576,14 +576,13 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         return self.node_contents_visit(node)
 
     def visit_TemplateStr(self, node: ast.AST) -> ast.AST:
-        """Template strings are not allowed by default.
-        Even so, that template strings can be useful in context of Template
-        Engines. A Template String itself is not executed itself, but it
-        contain expressions and need additional template rendering logic
-        applied to it to be useful.
+        """Template strings are allowed by default.
+
+        As Template strings are a very basic template mechanism, that needs
+        additional rendering logic to be useful, they are not blocked by
+        default.
         Those rendering logic would be affected by RestrictedPython as well.
 
-        TODO: Deeper review of security implications of template strings.
         TODO: Change Type Annotation to ast.TemplateStr when
               Support for Python 3.13 is dropped.
         """
@@ -595,12 +594,13 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         return self.node_contents_visit(node)
 
     def visit_Interpolation(self, node: ast.AST) -> ast.AST:
-        """Interpolations are not allowed by default.
-        As Interpolations are part of Template Strings, they will not be
-        reached in the context of RestrictedPython as Template Strings
-        ‚‚are not allowed.
+        """Interpolations are allowed by default.
+        As Interpolations are part of Template Strings, they are needed 
+        to be reached in the context of RestrictedPython as Template Strings
+        are allowed. As a user has to provide additional rendering logic
+        to make use of Template Strings, the security implications of
+        Interpolations are limited in the context of RestrictedPython.
 
-        TODO: Deeper review of security implications of interpolated strings.
         TODO: Change Type Annotation to ast.Interpolation when
               Support for Python 3.13 is dropped.
         """

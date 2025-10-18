@@ -97,7 +97,7 @@ def test_t_string_self_documenting_expressions():
         '_print_': PrintCollector,
         '_getattr_': default_guarded_getattr,
         '_getiter_': default_guarded_getiter,
-        '_inplacevar_': lambda x: x,
+        '_inplacevar_': lambda x, y, z: y + z,
     }
     exec(result.code, glb)
-    assert glb['_print']() == "user='eric_idle' member_since=datetime.date(1975, 7, 31)\n"  # NOQA: E501
+    assert glb['_print']() == "the user ERIC_IDLE is a member since 1975-07-31\n"  # NOQA: E501
