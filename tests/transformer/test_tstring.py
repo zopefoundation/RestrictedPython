@@ -1,5 +1,3 @@
-from string.templatelib import Template
-
 import pytest
 
 from RestrictedPython import compile_restricted_exec
@@ -7,6 +5,10 @@ from RestrictedPython._compat import IS_PY314_OR_GREATER
 from RestrictedPython.Eval import default_guarded_getattr
 from RestrictedPython.Eval import default_guarded_getiter
 from RestrictedPython.PrintCollector import PrintCollector
+
+
+if IS_PY314_OR_GREATER:
+    from string.templatelib import Template
 
 
 @pytest.mark.skipif(
