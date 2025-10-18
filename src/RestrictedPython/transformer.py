@@ -575,6 +575,26 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         """Allow f-strings without restrictions."""
         return self.node_contents_visit(node)
 
+    def visit_TemplateStr(self, node: ast.AST) -> ast.AST:
+        """Allow template strings without restrictions.
+
+        TODO: Review security implications of template strings.
+        TODO: Change Type Annotation to ast.TemplateStr when
+              Support for Python 3.13 is dropped.
+        """
+        return self.not_allowed(node)
+        # return self.node_contents_visit(node)
+
+    def visit_InterpolatedStr(self, node: ast.AST) -> ast.AST:
+        """Allow interpolated strings without restrictions.
+
+        TODO: Review security implications of interpolated strings.
+        TODO: Change Type Annotation to ast.InterpolatedStr when
+              Support for Python 3.13 is dropped.
+        """
+        return self.not_allowed(node)
+        # return self.node_contents_visit(node)
+
     def visit_JoinedStr(self, node: ast.JoinedStr) -> ast.AST:
         """Allow joined string without restrictions."""
         return self.node_contents_visit(node)
