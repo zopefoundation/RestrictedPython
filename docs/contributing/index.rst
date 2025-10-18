@@ -103,6 +103,7 @@ A (modified style) Copy of all Abstract Grammar Definitions for the Python versi
    changes_from310to311
    changes_from311to312
    changes_from312to313
+   changes_from313to314
 
 .. _understand:
 
@@ -235,11 +236,11 @@ Technical Backgrounds - Links to External Documentation
 
   * AST Grammar of Python (`Status of Python Versions`_)
 
+    * `Python 3.14 AST`_ (EOL 2030-10)
     * `Python 3.13 AST`_ (EOL 2029-10)
     * `Python 3.12 AST`_ (EOL 2028-10)
     * `Python 3.11 AST`_ (EOL 2027-10)
     * `Python 3.10 AST`_ (EOL 2026-10)
-    * `Python 3.9 AST`_ (EOL 2025-10)
 
   * `AST NodeVistiors Class`_
   * `AST NodeTransformer Class`_
@@ -256,6 +257,8 @@ Todos
 .. Links:
 
 .. _`What's new in Python`: https://docs.python.org/3/whatsnew/
+
+.. _`What's new in Python 3.14`: https://docs.python.org/3.14/whatsnew/3.14.html
 
 .. _`What's new in Python 3.13`: https://docs.python.org/3.13/whatsnew/3.13.html
 
@@ -280,6 +283,8 @@ Todos
 .. _`Chomsky 3`: https://en.wikipedia.org/wiki/Chomsky_hierarchy#Type-3_grammars
 
 .. _`Python 3 AST`: https://docs.python.org/3/library/ast.html#abstract-grammar
+
+.. _`Python 3.14 AST`: https://docs.python.org/3.14/library/ast.html#abstract-grammar
 
 .. _`Python 3.13 AST`: https://docs.python.org/3.13/library/ast.html#abstract-grammar
 
