@@ -1153,7 +1153,10 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         return self.node_contents_visit(node)
 
     def visit_TryStar(self, node: ast.AST) -> ast.AST:
-        """Disallow `ExceptionGroup` due to a potential sandbox escape."""
+        """Disallow `ExceptionGroup` due to a potential sandbox escape.
+
+        TODO: Type Annotation for node when dropping support for Python < 3.11 should be ast.TryStar.
+        """
         self.not_allowed(node)
 
     def visit_ExceptHandler(self, node: ast.ExceptHandler) -> ast.AST:

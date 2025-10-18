@@ -77,7 +77,7 @@ utility_builtins['test'] = test
 
 
 def reorder(s: Iterable, with_: Iterable | None = None,
-            without: Iterable | None = None) -> Iterable:
+            without: Iterable = ()) -> Iterable:
     # s, with_, and without are sequences treated as sets.
     # The result is subtract(intersect(s, with_), without),
     # unless with_ is None, in which case it is subtract(s, without).
