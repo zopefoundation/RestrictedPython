@@ -595,7 +595,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
 
     def visit_Interpolation(self, node: ast.AST) -> ast.AST:
         """Interpolations are allowed by default.
-        As Interpolations are part of Template Strings, they are needed 
+        As Interpolations are part of Template Strings, they are needed
         to be reached in the context of RestrictedPython as Template Strings
         are allowed. As a user has to provide additional rendering logic
         to make use of Template Strings, the security implications of
