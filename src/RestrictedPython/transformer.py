@@ -576,23 +576,30 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         return self.node_contents_visit(node)
 
     def visit_TemplateStr(self, node: ast.AST) -> ast.AST:
-        """Allow template strings without restrictions.
-
-        TODO: Review security implications of template strings.
+        """Template strings are not allowed by default. 
+        Even so, that template strings can be useful in context of Template Engines
+        A Template String itself is not executed itself, but it contain expressions 
+        and need additional template rendering logic applied to it to be useful.
+        Those rendering logic would be affected by RestrictedPython as well.        
+        
+        TODO: Deeper review of security implications of template strings.
         TODO: Change Type Annotation to ast.TemplateStr when
               Support for Python 3.13 is dropped.
         """
-        return self.not_allowed(node)
+        self.warn(node, 'TemplateStr statements are not yet allowed, please use f-strings or a real template engine instead.')
+        self.not_allowed(node)
         # return self.node_contents_visit(node)
 
-    def visit_InterpolatedStr(self, node: ast.AST) -> ast.AST:
-        """Allow interpolated strings without restrictions.
-
-        TODO: Review security implications of interpolated strings.
-        TODO: Change Type Annotation to ast.InterpolatedStr when
+    def visit_Interpolation(self, node: ast.AST) -> ast.AST:
+        """Interpolations are not allowed by default.
+        As Interpolations are part of Template Strings, they will not be reached in 
+        context of RestrictedPython as Template Strings are not allowed.
+        
+        TODO: Deeper review of security implications of interpolated strings.
+        TODO: Change Type Annotation to ast.Interpolation when
               Support for Python 3.13 is dropped.
         """
-        return self.not_allowed(node)
+        self.not_allowed(node)
         # return self.node_contents_visit(node)
 
     def visit_JoinedStr(self, node: ast.JoinedStr) -> ast.AST:
