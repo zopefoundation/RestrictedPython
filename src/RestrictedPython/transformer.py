@@ -406,7 +406,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
                 args=args,
                 keywords=[])
 
-        elif isinstance(slice_, ast.Tuple):
+        elif isinstance(slice_, (ast.Tuple, ast.ExtSlice)):
             dims = ast.Tuple([], ast.Load())
             for item in slice_.dims:
                 dims.elts.append(self.transform_slice(item))
