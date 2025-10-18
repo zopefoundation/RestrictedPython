@@ -5,6 +5,9 @@ Changes
 ----------------
 
 - Nothing changed yet.
+- Drop Support for Python 3.9 as it was EOL on 2025-10.
+- Added basis support of Python 3.14
+- Added Type Annotations
 
 
 8.1a1.dev0 (2025-03-20)
