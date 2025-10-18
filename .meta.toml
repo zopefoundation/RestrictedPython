@@ -47,7 +47,7 @@ testenv-additional = [
     "    coverage combine",
     "    coverage html",
     "    coverage report -m --fail-under=100",
-    "depends = py310,py311,py312,py313,py314,py314-datetime,coverage",
+    "depends = py39,py310,py311,py312,py313,py314,py314-datetime,coverage",
     ]
 coverage-command = "pytest --cov=src --cov=tests --cov-report= tests {posargs}"
 coverage-setenv = [

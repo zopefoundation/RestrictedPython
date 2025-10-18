@@ -25,6 +25,7 @@ jobs:
         config:
         # [Python version, tox env]
         - ["3.14", "release-check"]
+        - ["3.9", "py39"]
         - ["3.10", "py310"]
         - ["3.11", "py311"]
         - ["3.12", "py312"]
