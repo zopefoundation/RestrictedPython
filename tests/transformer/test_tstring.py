@@ -20,8 +20,7 @@ def test_transform():
 
     result = compile_restricted_exec('a = t"{max([1, 2, 3])}"')
     assert result.errors == ()
-    assert result.warnings == [
-        'Line 1: TemplateStr statements are not yet allowed, please use f-strings or a real template engine instead.']  # NOQA: E501
+    assert result.warnings == []
     assert result.code is not None
     loc = {}
     exec(result.code, {}, loc)
@@ -79,20 +78,8 @@ def test_t_string_self_documenting_expressions():
     result = compile_restricted_exec(
         t_string_self_documenting_expressions_example,
     )
-    # assert result.errors == (
-    #   'Line 13: TemplateStr statements are not allowed.',
-    # )
-    # assert result.warnings == [
-    #     'Line 13: TemplateStr statements are not yet allowed, please use '
-    #     'f-strings or a real template engine instead.',
-    #     "Line None: Prints, but never reads 'printed' variable."
-    # ]
-    # assert result.code is None
     assert result.errors == ()
-    assert result.warnings == [
-        'Line 20: TemplateStr statements are not yet allowed, '
-        'please use f-strings or a real template engine instead.',
-        "Line None: Prints, but never reads 'printed' variable."]
+    assert result.warnings == []
     assert result.code is not None
 
     glb = {

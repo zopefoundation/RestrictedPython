@@ -73,6 +73,7 @@ INSPECT_ATTRIBUTES = frozenset([
     "f_back",
     "f_builtins",
     "f_code",
+    "f_generator",
     "f_globals",
     # "f_lasti",  # int
     # "f_lineno",  # int
@@ -99,6 +100,7 @@ INSPECT_ATTRIBUTES = frozenset([
     # on generator objects:
     "gi_frame",
     # "gi_running",  # bool
+    # "gi_suspended",  # bool
     "gi_code",
     "gi_yieldfrom",
     # on coroutine objects:
@@ -586,15 +588,11 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         TODO: Change Type Annotation to ast.TemplateStr when
               Support for Python 3.13 is dropped.
         """
-        self.warn(
-            node,
-            'TemplateStr statements are not yet allowed, '
-            'please use f-strings or a real template engine instead.')
-        # self.not_allowed(node)
         return self.node_contents_visit(node)
 
-    def visit_Interpolation(self, node: ast.AST) -> ast.AST:
+    def visit_Interpolation(self, node):
         """Interpolations are allowed by default.
+
         As Interpolations are part of Template Strings, they are needed
         to be reached in the context of RestrictedPython as Template Strings
         are allowed. As a user has to provide additional rendering logic
@@ -604,7 +602,6 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         TODO: Change Type Annotation to ast.Interpolation when
               Support for Python 3.13 is dropped.
         """
-        # self.not_allowed(node)
         return self.node_contents_visit(node)
 
     def visit_JoinedStr(self, node: ast.JoinedStr) -> ast.AST:
