@@ -573,11 +573,6 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         default.
         Those rendering logic would be affected by RestrictedPython as well.
         """
-        self.warn(
-            node,
-            'TemplateStr statements are not yet allowed, '
-            'please use f-strings or a real template engine instead.')
-        # self.not_allowed(node)
         return self.node_contents_visit(node)
 
     def visit_Interpolation(self, node):
@@ -589,7 +584,6 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         to make use of Template Strings, the security implications of
         Interpolations are limited in the context of RestrictedPython.
         """
-        # self.not_allowed(node)
         return self.node_contents_visit(node)
 
     def visit_JoinedStr(self, node):

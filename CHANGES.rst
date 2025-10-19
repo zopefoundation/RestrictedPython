@@ -4,7 +4,7 @@ Changes
 8.1 (unreleased)
 ----------------
 
-- Allow to use the package with Python 3.14.
+- Allow to use the package with Python 3.14 including t-string support.
 
 
 8.1a1.dev0 (2025-03-20)
