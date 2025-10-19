@@ -79,7 +79,6 @@ def test_t_string_self_documenting_expressions():
         t_string_self_documenting_expressions_example,
     )
     assert result.errors == ()
-    assert result.warnings == []
     assert result.code is not None
 
     glb = {

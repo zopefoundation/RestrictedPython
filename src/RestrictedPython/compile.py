@@ -10,20 +10,14 @@ from collections import namedtuple
 from os import PathLike
 from typing import Any
 from typing import Literal
+from typing import TypeAlias
 
 from RestrictedPython._compat import IS_CPYTHON
-from RestrictedPython._compat import IS_PY310_OR_GREATER
 from RestrictedPython.transformer import RestrictingNodeTransformer
 
 
-if IS_PY310_OR_GREATER:
-    from typing import TypeAlias
-
-    # Temporary workaround for missing _typeshed
-    ReadableBuffer: TypeAlias = bytes | bytearray
-else:
-    from typing import TypeAlias  # type: ignore[import]
-    ReadableBuffer: TypeAlias = bytes | bytearray  # type: ignore[no-redef]
+# Temporary workaround for missing _typeshed
+ReadableBuffer: TypeAlias = bytes | bytearray
 
 CompileResult = namedtuple(
     'CompileResult', 'code, errors, warnings, used_names')

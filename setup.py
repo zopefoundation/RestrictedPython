@@ -35,6 +35,7 @@ setup(name='RestrictedPython',
       long_description_content_type='text/x-rst',
       classifiers=[
           'Development Status :: 6 - Mature',
+          'License :: OSI Approved :: Zope Public License',
           'Programming Language :: Python',
           'Operating System :: OS Independent',
           'Programming Language :: Python :: 3',
