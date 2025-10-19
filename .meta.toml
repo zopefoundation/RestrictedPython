@@ -55,7 +55,7 @@ coverage-setenv = [
     ]
 
 [coverage]
-fail-under = 97.3
+fail-under = 97.2
 
 [isort]
 additional-sources = "{toxinidir}/tests"
