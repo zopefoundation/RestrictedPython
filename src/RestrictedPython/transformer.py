@@ -563,6 +563,33 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         """Allow f-strings without restrictions."""
         return self.node_contents_visit(node)
 
+    def visit_TemplateStr(self, node):
+        """Template strings are allowed by default.
+
+        As Template strings are a very basic template mechanism, that needs
+        additional rendering logic to be useful, they are not blocked by
+        default.
+        Those rendering logic would be affected by RestrictedPython as well.
+        """
+        self.warn(
+            node,
+            'TemplateStr statements are not yet allowed, '
+            'please use f-strings or a real template engine instead.')
+        # self.not_allowed(node)
+        return self.node_contents_visit(node)
+
+    def visit_Interpolation(self, node):
+        """Interpolations are allowed by default.
+
+        As Interpolations are part of Template Strings, they are needed
+        to be reached in the context of RestrictedPython as Template Strings
+        are allowed. As a user has to provide additional rendering logic
+        to make use of Template Strings, the security implications of
+        Interpolations are limited in the context of RestrictedPython.
+        """
+        # self.not_allowed(node)
+        return self.node_contents_visit(node)
+
     def visit_JoinedStr(self, node):
         """Allow joined string without restrictions."""
         return self.node_contents_visit(node)

@@ -4,7 +4,7 @@ Changes
 8.1 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Allow to use the package with Python 3.14.
 
 
 8.1a1.dev0 (2025-03-20)
