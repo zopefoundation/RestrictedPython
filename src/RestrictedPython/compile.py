@@ -22,7 +22,7 @@ if IS_PY310_OR_GREATER:
     # Temporary workaround for missing _typeshed
     ReadableBuffer: TypeAlias = bytes | bytearray
 else:
-    from typing_extensions import TypeAlias  # type: ignore[import]
+    from typing import TypeAlias  # type: ignore[import]
     ReadableBuffer: TypeAlias = bytes | bytearray  # type: ignore[no-redef]
 
 CompileResult = namedtuple(

@@ -2,7 +2,7 @@
 # https://github.com/zopefoundation/meta/tree/master/config/pure-python
 [meta]
 template = "pure-python"
-commit-id = "72252845"
+commit-id = "9d049229"
 
 [python]
 with-pypy = false
@@ -11,6 +11,7 @@ with-sphinx-doctests = true
 with-windows = true
 with-future-python = true
 with-macos = false
+oldest-python = "3.10"
 
 [tox]
 use-flake8 = true
