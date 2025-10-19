@@ -73,6 +73,7 @@ INSPECT_ATTRIBUTES = frozenset([
     "f_back",
     "f_builtins",
     "f_code",
+    "f_generator",
     "f_globals",
     # "f_lasti",  # int
     # "f_lineno",  # int
@@ -99,6 +100,7 @@ INSPECT_ATTRIBUTES = frozenset([
     # on generator objects:
     "gi_frame",
     # "gi_running",  # bool
+    # "gi_suspended",  # bool
     "gi_code",
     "gi_yieldfrom",
     # on coroutine objects:
