@@ -73,6 +73,7 @@ INSPECT_ATTRIBUTES = frozenset([
     "f_back",
     "f_builtins",
     "f_code",
+    "f_generator",
     "f_globals",
     # "f_lasti",  # int
     # "f_lineno",  # int
@@ -99,6 +100,7 @@ INSPECT_ATTRIBUTES = frozenset([
     # on generator objects:
     "gi_frame",
     # "gi_running",  # bool
+    # "gi_suspended",  # bool
     "gi_code",
     "gi_yieldfrom",
     # on coroutine objects:
@@ -561,6 +563,27 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
 
     def visit_FormattedValue(self, node):
         """Allow f-strings without restrictions."""
+        return self.node_contents_visit(node)
+
+    def visit_TemplateStr(self, node):
+        """Template strings are allowed by default.
+
+        As Template strings are a very basic template mechanism, that needs
+        additional rendering logic to be useful, they are not blocked by
+        default.
+        Those rendering logic would be affected by RestrictedPython as well.
+        """
+        return self.node_contents_visit(node)
+
+    def visit_Interpolation(self, node):
+        """Interpolations are allowed by default.
+
+        As Interpolations are part of Template Strings, they are needed
+        to be reached in the context of RestrictedPython as Template Strings
+        are allowed. As a user has to provide additional rendering logic
+        to make use of Template Strings, the security implications of
+        Interpolations are limited in the context of RestrictedPython.
+        """
         return self.node_contents_visit(node)
 
     def visit_JoinedStr(self, node):
