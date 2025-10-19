@@ -1,7 +1,7 @@
 Changes
 =======
 
-8.1 (unreleased)
+8.1 (2025-10-19)
 ----------------
 
 - Allow to use the package with Python 3.14 including t-string support.
