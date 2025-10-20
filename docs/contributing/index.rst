@@ -241,7 +241,6 @@ Technical Backgrounds - Links to External Documentation
     * `Python 3.12 AST`_ (EOL 2028-10)
     * `Python 3.11 AST`_ (EOL 2027-10)
     * `Python 3.10 AST`_ (EOL 2026-10)
-    * `Python 3.9 AST`_ (EOL 2025-10)
 
   * `AST NodeVistiors Class`_
   * `AST NodeTransformer Class`_
