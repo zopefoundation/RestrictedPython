@@ -4,7 +4,8 @@ Changes
 8.2 (unreleased)
 ----------------
 
-- Added Type Annotations
+- Add type annotations to the package code.
+  For clarification, restricted Python code does not support type annotations.
 
 
 8.1 (2025-10-19)
