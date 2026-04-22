@@ -361,20 +361,6 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
     def gen_del_stmt(self, name_to_del):
         return ast.Delete(targets=[ast.Name(name_to_del, ast.Del())])
 
-    def transform_slice(self, slice_):
-        """Transform slices into function parameters.
-
-        ast.Slice nodes are only allowed within a ast.Subscript node.
-        To use a slice as an argument of ast.Call it has to be converted.
-        Conversion is done by calling the 'slice' function from builtins
-        """
-
-        if isinstance(slice_, ast.expr):
-            return slice_
-        else:  # pragma: no cover
-            # Slice is the only defined Slice type.
-            raise NotImplementedError(f"Unknown slice type: {slice_}")
-
     def check_name(self, node, name, allow_magic_methods=False):
         """Check names if they are allowed.
 
@@ -897,7 +883,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         if isinstance(node.ctx, ast.Load):
             new_node = ast.Call(
                 func=ast.Name('_getitem_', ast.Load()),
-                args=[node.value, self.transform_slice(node.slice)],
+                args=[node.value, node.slice],
                 keywords=[])
 
             copy_locations(new_node, node)
