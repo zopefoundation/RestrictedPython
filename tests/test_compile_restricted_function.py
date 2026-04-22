@@ -3,7 +3,6 @@ from types import FunctionType
 from RestrictedPython import PrintCollector
 from RestrictedPython import compile_restricted_function
 from RestrictedPython import safe_builtins
-from RestrictedPython._compat import IS_PY310_OR_GREATER
 
 
 def test_compile_restricted_function():
@@ -211,15 +210,9 @@ def test_compile_restricted_function_handle_SyntaxError():
     )
 
     assert result.code is None
-    if IS_PY310_OR_GREATER:
-        assert result.errors == (
-            "Line 1: SyntaxError: '(' was never closed at statement: 'a('",
-        )
-    else:
-        assert result.errors == (
-            "Line 1: SyntaxError: unexpected EOF while parsing at statement:"
-            " 'a('",
-        )
+    assert result.errors == (
+        "Line 1: SyntaxError: '(' was never closed at statement: 'a('",
+    )
 
 
 def test_compile_restricted_function_invalid_syntax():
@@ -237,11 +230,6 @@ def test_compile_restricted_function_invalid_syntax():
     assert len(result.errors) == 1
     error_msg = result.errors[0]
 
-    if IS_PY310_OR_GREATER:
-        assert error_msg.startswith(
-            "Line 1: SyntaxError: cannot assign to literal here. Maybe "
-        )
-    else:
-        assert error_msg.startswith(
-            "Line 1: SyntaxError: cannot assign to literal at statement:"
-        )
+    assert error_msg.startswith(
+        "Line 1: SyntaxError: cannot assign to literal here. Maybe "
+    )

@@ -4,7 +4,10 @@ Changes
 8.2 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Move package metadata from setup.py to pyproject.toml.
+
+- Drop support for Python 3.9.
+
 
 8.1 (2025-10-19)
 ----------------

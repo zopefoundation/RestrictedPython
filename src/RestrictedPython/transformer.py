@@ -370,44 +370,9 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         """
 
         if isinstance(slice_, ast.expr):
-            # Python 3.9+
             return slice_
-
-        elif isinstance(slice_, ast.Index):
-            return slice_.value
-
-        elif isinstance(slice_, ast.Slice):
-            # Create a python slice object.
-            args = []
-
-            if slice_.lower:
-                args.append(slice_.lower)
-            else:
-                args.append(self.gen_none_node())
-
-            if slice_.upper:
-                args.append(slice_.upper)
-            else:
-                args.append(self.gen_none_node())
-
-            if slice_.step:
-                args.append(slice_.step)
-            else:
-                args.append(self.gen_none_node())
-
-            return ast.Call(
-                func=ast.Name('slice', ast.Load()),
-                args=args,
-                keywords=[])
-
-        elif isinstance(slice_, ast.ExtSlice):
-            dims = ast.Tuple([], ast.Load())
-            for item in slice_.dims:
-                dims.elts.append(self.transform_slice(item))
-            return dims
-
         else:  # pragma: no cover
-            # Index, Slice and ExtSlice are only defined Slice types.
+            # Slice is the only defined Slice type.
             raise NotImplementedError(f"Unknown slice type: {slice_}")
 
     def check_name(self, node, name, allow_magic_methods=False):
@@ -953,19 +918,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
             raise NotImplementedError(
                 f"Unknown ctx type: {type(node.ctx)}")
 
-    def visit_Index(self, node):
-        """
-
-        """
-        return self.node_contents_visit(node)
-
     def visit_Slice(self, node):
-        """
-
-        """
-        return self.node_contents_visit(node)
-
-    def visit_ExtSlice(self, node):
         """
 
         """
