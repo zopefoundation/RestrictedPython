@@ -356,7 +356,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         return (tmp_target, cleanup)
 
     def gen_none_node(self):
-        return ast.NameConstant(value=None)
+        return ast.Constant(None)
 
     def gen_del_stmt(self, name_to_del):
         return ast.Delete(targets=[ast.Name(name_to_del, ast.Del())])
