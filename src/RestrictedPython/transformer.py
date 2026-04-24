@@ -476,20 +476,12 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
     # ast for Literals
 
     def visit_Constant(self, node):
-        """Allow constant literals with restriction for Ellipsis.
+        """Allow constant literals.
 
         Constant replaces Num, Str, Bytes, NameConstant and Ellipsis in
         Python 3.8+.
         :see: https://docs.python.org/dev/whatsnew/3.8.html#deprecated
         """
-        if node.value is Ellipsis:
-            # Deny using `...`.
-            # Special handling necessary as ``self.not_allowed(node)``
-            # would return the Error Message:
-            # 'Constant statements are not allowed.'
-            # which is only partial true.
-            self.error(node, 'Ellipsis statements are not allowed.')
-            return
         return self.node_contents_visit(node)
 
     def visit_Interactive(self, node):

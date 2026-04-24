@@ -8,6 +8,8 @@ Changes
 
 - Drop support for Python 3.9.
 
+- Allow the ``...`` (Ellipsis) statement.
+
 
 8.1 (2025-10-19)
 ----------------
