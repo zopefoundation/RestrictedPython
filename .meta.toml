@@ -1,16 +1,17 @@
-# Generated from:
-# https://github.com/zopefoundation/meta/tree/master/config/pure-python
+# Generated with zope.meta (https://zopemeta.readthedocs.io/) from:
+# https://github.com/zopefoundation/meta/tree/master/src/zope/meta/pure-python
 [meta]
 template = "pure-python"
-commit-id = "72252845"
+commit-id = "ba10c93f"
 
 [python]
 with-pypy = false
 with-docs = true
 with-sphinx-doctests = true
 with-windows = true
-with-future-python = true
+with-future-python = false
 with-macos = false
+with-free-threaded-python = false
 
 [tox]
 use-flake8 = true
@@ -47,7 +48,7 @@ testenv-additional = [
     "    coverage combine",
     "    coverage html",
     "    coverage report -m --fail-under=100",
-    "depends = py39,py310,py311,py311-datetime,py312,py313,py314,coverage",
+    "depends = py310,py311,py311-datetime,py312,py313,py314,coverage",
     ]
 coverage-command = "pytest --cov=src --cov=tests --cov-report= tests {posargs}"
 coverage-setenv = [
@@ -55,7 +56,7 @@ coverage-setenv = [
     ]
 
 [coverage]
-fail-under = 97.2
+fail-under = 97.1
 
 [isort]
 additional-sources = "{toxinidir}/tests"

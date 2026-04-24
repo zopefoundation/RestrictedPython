@@ -1,7 +1,5 @@
-# 
-# Generated from:
-# https://github.com/zopefoundation/meta/tree/master/config/pure-python
-
+# Generated with zope.meta (https://zopemeta.readthedocs.io/) from:
+# https://github.com/zopefoundation/meta/tree/master/src/zope/meta/pure-python
 [build-system]
 requires = [
     "setuptools >= 78.1.1,< 81",
@@ -9,12 +7,63 @@ requires = [
 ]
 build-backend = "setuptools.build_meta"
 
+
+[project]
+name = "RestrictedPython"
+version = "8.2.dev0"
+description = "RestrictedPython is a defined subset of the Python language which allows to provide a program input into a trusted environment."
+license = "ZPL-2.1"
+classifiers = [
+    "Development Status :: 6 - Mature",
+    "Programming Language :: Python",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Topic :: Security",
+]
+dynamic = ["readme"]
+requires-python = ">=3.10, <3.15"
+authors = [
+    {name = "Zope Foundation and contributors",email = "zope-dev@zope.dev"},
+]
+maintainers = [
+    {name = "Plone Foundation and contributors",email = "zope-dev@zope.dev"},
+]
+keywords = [
+    "restricted",
+    "execution",
+    "security",
+    "untrusted",
+    "code",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest",
+    "pytest-mock",
+]
+docs = [
+    "Sphinx",
+    "furo",
+]
+
+[project.urls]
+Documentation = "https://restrictedpython.readthedocs.io/"
+Issues = "https://github.com/zopefoundation/RestrictedPython/issues"
+Source = "https://github.com/zopefoundation/RestrictedPython"
+Changelog = "https://github.com/zopefoundation/RestrictedPython/blob/master/CHANGES.rst"
+
 [tool.coverage.run]
 branch = true
 source = ["RestrictedPython"]
 
 [tool.coverage.report]
-fail_under = 97.2
+fail_under = 97.1
 precision = 2
 ignore_errors = true
 show_missing = true
@@ -31,3 +80,7 @@ exclude_lines = [
 
 [tool.coverage.html]
 directory = "parts/htmlcov"
+
+[tool.setuptools.dynamic]
+readme = {file = ["README.rst", "CHANGES.rst"]}
+

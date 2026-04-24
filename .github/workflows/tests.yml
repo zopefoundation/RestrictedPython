@@ -1,5 +1,5 @@
-# Generated from:
-# https://github.com/zopefoundation/meta/tree/master/config/pure-python
+# Generated with zope.meta (https://zopemeta.readthedocs.io/) from:
+# https://github.com/zopefoundation/meta/tree/master/src/zope/meta/pure-python
 name: tests
 
 on:
@@ -25,7 +25,6 @@ jobs:
         config:
         # [Python version, tox env]
         - ["3.11", "release-check"]
-        - ["3.9", "py39"]
         - ["3.10", "py310"]
         - ["3.11", "py311"]
         - ["3.12", "py312"]
@@ -43,12 +42,12 @@ jobs:
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.event.pull_request.base.repo.full_name
     name: ${{ matrix.os[0] }}-${{ matrix.config[1] }}
     steps:
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
       with:
         persist-credentials: false
     - name: Install uv + caching
-      # astral/setup-uv@7
-      uses: astral-sh/setup-uv@3259c6206f993105e3a61b142c2d97bf4b9ef83d
+      # astral/setup-uv@8.1.0
+      uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b
       with:
         enable-cache: true
         cache-dependency-glob: |
@@ -57,11 +56,7 @@ jobs:
         python-version: ${{ matrix.config[0] }}
         github-token: ${{ secrets.GITHUB_TOKEN }}
     - name: Test
-      if: ${{ !startsWith(runner.os, 'Mac') }}
       run: uvx --with tox-uv tox -e ${{ matrix.config[1] }}
-    - name: Test (macOS)
-      if: ${{ startsWith(runner.os, 'Mac') }}
-      run: uvx --with tox-uv tox -e ${{ matrix.config[1] }}-universal2
     - name: Coverage
       if: matrix.config[1] == 'coverage'
       run: |
