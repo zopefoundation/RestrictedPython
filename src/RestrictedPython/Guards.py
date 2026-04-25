@@ -27,6 +27,7 @@ _safe_names = [
     'None',
     'False',
     'True',
+    'Ellipsis',
     'abs',
     'bool',
     'bytes',
