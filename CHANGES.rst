@@ -4,6 +4,8 @@ Changes
 8.2 (unreleased)
 ----------------
 
+- Remove documentation that appears to promote unsupported direct guards usage.
+
 - Move package metadata from setup.py to pyproject.toml.
 
 - Drop support for Python 3.9.
