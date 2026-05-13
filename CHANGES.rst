@@ -7,6 +7,14 @@ Changes
 - Add type annotations to the package code.
   For clarification, restricted Python code does not support type annotations.
 
+- Remove documentation that appears to promote unsupported direct guards usage.
+
+- Move package metadata from setup.py to pyproject.toml.
+
+- Drop support for Python 3.9.
+
+- Allow the ``...`` (Ellipsis) statement.
+
 
 8.1 (2025-10-19)
 ----------------

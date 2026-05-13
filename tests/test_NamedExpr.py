@@ -23,7 +23,7 @@ class TestNamedExpr(TestCase):
     def test_simple_only(self):
         # we test here that only a simple variable is allowed
         # as assignemt expression target
-        # Currently (Python 3.8, 3.9), this is enforced by the
+        # This is currently enforced by the
         # Python concrete syntax; therefore, some (``ast``) trickery is
         # necessary to produce a test for it.
         class TransformNamedExprTarget(NodeTransformer):

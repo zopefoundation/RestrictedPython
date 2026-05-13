@@ -363,66 +363,17 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
 
         return (tmp_target, cleanup)
 
-    def gen_none_node(self) -> ast.NameConstant:
-        return ast.NameConstant(value=None)
+    def gen_none_node(self) -> ast.Constant:
+        return ast.Constant(None)
 
     def gen_del_stmt(self, name_to_del: str) -> ast.Delete:
         return ast.Delete(targets=[ast.Name(name_to_del, ast.Del())])
 
-    def transform_slice(self, slice_: ast.AST) -> ast.AST:
-        """Transform slices into function parameters.
-
-        ast.Slice nodes are only allowed within a ast.Subscript node.
-        To use a slice as an argument of ast.Call it has to be converted.
-        Conversion is done by calling the 'slice' function from builtins
-        """
-
-        if isinstance(slice_, ast.expr):
-            # Python 3.9+
-            return slice_
-
-        elif isinstance(slice_, ast.Index):
-            return slice_.value
-
-        elif isinstance(slice_, ast.Slice):
-            # Create a python slice object.
-            args = []
-
-            if slice_.lower:
-                args.append(slice_.lower)
-            else:
-                args.append(self.gen_none_node())
-
-            if slice_.upper:
-                args.append(slice_.upper)
-            else:
-                args.append(self.gen_none_node())
-
-            if slice_.step:
-                args.append(slice_.step)
-            else:
-                args.append(self.gen_none_node())
-
-            return ast.Call(
-                func=ast.Name('slice', ast.Load()),
-                args=args,
-                keywords=[])
-
-        elif isinstance(slice_, (ast.Tuple, ast.ExtSlice)):
-            dims = ast.Tuple([], ast.Load())
-            for item in slice_.dims:
-                dims.elts.append(self.transform_slice(item))
-            return dims
-
-        else:  # pragma: no cover
-            # Index, Slice and ExtSlice are only defined Slice types.
-            raise NotImplementedError(f"Unknown slice type: {slice_}")
-
     def check_name(
-            self,
-            node: ast.AST,
-            name: str,
-            allow_magic_methods: bool = False) -> None:
+        self,
+        node: ast.AST,
+        name: str,
+        allow_magic_methods: bool = False) -> None:
         """Check names if they are allowed.
 
         If ``allow_magic_methods is True`` names in `ALLOWED_FUNC_NAMES`
@@ -537,20 +488,12 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
     # ast for Literals
 
     def visit_Constant(self, node: ast.Constant) -> ast.Constant | None:
-        """Allow constant literals with restriction for Ellipsis.
+        """Allow constant literals.
 
         Constant replaces Num, Str, Bytes, NameConstant and Ellipsis in
         Python 3.8+.
         :see: https://docs.python.org/dev/whatsnew/3.8.html#deprecated
         """
-        if node.value is Ellipsis:
-            # Deny using `...`.
-            # Special handling necessary as ``self.not_allowed(node)``
-            # would return the Error Message:
-            # 'Constant statements are not allowed.'
-            # which is only partial true.
-            self.error(node, 'Ellipsis statements are not allowed.')
-            return
         return self.node_contents_visit(node)
 
     def visit_Interactive(self, node: ast.Interactive) -> ast.AST:
@@ -950,7 +893,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         if isinstance(node.ctx, ast.Load):
             new_node = ast.Call(
                 func=ast.Name('_getitem_', ast.Load()),
-                args=[node.value, self.transform_slice(node.slice)],
+                args=[node.value, node.slice],
                 keywords=[])
 
             copy_locations(new_node, node)
@@ -971,19 +914,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
             raise NotImplementedError(
                 f"Unknown ctx type: {type(node.ctx)}")
 
-    def visit_Index(self, node: ast.Index) -> ast.AST:
-        """
-
-        """
-        return self.node_contents_visit(node)
-
     def visit_Slice(self, node: ast.Slice) -> ast.AST:
-        """
-
-        """
-        return self.node_contents_visit(node)
-
-    def visit_ExtSlice(self, node: ast.ExtSlice) -> ast.AST:
         """
 
         """

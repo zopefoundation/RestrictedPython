@@ -8,7 +8,6 @@ from RestrictedPython import compile_restricted
 from RestrictedPython import compile_restricted_eval
 from RestrictedPython import compile_restricted_exec
 from RestrictedPython import compile_restricted_single
-from RestrictedPython._compat import IS_PY310_OR_GREATER
 from RestrictedPython._compat import IS_PY311_OR_GREATER
 from tests.helper import restricted_eval
 
@@ -40,10 +39,7 @@ INVALID_ASSINGMENT = """
 def test_compile__invalid_syntax():
     with pytest.raises(SyntaxError) as err:
         compile_restricted(INVALID_ASSINGMENT, '<string>', 'exec')
-    if IS_PY310_OR_GREATER:
-        assert "SyntaxError: cannot assign to literal here." in str(err.value)
-    else:
-        assert "cannot assign to literal at statement:" in str(err.value)
+    assert "SyntaxError: cannot assign to literal here." in str(err.value)
 
 
 def test_compile__compile_restricted_exec__1():
@@ -118,15 +114,10 @@ def no_exec():
 def test_compile__compile_restricted_exec__10():
     """It is a SyntaxError to use the `exec` statement."""
     result = compile_restricted_exec(EXEC_STATEMENT)
-    if IS_PY310_OR_GREATER:
-        assert (
-            'Line 2: SyntaxError: Missing parentheses in call to \'exec\'. Did'
-            ' you mean exec(...)? at statement: "exec \'q = 1\'"',
-        ) == result.errors
-    else:
-        assert (
-            'Line 2: SyntaxError: Missing parentheses in call to \'exec\' at'
-            ' statement: "exec \'q = 1\'"',) == result.errors
+    assert (
+        'Line 2: SyntaxError: Missing parentheses in call to \'exec\'. Did'
+        ' you mean exec(...)? at statement: "exec \'q = 1\'"',
+    ) == result.errors
 
 
 FUNCTION_DEF = """\

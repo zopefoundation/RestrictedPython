@@ -98,7 +98,6 @@ A (modified style) Copy of all Abstract Grammar Definitions for the Python versi
 .. toctree::
    :maxdepth: 2
 
-   changes_from38to39
    changes_from39to310
    changes_from310to311
    changes_from311to312
@@ -268,8 +267,6 @@ Todos
 
 .. _`What's new in Python 3.10`: https://docs.python.org/3.10/whatsnew/3.10.html
 
-.. _`What's new in Python 3.9`: https://docs.python.org/3.9/whatsnew/3.9.html
-
 .. _`Status of Python Versions`: https://devguide.python.org/versions/
 
 .. _`Concept of Immutable Types and Python Example`: https://en.wikipedia.org/wiki/Immutable_object#Python
@@ -293,8 +290,6 @@ Todos
 .. _`Python 3.11 AST`: https://docs.python.org/3.11/library/ast.html#abstract-grammar
 
 .. _`Python 3.10 AST`: https://docs.python.org/3.10/library/ast.html#abstract-grammar
-
-.. _`Python 3.9 AST`: https://docs.python.org/3.9/library/ast.html#abstract-grammar
 
 .. _`AST NodeVistiors Class`: https://docs.python.org/3/library/ast.html#ast.NodeVisitor
 
