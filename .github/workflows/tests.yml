@@ -63,3 +63,32 @@ jobs:
         uvx coveralls --service=github
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Build package artifacts
+      if: >
+        matrix.os[0] == 'ubuntu'
+        && matrix.config[1] == 'py314'
+      run: |
+        rm -f dist/*
+        pip install -U packaging "setuptools >= 78.1.1,< 82" wheel twine
+        python setup.py sdist
+        python setup.py bdist_wheel
+
+    - name: Upload package wheel
+      if: >
+        matrix.os[0] == 'ubuntu'
+        && matrix.config[1] == 'py314'
+      uses: actions/upload-artifact@v7
+      with:
+        name: RestrictedPython.whl
+        path: dist/*whl
+
+    - name: Upload package source distribution
+      if: >
+        matrix.os[0] == 'ubuntu'
+        && matrix.config[1] == 'py314'
+      uses: actions/upload-artifact@v7
+      with:
+        name: RestrictedPython.tar.gz
+        path: dist/*gz
+
