@@ -4,6 +4,8 @@ Changes
 8.2 (unreleased)
 ----------------
 
+- Preliminary not security tested support for Python 3.15.
+
 - Remove documentation that appears to promote unsupported direct guards usage.
 
 - Move package metadata from setup.py to pyproject.toml.
