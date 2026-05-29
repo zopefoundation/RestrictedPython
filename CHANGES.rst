@@ -1,7 +1,7 @@
 Changes
 =======
 
-8.2 (unreleased)
+8.2 (2026-05-29)
 ----------------
 
 - Remove documentation that appears to promote unsupported direct guards usage.
