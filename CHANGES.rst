@@ -1,8 +1,8 @@
 Changes
 =======
 
-8.3 (unreleased)
-----------------
+8.3a1.dev0 (2026-05-29)
+-----------------------
 
 - Allow to use the package with Python 3.15 -- Caution: No security audit has been done so far.
 
