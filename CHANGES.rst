@@ -1,10 +1,14 @@
 Changes
 =======
 
-8.2 (unreleased)
+8.3 (unreleased)
 ----------------
 
 - Preliminary not security tested support for Python 3.15.
+
+
+8.2 (2026-05-29)
+----------------
 
 - Remove documentation that appears to promote unsupported direct guards usage.
 
