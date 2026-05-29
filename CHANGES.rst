@@ -4,7 +4,7 @@ Changes
 8.3 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Allow to use the package with Python 3.15 -- Caution: No security audit has been done so far.
 
 
 8.2 (2026-05-29)
