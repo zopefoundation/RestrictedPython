@@ -159,8 +159,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
     def __init__(self,
                  errors: list[str] | None = None,
                  warnings: list[str] | None = None,
-                 used_names: dict[str,
-                                  str] | None = None):
+                 used_names: dict[str, str] | None = None):
         super().__init__()
         self.errors = [] if errors is None else errors
         self.warnings = [] if warnings is None else warnings
@@ -490,7 +489,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
 
     # ast for Literals
 
-    def visit_Constant(self, node: ast.Constant) -> ast.Constant | None:
+    def visit_Constant(self, node: ast.Constant) -> ast.Constant:
         """Allow constant literals.
 
         Constant replaces Num, Str, Bytes, NameConstant and Ellipsis in
