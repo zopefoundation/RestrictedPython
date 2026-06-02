@@ -152,6 +152,9 @@ class PrintInfo:
 
 
 class RestrictingNodeTransformer(ast.NodeTransformer):
+    errors: list[str]
+    warnings: list[str]
+    used_names: dict[str, str]
 
     def __init__(self,
                  errors: list[str] | None = None,
