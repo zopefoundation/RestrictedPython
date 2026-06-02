@@ -370,10 +370,10 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         return ast.Delete(targets=[ast.Name(name_to_del, ast.Del())])
 
     def check_name(
-        self,
-        node: ast.AST,
-        name: str,
-        allow_magic_methods: bool = False) -> None:
+            self,
+            node: ast.AST,
+            name: str,
+            allow_magic_methods: bool = False) -> None:
         """Check names if they are allowed.
 
         If ``allow_magic_methods is True`` names in `ALLOWED_FUNC_NAMES`
