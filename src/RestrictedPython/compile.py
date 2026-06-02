@@ -37,7 +37,7 @@ def _compile_restricted_mode(
         mode: Literal["exec", "eval", "single"] = "exec",
         flags: int = 0,
         dont_inherit: bool = False,
-        policy: NodeTransformer = RestrictingNodeTransformer,
+        policy: type[NodeTransformer] | None = RestrictingNodeTransformer,
 ) -> CompileResult:
 
     if not IS_CPYTHON:
@@ -97,7 +97,7 @@ def compile_restricted_exec(
         filename: str | ReadableBuffer | PathLike[Any] = '<string>',
         flags: int = 0,
         dont_inherit: bool = False,
-        policy: NodeTransformer = RestrictingNodeTransformer,
+        policy: type[NodeTransformer] | None = RestrictingNodeTransformer,
 ) -> CompileResult:
     """Compile restricted for the mode `exec`."""
     return _compile_restricted_mode(
@@ -114,7 +114,7 @@ def compile_restricted_eval(
         filename: str | ReadableBuffer | PathLike[Any] = '<string>',
         flags: int = 0,
         dont_inherit: bool = False,
-        policy: NodeTransformer = RestrictingNodeTransformer,
+        policy: type[NodeTransformer] | None = RestrictingNodeTransformer,
 ) -> CompileResult:
     """Compile restricted for the mode `eval`."""
     return _compile_restricted_mode(
@@ -131,7 +131,7 @@ def compile_restricted_single(
         filename: str | ReadableBuffer | PathLike[Any] = '<string>',
         flags: int = 0,
         dont_inherit: bool = False,
-        policy: NodeTransformer = RestrictingNodeTransformer,
+        policy: type[NodeTransformer] | None = RestrictingNodeTransformer,
 ) -> CompileResult:
     """Compile restricted for the mode `single`."""
     return _compile_restricted_mode(
@@ -151,7 +151,7 @@ def compile_restricted_function(
         globalize=None,  # List of globals (e.g. ['here', 'context', ...])
         flags: int = 0,
         dont_inherit: bool = False,
-        policy: ast.NodeTransformer = RestrictingNodeTransformer,
+        policy: type[NodeTransformer] | None = RestrictingNodeTransformer,
 ) -> CompileResult:
     """Compile a restricted code object for a function.
 
@@ -205,7 +205,7 @@ def compile_restricted(
     mode: str = 'exec',
     flags: int = 0,
     dont_inherit: bool = False,
-    policy: NodeTransformer = RestrictingNodeTransformer,
+    policy: type[NodeTransformer] | None = RestrictingNodeTransformer,
 ) -> CodeType:
     """Replacement for the built-in compile() function.
 
