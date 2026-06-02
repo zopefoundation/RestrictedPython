@@ -8,6 +8,7 @@ from ast import Module
 from ast import NodeTransformer
 from collections import namedtuple
 from os import PathLike
+from types import CodeType
 from typing import Any
 from typing import Literal
 from typing import TypeAlias
@@ -205,7 +206,7 @@ def compile_restricted(
     flags: int = 0,
     dont_inherit: bool = False,
     policy: NodeTransformer = RestrictingNodeTransformer,
-) -> CompileResult:
+) -> CodeType:
     """Replacement for the built-in compile() function.
 
     policy ... `ast.NodeTransformer` class defining the restrictions.
