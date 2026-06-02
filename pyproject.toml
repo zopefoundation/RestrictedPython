@@ -2,15 +2,14 @@
 # https://github.com/zopefoundation/meta/tree/master/src/zope/meta/pure-python
 [build-system]
 requires = [
-    "setuptools >= 78.1.1,< 81",
+    "setuptools >= 78.1.1,< 82",
     "wheel",
 ]
 build-backend = "setuptools.build_meta"
 
-
 [project]
 name = "RestrictedPython"
-version = "8.2.dev0"
+version = "8.3.dev0"
 description = "RestrictedPython is a defined subset of the Python language which allows to provide a program input into a trusted environment."
 license = "ZPL-2.1"
 classifiers = [
@@ -28,7 +27,7 @@ classifiers = [
     "Typing :: Typed",
 ]
 dynamic = ["readme"]
-requires-python = ">=3.10, <3.15"
+requires-python = ">=3.10, <3.16"
 authors = [
     {name = "Zope Foundation and contributors",email = "zope-dev@zope.dev"},
 ]
