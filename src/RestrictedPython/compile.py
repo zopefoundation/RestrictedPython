@@ -27,7 +27,7 @@ class CompileResult(NamedTuple):
     code: CodeType | None
     errors: Sequence[str]
     warnings: Sequence[str]
-    used_names: Mapping[str, str]
+    used_names: Mapping[str, bool]
 
 
 syntax_error_template = (

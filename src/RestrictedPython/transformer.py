@@ -154,12 +154,12 @@ class PrintInfo:
 class RestrictingNodeTransformer(ast.NodeTransformer):
     errors: list[str]
     warnings: list[str]
-    used_names: dict[str, str]
+    used_names: dict[str, bool]
 
     def __init__(self,
                  errors: list[str] | None = None,
                  warnings: list[str] | None = None,
-                 used_names: dict[str, str] | None = None):
+                 used_names: dict[str, bool] | None = None):
         super().__init__()
         self.errors = [] if errors is None else errors
         self.warnings = [] if warnings is None else warnings
