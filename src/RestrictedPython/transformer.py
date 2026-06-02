@@ -535,7 +535,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         """
         return self.node_contents_visit(node)
 
-    def visit_Interpolation(self, node):
+    def visit_Interpolation(self, node: ast.AST) -> ast.AST:
         """Interpolations are allowed by default.
 
         As Interpolations are part of Template Strings, they are needed
