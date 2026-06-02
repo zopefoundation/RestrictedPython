@@ -6,11 +6,13 @@ from ast import Expression
 from ast import Interactive
 from ast import Module
 from ast import NodeTransformer
-from collections import namedtuple
+from collections.abc import Mapping
+from collections.abc import Sequence
 from os import PathLike
 from types import CodeType
 from typing import Any
 from typing import Literal
+from typing import NamedTuple
 from typing import TypeAlias
 
 from RestrictedPython._compat import IS_CPYTHON
@@ -20,8 +22,14 @@ from RestrictedPython.transformer import RestrictingNodeTransformer
 # Temporary workaround for missing _typeshed
 ReadableBuffer: TypeAlias = bytes | bytearray
 
-CompileResult = namedtuple(
-    'CompileResult', 'code, errors, warnings, used_names')
+
+class CompileResult(NamedTuple):
+    code: CodeType | None
+    errors: Sequence[str]
+    warnings: Sequence[str]
+    used_names: Mapping[str, str]
+
+
 syntax_error_template = (
     'Line {lineno}: {type}: {msg} at statement: {statement!r}')
 
@@ -168,7 +176,7 @@ def compile_restricted_function(
             msg=v.msg,
             statement=v.text.strip() if v.text else None)
         return CompileResult(
-            code=None, errors=(error,), warnings=(), used_names=())
+            code=None, errors=(error,), warnings=(), used_names={})
 
     # The compiled code is actually executed inside a function
     # (that is called when the code is called) so reading and assigning to a
