@@ -4,7 +4,8 @@ Changes
 8.3 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Add type annotations to the package code.
+  For clarification, restricted Python code does not support type annotations.
 
 
 8.3a1.dev0 (2026-05-29)
@@ -15,9 +16,6 @@ Changes
 
 8.2 (2026-05-29)
 ----------------
-
-- Add type annotations to the package code.
-  For clarification, restricted Python code does not support type annotations.
 
 - Remove documentation that appears to promote unsupported direct guards usage.
 
