@@ -11,10 +11,10 @@
 #
 ##############################################################################
 
+import collections.abc
 import math
 import random
 import string
-from collections.abc import Iterable
 
 
 utility_builtins = {}
@@ -76,8 +76,10 @@ def test(*args):
 utility_builtins['test'] = test
 
 
-def reorder(s: Iterable, with_: Iterable | None = None,
-            without: Iterable = ()) -> Iterable:
+def reorder(
+        s: collections.abc.Iterable,
+        with_: collections.abc.Iterable | None = None,
+        without: collections.abc.Iterable = ()) -> collections.abc.Iterable:
     # s, with_, and without are sequences treated as sets.
     # The result is subtract(intersect(s, with_), without),
     # unless with_ is None, in which case it is subtract(s, without).

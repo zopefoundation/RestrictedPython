@@ -14,7 +14,7 @@
 
 import ast
 
-from .compile import compile_restricted_eval
+from RestrictedPython.compile import compile_restricted_eval
 
 
 nltosp = str.maketrans('\r\n', '  ')

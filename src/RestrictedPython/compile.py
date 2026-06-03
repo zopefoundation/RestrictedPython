@@ -1,51 +1,48 @@
 from __future__ import annotations
 
 import ast
+import collections.abc
+import os
+import types
+import typing
 import warnings
-from ast import Expression
-from ast import Interactive
-from ast import Module
-from ast import NodeTransformer
-from collections.abc import Mapping
-from collections.abc import Sequence
-from os import PathLike
-from types import CodeType
-from typing import Any
-from typing import Literal
-from typing import NamedTuple
-from typing import TypeAlias
 
 from RestrictedPython._compat import IS_CPYTHON
 from RestrictedPython.transformer import RestrictingNodeTransformer
 
 
 # Temporary workaround for missing _typeshed
-ReadableBuffer: TypeAlias = bytes | bytearray
+ReadableBuffer: typing.TypeAlias = bytes | bytearray
 
 
-class CompileResult(NamedTuple):
-    code: CodeType | None
-    errors: Sequence[str]
-    warnings: Sequence[str]
-    used_names: Mapping[str, bool]
+class CompileResult(typing.NamedTuple):
+    code: types.CodeType | None
+    errors: collections.abc.Sequence[str]
+    warnings: collections.abc.Sequence[str]
+    used_names: collections.abc.Mapping[str, bool]
 
 
 syntax_error_template = (
-    'Line {lineno}: {type}: {msg} at statement: {statement!r}')
+    'Line {lineno}: {type}: {msg} at statement: {statement!r}'
+)
 
 NOT_CPYTHON_WARNING = (
     'RestrictedPython is only supported on CPython: use on other Python '
     'implementations may create security issues.'
 )
 
+_T_source: typing.TypeAlias = (
+    str | ReadableBuffer | ast.Module | ast.Expression | ast.Interactive
+)
+
 
 def _compile_restricted_mode(
-        source: str | ReadableBuffer | Module | Expression | Interactive,
-        filename: str | ReadableBuffer | PathLike[Any] = '<string>',
-        mode: Literal["exec", "eval", "single"] = "exec",
+        source: _T_source,
+        filename: str | ReadableBuffer | os.PathLike[typing.Any] = '<string>',
+        mode: typing.Literal["exec", "eval", "single"] = "exec",
         flags: int = 0,
         dont_inherit: bool = False,
-        policy: type[NodeTransformer] | None = RestrictingNodeTransformer,
+        policy: type[ast.NodeTransformer] | None = RestrictingNodeTransformer,
 ) -> CompileResult:
 
     if not IS_CPYTHON:
@@ -62,13 +59,13 @@ def _compile_restricted_mode(
                             dont_inherit=dont_inherit)
     elif issubclass(policy, RestrictingNodeTransformer):
         c_ast = None
-        allowed_source_types = [str, Module]
+        allowed_source_types = [str, ast.Module]
         if not issubclass(type(source), tuple(allowed_source_types)):
             raise TypeError('Not allowed source type: '
                             '"{0.__class__.__name__}".'.format(source))
         c_ast = None
         # workaround for pypy issue https://bitbucket.org/pypy/pypy/issues/2552
-        if isinstance(source, Module):
+        if isinstance(source, ast.Module):
             c_ast = source
         else:
             try:
@@ -101,11 +98,11 @@ def _compile_restricted_mode(
 
 
 def compile_restricted_exec(
-        source: str | ReadableBuffer | Module | Expression | Interactive,
-        filename: str | ReadableBuffer | PathLike[Any] = '<string>',
+        source: _T_source,
+        filename: str | ReadableBuffer | os.PathLike[typing.Any] = '<string>',
         flags: int = 0,
         dont_inherit: bool = False,
-        policy: type[NodeTransformer] | None = RestrictingNodeTransformer,
+        policy: type[ast.NodeTransformer] | None = RestrictingNodeTransformer,
 ) -> CompileResult:
     """Compile restricted for the mode `exec`."""
     return _compile_restricted_mode(
@@ -118,11 +115,11 @@ def compile_restricted_exec(
 
 
 def compile_restricted_eval(
-        source: str | ReadableBuffer | Module | Expression | Interactive,
-        filename: str | ReadableBuffer | PathLike[Any] = '<string>',
+        source: _T_source,
+        filename: str | ReadableBuffer | os.PathLike[typing.Any] = '<string>',
         flags: int = 0,
         dont_inherit: bool = False,
-        policy: type[NodeTransformer] | None = RestrictingNodeTransformer,
+        policy: type[ast.NodeTransformer] | None = RestrictingNodeTransformer,
 ) -> CompileResult:
     """Compile restricted for the mode `eval`."""
     return _compile_restricted_mode(
@@ -135,11 +132,11 @@ def compile_restricted_eval(
 
 
 def compile_restricted_single(
-        source: str | ReadableBuffer | Module | Expression | Interactive,
-        filename: str | ReadableBuffer | PathLike[Any] = '<string>',
+        source: _T_source,
+        filename: str | ReadableBuffer | os.PathLike[typing.Any] = '<string>',
         flags: int = 0,
         dont_inherit: bool = False,
-        policy: type[NodeTransformer] | None = RestrictingNodeTransformer,
+        policy: type[ast.NodeTransformer] | None = RestrictingNodeTransformer,
 ) -> CompileResult:
     """Compile restricted for the mode `single`."""
     return _compile_restricted_mode(
@@ -155,11 +152,11 @@ def compile_restricted_function(
         p,  # parameters
         body,
         name: str,
-        filename: str | ReadableBuffer | PathLike[Any] = '<string>',
+        filename: str | ReadableBuffer | os.PathLike[typing.Any] = '<string>',
         globalize=None,  # List of globals (e.g. ['here', 'context', ...])
         flags: int = 0,
         dont_inherit: bool = False,
-        policy: type[NodeTransformer] | None = RestrictingNodeTransformer,
+        policy: type[ast.NodeTransformer] | None = RestrictingNodeTransformer,
 ) -> CompileResult:
     """Compile a restricted code object for a function.
 
@@ -208,13 +205,13 @@ def compile_restricted_function(
 
 
 def compile_restricted(
-    source: str | ReadableBuffer | Module | Expression | Interactive,
-    filename: str | ReadableBuffer | PathLike[Any] = '<unknown>',
-    mode: str = 'exec',
-    flags: int = 0,
-    dont_inherit: bool = False,
-    policy: type[NodeTransformer] | None = RestrictingNodeTransformer,
-) -> CodeType:
+        source: _T_source,
+        filename: str | ReadableBuffer | os.PathLike[typing.Any] = '<unknown>',
+        mode: str = 'exec',
+        flags: int = 0,
+        dont_inherit: bool = False,
+        policy: type[ast.NodeTransformer] | None = RestrictingNodeTransformer,
+) -> types.CodeType:
     """Replacement for the built-in compile() function.
 
     policy ... `ast.NodeTransformer` class defining the restrictions.
