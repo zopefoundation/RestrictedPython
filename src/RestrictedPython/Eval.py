@@ -70,11 +70,10 @@ class RestrictionCapableEval:
 
     def prepUnrestrictedCode(self):
         if self.ucode is None:
-            exp_node = compile(
+            exp_node = ast.parse(
                 self.expr,
                 '<string>',
-                'eval',
-                ast.PyCF_ONLY_AST)
+                'eval')
 
             co = compile(exp_node, '<string>', 'eval')
 
