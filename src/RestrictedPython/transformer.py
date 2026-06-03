@@ -21,6 +21,7 @@ the parsed python code to create a modified AST for a byte code generation.
 import ast
 import contextlib
 import textwrap
+import typing
 
 
 # For AugAssign the operator must be converted to a string.
@@ -111,10 +112,13 @@ INSPECT_ATTRIBUTES = frozenset([
     "cr_origin",
 ])
 
+_T_visit_return: typing.TypeAlias = ast.AST | list[ast.AST] | None
 
 # When new ast nodes are generated they have no 'lineno', 'end_lineno',
 # 'col_offset' and 'end_col_offset'. This function copies these fields from the
 # incoming node:
+
+
 def copy_locations(new_node: ast.AST, old_node: ast.AST) -> None:
     assert 'lineno' in new_node._attributes
     new_node.lineno = old_node.lineno
@@ -489,7 +493,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
 
     # ast for Literals
 
-    def visit_Constant(self, node: ast.Constant) -> ast.AST | None:
+    def visit_Constant(self, node: ast.Constant) -> _T_visit_return:
         """Allow constant literals.
 
         Constant replaces Num, Str, Bytes, NameConstant and Ellipsis in
@@ -498,31 +502,33 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         """
         return self.node_contents_visit(node)
 
-    def visit_Interactive(self, node: ast.Interactive) -> ast.AST | None:
+    def visit_Interactive(self, node: ast.Interactive) -> _T_visit_return:
         """Allow single mode without restrictions."""
         return self.node_contents_visit(node)
 
-    def visit_List(self, node: ast.List) -> ast.AST | None:
+    def visit_List(self, node: ast.List) -> _T_visit_return:
         """Allow list literals without restrictions."""
         return self.node_contents_visit(node)
 
-    def visit_Tuple(self, node: ast.Tuple) -> ast.AST | None:
+    def visit_Tuple(self, node: ast.Tuple) -> _T_visit_return:
         """Allow tuple literals without restrictions."""
         return self.node_contents_visit(node)
 
-    def visit_Set(self, node: ast.Set) -> ast.AST | None:
+    def visit_Set(self, node: ast.Set) -> _T_visit_return:
         """Allow set literals without restrictions."""
         return self.node_contents_visit(node)
 
-    def visit_Dict(self, node: ast.Dict) -> ast.AST | None:
+    def visit_Dict(self, node: ast.Dict) -> _T_visit_return:
         """Allow dict literals without restrictions."""
         return self.node_contents_visit(node)
 
-    def visit_FormattedValue(self, node: ast.FormattedValue) -> ast.AST | None:
+    def visit_FormattedValue(
+            self,
+            node: ast.FormattedValue) -> _T_visit_return:
         """Allow f-strings without restrictions."""
         return self.node_contents_visit(node)
 
-    def visit_TemplateStr(self, node: ast.AST) -> ast.AST | None:
+    def visit_TemplateStr(self, node: ast.AST) -> _T_visit_return:
         """Template strings are allowed by default.
 
         As Template strings are a very basic template mechanism, that needs
@@ -535,7 +541,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         """
         return self.node_contents_visit(node)
 
-    def visit_Interpolation(self, node: ast.AST) -> ast.AST | None:
+    def visit_Interpolation(self, node: ast.AST) -> _T_visit_return:
         """Interpolations are allowed by default.
 
         As Interpolations are part of Template Strings, they are needed
@@ -549,13 +555,13 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         """
         return self.node_contents_visit(node)
 
-    def visit_JoinedStr(self, node: ast.JoinedStr) -> ast.AST | None:
+    def visit_JoinedStr(self, node: ast.JoinedStr) -> _T_visit_return:
         """Allow joined string without restrictions."""
         return self.node_contents_visit(node)
 
     # ast for Variables
 
-    def visit_Name(self, node: ast.Name) -> ast.Name | None:
+    def visit_Name(self, node: ast.Name) -> _T_visit_return:
         """Prevents access to protected names.
 
         Converts use of the name 'printed' to this expression: '_print()'
@@ -589,25 +595,25 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         self.check_name(node, node.id)
         return node
 
-    def visit_Load(self, node: ast.Load) -> ast.Load | None:
+    def visit_Load(self, node: ast.Load) -> _T_visit_return:
         """
 
         """
         return self.node_contents_visit(node)
 
-    def visit_Store(self, node: ast.Store) -> ast.AST | None:
+    def visit_Store(self, node: ast.Store) -> _T_visit_return:
         """
 
         """
         return self.node_contents_visit(node)
 
-    def visit_Del(self, node: ast.Del) -> ast.AST | None:
+    def visit_Del(self, node: ast.Del) -> _T_visit_return:
         """
 
         """
         return self.node_contents_visit(node)
 
-    def visit_Starred(self, node: ast.Starred) -> ast.AST | None:
+    def visit_Starred(self, node: ast.Starred) -> _T_visit_return:
         """
 
         """
@@ -615,18 +621,18 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
 
     # Expressions
 
-    def visit_Expression(self, node: ast.Expression) -> ast.AST | None:
+    def visit_Expression(self, node: ast.Expression) -> _T_visit_return:
         """Allow Expression statements without restrictions.
 
         They are in the AST when using the `eval` compile mode.
         """
         return self.node_contents_visit(node)
 
-    def visit_Expr(self, node: ast.Expr) -> ast.AST | None:
+    def visit_Expr(self, node: ast.Expr) -> _T_visit_return:
         """Allow Expr statements (any expression) without restrictions."""
         return self.node_contents_visit(node)
 
-    def visit_UnaryOp(self, node: ast.UnaryOp) -> ast.AST | None:
+    def visit_UnaryOp(self, node: ast.UnaryOp) -> _T_visit_return:
         """
         UnaryOp (Unary Operations) is the overall element for:
         * Not --> which should be allowed
@@ -635,135 +641,135 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         """
         return self.node_contents_visit(node)
 
-    def visit_UAdd(self, node: ast.UAdd) -> ast.AST | None:
+    def visit_UAdd(self, node: ast.UAdd) -> _T_visit_return:
         """Allow positive notation of variables. (e.g. +var)"""
         return self.node_contents_visit(node)
 
-    def visit_USub(self, node: ast.USub) -> ast.AST | None:
+    def visit_USub(self, node: ast.USub) -> _T_visit_return:
         """Allow negative notation of variables. (e.g. -var)"""
         return self.node_contents_visit(node)
 
-    def visit_Not(self, node: ast.Not) -> ast.AST | None:
+    def visit_Not(self, node: ast.Not) -> _T_visit_return:
         """Allow the `not` operator."""
         return self.node_contents_visit(node)
 
-    def visit_Invert(self, node: ast.Invert) -> ast.AST | None:
+    def visit_Invert(self, node: ast.Invert) -> _T_visit_return:
         """Allow `~` expressions."""
         return self.node_contents_visit(node)
 
-    def visit_BinOp(self, node: ast.BinOp) -> ast.AST | None:
+    def visit_BinOp(self, node: ast.BinOp) -> _T_visit_return:
         """Allow binary operations."""
         return self.node_contents_visit(node)
 
-    def visit_Add(self, node: ast.Add) -> ast.AST | None:
+    def visit_Add(self, node: ast.Add) -> _T_visit_return:
         """Allow `+` expressions."""
         return self.node_contents_visit(node)
 
-    def visit_Sub(self, node: ast.Sub) -> ast.AST | None:
+    def visit_Sub(self, node: ast.Sub) -> _T_visit_return:
         """Allow `-` expressions."""
         return self.node_contents_visit(node)
 
-    def visit_Mult(self, node: ast.Mult) -> ast.AST | None:
+    def visit_Mult(self, node: ast.Mult) -> _T_visit_return:
         """Allow `*` expressions."""
         return self.node_contents_visit(node)
 
-    def visit_Div(self, node: ast.Div) -> ast.AST | None:
+    def visit_Div(self, node: ast.Div) -> _T_visit_return:
         """Allow `/` expressions."""
         return self.node_contents_visit(node)
 
-    def visit_FloorDiv(self, node: ast.FloorDiv) -> ast.AST | None:
+    def visit_FloorDiv(self, node: ast.FloorDiv) -> _T_visit_return:
         """Allow `//` expressions."""
         return self.node_contents_visit(node)
 
-    def visit_Mod(self, node: ast.Mod) -> ast.AST | None:
+    def visit_Mod(self, node: ast.Mod) -> _T_visit_return:
         """Allow `%` expressions."""
         return self.node_contents_visit(node)
 
-    def visit_Pow(self, node: ast.Pow) -> ast.AST | None:
+    def visit_Pow(self, node: ast.Pow) -> _T_visit_return:
         """Allow `**` expressions."""
         return self.node_contents_visit(node)
 
-    def visit_LShift(self, node: ast.LShift) -> ast.AST | None:
+    def visit_LShift(self, node: ast.LShift) -> _T_visit_return:
         """Allow `<<` expressions."""
         return self.node_contents_visit(node)
 
-    def visit_RShift(self, node: ast.RShift) -> ast.AST | None:
+    def visit_RShift(self, node: ast.RShift) -> _T_visit_return:
         """Allow `>>` expressions."""
         return self.node_contents_visit(node)
 
-    def visit_BitOr(self, node: ast.BitOr) -> ast.AST | None:
+    def visit_BitOr(self, node: ast.BitOr) -> _T_visit_return:
         """Allow `|` expressions."""
         return self.node_contents_visit(node)
 
-    def visit_BitXor(self, node: ast.BitXor) -> ast.AST | None:
+    def visit_BitXor(self, node: ast.BitXor) -> _T_visit_return:
         """Allow `^` expressions."""
         return self.node_contents_visit(node)
 
-    def visit_BitAnd(self, node: ast.BitAnd) -> ast.AST | None:
+    def visit_BitAnd(self, node: ast.BitAnd) -> _T_visit_return:
         """Allow `&` expressions."""
         return self.node_contents_visit(node)
 
-    def visit_MatMult(self, node: ast.MatMult) -> ast.AST | None:
+    def visit_MatMult(self, node: ast.MatMult) -> _T_visit_return:
         """Allow multiplication (`@`)."""
         return self.node_contents_visit(node)
 
-    def visit_BoolOp(self, node: ast.BoolOp) -> ast.AST | None:
+    def visit_BoolOp(self, node: ast.BoolOp) -> _T_visit_return:
         """Allow bool operator without restrictions."""
         return self.node_contents_visit(node)
 
-    def visit_And(self, node: ast.And) -> ast.AST | None:
+    def visit_And(self, node: ast.And) -> _T_visit_return:
         """Allow bool operator `and` without restrictions."""
         return self.node_contents_visit(node)
 
-    def visit_Or(self, node: ast.Or) -> ast.AST | None:
+    def visit_Or(self, node: ast.Or) -> _T_visit_return:
         """Allow bool operator `or` without restrictions."""
         return self.node_contents_visit(node)
 
-    def visit_Compare(self, node: ast.Compare) -> ast.AST | None:
+    def visit_Compare(self, node: ast.Compare) -> _T_visit_return:
         """Allow comparison expressions without restrictions."""
         return self.node_contents_visit(node)
 
-    def visit_Eq(self, node: ast.Eq) -> ast.AST | None:
+    def visit_Eq(self, node: ast.Eq) -> _T_visit_return:
         """Allow == expressions."""
         return self.node_contents_visit(node)
 
-    def visit_NotEq(self, node: ast.NotEq) -> ast.AST | None:
+    def visit_NotEq(self, node: ast.NotEq) -> _T_visit_return:
         """Allow != expressions."""
         return self.node_contents_visit(node)
 
-    def visit_Lt(self, node: ast.Lt) -> ast.AST | None:
+    def visit_Lt(self, node: ast.Lt) -> _T_visit_return:
         """Allow < expressions."""
         return self.node_contents_visit(node)
 
-    def visit_LtE(self, node: ast.LtE) -> ast.AST | None:
+    def visit_LtE(self, node: ast.LtE) -> _T_visit_return:
         """Allow <= expressions."""
         return self.node_contents_visit(node)
 
-    def visit_Gt(self, node: ast.Gt) -> ast.AST | None:
+    def visit_Gt(self, node: ast.Gt) -> _T_visit_return:
         """Allow > expressions."""
         return self.node_contents_visit(node)
 
-    def visit_GtE(self, node: ast.GtE) -> ast.AST | None:
+    def visit_GtE(self, node: ast.GtE) -> _T_visit_return:
         """Allow >= expressions."""
         return self.node_contents_visit(node)
 
-    def visit_Is(self, node: ast.Is) -> ast.AST | None:
+    def visit_Is(self, node: ast.Is) -> _T_visit_return:
         """Allow `is` expressions."""
         return self.node_contents_visit(node)
 
-    def visit_IsNot(self, node: ast.IsNot) -> ast.AST | None:
+    def visit_IsNot(self, node: ast.IsNot) -> _T_visit_return:
         """Allow `is not` expressions."""
         return self.node_contents_visit(node)
 
-    def visit_In(self, node: ast.In) -> ast.AST | None:
+    def visit_In(self, node: ast.In) -> _T_visit_return:
         """Allow `in` expressions."""
         return self.node_contents_visit(node)
 
-    def visit_NotIn(self, node: ast.NotIn) -> ast.AST | None:
+    def visit_NotIn(self, node: ast.NotIn) -> _T_visit_return:
         """Allow `not in` expressions."""
         return self.node_contents_visit(node)
 
-    def visit_Call(self, node: ast.Call) -> ast.AST | None:
+    def visit_Call(self, node: ast.Call) -> _T_visit_return:
         """Checks calls with '*args' and '**kwargs'.
 
         Note: The following happens only if '*args' or '**kwargs' is used.
@@ -805,17 +811,17 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         copy_locations(node.func, node.args[0])
         return node
 
-    def visit_keyword(self, node: ast.keyword) -> ast.AST | None:
+    def visit_keyword(self, node: ast.keyword) -> _T_visit_return:
         """
 
         """
         return self.node_contents_visit(node)
 
-    def visit_IfExp(self, node: ast.IfExp) -> ast.AST | None:
+    def visit_IfExp(self, node: ast.IfExp) -> _T_visit_return:
         """Allow `if` expressions without restrictions."""
         return self.node_contents_visit(node)
 
-    def visit_Attribute(self, node: ast.Attribute) -> ast.AST | None:
+    def visit_Attribute(self, node: ast.Attribute) -> _T_visit_return:
         """Checks and mutates attribute access/assignment.
 
         'a.b' becomes '_getattr_(a, "b")'
@@ -871,7 +877,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
 
     # Subscripting
 
-    def visit_Subscript(self, node: ast.Subscript) -> ast.AST | None:
+    def visit_Subscript(self, node: ast.Subscript) -> _T_visit_return:
         """Transforms all kinds of subscripts.
 
         'foo[bar]' becomes '_getitem_(foo, bar)'
@@ -916,7 +922,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
             raise NotImplementedError(
                 f"Unknown ctx type: {type(node.ctx)}")
 
-    def visit_Slice(self, node: ast.Slice) -> ast.AST | None:
+    def visit_Slice(self, node: ast.Slice) -> _T_visit_return:
         """
 
         """
@@ -924,31 +930,31 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
 
     # Comprehensions
 
-    def visit_ListComp(self, node: ast.ListComp) -> ast.AST | None:
+    def visit_ListComp(self, node: ast.ListComp) -> _T_visit_return:
         """
 
         """
         return self.node_contents_visit(node)
 
-    def visit_SetComp(self, node: ast.SetComp) -> ast.AST | None:
+    def visit_SetComp(self, node: ast.SetComp) -> _T_visit_return:
         """
 
         """
         return self.node_contents_visit(node)
 
-    def visit_GeneratorExp(self, node: ast.GeneratorExp) -> ast.AST | None:
+    def visit_GeneratorExp(self, node: ast.GeneratorExp) -> _T_visit_return:
         """
 
         """
         return self.node_contents_visit(node)
 
-    def visit_DictComp(self, node: ast.DictComp) -> ast.AST | None:
+    def visit_DictComp(self, node: ast.DictComp) -> _T_visit_return:
         """
 
         """
         return self.node_contents_visit(node)
 
-    def visit_comprehension(self, node: ast.comprehension) -> ast.AST | None:
+    def visit_comprehension(self, node: ast.comprehension) -> _T_visit_return:
         """
 
         """
@@ -956,7 +962,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
 
     # Statements
 
-    def visit_Assign(self, node: ast.Assign) -> ast.AST | None:
+    def visit_Assign(self, node: ast.Assign) -> _T_visit_return:
         """
 
         """
@@ -1005,7 +1011,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
 
         return new_nodes
 
-    def visit_AugAssign(self, node: ast.AugAssign) -> ast.AST | None:
+    def visit_AugAssign(self, node: ast.AugAssign) -> _T_visit_return:
         """Forbid certain kinds of AugAssign
 
         According to the language reference (and ast.c) the following nodes
@@ -1056,65 +1062,65 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
             raise NotImplementedError(
                 f"Unknown target type: {type(node.target)}")
 
-    def visit_Raise(self, node: ast.Raise) -> ast.AST | None:
+    def visit_Raise(self, node: ast.Raise) -> _T_visit_return:
         """Allow `raise` statements without restrictions."""
         return self.node_contents_visit(node)
 
-    def visit_Assert(self, node: ast.Assert) -> ast.AST | None:
+    def visit_Assert(self, node: ast.Assert) -> _T_visit_return:
         """Allow assert statements without restrictions."""
         return self.node_contents_visit(node)
 
-    def visit_Delete(self, node: ast.Delete) -> ast.AST | None:
+    def visit_Delete(self, node: ast.Delete) -> _T_visit_return:
         """Allow `del` statements without restrictions."""
         return self.node_contents_visit(node)
 
-    def visit_Pass(self, node: ast.Pass) -> ast.AST | None:
+    def visit_Pass(self, node: ast.Pass) -> _T_visit_return:
         """Allow `pass` statements without restrictions."""
         return self.node_contents_visit(node)
 
     # Imports
 
-    def visit_Import(self, node: ast.Import) -> ast.AST | None:
+    def visit_Import(self, node: ast.Import) -> _T_visit_return:
         """Allow `import` statements with restrictions.
         See check_import_names."""
         return self.check_import_names(node)
 
-    def visit_ImportFrom(self, node: ast.ImportFrom) -> ast.AST | None:
+    def visit_ImportFrom(self, node: ast.ImportFrom) -> _T_visit_return:
         """Allow `import from` statements with restrictions.
         See check_import_names."""
         return self.check_import_names(node)
 
-    def visit_alias(self, node: ast.alias) -> ast.AST | None:
+    def visit_alias(self, node: ast.alias) -> _T_visit_return:
         """Allow `as` statements in import and import from statements."""
         return self.node_contents_visit(node)
 
     # Control flow
 
-    def visit_If(self, node: ast.If) -> ast.AST | None:
+    def visit_If(self, node: ast.If) -> _T_visit_return:
         """Allow `if` statements without restrictions."""
         return self.node_contents_visit(node)
 
-    def visit_For(self, node: ast.For) -> ast.AST | None:
+    def visit_For(self, node: ast.For) -> _T_visit_return:
         """Allow `for` statements with some restrictions."""
         return self.guard_iter(node)
 
-    def visit_While(self, node: ast.While) -> ast.AST | None:
+    def visit_While(self, node: ast.While) -> _T_visit_return:
         """Allow `while` statements."""
         return self.node_contents_visit(node)
 
-    def visit_Break(self, node: ast.Break) -> ast.AST | None:
+    def visit_Break(self, node: ast.Break) -> _T_visit_return:
         """Allow `break` statements without restrictions."""
         return self.node_contents_visit(node)
 
-    def visit_Continue(self, node: ast.Continue) -> ast.AST | None:
+    def visit_Continue(self, node: ast.Continue) -> _T_visit_return:
         """Allow `continue` statements without restrictions."""
         return self.node_contents_visit(node)
 
-    def visit_Try(self, node: ast.Try) -> ast.AST | None:
+    def visit_Try(self, node: ast.Try) -> _T_visit_return:
         """Allow `try` without restrictions."""
         return self.node_contents_visit(node)
 
-    def visit_TryStar(self, node: ast.AST) -> ast.AST | None:
+    def visit_TryStar(self, node: ast.AST) -> _T_visit_return:
         """Disallow `ExceptionGroup` due to a potential sandbox escape.
 
         TODO: Type Annotation for node when dropping support
@@ -1122,13 +1128,13 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         """
         self.not_allowed(node)
 
-    def visit_ExceptHandler(self, node: ast.ExceptHandler) -> ast.AST | None:
+    def visit_ExceptHandler(self, node: ast.ExceptHandler) -> _T_visit_return:
         """Protect exception handlers."""
         node = self.node_contents_visit(node)
         self.check_name(node, node.name)
         return node
 
-    def visit_With(self, node: ast.With) -> ast.AST | None:
+    def visit_With(self, node: ast.With) -> _T_visit_return:
         """Protect tuple unpacking on with statements."""
         node = self.node_contents_visit(node)
 
@@ -1143,13 +1149,13 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
 
         return node
 
-    def visit_withitem(self, node: ast.withitem) -> ast.AST | None:
+    def visit_withitem(self, node: ast.withitem) -> _T_visit_return:
         """Allow `with` statements (context managers) without restrictions."""
         return self.node_contents_visit(node)
 
     # Function and class definitions
 
-    def visit_FunctionDef(self, node: ast.FunctionDef) -> ast.AST | None:
+    def visit_FunctionDef(self, node: ast.FunctionDef) -> _T_visit_return:
         """Allow function definitions (`def`) with some restrictions."""
         self.check_name(node, node.name, allow_magic_methods=True)
         self.check_function_argument_names(node)
@@ -1159,44 +1165,44 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
             self.inject_print_collector(node)
         return node
 
-    def visit_Lambda(self, node: ast.Lambda) -> ast.AST | None:
+    def visit_Lambda(self, node: ast.Lambda) -> _T_visit_return:
         """Allow lambda with some restrictions."""
         self.check_function_argument_names(node)
         return self.node_contents_visit(node)
 
-    def visit_arguments(self, node: ast.arguments) -> ast.AST | None:
+    def visit_arguments(self, node: ast.arguments) -> _T_visit_return:
         """
 
         """
         return self.node_contents_visit(node)
 
-    def visit_arg(self, node: ast.arg) -> ast.AST | None:
+    def visit_arg(self, node: ast.arg) -> _T_visit_return:
         """
 
         """
         return self.node_contents_visit(node)
 
-    def visit_Return(self, node: ast.Return) -> ast.AST | None:
+    def visit_Return(self, node: ast.Return) -> _T_visit_return:
         """Allow `return` statements without restrictions."""
         return self.node_contents_visit(node)
 
-    def visit_Yield(self, node: ast.Yield) -> ast.AST | None:
+    def visit_Yield(self, node: ast.Yield) -> _T_visit_return:
         """Allow `yield`statements without restrictions."""
         return self.node_contents_visit(node)
 
-    def visit_YieldFrom(self, node: ast.YieldFrom) -> ast.AST | None:
+    def visit_YieldFrom(self, node: ast.YieldFrom) -> _T_visit_return:
         """Allow `yield`statements without restrictions."""
         return self.node_contents_visit(node)
 
-    def visit_Global(self, node: ast.Global) -> ast.AST | None:
+    def visit_Global(self, node: ast.Global) -> _T_visit_return:
         """Allow `global` statements without restrictions."""
         return self.node_contents_visit(node)
 
-    def visit_Nonlocal(self, node: ast.Nonlocal) -> ast.AST | None:
+    def visit_Nonlocal(self, node: ast.Nonlocal) -> _T_visit_return:
         """Deny `nonlocal` statements."""
         self.not_allowed(node)
 
-    def visit_ClassDef(self, node: ast.ClassDef) -> ast.AST | None:
+    def visit_ClassDef(self, node: ast.ClassDef) -> _T_visit_return:
         """Check the name of a class definition."""
         self.check_name(node, node.name)
         node = self.node_contents_visit(node)
@@ -1213,7 +1219,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         new_class_node.decorator_list = node.decorator_list
         return new_class_node
 
-    def visit_Module(self, node: ast.Module) -> ast.AST | None:
+    def visit_Module(self, node: ast.Module) -> _T_visit_return:
         """Add the print_collector (only if print is used) at the top."""
         node = self.node_contents_visit(node)
 
@@ -1232,25 +1238,25 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
     # Async und await
 
     def visit_AsyncFunctionDef(
-            self, node: ast.AsyncFunctionDef) -> ast.AST | None:
+            self, node: ast.AsyncFunctionDef) -> _T_visit_return:
         """Deny async functions."""
         self.not_allowed(node)
 
-    def visit_Await(self, node: ast.Await) -> ast.AST | None:
+    def visit_Await(self, node: ast.Await) -> _T_visit_return:
         """Deny async functionality."""
         self.not_allowed(node)
 
-    def visit_AsyncFor(self, node: ast.AsyncFor) -> ast.AST | None:
+    def visit_AsyncFor(self, node: ast.AsyncFor) -> _T_visit_return:
         """Deny async functionality."""
         self.not_allowed(node)
 
-    def visit_AsyncWith(self, node: ast.AsyncWith) -> ast.AST | None:
+    def visit_AsyncWith(self, node: ast.AsyncWith) -> _T_visit_return:
         """Deny async functionality."""
         self.not_allowed(node)
 
     # Assignment expressions (walrus operator ``:=``)
     # New in 3.8
-    def visit_NamedExpr(self, node: ast.NamedExpr) -> ast.AST | None:
+    def visit_NamedExpr(self, node: ast.NamedExpr) -> _T_visit_return:
         """Allow assignment expressions under some circumstances."""
         # while the grammar requires ``node.target`` to be a ``Name``
         # the abstract syntax is more permissive and allows an ``expr``.
