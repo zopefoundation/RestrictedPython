@@ -88,3 +88,23 @@ directory = "parts/htmlcov"
 [tool.setuptools.dynamic]
 readme = {file = ["README.rst", "CHANGES.rst"]}
 
+[tool.mypy]
+mypy_path = "src"
+packages = ["RestrictedPython"]
+python_version = "3.10"
+warn_unreachable = true
+implicit_reexport = false
+strict = true
+
+[[tool.mypy.overrides]]
+module = ["DateTime"]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = ["RestrictedPython.Guards"]
+check_untyped_defs = false
+disallow_untyped_defs = false
+
+[[tool.mypy.overrides]]
+module = ["RestrictedPython.transformer"]
+warn_no_return = false
