@@ -19,7 +19,9 @@ the parsed python code to create a modified AST for a byte code generation.
 
 
 import ast
+import collections
 import contextlib
+import sys
 import textwrap
 import typing
 
@@ -112,14 +114,20 @@ INSPECT_ATTRIBUTES = frozenset([
     "cr_origin",
 ])
 
-_T_visit_return: typing.TypeAlias = ast.AST | list[ast.AST] | None
+_T_visit_return: typing.TypeAlias = ast.AST | typing.Iterable[ast.AST] | None
+_T_pos_ast: typing.TypeAlias = (
+    ast.stmt | ast.expr | ast.excepthandler | ast.arg | ast.keyword | ast.alias
+    | ast.pattern)
+if sys.version_info >= (3, 12):
+    _T_pos_ast: typing.TypeAlias = _T_pos_ast | ast.type_param
+_T = typing.TypeVar('_T', bound=ast.AST)
 
 # When new ast nodes are generated they have no 'lineno', 'end_lineno',
 # 'col_offset' and 'end_col_offset'. This function copies these fields from the
 # incoming node:
 
 
-def copy_locations(new_node: ast.AST, old_node: ast.AST) -> None:
+def copy_locations(new_node: _T_pos_ast, old_node: _T_pos_ast) -> None:
     assert 'lineno' in new_node._attributes
     new_node.lineno = old_node.lineno
 
@@ -136,12 +144,12 @@ def copy_locations(new_node: ast.AST, old_node: ast.AST) -> None:
 
 
 class PrintInfo:
-    def __init__(self):
+    def __init__(self) -> None:
         self.print_used = False
         self.printed_used = False
 
     @contextlib.contextmanager
-    def new_print_scope(self):
+    def new_print_scope(self) -> collections.abc.Iterator[None]:
         old_print_used = self.print_used
         old_printed_used = self.printed_used
 
@@ -199,7 +207,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         self.warnings.append(
             f'Line {lineno}: {info}')
 
-    def guard_iter(self, node: ast.AST) -> ast.AST:
+    def guard_iter(self, node: ast.For | ast.comprehension) -> _T_visit_return:
         """
         Converts:
             for x in expr
@@ -230,7 +238,9 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         node.iter = new_iter
         return node
 
-    def is_starred(self, ob: ast.AST) -> bool:
+    def is_starred(self, ob: ast.AST) -> typing.TypeGuard[ast.Starred]:
+        # TODO: Change Type Annotation to typing.TypeIs[ast.Starred] when
+        #               Support for Python 3.12 is dropped.
         return isinstance(ob, ast.Starred)
 
     def gen_unpack_spec(self, tpl: ast.Tuple) -> ast.Dict:
@@ -281,7 +291,8 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         spec = ast.Dict(keys=[], values=[])
 
         spec.keys.append(ast.Constant('childs'))
-        spec.values.append(ast.Tuple([], ast.Load()))
+        val0 = ast.Tuple([], ast.Load())
+        spec.values.append(val0)
 
         # starred elements in a sequence do not contribute into the min_len.
         # For example a, b, *c = g
@@ -302,7 +313,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
                 el = ast.Tuple([], ast.Load())
                 el.elts.append(ast.Constant(idx - offset))
                 el.elts.append(self.gen_unpack_spec(val))
-                spec.values[0].elts.append(el)
+                val0.elts.append(el)
 
         spec.keys.append(ast.Constant('min_len'))
         spec.values.append(ast.Constant(min_len))
@@ -312,14 +323,15 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
     def protect_unpack_sequence(
             self,
             target: ast.Tuple,
-            value: ast.AST) -> ast.Call:
+            value: ast.expr) -> ast.Call:
         spec = self.gen_unpack_spec(target)
         return ast.Call(
             func=ast.Name('_unpack_sequence_', ast.Load()),
             args=[value, spec, ast.Name('_getiter_', ast.Load())],
             keywords=[])
 
-    def gen_unpack_wrapper(self, node: ast.AST,
+    def gen_unpack_wrapper(self,
+                           node: ast.stmt,
                            target: ast.Tuple) -> tuple[ast.Name, ast.Try]:
         """Helper function to protect tuple unpacks.
 
@@ -356,8 +368,9 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         #     arg = converter
         # finally:
         #     del tmp_arg
-        try_body = [ast.Assign(targets=[target], value=converter)]
-        finalbody = [self.gen_del_stmt(tmp_name)]
+        try_body: list[ast.stmt] = [ast.Assign(
+            targets=[target], value=converter)]
+        finalbody: list[ast.stmt] = [self.gen_del_stmt(tmp_name)]
         cleanup = ast.Try(
             body=try_body, finalbody=finalbody, handlers=[], orelse=[])
 
@@ -377,8 +390,8 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
 
     def check_name(
             self,
-            node: ast.AST,
-            name: str,
+            node: _T_pos_ast,
+            name: str | None,
             allow_magic_methods: bool = False) -> None:
         """Check names if they are allowed.
 
@@ -404,7 +417,9 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         elif name in FORBIDDEN_FUNC_NAMES:
             self.error(node, f'"{name}" is a reserved name.')
 
-    def check_function_argument_names(self, node: ast.FunctionDef) -> None:
+    def check_function_argument_names(
+            self,
+            node: ast.FunctionDef | ast.AsyncFunctionDef | ast.Lambda) -> None:
         for arg in node.args.args:
             self.check_name(node, arg.arg)
 
@@ -434,7 +449,10 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
 
         return self.node_contents_visit(node)
 
-    def inject_print_collector(self, node: ast.AST, position: int = 0) -> None:
+    def inject_print_collector(
+            self,
+            node: ast.Module | ast.FunctionDef,
+            position: int = 0) -> None:
         print_used = self.print_info.print_used
         printed_used = self.print_info.printed_used
 
@@ -467,7 +485,8 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
 
     # Special Functions for an ast.NodeTransformer
 
-    def generic_visit(self, node: ast.AST) -> ast.AST | None:
+    def generic_visit(self,  # type: ignore[override]
+                      node: ast.AST) -> _T_visit_return:
         """Reject ast nodes which do not have a corresponding `visit_` method.
 
         This is needed to prevent new ast nodes from new Python versions to be
@@ -487,9 +506,9 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
             node,
             f'{node.__class__.__name__} statements are not allowed.')
 
-    def node_contents_visit(self, node: ast.AST) -> ast.AST:
+    def node_contents_visit(self, node: _T) -> _T:
         """Visit the contents of a node."""
-        return super().generic_visit(node)
+        return super().generic_visit(node)  # type: ignore[return-value]
 
     # ast for Literals
 
@@ -570,6 +589,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         node = self.node_contents_visit(node)
 
         if isinstance(node.ctx, ast.Load):
+            new_node: _T_pos_ast
             if node.id == 'printed':
                 self.print_info.printed_used = True
                 new_node = ast.Call(
@@ -1213,7 +1233,8 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
             class {0.name}(metaclass=__metaclass__):
                 pass
         '''.format(node))
-        new_class_node = ast.parse(CLASS_DEF).body[0]
+        new_class_node = typing.cast(
+            ast.ClassDef, ast.parse(CLASS_DEF).body[0])
         new_class_node.body = node.body
         new_class_node.bases = node.bases
         new_class_node.decorator_list = node.decorator_list
@@ -1268,7 +1289,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         node = self.node_contents_visit(node)  # this checks ``node.target``
         target = node.target
         if not isinstance(target, ast.Name):
-            self.error(
+            self.error(  # type: ignore[unreachable]
                 node,
                 "Assignment expressions are only allowed for simple targets")
         return node

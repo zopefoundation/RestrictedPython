@@ -15,18 +15,20 @@ import collections.abc
 import math
 import random
 import string
+import types
+import typing
 
 
-utility_builtins = {}
+utility_builtins: dict[str, typing.Any] = {}
 
 
 class _AttributeDelegator:
-    def __init__(self, mod, *excludes):
+    def __init__(self, mod: types.ModuleType, *excludes: str):
         """delegate attribute lookups outside *excludes* to module *mod*."""
         self.__mod = mod
         self.__excludes = excludes
 
-    def __getattr__(self, attr):
+    def __getattr__(self, attr: str) -> typing.Any:
         if attr in self.__excludes:
             raise NotImplementedError(
                 f"{self.__mod.__name__}.{attr} is not safe")
@@ -51,7 +53,7 @@ except ImportError:
     pass
 
 
-def same_type(arg1, *args):
+def same_type(arg1: object, *args: object) -> bool:
     """Compares the class or type of two or more objects."""
     t = getattr(arg1, '__class__', type(arg1))
     for arg in args:
@@ -62,8 +64,10 @@ def same_type(arg1, *args):
 
 utility_builtins['same_type'] = same_type
 
+_T = typing.TypeVar('_T')
 
-def test(*args):
+
+def test(*args: _T) -> _T | None:
     length = len(args)
     for i in range(1, length, 2):
         if args[i - 1]:
@@ -71,15 +75,22 @@ def test(*args):
 
     if length % 2:
         return args[-1]
+    return None
 
 
 utility_builtins['test'] = test
 
+_TK = typing.TypeVar('_TK')
+_TV = typing.TypeVar('_TV')
+_T_in: typing.TypeAlias = collections.abc.Iterable[_TK | tuple[_TK, _TV]]
+_T_out: typing.TypeAlias = list[tuple[_TK, _TK | _TV]]
+
 
 def reorder(
-        s: collections.abc.Iterable,
-        with_: collections.abc.Iterable | None = None,
-        without: collections.abc.Iterable = ()) -> collections.abc.Iterable:
+        s: _T_in[_TK, _TV],
+        with_: collections.abc.Iterable[typing.Any] | None = None,
+        without: collections.abc.Iterable[typing.Any] = ()
+) -> _T_out[_TK, _TV]:
     # s, with_, and without are sequences treated as sets.
     # The result is subtract(intersect(s, with_), without),
     # unless with_ is None, in which case it is subtract(s, without).

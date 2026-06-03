@@ -13,7 +13,11 @@
 """Restricted Python Expressions."""
 
 import ast
+import collections
+import types
+import typing
 
+from RestrictedPython._types import _cast_not_none
 from RestrictedPython.compile import compile_restricted_eval
 
 
@@ -22,13 +26,21 @@ nltosp = str.maketrans('\r\n', '  ')
 # No restrictions.
 default_guarded_getattr = getattr
 
+_T = typing.TypeVar('_T')
+_TK = typing.TypeVar('_TK', contravariant=True)
+_TV = typing.TypeVar('_TV', covariant=True)
 
-def default_guarded_getitem(ob, index):
+
+class _GetItem(typing.Protocol[_TK, _TV]):
+    def __getitem__(self, key: _TK) -> _TV: ...
+
+
+def default_guarded_getitem(ob: _GetItem[_TK, _TV], index: _TK) -> _TV:
     # No restrictions.
     return ob[index]
 
 
-def default_guarded_getiter(ob):
+def default_guarded_getiter(ob: _T) -> _T:
     # No restrictions.
     return ob
 
@@ -36,17 +48,18 @@ def default_guarded_getiter(ob):
 class RestrictionCapableEval:
     """A base class for restricted code."""
 
-    globals = {'__builtins__': None}
+    globals: dict[str, typing.Any] = {'__builtins__': None}
+
     # restricted
-    rcode = None
+    rcode: types.CodeType | None = None
 
     # unrestricted
-    ucode = None
+    ucode: types.CodeType | None = None
 
     # Names used by the expression
-    used = None
+    used: tuple[str, ...] | None = None
 
-    def __init__(self, expr):
+    def __init__(self, expr: str):
         """Create a restricted expression
 
         where:
@@ -60,7 +73,7 @@ class RestrictionCapableEval:
         # Catch syntax errors.
         self.prepUnrestrictedCode()
 
-    def prepRestrictedCode(self):
+    def prepRestrictedCode(self) -> None:
         if self.rcode is None:
             result = compile_restricted_eval(self.expr, '<string>')
             if result.errors:
@@ -68,7 +81,7 @@ class RestrictionCapableEval:
             self.used = tuple(result.used_names)
             self.rcode = result.code
 
-    def prepUnrestrictedCode(self):
+    def prepUnrestrictedCode(self) -> None:
         if self.ucode is None:
             exp_node = ast.parse(
                 self.expr,
@@ -89,7 +102,9 @@ class RestrictionCapableEval:
 
             self.ucode = co
 
-    def eval(self, mapping):
+    def eval(self,
+             mapping: collections.abc.Mapping[str,
+                                              typing.Any]) -> typing.Any:
         # This default implementation is probably not very useful. :-(
         # This is meant to be overridden.
         self.prepRestrictedCode()
@@ -102,11 +117,11 @@ class RestrictionCapableEval:
 
         global_scope.update(self.globals)
 
-        for name in self.used:
+        for name in _cast_not_none(self.used):
             if (name not in global_scope) and (name in mapping):
                 global_scope[name] = mapping[name]
 
-        return eval(self.rcode, global_scope)
+        return eval(_cast_not_none(self.rcode), global_scope)
 
-    def __call__(self, **kw):
+    def __call__(self, **kw: typing.Any) -> typing.Any:
         return self.eval(kw)

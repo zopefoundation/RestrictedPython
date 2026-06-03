@@ -10,11 +10,28 @@
 # FOR A PARTICULAR PURPOSE
 #
 ##############################################################################
+import collections.abc
+import typing
 
-limited_builtins = {}
+
+limited_builtins: dict[str, typing.Any] = {}
 
 
-def limited_range(iFirst, *args):
+@typing.overload
+def limited_range(iFirst: int) -> collections.abc.Sequence[int]: ...
+
+
+@typing.overload
+def limited_range(iStart: int, iEnd: int, /
+                  ) -> collections.abc.Sequence[int]: ...
+
+
+@typing.overload
+def limited_range(iStart: int, iEnd: int, iStep: int, /
+                  ) -> collections.abc.Sequence[int]: ...
+
+
+def limited_range(iFirst: int, *args: int) -> collections.abc.Sequence[int]:
     # limited range function from Martijn Pieters
     RANGELIMIT = 1000
     if not len(args):
@@ -41,8 +58,10 @@ def limited_range(iFirst, *args):
 
 limited_builtins['range'] = limited_range
 
+_T = typing.TypeVar('_T')
 
-def limited_list(seq):
+
+def limited_list(seq: collections.abc.Iterable[_T]) -> list[_T]:
     if isinstance(seq, str):
         raise TypeError('cannot convert string to list')
     return list(seq)
@@ -51,7 +70,7 @@ def limited_list(seq):
 limited_builtins['list'] = limited_list
 
 
-def limited_tuple(seq):
+def limited_tuple(seq: collections.abc.Iterable[_T]) -> tuple[_T, ...]:
     if isinstance(seq, str):
         raise TypeError('cannot convert string to tuple')
     return tuple(seq)

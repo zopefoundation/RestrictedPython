@@ -8,6 +8,7 @@ import typing
 import warnings
 
 from RestrictedPython._compat import IS_CPYTHON
+from RestrictedPython._types import _cast_not_none
 from RestrictedPython.transformer import RestrictingNodeTransformer
 
 
@@ -31,14 +32,14 @@ NOT_CPYTHON_WARNING = (
     'implementations may create security issues.'
 )
 
-_T_source: typing.TypeAlias = (
-    str | ReadableBuffer | ast.Module | ast.Expression | ast.Interactive
-)
+_T_ast_compilable: typing.TypeAlias = (
+    ast.Module | ast.Expression | ast.Interactive)
+_T_source: typing.TypeAlias = str | ReadableBuffer | _T_ast_compilable
 
 
 def _compile_restricted_mode(
         source: _T_source,
-        filename: str | ReadableBuffer | os.PathLike[typing.Any] = '<string>',
+        filename: str | bytes | os.PathLike[typing.Any] = '<string>',
         mode: typing.Literal["exec", "eval", "single"] = "exec",
         flags: int = 0,
         dont_inherit: bool = False,
@@ -50,26 +51,27 @@ def _compile_restricted_mode(
             NOT_CPYTHON_WARNING, RuntimeWarning, 'RestrictedPython', 0)
 
     byte_code = None
-    collected_errors = []
-    collected_warnings = []
-    used_names = {}
+    collected_errors: list[str] = []
+    collected_warnings: list[str] = []
+    used_names: dict[str, bool] = {}
     if policy is None:
         # Unrestricted Source Checks
         byte_code = compile(source, filename, mode=mode, flags=flags,
                             dont_inherit=dont_inherit)
     elif issubclass(policy, RestrictingNodeTransformer):
-        c_ast = None
         allowed_source_types = [str, ast.Module]
         if not issubclass(type(source), tuple(allowed_source_types)):
             raise TypeError('Not allowed source type: '
                             '"{0.__class__.__name__}".'.format(source))
-        c_ast = None
+        c_ast: _T_ast_compilable | None = None
         # workaround for pypy issue https://bitbucket.org/pypy/pypy/issues/2552
         if isinstance(source, ast.Module):
             c_ast = source
         else:
             try:
-                c_ast = ast.parse(source, filename, mode)
+                c_ast = typing.cast(
+                    _T_ast_compilable, ast.parse(
+                        source, filename, mode))
             except (TypeError, ValueError) as e:
                 collected_errors.append(str(e))
             except SyntaxError as v:
@@ -99,7 +101,7 @@ def _compile_restricted_mode(
 
 def compile_restricted_exec(
         source: _T_source,
-        filename: str | ReadableBuffer | os.PathLike[typing.Any] = '<string>',
+        filename: str | bytes | os.PathLike[typing.Any] = '<string>',
         flags: int = 0,
         dont_inherit: bool = False,
         policy: type[ast.NodeTransformer] | None = RestrictingNodeTransformer,
@@ -116,7 +118,7 @@ def compile_restricted_exec(
 
 def compile_restricted_eval(
         source: _T_source,
-        filename: str | ReadableBuffer | os.PathLike[typing.Any] = '<string>',
+        filename: str | bytes | os.PathLike[typing.Any] = '<string>',
         flags: int = 0,
         dont_inherit: bool = False,
         policy: type[ast.NodeTransformer] | None = RestrictingNodeTransformer,
@@ -133,7 +135,7 @@ def compile_restricted_eval(
 
 def compile_restricted_single(
         source: _T_source,
-        filename: str | ReadableBuffer | os.PathLike[typing.Any] = '<string>',
+        filename: str | bytes | os.PathLike[typing.Any] = '<string>',
         flags: int = 0,
         dont_inherit: bool = False,
         policy: type[ast.NodeTransformer] | None = RestrictingNodeTransformer,
@@ -149,11 +151,12 @@ def compile_restricted_single(
 
 
 def compile_restricted_function(
-        p,  # parameters
-        body,
+        p: str,  # parameters
+        body: str | ReadableBuffer | ast.Module | ast.Interactive,
         name: str,
-        filename: str | ReadableBuffer | os.PathLike[typing.Any] = '<string>',
-        globalize=None,  # List of globals (e.g. ['here', 'context', ...])
+        filename: str | bytes | os.PathLike[typing.Any] = '<string>',
+        # List of globals (e.g. ['here', 'context', ...])
+        globalize: list[str] | None = None,
         flags: int = 0,
         dont_inherit: bool = False,
         policy: type[ast.NodeTransformer] | None = RestrictingNodeTransformer,
@@ -190,7 +193,7 @@ def compile_restricted_function(
     assert isinstance(function_ast, ast.FunctionDef)
     function_ast.name = name
 
-    wrapper_ast.body[0].body = body_ast.body
+    function_ast.body = body_ast.body
     wrapper_ast = ast.fix_missing_locations(wrapper_ast)
 
     result = _compile_restricted_mode(
@@ -206,7 +209,7 @@ def compile_restricted_function(
 
 def compile_restricted(
         source: _T_source,
-        filename: str | ReadableBuffer | os.PathLike[typing.Any] = '<unknown>',
+        filename: str | bytes | os.PathLike[typing.Any] = '<unknown>',
         mode: str = 'exec',
         flags: int = 0,
         dont_inherit: bool = False,
@@ -221,7 +224,8 @@ def compile_restricted(
         result = _compile_restricted_mode(
             source,
             filename=filename,
-            mode=mode,
+            mode=mode,  # type: ignore[arg-type]
+            # https://github.com/zopefoundation/RestrictedPython/issues/318
             flags=flags,
             dont_inherit=dont_inherit,
             policy=policy)
@@ -234,4 +238,4 @@ def compile_restricted(
         )
     if result.errors:
         raise SyntaxError(result.errors)
-    return result.code
+    return _cast_not_none(result.code)

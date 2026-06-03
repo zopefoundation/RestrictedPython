@@ -15,17 +15,17 @@
 class PrintCollector:
     """Collect written text, and return it when called."""
 
-    def __init__(self, _getattr_=None):
+    def __init__(self, _getattr_=None):  # type: ignore[no-untyped-def]
         self.txt = []
         self._getattr_ = _getattr_
 
-    def write(self, text):
+    def write(self, text: str) -> None:
         self.txt.append(text)
 
-    def __call__(self):
+    def __call__(self) -> str:
         return ''.join(self.txt)
 
-    def _call_print(self, *objects, **kwargs):
+    def _call_print(self, *objects, **kwargs):  # type: ignore[no-untyped-def]
         if kwargs.get('file', None) is None:
             kwargs['file'] = self
         else:
