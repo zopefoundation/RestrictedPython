@@ -149,7 +149,7 @@ def compile_restricted_function(
         body_ast = body.body
     else:
         try:
-            _body_ast = ast.parse(body, '<func code>', 'exec')
+            body_ast = ast.parse(body, '<func code>', 'exec').body
         except SyntaxError as v:
             error = syntax_error_template.format(
                 lineno=v.lineno,
@@ -158,7 +158,6 @@ def compile_restricted_function(
                 statement=v.text.strip() if v.text else None)
             return CompileResult(
                 code=None, errors=(error,), warnings=(), used_names=())
-        body_ast = _body_ast.body
 
     # The compiled code is actually executed inside a function
     # (that is called when the code is called) so reading and assigning to a
