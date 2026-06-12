@@ -15,7 +15,7 @@ API overview
     :param flags: (optional). defaults to ``0``
     :param dont_inherit: (optional). defaults to ``False``
     :param policy: (optional). defaults to ``RestrictingNodeTransformer``
-    :type source: str or ``ast.Module``
+    :type source: str or bytes or bytearray or ``ast.Module`` or ``ast.Expression`` or ``ast.Interactive``
     :type filename: str or bytes or os.PathLike[typing.Any]
     :type mode: str
     :type flags: int
