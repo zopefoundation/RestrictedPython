@@ -39,13 +39,19 @@ def _compile_restricted_mode(
                             dont_inherit=dont_inherit)
     elif issubclass(policy, RestrictingNodeTransformer):
         c_ast = None
-        allowed_source_types = [str, ast.Module]
+        allowed_source_types = [
+            str,
+            bytes,
+            bytearray,
+            ast.Module,
+            ast.Expression,
+            ast.Interactive]
         if not issubclass(type(source), tuple(allowed_source_types)):
             raise TypeError('Not allowed source type: '
                             '"{0.__class__.__name__}".'.format(source))
         c_ast = None
         # workaround for pypy issue https://bitbucket.org/pypy/pypy/issues/2552
-        if isinstance(source, ast.Module):
+        if isinstance(source, (ast.Module, ast.Expression, ast.Interactive)):
             c_ast = source
         else:
             try:
