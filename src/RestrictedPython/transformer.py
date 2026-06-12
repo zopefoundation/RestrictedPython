@@ -21,9 +21,10 @@ the parsed python code to create a modified AST for a byte code generation.
 import ast
 import collections
 import contextlib
-import sys
 import textwrap
 import typing
+
+from RestrictedPython._types import T_pos_ast
 
 
 # For AugAssign the operator must be converted to a string.
@@ -115,11 +116,6 @@ INSPECT_ATTRIBUTES = frozenset([
 ])
 
 _T_visit_return: typing.TypeAlias = ast.AST | typing.Iterable[ast.AST] | None
-_T_pos_ast: typing.TypeAlias = (
-    ast.stmt | ast.expr | ast.excepthandler | ast.arg | ast.keyword | ast.alias
-    | ast.pattern)
-if sys.version_info >= (3, 12):
-    _T_pos_ast: typing.TypeAlias = _T_pos_ast | ast.type_param
 _T = typing.TypeVar('_T', bound=ast.AST)
 
 # When new ast nodes are generated they have no 'lineno', 'end_lineno',
@@ -127,7 +123,7 @@ _T = typing.TypeVar('_T', bound=ast.AST)
 # incoming node:
 
 
-def copy_locations(new_node: _T_pos_ast, old_node: _T_pos_ast) -> None:
+def copy_locations(new_node: T_pos_ast, old_node: T_pos_ast) -> None:
     assert 'lineno' in new_node._attributes
     new_node.lineno = old_node.lineno
 
@@ -390,7 +386,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
 
     def check_name(
             self,
-            node: _T_pos_ast,
+            node: T_pos_ast,
             name: str | None,
             allow_magic_methods: bool = False) -> None:
         """Check names if they are allowed.
@@ -589,7 +585,7 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         node = self.node_contents_visit(node)
 
         if isinstance(node.ctx, ast.Load):
-            new_node: _T_pos_ast
+            new_node: T_pos_ast
             if node.id == 'printed':
                 self.print_info.printed_used = True
                 new_node = ast.Call(

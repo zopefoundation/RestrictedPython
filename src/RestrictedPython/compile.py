@@ -8,7 +8,7 @@ import typing
 import warnings
 
 from RestrictedPython._compat import IS_CPYTHON
-from RestrictedPython._types import _cast_not_none
+from RestrictedPython._types import cast_not_none
 from RestrictedPython.transformer import RestrictingNodeTransformer
 
 
@@ -238,4 +238,4 @@ def compile_restricted(
         )
     if result.errors:
         raise SyntaxError(result.errors)
-    return _cast_not_none(result.code)
+    return cast_not_none(result.code)

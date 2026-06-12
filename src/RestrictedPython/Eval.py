@@ -17,7 +17,7 @@ import collections
 import types
 import typing
 
-from RestrictedPython._types import _cast_not_none
+from RestrictedPython._types import cast_not_none
 from RestrictedPython.compile import compile_restricted_eval
 
 
@@ -117,11 +117,11 @@ class RestrictionCapableEval:
 
         global_scope.update(self.globals)
 
-        for name in _cast_not_none(self.used):
+        for name in cast_not_none(self.used):
             if (name not in global_scope) and (name in mapping):
                 global_scope[name] = mapping[name]
 
-        return eval(_cast_not_none(self.rcode), global_scope)
+        return eval(cast_not_none(self.rcode), global_scope)
 
     def __call__(self, **kw: typing.Any) -> typing.Any:
         return self.eval(kw)
