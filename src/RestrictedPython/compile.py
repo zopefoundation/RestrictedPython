@@ -4,6 +4,7 @@ from collections import namedtuple
 
 from RestrictedPython._compat import IS_CPYTHON
 from RestrictedPython.transformer import RestrictingNodeTransformer
+from RestrictedPython.transformer import copy_locations
 
 
 CompileResult = namedtuple(
@@ -140,16 +141,24 @@ def compile_restricted_function(
     http://restrictedpython.readthedocs.io/en/latest/usage/index.html#RestrictedPython.compile_restricted_function
     """
     # Parse the parameters and body, then combine them.
-    try:
-        body_ast = ast.parse(body, '<func code>', 'exec')
-    except SyntaxError as v:
-        error = syntax_error_template.format(
-            lineno=v.lineno,
-            type=v.__class__.__name__,
-            msg=v.msg,
-            statement=v.text.strip() if v.text else None)
-        return CompileResult(
-            code=None, errors=(error,), warnings=(), used_names=())
+    if isinstance(body, ast.Expression):
+        _body_ast = ast.Expr(body.body)
+        copy_locations(_body_ast, body.body)
+        body_ast = [_body_ast]
+    elif isinstance(body, (ast.Module, ast.Interactive)):
+        body_ast = body.body
+    else:
+        try:
+            _body_ast = ast.parse(body, '<func code>', 'exec')
+        except SyntaxError as v:
+            error = syntax_error_template.format(
+                lineno=v.lineno,
+                type=v.__class__.__name__,
+                msg=v.msg,
+                statement=v.text.strip() if v.text else None)
+            return CompileResult(
+                code=None, errors=(error,), warnings=(), used_names=())
+        body_ast = _body_ast.body
 
     # The compiled code is actually executed inside a function
     # (that is called when the code is called) so reading and assigning to a
@@ -157,7 +166,7 @@ def compile_restricted_function(
     # UnboundLocalError.
     # We don't want the user to need to understand this.
     if globalize:
-        body_ast.body.insert(0, ast.Global(globalize))
+        body_ast.insert(0, ast.Global(globalize))
     wrapper_ast = ast.parse('def masked_function_name(%s): pass' % p,
                             '<func wrapper>', 'exec')
     # In case the name you chose for your generated function is not a
@@ -166,7 +175,7 @@ def compile_restricted_function(
     assert isinstance(function_ast, ast.FunctionDef)
     function_ast.name = name
 
-    wrapper_ast.body[0].body = body_ast.body
+    wrapper_ast.body[0].body = body_ast
     wrapper_ast = ast.fix_missing_locations(wrapper_ast)
 
     result = _compile_restricted_mode(
