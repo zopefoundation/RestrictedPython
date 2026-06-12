@@ -1,3 +1,4 @@
+import ast
 from types import FunctionType
 
 from RestrictedPython import PrintCollector
@@ -233,3 +234,68 @@ def test_compile_restricted_function_invalid_syntax():
     assert error_msg.startswith(
         "Line 1: SyntaxError: cannot assign to literal here. Maybe "
     )
+
+
+def test_compile_restricted_function_pre_parse_exec():
+    p = ''
+    body = ast.parse("""
+print("Hello World!")
+return printed
+""")
+    name = "hello_world"
+    global_symbols = []
+
+    result = compile_restricted_function(
+        p,  # parameters
+        body,
+        name,
+        filename='<string>',
+        globalize=global_symbols
+    )
+
+    assert result.code is not None
+    assert result.errors == ()
+
+    safe_globals = {
+        '__name__': 'script',
+        '_getattr_': getattr,
+        '_print_': PrintCollector,
+        '__builtins__': safe_builtins,
+    }
+    safe_locals = {}
+    exec(result.code, safe_globals, safe_locals)
+    hello_world = safe_locals['hello_world']
+    assert type(hello_world) is FunctionType
+    assert hello_world() == 'Hello World!\n'
+
+
+def test_compile_restricted_function_pre_parse_single():
+    p = ''
+    body = ast.parse("""
+return "Hello World!"
+""", mode="single")
+    name = "hello_world"
+    global_symbols = []
+
+    result = compile_restricted_function(
+        p,  # parameters
+        body,
+        name,
+        filename='<string>',
+        globalize=global_symbols
+    )
+
+    assert result.code is not None
+    assert result.errors == ()
+
+    safe_globals = {
+        '__name__': 'script',
+        '_getattr_': getattr,
+        '_print_': PrintCollector,
+        '__builtins__': safe_builtins,
+    }
+    safe_locals = {}
+    exec(result.code, safe_globals, safe_locals)
+    hello_world = safe_locals['hello_world']
+    assert type(hello_world) is FunctionType
+    assert hello_world() == 'Hello World!'
