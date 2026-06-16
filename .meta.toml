@@ -2,7 +2,7 @@
 # https://github.com/zopefoundation/meta/tree/master/src/zope/meta/pure-python
 [meta]
 template = "pure-python"
-commit-id = "516c594a"
+commit-id = "92befcdf"
 
 [python]
 with-pypy = false
@@ -89,3 +89,6 @@ additional-ignores = [
 additional-config = [
     "- [\"3.11\", \"py311-datetime\"]",
     ]
+
+[pypi]
+trusted-publishing = true
