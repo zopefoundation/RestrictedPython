@@ -68,7 +68,7 @@ API overview
     :param dont_inherit: (optional). defaults to ``False``
     :param policy: (optional). defaults to ``RestrictingNodeTransformer``
     :type p: str
-    :type body: str or bytes or bytearray
+    :type body: str or bytes or bytearray or ``ast.Module`` or ``ast.Expression`` or ``ast.Interactive``
     :type name: str
     :type filename: str or bytes or os.PathLike[typing.Any]
     :type globalize: None or list

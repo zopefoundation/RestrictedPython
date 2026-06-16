@@ -4,6 +4,7 @@ Changes
 8.4 (unreleased)
 ----------------
 
+- Allow ``ast.Module``, ``ast.Expression`` and ``ast.Interactive`` as body in compile_restricted_function
 
 8.3 (2026-06-16)
 ----------------
