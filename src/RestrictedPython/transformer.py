@@ -387,6 +387,9 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
             self.error(node, f'"{name}" is a reserved name.')
 
     def check_function_argument_names(self, node):
+        for arg in node.args.posonlyargs:
+            self.check_name(node, arg.arg)
+
         for arg in node.args.args:
             self.check_name(node, arg.arg)
 
