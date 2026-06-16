@@ -416,6 +416,9 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
     def check_function_argument_names(
             self,
             node: ast.FunctionDef | ast.AsyncFunctionDef | ast.Lambda) -> None:
+        for arg in node.args.posonlyargs:
+            self.check_name(node, arg.arg)
+
         for arg in node.args.args:
             self.check_name(node, arg.arg)
 

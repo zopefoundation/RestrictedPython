@@ -47,8 +47,8 @@ jobs:
       with:
         persist-credentials: false
     - name: Install uv + caching
-      # astral/setup-uv@8.1.0
-      uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b
+      # astral/setup-uv@8.2.0
+      uses: astral-sh/setup-uv@fac544c07dec837d0ccb6301d7b5580bf5edae39
       with:
         enable-cache: true
         cache-dependency-glob: |
@@ -93,3 +93,35 @@ jobs:
         name: RestrictedPython.tar.gz
         path: dist/*gz
 
+  publish:
+    name: Publish to PyPI
+    runs-on: ubuntu-latest
+    # Only publish on tag pushes
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
+    # Wait for build jobs to complete
+    needs: [build]
+    environment:
+      name: pypi
+      url: https://pypi.org/p/RestrictedPython
+    permissions:
+      contents: read
+      id-token: write  # Mandatory for trusted publishing
+
+    steps:
+      - name: Download package artifacts
+        uses: actions/download-artifact@v8
+        with:
+          path: dist/
+          pattern: '*'
+          merge-multiple: true
+
+      - name: Display structure of downloaded files
+        run: |
+          ls -lR dist/
+
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          skip-existing: true
+          packages-dir: dist/
+          verbose: true

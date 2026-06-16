@@ -10,6 +10,7 @@ import warnings
 from RestrictedPython._compat import IS_CPYTHON
 from RestrictedPython._types import cast_not_none
 from RestrictedPython.transformer import RestrictingNodeTransformer
+from RestrictedPython.transformer import copy_locations
 
 
 # Temporary workaround for missing _typeshed
@@ -59,13 +60,19 @@ def _compile_restricted_mode(
         byte_code = compile(source, filename, mode=mode, flags=flags,
                             dont_inherit=dont_inherit)
     elif issubclass(policy, RestrictingNodeTransformer):
-        allowed_source_types = [str, ast.Module]
+        allowed_source_types = [
+            str,
+            bytes,
+            bytearray,
+            ast.Module,
+            ast.Expression,
+            ast.Interactive]
         if not issubclass(type(source), tuple(allowed_source_types)):
             raise TypeError('Not allowed source type: '
                             '"{0.__class__.__name__}".'.format(source))
         c_ast: _T_ast_compilable | None = None
         # workaround for pypy issue https://bitbucket.org/pypy/pypy/issues/2552
-        if isinstance(source, ast.Module):
+        if isinstance(source, (ast.Module, ast.Expression, ast.Interactive)):
             c_ast = source
         else:
             try:
@@ -152,7 +159,7 @@ def compile_restricted_single(
 
 def compile_restricted_function(
         p: str,  # parameters
-        body: str | ReadableBuffer | ast.Module | ast.Interactive,
+        body: _T_source,
         name: str,
         filename: str | bytes | os.PathLike[typing.Any] = '<string>',
         # List of globals (e.g. ['here', 'context', ...])
@@ -167,16 +174,24 @@ def compile_restricted_function(
     http://restrictedpython.readthedocs.io/en/latest/usage/index.html#RestrictedPython.compile_restricted_function
     """
     # Parse the parameters and body, then combine them.
-    try:
-        body_ast = ast.parse(body, '<func code>', 'exec')
-    except SyntaxError as v:
-        error = syntax_error_template.format(
-            lineno=v.lineno,
-            type=v.__class__.__name__,
-            msg=v.msg,
-            statement=v.text.strip() if v.text else None)
-        return CompileResult(
-            code=None, errors=(error,), warnings=(), used_names={})
+    body_ast: list[ast.stmt]
+    if isinstance(body, ast.Expression):
+        _body_ast = ast.Expr(body.body)
+        copy_locations(_body_ast, body.body)
+        body_ast = [_body_ast]
+    elif isinstance(body, (ast.Module, ast.Interactive)):
+        body_ast = body.body
+    else:
+        try:
+            body_ast = ast.parse(body, '<func code>', 'exec').body
+        except SyntaxError as v:
+            error = syntax_error_template.format(
+                lineno=v.lineno,
+                type=v.__class__.__name__,
+                msg=v.msg,
+                statement=v.text.strip() if v.text else None)
+            return CompileResult(
+                code=None, errors=(error,), warnings=(), used_names={})
 
     # The compiled code is actually executed inside a function
     # (that is called when the code is called) so reading and assigning to a
@@ -184,7 +199,7 @@ def compile_restricted_function(
     # UnboundLocalError.
     # We don't want the user to need to understand this.
     if globalize:
-        body_ast.body.insert(0, ast.Global(globalize))
+        body_ast.insert(0, ast.Global(globalize))
     wrapper_ast = ast.parse('def masked_function_name(%s): pass' % p,
                             '<func wrapper>', 'exec')
     # In case the name you chose for your generated function is not a
@@ -193,7 +208,7 @@ def compile_restricted_function(
     assert isinstance(function_ast, ast.FunctionDef)
     function_ast.name = name
 
-    function_ast.body = body_ast.body
+    function_ast.body = body_ast
     wrapper_ast = ast.fix_missing_locations(wrapper_ast)
 
     result = _compile_restricted_mode(
