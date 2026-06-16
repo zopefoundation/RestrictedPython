@@ -5,6 +5,7 @@ Changes
 ----------------
 
 - Allow ``ast.Module``, ``ast.Expression`` and ``ast.Interactive`` as body in compile_restricted_function
+
 - Disallow ``mode="function"`` in ``compile_restricted`` (it never worked).
 
 8.3 (2026-06-16)
