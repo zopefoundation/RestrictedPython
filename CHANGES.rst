@@ -1,8 +1,10 @@
 Changes
 =======
 
-8.3 (unreleased)
+8.3 (2026-06-16)
 ----------------
+
+- Switch to PyPI Trusted Publishing for the package release process
 
 - Also validate positional-only argument names (parameters before ``/``) so
   they cannot start with an underscore, closing a sandbox escape where a

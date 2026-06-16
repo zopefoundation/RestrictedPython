@@ -9,7 +9,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "RestrictedPython"
-version = "8.3.dev0"
+version = "8.3"
 description = "RestrictedPython is a defined subset of the Python language which allows to provide a program input into a trusted environment."
 license = "ZPL-2.1"
 classifiers = [
@@ -83,3 +83,7 @@ directory = "parts/htmlcov"
 [tool.setuptools.dynamic]
 readme = {file = ["README.rst", "CHANGES.rst"]}
 
+
+[tool.zest-releaser]
+create-wheel = false
+upload-pypi = false
