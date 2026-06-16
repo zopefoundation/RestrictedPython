@@ -1,10 +1,20 @@
 Changes
 =======
 
-8.3 (unreleased)
+8.4 (unreleased)
 ----------------
 
 - Allow ``ast.Module``, ``ast.Expression`` and ``ast.Interactive`` as body in compile_restricted_function
+
+8.3 (2026-06-16)
+----------------
+
+- Switch to PyPI Trusted Publishing for the package release process
+
+- Also validate positional-only argument names (parameters before ``/``) so
+  they cannot start with an underscore, closing a sandbox escape where a
+  positional-only parameter could shadow an injected protected name such as
+  ``_getattr_``, ``_getitem_``, ``_write_`` or ``_print_``.
 
 
 8.3a1.dev0 (2026-05-29)
