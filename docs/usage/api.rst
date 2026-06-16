@@ -67,10 +67,10 @@ API overview
     :param flags: (optional). defaults to ``0``
     :param dont_inherit: (optional). defaults to ``False``
     :param policy: (optional). defaults to ``RestrictingNodeTransformer``
-    :type p: str or unicode text
-    :type body: str or unicode text
-    :type name: str or unicode text
-    :type filename: str or unicode text
+    :type p: str
+    :type body: str or bytes or bytearray
+    :type name: str
+    :type filename: str or bytes or os.PathLike[typing.Any]
     :type globalize: None or list
     :type flags: int
     :type dont_inherit: int
