@@ -4,7 +4,10 @@ Changes
 8.3 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Also validate positional-only argument names (parameters before ``/``) so
+  they cannot start with an underscore, closing a sandbox escape where a
+  positional-only parameter could shadow an injected protected name such as
+  ``_getattr_``, ``_getitem_``, ``_write_`` or ``_print_``.
 
 
 8.3a1.dev0 (2026-05-29)
