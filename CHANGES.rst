@@ -4,6 +4,9 @@ Changes
 8.4 (unreleased)
 ----------------
 
+- Add type annotations to the package code.
+  For clarification, restricted Python code does not support type annotations.
+
 - Allow ``ast.Module``, ``ast.Expression`` and ``ast.Interactive`` as body in compile_restricted_function
 
 - Disallow ``mode="function"`` in ``compile_restricted`` (it never worked).

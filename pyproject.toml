@@ -24,6 +24,7 @@ classifiers = [
     "Programming Language :: Python :: 3.14",
     "Programming Language :: Python :: Implementation :: CPython",
     "Topic :: Security",
+    "Typing :: Typed",
 ]
 dynamic = ["readme"]
 requires-python = ">=3.10, <3.16"
@@ -49,6 +50,9 @@ test = [
 docs = [
     "Sphinx",
     "furo",
+]
+typecheck = [
+    "mypy",
 ]
 
 [project.urls]
@@ -83,6 +87,26 @@ directory = "parts/htmlcov"
 [tool.setuptools.dynamic]
 readme = {file = ["README.rst", "CHANGES.rst"]}
 
+[tool.mypy]
+mypy_path = "src"
+packages = ["RestrictedPython"]
+python_version = "3.10"
+warn_unreachable = true
+implicit_reexport = false
+strict = true
+
+[[tool.mypy.overrides]]
+module = ["DateTime"]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = ["RestrictedPython.Guards"]
+check_untyped_defs = false
+disallow_untyped_defs = false
+
+[[tool.mypy.overrides]]
+module = ["RestrictedPython.transformer"]
+warn_no_return = false
 
 [tool.zest-releaser]
 create-wheel = false

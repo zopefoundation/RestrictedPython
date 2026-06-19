@@ -220,7 +220,7 @@ def _full_write_guard():
     return guard
 
 
-full_write_guard = _full_write_guard()
+full_write_guard = _full_write_guard()  # type: ignore[no-untyped-call]
 
 
 def guarded_setattr(object, name, value):
