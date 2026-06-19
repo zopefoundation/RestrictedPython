@@ -206,7 +206,7 @@ def compile_restricted(
     policy ... `ast.NodeTransformer` class defining the restrictions.
 
     """
-    if mode in ['exec', 'eval', 'single', 'function']:
+    if mode in ['exec', 'eval', 'single']:
         result = _compile_restricted_mode(
             source,
             filename=filename,

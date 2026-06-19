@@ -11,7 +11,7 @@ API overview
 
     :param source: (required). the source code that should be compiled
     :param filename: (optional). defaults to ``'<unknown>'``
-    :param mode: (optional). Use ``'exec'``, ``'eval'``, ``'single'`` or ``'function'``. defaults to ``'exec'``
+    :param mode: (optional). Use ``'exec'``, ``'eval'`` or ``'single'``. defaults to ``'exec'``
     :param flags: (optional). defaults to ``0``
     :param dont_inherit: (optional). defaults to ``False``
     :param policy: (optional). defaults to ``RestrictingNodeTransformer``
