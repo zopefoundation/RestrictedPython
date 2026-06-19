@@ -225,7 +225,7 @@ def compile_restricted_function(
 def compile_restricted(
         source: _T_source,
         filename: str | bytes | os.PathLike[typing.Any] = '<unknown>',
-        mode: str = 'exec',
+        mode: typing.Literal["exec", "eval", "single"] = 'exec',
         flags: int = 0,
         dont_inherit: bool = False,
         policy: type[ast.NodeTransformer] | None = RestrictingNodeTransformer,
@@ -239,8 +239,7 @@ def compile_restricted(
         result = _compile_restricted_mode(
             source,
             filename=filename,
-            mode=mode,  # type: ignore[arg-type]
-            # https://github.com/zopefoundation/RestrictedPython/issues/318
+            mode=mode,
             flags=flags,
             dont_inherit=dont_inherit,
             policy=policy)
