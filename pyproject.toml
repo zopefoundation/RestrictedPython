@@ -9,7 +9,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "RestrictedPython"
-version = "8.4.dev0"
+version = "8.4"
 description = "RestrictedPython is a defined subset of the Python language which allows to provide a program input into a trusted environment."
 license = "ZPL-2.1"
 classifiers = [
@@ -61,6 +61,7 @@ Issues = "https://github.com/zopefoundation/RestrictedPython/issues"
 Source = "https://github.com/zopefoundation/RestrictedPython"
 Changelog = "https://github.com/zopefoundation/RestrictedPython/blob/master/CHANGES.rst"
 
+
 [tool.coverage.run]
 branch = true
 source = ["RestrictedPython"]
@@ -87,6 +88,7 @@ directory = "parts/htmlcov"
 [tool.setuptools.dynamic]
 readme = {file = ["README.rst", "CHANGES.rst"]}
 
+
 [tool.mypy]
 mypy_path = "src"
 packages = ["RestrictedPython"]
@@ -107,6 +109,7 @@ disallow_untyped_defs = false
 [[tool.mypy.overrides]]
 module = ["RestrictedPython.transformer"]
 warn_no_return = false
+
 
 [tool.zest-releaser]
 create-wheel = false

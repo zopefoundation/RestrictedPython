@@ -1,7 +1,7 @@
 Changes
 =======
 
-8.4 (unreleased)
+8.4 (2026-07-10)
 ----------------
 
 - Add type annotations to the package code.
