@@ -16,6 +16,7 @@
 # DocumentTemplate.DT_UTil contains a few.
 
 import builtins
+import string
 
 from RestrictedPython.transformer import INSPECT_ATTRIBUTES
 
@@ -238,6 +239,8 @@ safe_builtins['delattr'] = guarded_delattr
 
 
 raise_ = object()
+_FORMATTER_UNSAFE_METHODS = frozenset(('format', 'get_field', 'get_value',
+                                       'vformat'))
 
 
 def safer_getattr(object, name, default=None, getattr=getattr):
@@ -254,6 +257,14 @@ def safer_getattr(object, name, default=None, getattr=getattr):
             (isinstance(object, type) and issubclass(object, str))):
         raise NotImplementedError(
             'Using the format*() methods of `str` is not safe')
+    if object is string and name == 'Formatter':
+        raise NotImplementedError('string.Formatter is not safe')
+    if name in _FORMATTER_UNSAFE_METHODS and (
+            isinstance(object, string.Formatter) or
+            (isinstance(object, type) and
+             issubclass(object, string.Formatter))):
+        raise NotImplementedError(
+            'Using string.Formatter methods is not safe')
     if name in INSPECT_ATTRIBUTES:
         raise AttributeError(
             f'"{name}" is a restricted name,'
