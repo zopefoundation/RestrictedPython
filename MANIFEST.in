@@ -1,10 +1,11 @@
-# Generated from:
-# https://github.com/zopefoundation/meta/tree/master/config/pure-python
+# Generated with zope.meta (https://zopemeta.readthedocs.io/) from:
+# https://github.com/zopefoundation/meta/tree/master/src/zope/meta/pure-python
 include *.md
 include *.rst
 include *.txt
 include buildout.cfg
 include tox.ini
+include .pre-commit-config.yaml
 
 recursive-include docs *.py
 recursive-include docs *.rst
@@ -12,6 +13,7 @@ recursive-include docs *.txt
 recursive-include docs Makefile
 
 recursive-include src *.py
+include *.yaml
 recursive-include docs *.ast
 recursive-include docs *.bat
 recursive-include docs *.jpg

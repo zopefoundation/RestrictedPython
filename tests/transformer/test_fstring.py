@@ -1,7 +1,4 @@
-import pytest
-
 from RestrictedPython import compile_restricted_exec
-from RestrictedPython._compat import IS_PY38_OR_GREATER
 from RestrictedPython.PrintCollector import PrintCollector
 
 
@@ -37,10 +34,6 @@ print(f'{user=} {member_since=}')
 """
 
 
-@pytest.mark.skipif(
-    not IS_PY38_OR_GREATER,
-    reason="f-string self-documenting expressions added in Python 3.8.",
-)
 def test_f_string_self_documenting_expressions():
     """Checks if f-string self-documenting expressions is checked."""
     result = compile_restricted_exec(

@@ -1,7 +1,6 @@
 Contributing
 ============
 
-.. contents::
 
 Contributing to RestrictedPython
 --------------------------------
@@ -64,6 +63,7 @@ To do so:
     All AST Nodes without an explicit ``visit_<AST Node>`` method, are denied by default.
     So the usage of this expression and functionality is not allowed.
 
+* Check the documentation for `inspect <https://docs.python.org/3/library/inspect.html>`_ and adjust the ``transformer.py:INSPECT_ATTRIBUTES`` list.
 * Add a corresponding changelog entry.
 * Additionally modify ``.meta.toml`` and run the ``meta/config`` script (for details see: https://github.com/mgedmin/check-python-versions) to update the following files:
 
@@ -90,27 +90,19 @@ To enable a certain functionality in RestrictedPython, do the following:
   * icemac
   * loechel
 
-Differences between different Python versions
----------------------------------------------
+Differences between Python versions
+-----------------------------------
 
 A (modified style) Copy of all Abstract Grammar Definitions for the Python versions does live in this Documentation (ast Subfolder) to help finding difference quicker by comparing files.
 
 .. toctree::
    :maxdepth: 2
 
-   changes_from26to27
-   changes_from30to31
-   changes_from31to32
-   changes_from32to33
-   changes_from33to34
-   changes_from34to35
-   changes_from35to36
-   changes_from36to37
-   changes_from37to38
-   changes_from38to39
    changes_from39to310
    changes_from310to311
    changes_from311to312
+   changes_from312to313
+   changes_from313to314
 
 .. _understand:
 
@@ -158,14 +150,14 @@ The ``ast`` module consists of four areas:
 A ``NodeVisitor`` is a class of a node / AST consumer, it reads the data by stepping through the tree without modifying it.
 In contrast, a ``NodeTransformer`` (which inherits from a ``NodeVisitor``) is allowed to modify the tree and nodes.
 
-Technical decissions on how to implement / maintain RestrictedPython (Design, Structure, Tools, ...)
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Technical decisions on how to implement / maintain RestrictedPython (Design, Structure, Tools, ...)
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 RestrictedPython is a core Package of the Zope & Plone Stack.
 Until Version 3.6 RestrictedPython was Python 2 only, and a critical blocker for Zope & Plone.
-With RestrictedPython 4.0 an API compatible rewrite has happend, which supports modern Python Versions.
+With RestrictedPython 4.0 an API compatible rewrite has happened, which supports modern Python Versions.
 
-* Use modern python tool stack for maintainance and tests
+* Use modern python tool stack for maintenance and tests
 
   * tox
   * pytest
@@ -185,7 +177,7 @@ With RestrictedPython 4.0 an API compatible rewrite has happend, which supports 
   Resolve discussion about how RestrictedPython should be treat new expressions / ``ast.Nodes``.
   This belongs to :ref:`new_python_version`.
 
-  **Option 1 - reduce maintainance burden (prefered by icemac)**
+  **Option 1 - reduce maintenance burden (preferred by icemac)**
 
 
   All AST Nodes without an explicit ``visit_<AST Node>`` method, are denied by default.
@@ -193,7 +185,7 @@ With RestrictedPython 4.0 an API compatible rewrite has happend, which supports 
 
   *This is currently the promoted version.*
 
-  **Option 2 - be as explicite as possible (prefered by loechel)**
+  **Option 2 - be as explicit as possible (preferred by loechel)**
 
   If the new AST Node should be disabled by default, add a ``visit_<AST Node>`` method such as the following:
 
@@ -243,21 +235,11 @@ Technical Backgrounds - Links to External Documentation
 
   * AST Grammar of Python (`Status of Python Versions`_)
 
-    * `Python 3.12 AST`_ (development branch - EOL 2028-10)
-    * `Python 3.11 AST`_ (in bugfix phase - EOL 2027-10)
-    * `Python 3.10 AST`_ (in bugfix phase - EOL 2026-10)
-    * `Python 3.9 AST`_ (in security phase - EOL 2025-10)
-    * `Python 3.8 AST`_ (in security phase - EOL 2024-10)
-    * `Python 3.7 AST`_ (in security phase - EOL 2023-06-27)
-    * `Python 3.6 AST`_ (obsolete - EOL 2021-12-23)
-    * `Python 3.5 AST`_ (obsolete - EOL 2020-09-30)
-    * `Python 3.4 AST`_ (obsolete - EOL 2019-03-18)
-    * `Python 3.3 AST`_ (obsolete - EOL 2017-09-29)
-    * `Python 3.2 AST`_ (obsolete - EOL 2016-02-20)
-    * `Python 3.1 AST`_ (obsolete - EOL 2012-04-09)
-    * `Python 3.0 AST`_ (obsolete - EOL 2009-06-27)
-    * `Python 2.7 AST`_ (obsolete - EOL 2020-01-01)
-    * `Python 2.6 AST`_ (obsolete - EOL 2013-10.29)
+    * `Python 3.14 AST`_ (EOL 2030-10)
+    * `Python 3.13 AST`_ (EOL 2029-10)
+    * `Python 3.12 AST`_ (EOL 2028-10)
+    * `Python 3.11 AST`_ (EOL 2027-10)
+    * `Python 3.10 AST`_ (EOL 2026-10)
 
   * `AST NodeVistiors Class`_
   * `AST NodeTransformer Class`_
@@ -275,25 +257,15 @@ Todos
 
 .. _`What's new in Python`: https://docs.python.org/3/whatsnew/
 
+.. _`What's new in Python 3.14`: https://docs.python.org/3.14/whatsnew/3.14.html
+
+.. _`What's new in Python 3.13`: https://docs.python.org/3.13/whatsnew/3.13.html
+
 .. _`What's new in Python 3.12`: https://docs.python.org/3.12/whatsnew/3.12.html
 
 .. _`What's new in Python 3.11`: https://docs.python.org/3.11/whatsnew/3.11.html
 
 .. _`What's new in Python 3.10`: https://docs.python.org/3.10/whatsnew/3.10.html
-
-.. _`What's new in Python 3.9`: https://docs.python.org/3.9/whatsnew/3.9.html
-
-.. _`What's new in Python 3.8`: https://docs.python.org/3.8/whatsnew/3.8.html
-
-.. _`What's new in Python 3.7`: https://docs.python.org/3.7/whatsnew/3.7.html
-
-.. _`What's new in Python 3.6`: https://docs.python.org/3.6/whatsnew/3.6.html
-
-.. _`What's new in Python 3.5`: https://docs.python.org/3.5/whatsnew/3.5.html
-
-.. _`What's new in Python 3.4`: https://docs.python.org/3.4/whatsnew/3.4.html
-
-.. _`What's new in Python 2.7`: https://docs.python.org/2.7/whatsnew/2.7.html
 
 .. _`Status of Python Versions`: https://devguide.python.org/versions/
 
@@ -309,35 +281,15 @@ Todos
 
 .. _`Python 3 AST`: https://docs.python.org/3/library/ast.html#abstract-grammar
 
+.. _`Python 3.14 AST`: https://docs.python.org/3.14/library/ast.html#abstract-grammar
+
+.. _`Python 3.13 AST`: https://docs.python.org/3.13/library/ast.html#abstract-grammar
+
 .. _`Python 3.12 AST`: https://docs.python.org/3.12/library/ast.html#abstract-grammar
 
 .. _`Python 3.11 AST`: https://docs.python.org/3.11/library/ast.html#abstract-grammar
 
 .. _`Python 3.10 AST`: https://docs.python.org/3.10/library/ast.html#abstract-grammar
-
-.. _`Python 3.9 AST`: https://docs.python.org/3.9/library/ast.html#abstract-grammar
-
-.. _`Python 3.8 AST`: https://docs.python.org/3.8/library/ast.html#abstract-grammar
-
-.. _`Python 3.7 AST`: https://docs.python.org/3.7/library/ast.html#abstract-grammar
-
-.. _`Python 3.6 AST`: https://docs.python.org/3.6/library/ast.html#abstract-grammar
-
-.. _`Python 3.5 AST`: https://docs.python.org/3.5/library/ast.html#abstract-grammar
-
-.. _`Python 3.4 AST`: https://docs.python.org/3.4/library/ast.html#abstract-grammar
-
-.. _`Python 3.3 AST`: https://docs.python.org/3.3/library/ast.html#abstract-grammar
-
-.. _`Python 3.2 AST`: https://docs.python.org/3.2/library/ast.html#abstract-grammar
-
-.. _`Python 3.1 AST`: https://docs.python.org/3.1/library/ast.html#abstract-grammar
-
-.. _`Python 3.0 AST`: https://docs.python.org/3.0/library/ast.html#abstract-grammar
-
-.. _`Python 2.7 AST`: https://docs.python.org/2.7/library/ast.html#abstract-grammar
-
-.. _`Python 2.6 AST`: https://docs.python.org/2.6/library/ast.html#abstract-grammar
 
 .. _`AST NodeVistiors Class`: https://docs.python.org/3/library/ast.html#ast.NodeVisitor
 

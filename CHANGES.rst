@@ -1,7 +1,147 @@
 Changes
 =======
 
-6.0 (unreleased)
+8.5 (unreleased)
+----------------
+
+
+8.4 (2026-07-10)
+----------------
+
+- Add type annotations to the package code.
+  For clarification, restricted Python code does not support type annotations.
+
+- Allow ``ast.Module``, ``ast.Expression`` and ``ast.Interactive`` as body in compile_restricted_function
+
+- Disallow ``mode="function"`` in ``compile_restricted`` (it never worked).
+
+- Prevent access to ``string.Formatter`` and its unsafe traversal methods via
+  ``safer_getattr``.
+
+8.3 (2026-06-16)
+----------------
+
+- Switch to PyPI Trusted Publishing for the package release process
+
+- Also validate positional-only argument names (parameters before ``/``) so
+  they cannot start with an underscore, closing a sandbox escape where a
+  positional-only parameter could shadow an injected protected name such as
+  ``_getattr_``, ``_getitem_``, ``_write_`` or ``_print_``.
+
+
+8.3a1.dev0 (2026-05-29)
+-----------------------
+
+- Allow to use the package with Python 3.15 -- Caution: No security audit has been done so far.
+
+
+8.2 (2026-05-29)
+----------------
+
+- Remove documentation that appears to promote unsupported direct guards usage.
+
+- Move package metadata from setup.py to pyproject.toml.
+
+- Drop support for Python 3.9.
+
+- Allow the ``...`` (Ellipsis) statement.
+
+
+8.1 (2025-10-19)
+----------------
+
+- Allow to use the package with Python 3.14 including t-string support.
+
+
+8.0 (2025-01-23)
+----------------
+
+Backwards incompatible changes
+++++++++++++++++++++++++++++++
+
+- Disallow ``try/except*`` clauses due to a possible sandbox escape and
+  probable uselessness of this feature in the context of ``RestrictedPython``.
+  In addition, remove ``ExceptionGroup`` from ``safe_builtins`` (as useful only
+  with ``try/except*``). - This feature was introduced into
+  ``RestrictedPython`` in version 6.0 for Python 3.11+. (CVE-2025-22153)
+
+- Drop support for Python 3.8.
+
+Features
+++++++++
+
+- Update setuptools version pin.
+  (`#292 <https://github.com/zopefoundation/RestrictedPython/issues/292>`_)
+
+
+7.4 (2024-10-09)
+----------------
+
+- Allow to use the package with Python 3.13.
+
+- Drop support for Python 3.7.
+
+- Provide new function ``RestrictedPython.Guards.safer_getattr_raise``.
+  It is similar to ``safer_getattr`` but handles its parameter
+  ``default`` like ``getattr``, i.e. it raises ``AttributeError``
+  if the attribute lookup fails and this parameter is not provided,
+  fixes `#287 <https://github.com/zopefoundation/RestrictedPython/issues/287>`_.
+
+
+7.3 (2024-09-30)
+----------------
+
+- Increase the safety level of ``safer_getattr`` allowing applications to use
+  it as ``getattr`` implementation. Such use should now follow the same policy
+  and give the same level of protection as direct attribute access in an
+  environment based on ``RestrictedPython``'s ``safe_builtints``.
+- Prevent information leakage via ``AttributeError.obj``
+  and the ``string`` module. (CVE-2024-47532)
+
+
+7.2 (2024-08-02)
+----------------
+
+- Remove unneeded setuptools fossils that may cause installation problems
+  with recent setuptools versions.
+- Add support for single mode statements / execution.
+- Fix a potential breakout capability in the provided ``safer_getattr`` method
+  that is part of the ``safer_builtins``.
+
+
+7.1 (2024-03-14)
+----------------
+
+- Add support for the matmul (``@``) operator.
+
+
+7.0 (2023-11-17)
+----------------
+
+Backwards incompatible changes
+++++++++++++++++++++++++++++++
+
+- Drop support for Python 3.6.
+
+Features
+++++++++
+
+- Officially support Python 3.12.
+
+Fixes
++++++
+
+- Prevent DeprecationWarnings from ``ast.Str`` and ``ast.Num`` on Python 3.12
+
+- Forbid using some attributes providing access to restricted Python internals.
+  (CVE-2023-37271)
+
+- Fix information disclosure problems through Python's "format" functionality
+  (``format`` and ``format_map`` methods on ``str`` and its instances,
+  ``string.Formatter``). (CVE-2023-41039)
+
+
+6.0 (2022-11-03)
 ----------------
 
 Backwards incompatible changes
@@ -12,10 +152,10 @@ Backwards incompatible changes
 Features
 ++++++++
 
-- Allow to use the package with Python 3.11 -- Caution: No security audit has
-  been done so far.
+- Officially support Python 3.11.
 
-- Fix code to run on Python 3.11.0b3.
+- Allow to use the Python 3.11 feature of exception groups and except\*
+  (PEP 654).
 
 
 5.2 (2021-11-19)

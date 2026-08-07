@@ -94,6 +94,62 @@ One common advanced usage would be to define an own restricted builtin dictionar
 
 There is a shortcut for ``{'__builtins__': safe_builtins}`` named ``safe_globals`` which can be imported from ``RestrictedPython``.
 
+Other Usages
+------------
+
+RestrictedPython has similar to normal Python multiple modes:
+
+* exec
+* eval
+* single
+* function
+
+you can use it by:
+
+.. testcode::
+
+    from RestrictedPython import compile_restricted
+
+    source_code = """
+    def do_something():
+        pass
+    """
+
+    byte_code = compile_restricted(
+        source_code,
+        filename='<inline code>',
+        mode='exec'
+    )
+    exec(byte_code)
+    do_something()
+
+.. testcode::
+
+    from RestrictedPython import compile_restricted
+
+    byte_code = compile_restricted(
+        "2 + 2",
+        filename='<inline code>',
+        mode='eval'
+    )
+    eval(byte_code)
+
+
+.. testcode:: single
+
+    from RestrictedPython import compile_restricted
+
+    byte_code = compile_restricted(
+        "2 + 2",
+        filename='<inline code>',
+        mode='single'
+    )
+    exec(byte_code)
+
+.. testoutput:: single
+
+    4
+
 Necessary setup
 ---------------
 

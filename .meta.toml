@@ -1,21 +1,23 @@
-# Generated from:
-# https://github.com/zopefoundation/meta/tree/master/config/pure-python
+# Generated with zope.meta (https://zopemeta.readthedocs.io/) from:
+# https://github.com/zopefoundation/meta/tree/master/src/zope/meta/pure-python
 [meta]
 template = "pure-python"
-commit-id = "54e37f7de7149c0d4003e40bbe300d012a851ce7"
+commit-id = "6603f967"
 
 [python]
 with-pypy = false
-with-legacy-python = false
 with-docs = true
 with-sphinx-doctests = true
 with-windows = true
 with-future-python = true
+with-macos = false
+with-free-threaded-python = false
 
 [tox]
 use-flake8 = true
 additional-envlist = [
-    "py39-datetime",
+    "py311-datetime",
+    "combined-coverage",
     ]
 testenv-deps = [
     "datetime: DateTime",
@@ -27,21 +29,34 @@ testenv-setenv = [
     ]
 testenv-commands = [
     "python -V",
-    "pip list",
-    "pytest --cov=src --cov=tests --cov-report= {posargs}",
+    "pytest --cov=src --cov=tests --cov-report= tests {posargs}",
     ]
-coverage-basepython = "python3"
-coverage-command = [
-    "coverage erase",
-    "coverage combine"
-]
-coverage-depends = "py36,py37,py38,py39,py39-datetime,py310,py311"
+testenv-additional = [
+    "",
+    "[testenv:combined-coverage]",
+    "basepython = python3",
+    "allowlist_externals =",
+    "    mkdir",
+    "deps =",
+    "    coverage",
+    "    -cconstraints.txt",
+    "setenv =",
+    "    COVERAGE_FILE=.coverage",
+    "commands =",
+    "    mkdir -p {toxinidir}/parts/htmlcov",
+    "    coverage erase",
+    "    coverage combine",
+    "    coverage html",
+    "    coverage report -m --fail-under=100",
+    "depends = py310,py311,py311-datetime,py312,py313,py314,coverage",
+    ]
+coverage-command = "pytest --cov=src --cov=tests --cov-report= tests {posargs}"
 coverage-setenv = [
     "COVERAGE_FILE=.coverage",
     ]
 
 [coverage]
-fail-under = 100.0
+fail-under = 97.1
 
 [isort]
 additional-sources = "{toxinidir}/tests"
@@ -51,6 +66,7 @@ additional-sources = "tests"
 
 [manifest]
 additional-rules = [
+    "include *.yaml",
     "recursive-include docs *.ast",
     "recursive-include docs *.bat",
     "recursive-include docs *.jpg",
@@ -66,9 +82,13 @@ additional-ignores = [
     "docs/_build/html/_sources/roadmap/*",
     "docs/_build/html/_sources/upgrade_dependencies/*",
     "docs/_build/html/_sources/usage/*",
+    "docs/_build/html/_static/scripts/*",
     ]
 
 [github-actions]
 additional-config = [
-    "- [\"3.9\",   \"py39-datetime\"]",
+    "- [\"3.11\", \"py311-datetime\"]",
     ]
+
+[pypi]
+trusted-publishing = true

@@ -16,6 +16,9 @@
 # DocumentTemplate.DT_UTil contains a few.
 
 import builtins
+import string
+
+from RestrictedPython.transformer import INSPECT_ATTRIBUTES
 
 
 safe_builtins = {}
@@ -25,6 +28,7 @@ _safe_names = [
     'None',
     'False',
     'True',
+    'Ellipsis',
     'abs',
     'bool',
     'bytes',
@@ -217,7 +221,7 @@ def _full_write_guard():
     return guard
 
 
-full_write_guard = _full_write_guard()
+full_write_guard = _full_write_guard()  # type: ignore[no-untyped-call]
 
 
 def guarded_setattr(object, name, value):
@@ -234,6 +238,11 @@ def guarded_delattr(object, name):
 safe_builtins['delattr'] = guarded_delattr
 
 
+raise_ = object()
+_FORMATTER_UNSAFE_METHODS = frozenset(('format', 'get_field', 'get_value',
+                                       'vformat'))
+
+
 def safer_getattr(object, name, default=None, getattr=getattr):
     """Getattr implementation which prevents using format on string objects.
 
@@ -241,18 +250,40 @@ def safer_getattr(object, name, default=None, getattr=getattr):
     http://lucumr.pocoo.org/2016/12/29/careful-with-str-format/
 
     """
-    if isinstance(object, str) and name == 'format':
+    if type(name) is not str:
+        raise TypeError('type(name) must be str')
+    if name in ('format', 'format_map') and (
+            isinstance(object, str) or
+            (isinstance(object, type) and issubclass(object, str))):
         raise NotImplementedError(
-            'Using format() on a %s is not safe.' % object.__class__.__name__)
+            'Using the format*() methods of `str` is not safe')
+    if object is string and name == 'Formatter':
+        raise NotImplementedError('string.Formatter is not safe')
+    if name in _FORMATTER_UNSAFE_METHODS and (
+            isinstance(object, string.Formatter) or
+            (isinstance(object, type) and
+             issubclass(object, string.Formatter))):
+        raise NotImplementedError(
+            'Using string.Formatter methods is not safe')
+    if name in INSPECT_ATTRIBUTES:
+        raise AttributeError(
+            f'"{name}" is a restricted name,'
+            ' that is forbidden to access in RestrictedPython.')
     if name.startswith('_'):
         raise AttributeError(
             '"{name}" is an invalid attribute name because it '
             'starts with "_"'.format(name=name)
         )
-    return getattr(object, name, default)
+    args = (object, name) + (() if default is raise_ else (default,))
+    return getattr(*args)
 
 
 safe_builtins['_getattr_'] = safer_getattr
+
+
+def safer_getattr_raise(object, name, default=raise_):
+    """like ``safer_getattr`` but raising ``AttributeError`` if failing."""
+    return safer_getattr(object, name, default)
 
 
 def guarded_iter_unpack_sequence(it, spec, _getiter_):

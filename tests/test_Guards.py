@@ -1,3 +1,5 @@
+import string as pystring
+
 import pytest
 
 from RestrictedPython import compile_restricted_exec
@@ -160,7 +162,7 @@ b = a.format('world')
 """
 
 
-def test_Guards__safer_getattr__1():
+def test_Guards__safer_getattr__1a():
     """It prevents using the format method of a string.
 
     format() is considered harmful:
@@ -171,17 +173,18 @@ def test_Guards__safer_getattr__1():
     }
     with pytest.raises(NotImplementedError) as err:
         restricted_exec(STRING_DOT_FORMAT_DENIED, glb)
-    assert 'Using format() on a str is not safe.' == str(err.value)
+    assert 'Using the format*() methods of `str` is not safe' == str(err.value)
 
 
-UNICODE_DOT_FORMAT_DENIED = """\
-a = u'Hello {}'
-b = a.format(u'world')
+# contributed by Ward Theunisse
+STRING_DOT_FORMAT_MAP_DENIED = """\
+a = 'Hello {foo.__dict__}'
+b = a.format_map({foo:str})
 """
 
 
-def test_Guards__safer_getattr__2():
-    """It prevents using the format method of a unicode.
+def test_Guards__safer_getattr__1b():
+    """It prevents using the format method of a string.
 
     format() is considered harmful:
     http://lucumr.pocoo.org/2016/12/29/careful-with-str-format/
@@ -190,8 +193,178 @@ def test_Guards__safer_getattr__2():
         '__builtins__': safe_builtins,
     }
     with pytest.raises(NotImplementedError) as err:
-        restricted_exec(UNICODE_DOT_FORMAT_DENIED, glb)
-    assert 'Using format() on a str is not safe.' == str(err.value)
+        restricted_exec(STRING_DOT_FORMAT_MAP_DENIED, glb)
+    assert 'Using the format*() methods of `str` is not safe' == str(err.value)
+
+
+# contributed by Abhishek Govindarasu
+STR_DOT_FORMAT_DENIED = """\
+str.format('{0.__class__.__mro__[1]}', int)
+"""
+
+
+def test_Guards__safer_getattr__1c():
+    """It prevents using the format method of a string.
+
+    format() is considered harmful:
+    http://lucumr.pocoo.org/2016/12/29/careful-with-str-format/
+    """
+    glb = {
+        '__builtins__': safe_builtins,
+    }
+    with pytest.raises(NotImplementedError) as err:
+        restricted_exec(STR_DOT_FORMAT_DENIED, glb)
+    assert 'Using the format*() methods of `str` is not safe' == str(err.value)
+
+
+STR_DOT_FORMAT_MAP_DENIED = """\
+str.format_map('Hello {foo.__dict__}', {'foo':str})
+"""
+
+
+def test_Guards__safer_getattr__1d():
+    """It prevents using the format method of a string.
+
+    format() is considered harmful:
+    http://lucumr.pocoo.org/2016/12/29/careful-with-str-format/
+    """
+    glb = {
+        '__builtins__': safe_builtins,
+    }
+    with pytest.raises(NotImplementedError) as err:
+        restricted_exec(STR_DOT_FORMAT_MAP_DENIED, glb)
+    assert 'Using the format*() methods of `str` is not safe' == str(err.value)
+
+
+STRING_FORMATTER_GET_FIELD_DENIED = """\
+import string
+fmt = string.Formatter()
+# Build restricted attribute names without spelling underscores directly.
+U = chr(95)
+g = U*2 + 'globals' + U*2
+b = U*2 + 'builtins' + U*2
+src = string.capwords
+real_builtins = fmt.get_field('0.' + g + '[' + b + ']', (src,), {})[0]
+result = real_builtins['eval']('1+1')
+"""
+
+
+def test_Guards__safer_getattr__1e():
+    """It prevents access to the real ``string.Formatter`` class."""
+    builtins = safe_builtins.copy()
+    builtins['__import__'] = __import__
+    glb = {
+        '__builtins__': builtins,
+    }
+    with pytest.raises(NotImplementedError) as err:
+        restricted_exec(STRING_FORMATTER_GET_FIELD_DENIED, glb)
+    assert 'string.Formatter is not safe' == str(err.value)
+
+
+def test_Guards__safer_getattr__1f():
+    """It prevents unsafe methods on provided ``Formatter`` instances."""
+    fmt = pystring.Formatter()
+
+    for name in ('format', 'get_field', 'get_value', 'vformat'):
+        with pytest.raises(NotImplementedError) as err:
+            safer_getattr(fmt, name)
+        assert 'Using string.Formatter methods is not safe' == str(err.value)
+
+
+DIRECT_STRING_FORMATTER_CLASS_GET_FIELD_DENIED = """\
+fmt = Formatter()
+result = fmt.get_field('0', (capwords,), {})
+"""
+
+
+DIRECT_STRING_FORMATTER_INSTANCE_GET_FIELD_DENIED = """\
+result = fmt.get_field('0', (capwords,), {})
+"""
+
+
+def test_Guards__safer_getattr__1g():
+    """It prevents traversal if the host provides ``Formatter`` directly."""
+    glb = {
+        '__builtins__': safe_builtins,
+        'Formatter': pystring.Formatter,
+        'capwords': pystring.capwords,
+    }
+    with pytest.raises(NotImplementedError) as err:
+        restricted_exec(DIRECT_STRING_FORMATTER_CLASS_GET_FIELD_DENIED, glb)
+    assert 'Using string.Formatter methods is not safe' == str(err.value)
+
+
+def test_Guards__safer_getattr__1h():
+    """It prevents traversal if the host provides a ``Formatter`` instance."""
+    glb = {
+        '__builtins__': safe_builtins,
+        'fmt': pystring.Formatter(),
+        'capwords': pystring.capwords,
+    }
+    with pytest.raises(NotImplementedError) as err:
+        restricted_exec(DIRECT_STRING_FORMATTER_INSTANCE_GET_FIELD_DENIED, glb)
+    assert 'Using string.Formatter methods is not safe' == str(err.value)
+
+
+UNBOUND_STRING_FORMATTER_CLASS_GET_FIELD_DENIED = """\
+fmt = Formatter()
+gf = Formatter.get_field
+result = gf(fmt, '0', (capwords,), {})
+"""
+
+
+def test_Guards__safer_getattr__1i():
+    """It prevents unbound (class-level) access to ``Formatter.get_field``."""
+    glb = {
+        '__builtins__': safe_builtins,
+        'Formatter': pystring.Formatter,
+        'capwords': pystring.capwords,
+    }
+    with pytest.raises(NotImplementedError) as err:
+        restricted_exec(UNBOUND_STRING_FORMATTER_CLASS_GET_FIELD_DENIED, glb)
+    assert 'Using string.Formatter methods is not safe' == str(err.value)
+
+
+UNBOUND_STRING_FORMATTER_CLASS_VFORMAT_DENIED = """\
+fmt = Formatter()
+vf = Formatter.vformat
+result = vf(fmt, '{0}', (capwords,), {})
+"""
+
+
+def test_Guards__safer_getattr__1j():
+    """It prevents unbound (class-level) access to ``Formatter.vformat``."""
+    glb = {
+        '__builtins__': safe_builtins,
+        'Formatter': pystring.Formatter,
+        'capwords': pystring.capwords,
+    }
+    with pytest.raises(NotImplementedError) as err:
+        restricted_exec(UNBOUND_STRING_FORMATTER_CLASS_VFORMAT_DENIED, glb)
+    assert 'Using string.Formatter methods is not safe' == str(err.value)
+
+
+class _ExposedFormatterSubclass(pystring.Formatter):
+    """A Formatter subclass a host might expose to restricted code."""
+
+
+UNBOUND_STRING_FORMATTER_SUBCLASS_GET_VALUE_DENIED = """\
+gv = Sub.get_value
+result = gv(Sub(), 0, (capwords,), {})
+"""
+
+
+def test_Guards__safer_getattr__1k():
+    """Prevents class-level access on host-exposed ``Formatter`` subclass."""
+    glb = {
+        '__builtins__': safe_builtins,
+        'Sub': _ExposedFormatterSubclass,
+        'capwords': pystring.capwords,
+    }
+    with pytest.raises(NotImplementedError) as err:
+        restricted_exec(
+            UNBOUND_STRING_FORMATTER_SUBCLASS_GET_VALUE_DENIED, glb)
+    assert 'Using string.Formatter methods is not safe' == str(err.value)
 
 
 SAFER_GETATTR_ALLOWED = """\
@@ -217,6 +390,88 @@ def test_Guards__safer_getattr__3():
     )
     restricted_exec(SAFER_GETATTR_ALLOWED, restricted_globals)
     assert restricted_globals['result'] == 2
+
+
+SAFER_GETATTR_BREAKOUT = """\
+def g(obj, name):
+    # create class FakeString which inherits from str
+    class FakeString(str):
+        # overload startswith() to always return false
+        def startswith(self, _):
+            return False
+    return getattr(obj, FakeString(name))
+
+# call str.__class__.__base__.__subclasses__()
+subclasses = g(g(g(str, "__class__"), "__base__"), "__subclasses__")()
+# traverse list of subclasses until we reach the BuiltinImporter class
+x = "test"
+while "BuiltinImporter" not in str(x):
+    x = subclasses.pop()
+    continue
+# use BuiltinImporter to import 'os' and access to a not allowed function
+result = x.load_module('os').getgid()
+"""
+
+
+def test_Guards__safer_getattr__4():
+    restricted_globals = dict(
+        __builtins__=safe_builtins,
+        __name__=None,
+        __metaclass__=type,
+        # _write_=_write_,
+        getattr=safer_getattr,
+        result=None,
+    )
+
+    with pytest.raises(TypeError) as err:
+        restricted_exec(SAFER_GETATTR_BREAKOUT, restricted_globals)
+    assert 'type(name) must be str' == str(err.value)
+
+
+SAFER_GETATTR_BREAKOUT2 = """\
+g = None
+leak = None
+def test():
+    global g, leak
+    leak = getattr(getattr(getattr(g, "gi_frame"), "f_back"), "f_back")
+    yield leak
+g = test()
+g.send(None)
+os = getattr(leak, "f_builtins").get('__import__')('os')
+result = os.getgid()
+"""
+
+
+def test_Guards__safer_getattr__5():
+    restricted_globals = dict(
+        __builtins__=safe_builtins,
+        __name__=None,
+        __metaclass__=type,
+        # _write_=_write_,
+        getattr=safer_getattr,
+        result=None,
+    )
+
+    # restricted_exec(SAFER_GETATTR_BREAKOUT2, restricted_globals)
+    # assert restricted_globals['result'] == 20
+    with pytest.raises(AttributeError) as err:
+        restricted_exec(SAFER_GETATTR_BREAKOUT2, restricted_globals)
+    assert (
+        '"gi_frame" is a restricted name, '
+        'that is forbidden to access in RestrictedPython.'
+    ) == str(err.value)
+
+
+def test_Guards__safer_getattr_raise():
+    from types import SimpleNamespace
+
+    from RestrictedPython.Guards import safer_getattr_raise
+
+    o = SimpleNamespace(a="a")
+    assert safer_getattr_raise(o, "a") == "a"
+    assert safer_getattr_raise(o, "b", None) is None
+    with pytest.raises(AttributeError):
+        safer_getattr_raise(o, "b")
 
 
 def test_call_py3_builtins():

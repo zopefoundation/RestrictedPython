@@ -1,4 +1,3 @@
-from RestrictedPython import compile_restricted_eval
 from tests.helper import restricted_eval
 
 
@@ -33,8 +32,12 @@ def test_FloorDiv():
 
 
 def test_MatMult():
-    result = compile_restricted_eval('(8, 3, 5) @ (2, 7, 1)')
-    assert result.errors == (
-        'Line None: MatMult statements are not allowed.',
-    )
-    assert result.code is None
+    class Vector:
+        def __init__(self, values):
+            self.values = values
+
+        def __matmul__(self, other):
+            return sum(x * y for x, y in zip(self.values, other.values))
+
+    assert restricted_eval(
+        'Vector((8, 3, 5)) @ Vector((2, 7, 1))', {'Vector': Vector}) == 42

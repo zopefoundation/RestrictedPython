@@ -1,5 +1,5 @@
-# Generated from:
-# https://github.com/zopefoundation/meta/tree/master/config/pure-python
+# Generated with zope.meta (https://zopemeta.readthedocs.io/) from:
+# https://github.com/zopefoundation/meta/tree/master/src/zope/meta/pure-python
 name: tests
 
 on:
@@ -12,94 +12,116 @@ on:
 
 jobs:
   build:
+    permissions:
+      contents: read
+      pull-requests: write
     strategy:
       # We want to see all failures:
       fail-fast: false
       matrix:
         os:
-        - ubuntu
-        - windows
+        - ["ubuntu", "ubuntu-latest"]
+        - ["windows", "windows-latest"]
         config:
         # [Python version, tox env]
-        - ["3.9",   "lint"]
-        - ["3.6",   "py36"]
-        - ["3.7",   "py37"]
-        - ["3.8",   "py38"]
-        - ["3.9",   "py39"]
-        - ["3.10",  "py310"]
-        - ["3.11.0-rc.2",  "py311"]
-        - ["3.9",   "docs"]
-        - ["3.9",   "py39-datetime"]
+        - ["3.11", "release-check"]
+        - ["3.10", "py310"]
+        - ["3.11", "py311"]
+        - ["3.12", "py312"]
+        - ["3.13", "py313"]
+        - ["3.14", "py314"]
+        - ["3.15", "py315"]
+        - ["3.11", "docs"]
+        - ["3.11", "coverage"]
+        - ["3.11", "py311-datetime"]
         exclude:
-          - { os: windows, config: ["3.9",   "lint"] }
-          - { os: windows, config: ["3.9",   "docs"] }
+          - { os: ["windows", "windows-latest"], config: ["3.11", "release-check"] }
+          - { os: ["windows", "windows-latest"], config: ["3.11", "docs"] }
+          - { os: ["windows", "windows-latest"], config: ["3.11", "coverage"] }
 
-    runs-on: ${{ matrix.os }}-latest
+    runs-on: ${{ matrix.os[1] }}
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.event.pull_request.base.repo.full_name
-    name: ${{ matrix.os }}-${{ matrix.config[1] }}
+    name: ${{ matrix.os[0] }}-${{ matrix.config[1] }}
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up Python
-      uses: actions/setup-python@v2
+    - uses: actions/checkout@v7
       with:
+        persist-credentials: false
+    - name: Install uv + caching
+      # astral/setup-uv@8.2.0
+      uses: astral-sh/setup-uv@fac544c07dec837d0ccb6301d7b5580bf5edae39
+      with:
+        enable-cache: true
+        cache-dependency-glob: |
+          setup.*
+          tox.ini
         python-version: ${{ matrix.config[0] }}
-    - name: Pip cache
-      uses: actions/cache@v2
-      with:
-        path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ matrix.config[0] }}-${{ hashFiles('setup.*', 'tox.ini') }}
-        restore-keys: |
-          ${{ runner.os }}-pip-${{ matrix.config[0] }}-
-          ${{ runner.os }}-pip-
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install tox
+        github-token: ${{ secrets.GITHUB_TOKEN }}
     - name: Test
-      run: tox -e ${{ matrix.config[1] }}
+      run: uvx --with tox-uv tox -e ${{ matrix.config[1] }}
+    - name: Coverage
+      if: matrix.config[1] == 'coverage'
+      run: |
+        uvx coveralls --service=github
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Upload coverage artifact
-      uses: actions/upload-artifact@v2
-      if: matrix.os != 'windows'
+    - name: Build package artifacts
+      if: >
+        matrix.os[0] == 'ubuntu'
+        && matrix.config[1] == 'py314'
+      run: |
+        rm -f dist/*
+        pip install -U packaging "setuptools >= 78.1.1,< 82" wheel twine
+        python setup.py sdist
+        python setup.py bdist_wheel
+
+    - name: Upload package wheel
+      if: >
+        matrix.os[0] == 'ubuntu'
+        && matrix.config[1] == 'py314'
+      uses: actions/upload-artifact@v7
       with:
-        name: coverage-data
-        path: .coverage.${{ matrix.config[1] }}
-        if-no-files-found: ignore
+        name: RestrictedPython.whl
+        path: dist/*whl
 
-  coverage:
-    name: Combined coverage
+    - name: Upload package source distribution
+      if: >
+        matrix.os[0] == 'ubuntu'
+        && matrix.config[1] == 'py314'
+      uses: actions/upload-artifact@v7
+      with:
+        name: RestrictedPython.tar.gz
+        path: dist/*gz
+
+  publish:
+    name: Publish to PyPI
     runs-on: ubuntu-latest
-    needs: build
+    # Only publish on tag pushes
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
+    # Wait for build jobs to complete
+    needs: [build]
+    environment:
+      name: pypi
+      url: https://pypi.org/p/RestrictedPython
+    permissions:
+      contents: read
+      id-token: write  # Mandatory for trusted publishing
+
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
+      - name: Download package artifacts
+        uses: actions/download-artifact@v8
         with:
-          # Use latest, so it understands all syntax.
-          python-version: "3.10"
-      - run: python -m pip install --upgrade coveralls coverage[toml]
+          path: dist/
+          pattern: '*'
+          merge-multiple: true
 
-      - name: Download coverage data.
-        uses: actions/download-artifact@v2
-        with:
-          name: coverage-data
-
-      - name: Indicate completion to coveralls.io
+      - name: Display structure of downloaded files
         run: |
-          python -m coverage combine
-          coveralls --service=github
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ls -lR dist/
 
-      - name: Coverage report and fail if it's <100%.
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          python -m coverage html --skip-covered --skip-empty
-          python -m coverage report --fail-under=100
-
-      - name: Upload HTML report if check failed.
-        uses: actions/upload-artifact@v2
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
         with:
-          name: html-report
-          path: htmlcov
-        if: ${{ failure() }}
+          skip-existing: true
+          packages-dir: dist/
+          verbose: true

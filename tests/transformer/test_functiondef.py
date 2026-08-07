@@ -29,9 +29,27 @@ def test_RestrictingNodeTransformer__visit_FunctionDef__4():
     assert result.errors == (functiondef_err_msg,)
 
 
+def test_positional_only_arg_with_underscore_is_rejected():
+    """It prevents positional-only arguments starting with `_`."""
+    result = compile_restricted_exec("def foo(_bad, /): pass")
+    assert result.errors == (functiondef_err_msg,)
+
+
+def test_positional_only_arg_with_default_underscore_is_rejected():
+    """It prevents positional-only arguments with an underscore default."""
+    result = compile_restricted_exec("def foo(_bad=1, /): pass")
+    assert result.errors == (functiondef_err_msg,)
+
+
 def test_RestrictingNodeTransformer__visit_FunctionDef__7():
     """It prevents `_` function arguments together with a single `*`."""
     result = compile_restricted_exec("def foo(good, *, _bad): pass")
+    assert result.errors == (functiondef_err_msg,)
+
+
+def test_positional_only_lambda_arg_with_underscore_is_rejected():
+    """It prevents positional-only lambda arguments starting with `_`."""
+    result = compile_restricted_exec("f = lambda _bad, /: None")
     assert result.errors == (functiondef_err_msg,)
 
 

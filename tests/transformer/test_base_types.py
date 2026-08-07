@@ -1,4 +1,3 @@
-from RestrictedPython import compile_restricted_exec
 from tests.helper import restricted_eval
 
 
@@ -18,6 +17,6 @@ def test_Set():
 
 
 def test_Ellipsis():
-    """It prevents using the `ellipsis` statement."""
-    result = compile_restricted_exec('...')
-    assert result.errors == ('Line 1: Ellipsis statements are not allowed.',)
+    """It allows to use the `ellipsis` statement."""
+    assert restricted_eval('...') == ...
+    assert restricted_eval('Ellipsis') == ...
