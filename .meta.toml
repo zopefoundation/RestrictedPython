@@ -17,7 +17,6 @@ with-free-threaded-python = false
 use-flake8 = true
 additional-envlist = [
     "py311-datetime",
-    "combined-coverage",
     ]
 testenv-deps = [
     "datetime: DateTime",
@@ -29,34 +28,29 @@ testenv-setenv = [
     ]
 testenv-commands = [
     "python -V",
-    "pytest --cov=src --cov=tests --cov-report= tests {posargs}",
+    # A single Python version cannot reach the required coverage, only the
+    # combination of all of them can, thus the check is disabled here and
+    # done in the `coverage` environment.
+    "pytest --cov=src --cov=tests --cov-report= --cov-fail-under=0 tests {posargs}",
     ]
-testenv-additional = [
-    "",
-    "[testenv:combined-coverage]",
-    "basepython = python3",
-    "allowlist_externals =",
-    "    mkdir",
-    "deps =",
-    "    coverage",
-    "    -cconstraints.txt",
-    "setenv =",
-    "    COVERAGE_FILE=.coverage",
-    "commands =",
-    "    mkdir -p {toxinidir}/parts/htmlcov",
-    "    coverage erase",
-    "    coverage combine",
-    "    coverage html",
-    "    coverage report -m --fail-under=100",
-    "depends = py310,py311,py311-datetime,py312,py313,py314,coverage",
+coverage-command = [
+    "coverage erase",
+    "coverage combine",
     ]
-coverage-command = "pytest --cov=src --cov=tests --cov-report= tests {posargs}"
 coverage-setenv = [
     "COVERAGE_FILE=.coverage",
     ]
+coverage-additional = [
+    "depends = py310,py311,py311-datetime,py312,py313,py314,py315",
+    ]
 
 [coverage]
-fail-under = 97.1
+fail-under = 100
+
+[coverage-run]
+additional-config = [
+    "relative_files = true",
+    ]
 
 [isort]
 additional-sources = "{toxinidir}/tests"

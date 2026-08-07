@@ -4,6 +4,12 @@ Changes
 8.5 (unreleased)
 ----------------
 
+- Fix the combined coverage report: the ``coverage`` tox environment now
+  combines the coverage data of all supported Python versions instead of
+  measuring a single one, and enforces 100 % coverage. The broken
+  ``combined-coverage`` environment has been removed, as it erased the data it
+  was supposed to combine.
+
 
 8.4 (2026-07-10)
 ----------------
