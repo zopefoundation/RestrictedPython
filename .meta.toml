@@ -83,6 +83,16 @@ additional-ignores = [
 additional-config = [
     "- [\"3.11\", \"py311-datetime\"]",
     ]
+# The `coverage` environment runs no tests itself, it only combines the
+# coverage data written by the `py3*` environments. In CI each of those runs
+# on its own machine, so the `coverage` job finds nothing to combine and
+# fails. It therefore has to run the whole `envlist` minus the environments
+# that contribute no coverage data. Spelling it that way round avoids
+# repeating the list of Python versions here: `envlist` and the `depends` of
+# the `coverage` environment stay its only source.
+test-commands = [
+    "uvx --with tox-uv tox ${{ matrix.config[1] == 'coverage' && '--skip-env \"(lint|docs|release-check)\"' || format('-e {0}', matrix.config[1]) }}",
+    ]
 
 [pypi]
 trusted-publishing = true

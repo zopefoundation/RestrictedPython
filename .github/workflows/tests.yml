@@ -57,7 +57,8 @@ jobs:
         python-version: ${{ matrix.config[0] }}
         github-token: ${{ secrets.GITHUB_TOKEN }}
     - name: Test
-      run: uvx --with tox-uv tox -e ${{ matrix.config[1] }}
+      run: |
+        uvx --with tox-uv tox ${{ matrix.config[1] == 'coverage' && '--skip-env "(lint|docs|release-check)"' || format('-e {0}', matrix.config[1]) }}
     - name: Coverage
       if: matrix.config[1] == 'coverage'
       run: |
