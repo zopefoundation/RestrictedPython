@@ -90,6 +90,7 @@ directory = "parts/htmlcov"
 readme = {file = ["README.rst", "CHANGES.rst"]}
 
 
+
 [tool.mypy]
 mypy_path = "src"
 packages = ["RestrictedPython"]
@@ -112,6 +113,8 @@ module = ["RestrictedPython.transformer"]
 warn_no_return = false
 
 
+
 [tool.zest-releaser]
 create-wheel = false
+extra-message = ""
 upload-pypi = false

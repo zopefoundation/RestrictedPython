@@ -2,7 +2,7 @@
 # https://github.com/zopefoundation/meta/tree/master/src/zope/meta/pure-python
 [meta]
 template = "pure-python"
-commit-id = "6603f967"
+commit-id = "abd316d0"
 
 [python]
 with-pypy = false
@@ -23,9 +23,6 @@ testenv-deps = [
     "-cconstraints.txt",
     "pytest-cov",
     ]
-testenv-setenv = [
-    "COVERAGE_FILE=.coverage.{envname}",
-    ]
 testenv-commands = [
     "python -V",
     # A single Python version cannot reach the required coverage, only the
@@ -33,24 +30,10 @@ testenv-commands = [
     # done in the `coverage` environment.
     "pytest --cov=src --cov=tests --cov-report= --cov-fail-under=0 tests {posargs}",
     ]
-coverage-command = [
-    "coverage erase",
-    "coverage combine",
-    ]
-coverage-setenv = [
-    "COVERAGE_FILE=.coverage",
-    ]
-coverage-additional = [
-    "depends = py310,py311,py311-datetime,py312,py313,py314,py315",
-    ]
 
 [coverage]
 fail-under = 100
-
-[coverage-run]
-additional-config = [
-    "relative_files = true",
-    ]
+combine = true
 
 [isort]
 additional-sources = "{toxinidir}/tests"
@@ -82,16 +65,6 @@ additional-ignores = [
 [github-actions]
 additional-config = [
     "- [\"3.11\", \"py311-datetime\"]",
-    ]
-# The `coverage` environment runs no tests itself, it only combines the
-# coverage data written by the `py3*` environments. In CI each of those runs
-# on its own machine, so the `coverage` job finds nothing to combine and
-# fails. It therefore has to run the whole `envlist` minus the environments
-# that contribute no coverage data. Spelling it that way round avoids
-# repeating the list of Python versions here: `envlist` and the `depends` of
-# the `coverage` environment stay its only source.
-test-commands = [
-    "uvx --with tox-uv tox ${{ matrix.config[1] == 'coverage' && '--skip-env \"(lint|docs|release-check)\"' || format('-e {0}', matrix.config[1]) }}",
     ]
 
 [pypi]
