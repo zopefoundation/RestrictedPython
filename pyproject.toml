@@ -65,9 +65,10 @@ Changelog = "https://github.com/zopefoundation/RestrictedPython/blob/master/CHAN
 [tool.coverage.run]
 branch = true
 source = ["RestrictedPython"]
+relative_files = true
 
 [tool.coverage.report]
-fail_under = 97.1
+fail_under = 100
 precision = 2
 ignore_errors = true
 show_missing = true
@@ -87,6 +88,7 @@ directory = "parts/htmlcov"
 
 [tool.setuptools.dynamic]
 readme = {file = ["README.rst", "CHANGES.rst"]}
+
 
 
 [tool.mypy]
@@ -111,6 +113,8 @@ module = ["RestrictedPython.transformer"]
 warn_no_return = false
 
 
+
 [tool.zest-releaser]
 create-wheel = false
+extra-message = ""
 upload-pypi = false

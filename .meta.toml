@@ -2,7 +2,7 @@
 # https://github.com/zopefoundation/meta/tree/master/src/zope/meta/pure-python
 [meta]
 template = "pure-python"
-commit-id = "6603f967"
+commit-id = "abd316d0"
 
 [python]
 with-pypy = false
@@ -17,46 +17,23 @@ with-free-threaded-python = false
 use-flake8 = true
 additional-envlist = [
     "py311-datetime",
-    "combined-coverage",
     ]
 testenv-deps = [
     "datetime: DateTime",
     "-cconstraints.txt",
     "pytest-cov",
     ]
-testenv-setenv = [
-    "COVERAGE_FILE=.coverage.{envname}",
-    ]
 testenv-commands = [
     "python -V",
-    "pytest --cov=src --cov=tests --cov-report= tests {posargs}",
-    ]
-testenv-additional = [
-    "",
-    "[testenv:combined-coverage]",
-    "basepython = python3",
-    "allowlist_externals =",
-    "    mkdir",
-    "deps =",
-    "    coverage",
-    "    -cconstraints.txt",
-    "setenv =",
-    "    COVERAGE_FILE=.coverage",
-    "commands =",
-    "    mkdir -p {toxinidir}/parts/htmlcov",
-    "    coverage erase",
-    "    coverage combine",
-    "    coverage html",
-    "    coverage report -m --fail-under=100",
-    "depends = py310,py311,py311-datetime,py312,py313,py314,coverage",
-    ]
-coverage-command = "pytest --cov=src --cov=tests --cov-report= tests {posargs}"
-coverage-setenv = [
-    "COVERAGE_FILE=.coverage",
+    # A single Python version cannot reach the required coverage, only the
+    # combination of all of them can, thus the check is disabled here and
+    # done in the `coverage` environment.
+    "pytest --cov=src --cov=tests --cov-report= --cov-fail-under=0 tests {posargs}",
     ]
 
 [coverage]
-fail-under = 97.1
+fail-under = 100
+combine = true
 
 [isort]
 additional-sources = "{toxinidir}/tests"

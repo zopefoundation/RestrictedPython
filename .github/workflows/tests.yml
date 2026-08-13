@@ -47,8 +47,8 @@ jobs:
       with:
         persist-credentials: false
     - name: Install uv + caching
-      # astral/setup-uv@8.2.0
-      uses: astral-sh/setup-uv@fac544c07dec837d0ccb6301d7b5580bf5edae39
+      # astral/setup-uv@9.0.0
+      uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9
       with:
         enable-cache: true
         cache-dependency-glob: |
@@ -57,7 +57,11 @@ jobs:
         python-version: ${{ matrix.config[0] }}
         github-token: ${{ secrets.GITHUB_TOKEN }}
     - name: Test
-      run: uvx --with tox-uv tox -e ${{ matrix.config[1] }}
+      # The `coverage` environment combines the data written by the test
+      # environments, so it has to run them: each job gets its own machine
+      # and there would be nothing to combine otherwise.
+      run: |
+        uvx --with tox-uv tox ${{ matrix.config[1] == 'coverage' && '--skip-env "(docs|lint|release-check)"' || format('-e {0}', matrix.config[1]) }}
     - name: Coverage
       if: matrix.config[1] == 'coverage'
       run: |

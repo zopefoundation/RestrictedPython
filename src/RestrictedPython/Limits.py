@@ -17,16 +17,16 @@ import typing
 limited_builtins: dict[str, typing.Any] = {}
 
 
-@typing.overload
+@typing.overload  # pragma: no cover
 def limited_range(iFirst: int) -> collections.abc.Sequence[int]: ...
 
 
-@typing.overload
+@typing.overload  # pragma: no cover
 def limited_range(iStart: int, iEnd: int, /
                   ) -> collections.abc.Sequence[int]: ...
 
 
-@typing.overload
+@typing.overload  # pragma: no cover
 def limited_range(iStart: int, iEnd: int, iStep: int, /
                   ) -> collections.abc.Sequence[int]: ...
 

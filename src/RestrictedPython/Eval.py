@@ -32,7 +32,7 @@ _TV = typing.TypeVar('_TV', covariant=True)
 
 
 class _GetItem(typing.Protocol[_TK, _TV]):
-    def __getitem__(self, key: _TK) -> _TV: ...
+    def __getitem__(self, key: _TK) -> _TV: ...  # pragma: no cover
 
 
 def default_guarded_getitem(ob: _GetItem[_TK, _TV], index: _TK) -> _TV:
