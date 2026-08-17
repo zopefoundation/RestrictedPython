@@ -2,7 +2,7 @@
 # https://github.com/zopefoundation/meta/tree/master/src/zope/meta/pure-python
 [meta]
 template = "pure-python"
-commit-id = "3d9788fb"
+commit-id = "f40a2b2b"
 
 [python]
 with-pypy = false
@@ -40,6 +40,15 @@ additional-sources = "{toxinidir}/tests"
 
 [flake8]
 additional-sources = "tests"
+
+[pre-commit]
+additional-config = [
+    "- repo: https://github.com/pre-commit/mirrors-mypy",
+    "  rev: v2.1.0",
+    "  hooks:",
+    "    - id: mypy",
+    "      pass_filenames: false",
+    ]
 
 [manifest]
 additional-rules = [
