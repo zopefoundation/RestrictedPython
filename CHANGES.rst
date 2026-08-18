@@ -4,6 +4,19 @@ Changes
 8.5 (unreleased)
 ----------------
 
+- Officially support Python 3.15 after performing a security audit of its
+  changes:
+
+  - Disallow lazy import statements (PEP 810) as they bypass a guarded
+    ``__import__``.
+
+  - Disallow unpacking in comprehensions (PEP 798) as it bypasses the
+    ``_getiter_`` guard.
+
+- Add the attributes of asynchronous generator objects (``ag_await``,
+  ``ag_frame``, ``ag_code``) to the restricted names in
+  ``INSPECT_ATTRIBUTES`` as they were missing there.
+
 - Fix the combined coverage report: the ``coverage`` tox environment now
   combines the coverage data of all supported Python versions instead of
   measuring a single one, and enforces 100 % coverage. The broken

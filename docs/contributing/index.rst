@@ -67,7 +67,7 @@ To do so:
 * Add a corresponding changelog entry.
 * Additionally modify ``.meta.toml`` and run the ``meta/config`` script (for details see: https://github.com/mgedmin/check-python-versions) to update the following files:
 
-  * ``/setup.py`` - Check that the new Python version classifier has been added ``"Programming Language :: Python :: <version>",``, and that the ``python_requires`` section has been updated correctly.
+  * ``/pyproject.toml`` - Check that the new Python version classifier has been added ``"Programming Language :: Python :: <version>",``, and that the ``requires-python`` value has been updated correctly.
   * ``/tox.ini`` - Check that a ``testenv`` entry is added to the general ``envlist`` statement.
   * ``/.github/workflows/tests.yml`` - Check that a corresponding Python version entry has been added to the matrix definition.
   * ``/docs/conf.py`` - Add the Python version to the ``intersphinx_mapping`` list.
@@ -103,6 +103,7 @@ A (modified style) Copy of all Abstract Grammar Definitions for the Python versi
    changes_from311to312
    changes_from312to313
    changes_from313to314
+   changes_from314to315
 
 .. _understand:
 
@@ -235,6 +236,7 @@ Technical Backgrounds - Links to External Documentation
 
   * AST Grammar of Python (`Status of Python Versions`_)
 
+    * `Python 3.15 AST`_ (EOL 2031-10)
     * `Python 3.14 AST`_ (EOL 2030-10)
     * `Python 3.13 AST`_ (EOL 2029-10)
     * `Python 3.12 AST`_ (EOL 2028-10)
@@ -256,6 +258,8 @@ Todos
 .. Links:
 
 .. _`What's new in Python`: https://docs.python.org/3/whatsnew/
+
+.. _`What's new in Python 3.15`: https://docs.python.org/3.15/whatsnew/3.15.html
 
 .. _`What's new in Python 3.14`: https://docs.python.org/3.14/whatsnew/3.14.html
 
@@ -280,6 +284,8 @@ Todos
 .. _`Chomsky 3`: https://en.wikipedia.org/wiki/Chomsky_hierarchy#Type-3_grammars
 
 .. _`Python 3 AST`: https://docs.python.org/3/library/ast.html#abstract-grammar
+
+.. _`Python 3.15 AST`: https://docs.python.org/3.15/library/ast.html#abstract-grammar
 
 .. _`Python 3.14 AST`: https://docs.python.org/3.14/library/ast.html#abstract-grammar
 

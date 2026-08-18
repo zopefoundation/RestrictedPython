@@ -117,6 +117,7 @@ intersphinx_mapping = {
     'python312': ('https://docs.python.org/3.12', None),
     'python313': ('https://docs.python.org/3.13', None),
     'python314': ('https://docs.python.org/3.14', None),
+    'python315': ('https://docs.python.org/3.15', None),
 }
 
 # Options for sphinx.ext.todo:
