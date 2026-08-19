@@ -1,7 +1,7 @@
 Changes
 =======
 
-8.5 (unreleased)
+8.5 (2026-08-19)
 ----------------
 
 - Officially support Python 3.15 after performing a security audit of its
