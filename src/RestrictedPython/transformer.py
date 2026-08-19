@@ -105,14 +105,22 @@ INSPECT_ATTRIBUTES = frozenset([
     "gi_frame",
     # "gi_running",  # bool
     # "gi_suspended",  # bool
+    # "gi_state",  # str
     "gi_code",
     "gi_yieldfrom",
     # on coroutine objects:
     "cr_await",
     "cr_frame",
     # "cr_running",  # bool
+    # "cr_state",  # str
     "cr_code",
     "cr_origin",
+    # on asynchronous generator objects:
+    "ag_await",
+    "ag_frame",
+    # "ag_running",  # bool
+    # "ag_state",  # str
+    "ag_code",
 ])
 
 _T_visit_return: typing.TypeAlias = ast.AST | typing.Iterable[ast.AST] | None
@@ -439,6 +447,11 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
 
         => 'from _a import x' is ok, because '_a' is not added to the scope.
         """
+        if getattr(node, 'is_lazy', 0):
+            # `lazy import` (Python 3.15+) resolves through the
+            # `__lazy_import__` builtin at first use, thus bypassing a guarded
+            # `__import__`.
+            self.error(node, 'Lazy import statements are not allowed.')
         for name in node.names:
             if '*' in name.name:
                 self.error(node, '"*" imports are not allowed.')
@@ -950,27 +963,46 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
     # Comprehensions
 
     def visit_ListComp(self, node: ast.ListComp) -> _T_visit_return:
-        """
+        """Allow list comprehensions except unpacking (Python 3.15+).
 
+        Unpacking iterates the starred value without calling `_getiter_`,
+        unlike the equivalent nested comprehension.
         """
+        if isinstance(node.elt, ast.Starred):
+            self.error(node, 'Unpacking in comprehensions is not allowed.')
         return self.node_contents_visit(node)
 
     def visit_SetComp(self, node: ast.SetComp) -> _T_visit_return:
-        """
+        """Allow set comprehensions except unpacking (Python 3.15+).
 
+        Unpacking iterates the starred value without calling `_getiter_`,
+        unlike the equivalent nested comprehension.
         """
+        if isinstance(node.elt, ast.Starred):
+            self.error(node, 'Unpacking in comprehensions is not allowed.')
         return self.node_contents_visit(node)
 
     def visit_GeneratorExp(self, node: ast.GeneratorExp) -> _T_visit_return:
-        """
+        """Allow generator expressions except unpacking (Python 3.15+).
 
+        Unpacking iterates the starred value without calling `_getiter_`,
+        unlike the equivalent nested comprehension.
         """
+        if isinstance(node.elt, ast.Starred):
+            self.error(node, 'Unpacking in comprehensions is not allowed.')
         return self.node_contents_visit(node)
 
     def visit_DictComp(self, node: ast.DictComp) -> _T_visit_return:
-        """
+        """Allow dict comprehensions except unpacking (Python 3.15+).
 
+        Unpacking iterates the doubly-starred mapping without calling
+        `_getiter_`, unlike the equivalent nested comprehension.
         """
+        # Since Python 3.15 `value` can be `None`, but typeshed does not know
+        # this, yet:
+        value: ast.expr | None = node.value
+        if value is None:
+            self.error(node, 'Unpacking in comprehensions is not allowed.')
         return self.node_contents_visit(node)
 
     def visit_comprehension(self, node: ast.comprehension) -> _T_visit_return:

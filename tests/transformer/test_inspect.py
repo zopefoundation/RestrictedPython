@@ -31,6 +31,23 @@ generator_element = [elem for elem in generator][0]
     )
 
 
+def test_get_inspect_attributes_on_async_generator():
+    source_code = """
+frame = agen.ag_frame
+code = agen.ag_code
+awaited = agen.ag_await
+"""
+    result = compile_restricted_exec(source_code)
+    assert result.errors == (
+        'Line 2: "ag_frame" is a restricted name, '
+        'that is forbidden to access in RestrictedPython.',
+        'Line 3: "ag_code" is a restricted name, '
+        'that is forbidden to access in RestrictedPython.',
+        'Line 4: "ag_await" is a restricted name, '
+        'that is forbidden to access in RestrictedPython.',
+    )
+
+
 def test_call_inspect_frame_on_generator():
     source_code = """
 generator = None
