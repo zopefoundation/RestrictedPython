@@ -41,7 +41,7 @@ Changes
 - Disallow ``mode="function"`` in ``compile_restricted`` (it never worked).
 
 - Prevent access to ``string.Formatter`` and its unsafe traversal methods via
-  ``safer_getattr``.
+  ``safer_getattr``. (CVE-2026-76825)
 
 8.3 (2026-06-16)
 ----------------
