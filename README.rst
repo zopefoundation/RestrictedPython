@@ -79,6 +79,15 @@ This example directly executed in Python could harm your system.
     Traceback (most recent call last):
     ImportError: __import__ not found
 
+.. warning::
+
+   RestrictedPython ships no ``__import__`` implementation on purpose.
+   If you provide one, you move the security boundary out of RestrictedPython
+   and into your own import policy.
+   See `Security considerations
+   <https://restrictedpython.readthedocs.io/en/latest/usage/security_considerations.html>`_
+   before doing so.
+
 Contributing to RestrictedPython
 --------------------------------
 

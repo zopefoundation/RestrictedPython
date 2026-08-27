@@ -79,6 +79,12 @@ Specifically:
 4. ``__import__`` is the normal Python import hook, and should be used
    to control access to Python packages and modules.
 
+   .. warning::
+
+      RestrictedPython ships no ``__import__`` implementation.
+      Provide one and you move the security boundary out of RestrictedPython and
+      into your own import policy — read :ref:`security_considerations` first.
+
 5. ``__builtins__`` is the normal Python builtins dictionary, which
    should be weeded down to a set that cannot be used to get around
    your restrictions.  A usable "safe" set is

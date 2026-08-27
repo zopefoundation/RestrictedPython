@@ -4,7 +4,10 @@ Changes
 8.6 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Add a "Security considerations" documentation page. It explains why the guards
+  only cover attribute access written in the restricted source, and why
+  providing an ``__import__`` implementation hands the security boundary to the
+  import policy of the calling application.
 
 
 8.5 (2026-08-19)
