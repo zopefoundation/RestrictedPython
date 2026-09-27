@@ -35,7 +35,7 @@ For all commits, use ``tox`` to run tests and lint, and build the docs, before p
 
 .. _new_python_version:
 
-Preperations for a new Python version
+Preparations for a new Python version
 +++++++++++++++++++++++++++++++++++++
 
 RestrictedPython should be updated for each new version of Python.
@@ -49,19 +49,11 @@ To do so:
 * For each new **AST Node** or functionality:
 
   * Add tests to ``/tests/``.
-  * Add a ``visit_<AST Node>`` to ``/src/RestrictedPython/transformer.py``.
+  * Add a ``visit_<AST Node>`` method to ``/src/RestrictedPython/transformer.py`` which either allows or denies the node, see :ref:`explicit_visitors`.
+    The test ``tests/transformer/test_explicit_deny.py`` fails as long as a node of the running Python version has no ``visit_<AST Node>`` method.
 
-    If the new AST Node should be enabled by default, with or without any modification, please add a ``visit_<AST Node>`` method such as the following:
-
-    .. code-block:: python
-
-        def visit_<AST Node>(self, node):
-            """Allow `<AST Node>` expressions."""
-            ...  # modifications
-            return self.node_contents_visit(node)
-
-    All AST Nodes without an explicit ``visit_<AST Node>`` method, are denied by default.
-    So the usage of this expression and functionality is not allowed.
+  * Check existing nodes with new fields, too.
+    A new feature does not always come with a new node: lazy imports (:pep:`810`) only added the field ``is_lazy`` to ``Import`` and ``ImportFrom``, see :doc:`changes_from314to315`.
 
 * Check the documentation for `inspect <https://docs.python.org/3/library/inspect.html>`_ and adjust the ``transformer.py:INSPECT_ATTRIBUTES`` list.
 * Add a corresponding changelog entry.
@@ -173,59 +165,71 @@ With RestrictedPython 4.0 an API compatible rewrite has happened, which supports
 
   Tests and documentation are distributed within released packages.
 
-.. todo::
+.. _explicit_visitors:
 
-  Resolve discussion about how RestrictedPython should be treat new expressions / ``ast.Nodes``.
-  This belongs to :ref:`new_python_version`.
+Every AST node has an explicit ``visit_<AST Node>`` method
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-  **Option 1 - reduce maintenance burden (preferred by icemac)**
+RestrictedPython follows the Zen of Python (:pep:`20`):
 
+.. code-block:: pycon
+    :emphasize-lines: 5
 
-  All AST Nodes without an explicit ``visit_<AST Node>`` method, are denied by default.
-  So the usage of this expression and functionality is not allowed.
+    >>> import this
+    The Zen of Python, by Tim Peters
 
-  *This is currently the promoted version.*
+    Beautiful is better than ugly.
+    Explicit is better than implicit.
+    Simple is better than complex.
+    Complex is better than complicated.
+    Flat is better than nested.
+    Sparse is better than dense.
+    Readability counts.
+    Special cases aren't special enough to break the rules.
+    Although practicality beats purity.
+    Errors should never pass silently.
+    Unless explicitly silenced.
+    In the face of ambiguity, refuse the temptation to guess.
+    There should be one-- and preferably only one --obvious way to do it.
+    Although that way may not be obvious at first unless you're Dutch.
+    Now is better than never.
+    Although never is often better than *right* now.
+    If the implementation is hard to explain, it's a bad idea.
+    If the implementation is easy to explain, it may be a good idea.
+    Namespaces are one honking great idea -- let's do more of those!
 
-  **Option 2 - be as explicit as possible (preferred by loechel)**
+Therefore **every AST node has an explicit** ``visit_<AST Node>`` **method** in ``RestrictingNodeTransformer``, also the denied ones.
 
-  If the new AST Node should be disabled by default, add a ``visit_<AST Node>`` method such as the following:
+``generic_visit`` denies every node without a ``visit_<AST Node>`` method.
+It is the safety net for nodes of a new Python version which nobody has reviewed yet, not the place where the decision about a known language feature is recorded.
+A node which is denied only by ``generic_visit`` looks the same as a node nobody has looked at.
+An explicit method records that somebody has reviewed the node and why it is denied, at the place where the next reviewer looks for it.
+In security relevant code, that knowledge is worth more than the lines it takes.
 
-  .. code-block:: python
+A denied node gets a method like the following:
 
-      def visit_<AST Node>(self, node):
-          """`<AST Node>` expression currently not allowed."""
-          self.not_allowed(node)
+.. code-block:: python
 
-  Please note, that for all AST Nodes without an explicit ``visit_<AST Node>`` method, a default applies which denies the usage of this expression and functionality.
-  As we try to be **as explicit as possible**, all language features should have a corresponding ``visit_<AST Node>``.
+    def visit_<AST Node>(self, node):
+        """Deny `<AST Node>` (<example>, <PEP>).
 
-  That follows the Zen of Python:
+        <Why it is denied: which guard or check it would bypass, which
+        security implications it has, or why it has not been reviewed yet.>
+        """
+        self.not_allowed(node)
 
-  .. code-block:: pycon
-      :emphasize-lines: 5
+The docstring states the reason, not only the decision:
 
-      >>> import this
-      The Zen of Python, by Tim Peters
+* Which guard (``_getattr_``, ``_getitem_``, ``_getiter_``, ``_write_``, ...) or check (``check_name``, import policy, ...) the node would bypass.
+* Which security implications allowing it would have.
+* If no concrete bypass is known, say so and say that a security review is still missing.
 
-      Beautiful is better than ugly.
-      Explicit is better than implicit.
-      Simple is better than complex.
-      Complex is better than complicated.
-      Flat is better than nested.
-      Sparse is better than dense.
-      Readability counts.
-      Special cases aren't special enough to break the rules.
-      Although practicality beats purity.
-      Errors should never pass silently.
-      Unless explicitly silenced.
-      In the face of ambiguity, refuse the temptation to guess.
-      There should be one-- and preferably only one --obvious way to do it.
-      Although that way may not be obvious at first unless you're Dutch.
-      Now is better than never.
-      Although never is often better than *right* now.
-      If the implementation is hard to explain, it's a bad idea.
-      If the implementation is easy to explain, it may be a good idea.
-      Namespaces are one honking great idea -- let's do more of those!
+Where the reason is a behavior of the interpreter, add a test which allows the node and shows the bypass (see ``tests/transformer/test_explicit_deny.py``).
+If the interpreter changes, the test fails and the docstring gets reviewed.
+
+An allowed node gets a method which calls ``self.node_contents_visit(node)``, with the modifications needed to guard it.
+
+The test ``tests/transformer/test_explicit_deny.py`` enforces the rule: it fails as long as a node of the running Python version has no ``visit_<AST Node>`` method.
 
 
 Technical Backgrounds - Links to External Documentation

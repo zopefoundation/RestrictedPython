@@ -1113,6 +1113,32 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
             raise NotImplementedError(
                 f"Unknown target type: {type(node.target)}")
 
+    def visit_AnnAssign(self, node: ast.AnnAssign) -> _T_visit_return:
+        """Deny annotated assignments (`x: int = 1`, :pep:`526`).
+
+        Why it is denied:
+
+        * The annotation is not a value the restricted code works with, it
+          is stored for other code to evaluate: in the ``__annotations__``
+          mapping of the module or class, as a string (:pep:`563`) or,
+          since Python 3.14, as a lazily evaluated ``__annotate__``
+          function (:pep:`649`, :pep:`749`).
+          When and in which context the annotation expression runs is thus
+          decided by the code inspecting the annotations (for example
+          ``typing.get_type_hints``), not by the restricted code.
+        * Up to Python 3.13 (and with ``from __future__ import
+          annotations``) the annotation is written into
+          ``__annotations__`` by the bytecode (``SETUP_ANNOTATIONS`` /
+          ``STORE_SUBSCR``) without calling the ``_write_`` guard. Since
+          Python 3.14 the compiler creates an ``__annotate__`` function
+          instead, which runs whenever other code asks for the annotations.
+
+        Allowing type hints is requested in
+        https://github.com/zopefoundation/RestrictedPython/issues/219; that
+        needs a security review of the points above first.
+        """
+        self.not_allowed(node)
+
     def visit_Raise(self, node: ast.Raise) -> _T_visit_return:
         """Allow `raise` statements without restrictions."""
         return self.node_contents_visit(node)
@@ -1172,7 +1198,14 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         return self.node_contents_visit(node)
 
     def visit_TryStar(self, node: ast.AST) -> _T_visit_return:
-        """Disallow `ExceptionGroup` due to a potential sandbox escape.
+        """Deny `try` with `except*` clauses (:pep:`654`).
+
+        `except*` allowed a sandbox escape via a type confusion bug in the
+        CPython interpreter, see
+        https://github.com/zopefoundation/RestrictedPython/security/advisories/GHSA-gmj9-h825-chq2
+        (CVE-2025-22153). Its only use is handling an ``ExceptionGroup``,
+        which is not in ``safe_builtins``; so there is hardly a use case in
+        restricted code.
 
         TODO: Change Type Annotation to ast.TryStar when
               Support for Python 3.10 is dropped.
@@ -1203,6 +1236,118 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
     def visit_withitem(self, node: ast.withitem) -> _T_visit_return:
         """Allow `with` statements (context managers) without restrictions."""
         return self.node_contents_visit(node)
+
+    # Structural pattern matching (:pep:`634`), new in Python 3.10
+
+    def visit_Match(self, node: ast.Match) -> _T_visit_return:
+        """Deny the `match` statement.
+
+        Matching a pattern accesses the subject inside the interpreter
+        (bytecode ``MATCH_CLASS``, ``MATCH_MAPPING``, ``MATCH_SEQUENCE``,
+        ``MATCH_KEYS``) instead of through the ast nodes RestrictedPython
+        rewrites. Thus the guards are not called:
+
+        * class patterns read attributes without ``_getattr_``,
+          see `visit_MatchClass`,
+        * mapping patterns read items without ``_getitem_``,
+          see `visit_MatchMapping`,
+        * sequence patterns iterate without ``_getiter_``,
+          see `visit_MatchSequence`,
+        * capture patterns bind names without the name checks,
+          see `visit_MatchAs`.
+
+        A guarded `match` statement would need a rewrite of the whole
+        statement into guarded code, which has not been done.
+        Denying `match` makes all the pattern nodes unreachable; they have
+        their own `visit_` methods nevertheless to document the reasons.
+        """
+        self.not_allowed(node)
+
+    def visit_match_case(self, node: ast.match_case) -> _T_visit_return:
+        """Deny a `case` clause of a `match` statement.
+
+        Only reachable inside a `match` statement, see `visit_Match`.
+        """
+        self.not_allowed(node)
+
+    def visit_MatchValue(self, node: ast.MatchValue) -> _T_visit_return:
+        """Deny value patterns (`case 1:`, `case Color.RED:`).
+
+        A value pattern may be a dotted name (``case obj.attr:``). Allowed
+        as it is, the attribute would be read without ``_getattr_``.
+        Rewriting it into a ``_getattr_`` call like `visit_Attribute` does
+        is not possible, as ``compile()`` only accepts constants and
+        attribute lookups in a value pattern.
+        """
+        self.not_allowed(node)
+
+    def visit_MatchSingleton(
+            self, node: ast.MatchSingleton) -> _T_visit_return:
+        """Deny singleton patterns (`case None:`, `case True:`).
+
+        They compare by identity and are harmless on their own, but they
+        only exist inside a `match` statement, see `visit_Match`.
+        """
+        self.not_allowed(node)
+
+    def visit_MatchSequence(
+            self, node: ast.MatchSequence) -> _T_visit_return:
+        """Deny sequence patterns (`case [first, *rest]:`).
+
+        The subject is measured with ``len()`` and unpacked by the
+        interpreter without calling ``_getiter_``, thus bypassing the guard
+        which protects every other iteration (`guard_iter`).
+        """
+        self.not_allowed(node)
+
+    def visit_MatchMapping(self, node: ast.MatchMapping) -> _T_visit_return:
+        """Deny mapping patterns (`case {'key': value, **rest}:`).
+
+        The interpreter calls ``get()`` on the subject for each key and,
+        for ``**rest``, reads all remaining items. None of these accesses
+        calls ``_getitem_``. The name bound by ``**rest`` is an identifier
+        string, not an ``ast.Name``, so it escapes the name checks, see
+        `visit_MatchAs`.
+        """
+        self.not_allowed(node)
+
+    def visit_MatchClass(self, node: ast.MatchClass) -> _T_visit_return:
+        """Deny class patterns (`case Point(x=0):`).
+
+        The interpreter reads the attributes named by the keyword patterns
+        and by ``__match_args__`` of the class directly, without calling
+        ``_getattr_``. That bypasses the attribute guard, which is the
+        central protection of RestrictedPython.
+        """
+        self.not_allowed(node)
+
+    def visit_MatchStar(self, node: ast.MatchStar) -> _T_visit_return:
+        """Deny star patterns (`case [first, *rest]:`).
+
+        The bound name is an identifier string, not an ``ast.Name``, so it
+        escapes the name checks, see `visit_MatchAs`.
+        """
+        self.not_allowed(node)
+
+    def visit_MatchAs(self, node: ast.MatchAs) -> _T_visit_return:
+        """Deny capture and as-patterns (`case x:`, `case [x] as y:`).
+
+        The bound names are stored as identifier strings in the pattern
+        node, not as ``ast.Name`` nodes. `check_name` is never called for
+        them, so ``case _secret:`` binds a name starting with an underscore,
+        which RestrictedPython denies everywhere else.
+        The same class of bug was the cause of
+        https://github.com/zopefoundation/RestrictedPython/security/advisories/GHSA-ffg3-p8fm-mjx2
+        (names of positional-only arguments).
+        """
+        self.not_allowed(node)
+
+    def visit_MatchOr(self, node: ast.MatchOr) -> _T_visit_return:
+        """Deny or-patterns (`case 1 | 2:`).
+
+        They combine other patterns, see `visit_Match`.
+        """
+        self.not_allowed(node)
 
     # Function and class definitions
 
@@ -1250,7 +1395,16 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         return self.node_contents_visit(node)
 
     def visit_Nonlocal(self, node: ast.Nonlocal) -> _T_visit_return:
-        """Deny `nonlocal` statements."""
+        """Deny `nonlocal` statements.
+
+        `nonlocal` lets a nested function rebind a variable of an enclosing
+        function. The names are identifier strings in the node, not
+        ``ast.Name`` nodes, so `check_name` does not see them here.
+        No concrete bypass is known, as the variable itself has to be
+        defined in the enclosing function, where its name is checked.
+        It has been denied since the start of the ast based implementation
+        without a security review; it needs one before allowing it.
+        """
         self.not_allowed(node)
 
     def visit_ClassDef(self, node: ast.ClassDef) -> _T_visit_return:
@@ -1287,23 +1441,131 @@ class RestrictingNodeTransformer(ast.NodeTransformer):
         self.inject_print_collector(node, position)
         return node
 
+    # Type parameters and type aliases (:pep:`695`), new in Python 3.12
+
+    def visit_TypeAlias(self, node: ast.AST) -> _T_visit_return:
+        """Deny the `type` statement (`type Alias = int`).
+
+        * It creates a ``typing.TypeAliasType`` object without any
+          ``import``, so the import guard is not asked.
+        * The value is evaluated lazily, when other code first accesses
+          ``__value__``. When and in which context the restricted code runs
+          is then decided by that code, not by the caller of the restricted
+          code.
+
+        TODO: Change Type Annotation to ast.TypeAlias when
+              Support for Python 3.11 is dropped.
+        """
+        self.not_allowed(node)
+
+    def visit_TypeVar(self, node: ast.AST) -> _T_visit_return:
+        """Deny type variables in type parameter lists (`def f[T]():`).
+
+        * It creates ``typing.TypeVar`` objects without any ``import``, so
+          the import guard is not asked. A generic class additionally gets
+          ``typing.Generic`` as an implicit base class.
+        * Bounds, constraints and defaults are evaluated lazily, when other
+          code first accesses them (e.g. ``__bound__``), see
+          `visit_TypeAlias`.
+        * `visit_ClassDef` rebuilds the class node without its
+          ``type_params``, so allowing them would silently change the
+          meaning of a generic class.
+
+        TODO: Change Type Annotation to ast.TypeVar when
+              Support for Python 3.11 is dropped.
+        """
+        self.not_allowed(node)
+
+    def visit_ParamSpec(self, node: ast.AST) -> _T_visit_return:
+        """Deny parameter specifications (`def f[**P]():`).
+
+        Same reasons as for `visit_TypeVar`; it creates
+        ``typing.ParamSpec`` objects.
+
+        TODO: Change Type Annotation to ast.ParamSpec when
+              Support for Python 3.11 is dropped.
+        """
+        self.not_allowed(node)
+
+    def visit_TypeVarTuple(self, node: ast.AST) -> _T_visit_return:
+        """Deny type variable tuples (`def f[*Ts]():`).
+
+        Same reasons as for `visit_TypeVar`; it creates
+        ``typing.TypeVarTuple`` objects.
+
+        TODO: Change Type Annotation to ast.TypeVarTuple when
+              Support for Python 3.11 is dropped.
+        """
+        self.not_allowed(node)
+
+    # Type comments (:pep:`484`)
+
+    def visit_FunctionType(self, node: ast.FunctionType) -> _T_visit_return:
+        """Deny function type signatures (`(int, str) -> bool`).
+
+        They are only created by ``ast.parse(mode='func_type')`` to read
+        signature type comments. They are not executable code: ``compile()``
+        does not accept them. RestrictedPython never creates them, so there
+        is nothing to allow.
+        """
+        self.not_allowed(node)
+
+    def visit_TypeIgnore(self, node: ast.TypeIgnore) -> _T_visit_return:
+        """Deny `# type: ignore` comments in a pre-parsed ast.
+
+        The parser only creates them with ``ast.parse(type_comments=True)``,
+        which RestrictedPython never uses. A pre-parsed ast passed in by the
+        caller could contain them. They are harmless in themselves, but
+        allowing them would make the result depend on how the caller parsed
+        the code instead of on the code.
+        """
+        self.not_allowed(node)
+
     # Async und await
 
     def visit_AsyncFunctionDef(
             self, node: ast.AsyncFunctionDef) -> _T_visit_return:
-        """Deny async functions."""
+        """Deny async functions (`async def`, :pep:`492`).
+
+        Calling an async function creates a coroutine object; running it
+        needs an event loop provided by the calling application, so the
+        restricted code cannot use it on its own.
+        The async statements inside (`await`, `async for`, `async with`)
+        bypass guards, see `visit_Await`, `visit_AsyncFor` and
+        `visit_AsyncWith`.
+        Denying `async def` makes them unreachable, as they are only
+        allowed inside an async function.
+        """
         self.not_allowed(node)
 
     def visit_Await(self, node: ast.Await) -> _T_visit_return:
-        """Deny async functionality."""
+        """Deny `await` expressions.
+
+        `await` suspends the restricted code and hands control to an
+        awaitable which the restricted code got from outside, for example
+        from the calling application. Neither the suspension nor the code
+        running in between is covered by RestrictedPython.
+        Only reachable inside `async def`, see `visit_AsyncFunctionDef`.
+        """
         self.not_allowed(node)
 
     def visit_AsyncFor(self, node: ast.AsyncFor) -> _T_visit_return:
-        """Deny async functionality."""
+        """Deny `async for` loops.
+
+        The loop calls ``__aiter__`` and ``__anext__`` of the iterable
+        without calling ``_getiter_``: `guard_iter` only protects `for`
+        loops and comprehensions.
+        Only reachable inside `async def`, see `visit_AsyncFunctionDef`.
+        """
         self.not_allowed(node)
 
     def visit_AsyncWith(self, node: ast.AsyncWith) -> _T_visit_return:
-        """Deny async functionality."""
+        """Deny `async with` statements.
+
+        They call ``__aenter__`` and ``__aexit__`` and await the results,
+        see `visit_Await`.
+        Only reachable inside `async def`, see `visit_AsyncFunctionDef`.
+        """
         self.not_allowed(node)
 
     # Assignment expressions (walrus operator ``:=``)
