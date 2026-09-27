@@ -9,6 +9,18 @@ Changes
   providing an ``__import__`` implementation hands the security boundary to the
   import policy of the calling application.
 
+- Every ast node now has an explicit ``visit_<node>`` method in
+  ``RestrictingNodeTransformer``, following "Explicit is better than
+  implicit." (PEP 20). The nodes which were only denied implicitly by
+  ``generic_visit`` (``AnnAssign``, the ``match`` statement and its patterns,
+  the type parameter and ``type`` statement nodes of Python 3.12+,
+  ``FunctionType`` and ``TypeIgnore``) are now denied explicitly, and the
+  docstrings of all denying methods explain the reason and the security
+  implications. They are still denied, but no longer emit the warning
+  "... statement is not known to RestrictedPython". A new test fails for
+  every ast node of the running Python version without a ``visit_<node>``
+  method.
+
 
 8.5 (2026-08-19)
 ----------------
