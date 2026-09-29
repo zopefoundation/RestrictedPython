@@ -55,6 +55,8 @@ ALLOWED_FUNC_NAMES = frozenset([
     '__ne__',
     '__gt__',
     '__ge__',
+    '__enter__',
+    '__exit__',
 ])
 
 

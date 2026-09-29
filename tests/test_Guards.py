@@ -55,6 +55,37 @@ result = ob1.display()'''
     assert restricted_globals['result'] == '2411'
 
 
+def test_Guards__safe_builtins__3():
+    """It allows classes to define `__enter__` and `__exit__` so they can be
+    used as context managers in a `with` statement.
+    """
+
+    context_manager_code = '''
+class MyContextManager:
+    def __enter__(self):
+        events.append('enter')
+        return self
+
+    def __exit__(self, exc_type, exc_value, exc_traceback):
+        events.append('exit')
+        return False
+
+events = []
+with MyContextManager():
+    events.append('inside')
+result = events'''
+
+    restricted_globals = dict(
+        result=None,
+        __name__='restricted_module',
+        __metaclass__=type,
+        _write_=_write_,
+        _getattr_=getattr)
+
+    restricted_exec(context_manager_code, restricted_globals)
+    assert restricted_globals['result'] == ['enter', 'inside', 'exit']
+
+
 def test_Guards__guarded_setattr__1():
     """It allows use setattr and delattr when _guarded_writes is True.
     """

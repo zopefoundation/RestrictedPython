@@ -9,6 +9,10 @@ Changes
   providing an ``__import__`` implementation hands the security boundary to the
   import policy of the calling application.
 
+- Allow defining ``__enter__`` and ``__exit__`` on a class in restricted code,
+  so a class can be used as a context manager in a ``with`` statement. See
+  `issue 230 <https://github.com/zopefoundation/RestrictedPython/issues/230>`_.
+
 
 8.5 (2026-08-19)
 ----------------
