@@ -49,6 +49,7 @@ _safe_names = [
     'pow',
     'range',
     'repr',
+    'reversed',
     'round',
     'slice',
     'sorted',

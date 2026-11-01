@@ -25,6 +25,11 @@ def test_Guards_sorted():
     assert restricted_eval('sorted([5, 2, 8, 1])') == sorted([5, 2, 8, 1])
 
 
+def test_Guards_reversed():
+    """It contains reversed"""
+    assert list(restricted_eval('reversed([5, 2, 8, 1])')) == [1, 8, 2, 5]
+
+
 def test_Guards__safe_builtins__1():
     """It contains `slice()`."""
     assert restricted_eval('slice(1)') == slice(1)

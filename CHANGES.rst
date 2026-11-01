@@ -4,6 +4,8 @@ Changes
 8.6 (unreleased)
 ----------------
 
+- Add support for the ``reversed`` builtin in ``safe_builtins``.
+
 - Add a "Security considerations" documentation page. It explains why the guards
   only cover attribute access written in the restricted source, and why
   providing an ``__import__`` implementation hands the security boundary to the
