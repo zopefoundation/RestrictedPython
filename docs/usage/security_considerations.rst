@@ -70,7 +70,8 @@ sees the elements:
 ``safe_builtins`` therefore leaves out ``reversed``, ``sorted`` and ``tuple``.
 If your application needs them, provide wrappers that pass the argument through
 ``_getiter_`` before handing it to the real builtin, the way
-:func:`AccessControl.ZopeGuards.guarded_zip` does.
+`AccessControl.ZopeGuards.guarded_zip <https://github.com/zopefoundation/AccessControl/blob/master/src/AccessControl/ZopeGuards.py>`_
+does.
 
 .. _providing_import:
 
