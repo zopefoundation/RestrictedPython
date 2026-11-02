@@ -51,9 +51,7 @@ _safe_names = [
     'repr',
     'round',
     'slice',
-    'sorted',
     'str',
-    'tuple',
     'zip'
 ]
 
@@ -137,6 +135,9 @@ for name in _safe_exceptions:
 
 # Builtins that are intentionally disabled
 # compile   - don't let them produce new code
+# reversed  - iterates its argument in C, bypassing the `_getiter_` guard
+# sorted    - iterates its argument in C, bypassing the `_getiter_` guard
+# tuple     - iterates its argument in C, bypassing the `_getiter_` guard
 # dir       - a general purpose introspector, probably hard to wrap
 # execfile  - no direct I/O
 # file      - no direct I/O
