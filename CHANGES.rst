@@ -6,6 +6,12 @@ Changes
 
 - Drop support for Python 3.10.
 
+- Remove ``bytes``, ``sorted``, ``tuple`` and ``zip`` from ``safe_builtins``
+  and do not add ``reversed``: all of them iterate their argument in C,
+  bypassing the ``_getiter_`` guard. Applications which need them have to
+  provide wrappers calling ``_getiter_``.
+  (`#335 <https://github.com/zopefoundation/RestrictedPython/issues/335>`_)
+
 - Add a "Security considerations" documentation page. It explains why the guards
   only cover attribute access written in the restricted source, and why
   providing an ``__import__`` implementation hands the security boundary to the

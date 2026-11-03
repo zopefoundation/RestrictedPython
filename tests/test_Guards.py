@@ -15,14 +15,17 @@ def _write_(x):
     return x
 
 
-def test_Guards_bytes():
-    """It contains bytes"""
-    assert restricted_eval('bytes(1)') == bytes(1)
-
-
-def test_Guards_sorted():
-    """It contains sorted"""
-    assert restricted_eval('sorted([5, 2, 8, 1])') == sorted([5, 2, 8, 1])
+@pytest.mark.parametrize('name',
+                         ['bytes',
+                          'reversed',
+                          'sorted',
+                          'tuple',
+                          'zip'])
+def test_Guards__safe_builtins__iterating(name):
+    """It does not contain builtins which iterate without `_getiter_`."""
+    assert name not in safe_builtins
+    with pytest.raises(NameError):
+        restricted_eval(f'{name}([5, 2, 8, 1])')
 
 
 def test_Guards__safe_builtins__1():

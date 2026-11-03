@@ -46,6 +46,36 @@ You gain more by auditing what you put into ``globals`` and ``__builtins__``
 than by relying on the guards.
 The guards are a second line of defence, not the boundary.
 
+.. _builtins_that_iterate:
+
+Builtins that iterate bypass ``_getiter_``
+..........................................
+
+The same applies to iteration.
+``compile_restricted`` routes ``for`` loops, comprehensions and unpacking
+**written in the restricted source** through ``_getiter_``.
+A builtin that iterates its argument itself does so in C, so the guard never
+sees the elements:
+
+.. code-block:: python
+
+    # `_getiter_` runs
+    [x for x in secret]
+
+    # no `_getiter_` call; every element is read without a guard
+    tuple(secret)
+    sorted(secret)
+    reversed(secret)
+    zip(secret)
+    bytes(secret)
+
+``safe_builtins`` therefore leaves out ``bytes``, ``reversed``, ``sorted``,
+``tuple`` and ``zip``.
+If your application needs them, provide wrappers that pass the argument through
+``_getiter_`` before handing it to the real builtin, the way
+`AccessControl.ZopeGuards.guarded_zip <https://github.com/zopefoundation/AccessControl/blob/master/src/AccessControl/ZopeGuards.py>`_
+does.
+
 .. _providing_import:
 
 Providing ``__import__`` moves the boundary out of RestrictedPython
