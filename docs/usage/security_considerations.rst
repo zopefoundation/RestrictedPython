@@ -66,8 +66,11 @@ sees the elements:
     tuple(secret)
     sorted(secret)
     reversed(secret)
+    zip(secret)
+    bytes(secret)
 
-``safe_builtins`` therefore leaves out ``reversed``, ``sorted`` and ``tuple``.
+``safe_builtins`` therefore leaves out ``bytes``, ``reversed``, ``sorted``,
+``tuple`` and ``zip``.
 If your application needs them, provide wrappers that pass the argument through
 ``_getiter_`` before handing it to the real builtin, the way
 `AccessControl.ZopeGuards.guarded_zip <https://github.com/zopefoundation/AccessControl/blob/master/src/AccessControl/ZopeGuards.py>`_
