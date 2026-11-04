@@ -4,8 +4,6 @@ Changes
 8.6 (unreleased)
 ----------------
 
-- Drop support for Python 3.10.
-
 - Remove ``bytes``, ``sorted``, ``tuple`` and ``zip`` from ``safe_builtins``
   and do not add ``reversed``: all of them iterate their argument in C,
   bypassing the ``_getiter_`` guard. Applications which need them have to
@@ -16,6 +14,8 @@ Changes
   only cover attribute access written in the restricted source, and why
   providing an ``__import__`` implementation hands the security boundary to the
   import policy of the calling application.
+
+- Drop support for Python 3.10.
 
 
 8.5 (2026-08-19)
