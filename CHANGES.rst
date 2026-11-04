@@ -1,7 +1,7 @@
 Changes
 =======
 
-8.6 (unreleased)
+9.0 (2026-11-04)
 ----------------
 
 - Remove ``bytes``, ``sorted``, ``tuple`` and ``zip`` from ``safe_builtins``
