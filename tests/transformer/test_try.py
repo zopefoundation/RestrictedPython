@@ -1,7 +1,4 @@
-import pytest
-
 from RestrictedPython import compile_restricted_exec
-from RestrictedPython._compat import IS_PY311_OR_GREATER
 from tests.helper import restricted_exec
 
 
@@ -64,10 +61,6 @@ def try_except_star(m):
 """
 
 
-@pytest.mark.skipif(
-    not IS_PY311_OR_GREATER,
-    reason="ExceptionGroup class was added in Python 3.11.",
-)
 def test_RestrictingNodeTransformer__visit_TryStar__1():
     """It denies try-except* PEP 654 statements."""
     result = compile_restricted_exec(TRY_EXCEPT_STAR)
