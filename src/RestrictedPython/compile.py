@@ -79,8 +79,6 @@ def _compile_restricted_mode(
                 c_ast = typing.cast(
                     _T_ast_compilable, ast.parse(
                         source, filename, mode))
-            except (TypeError, ValueError) as e:
-                collected_errors.append(str(e))
             except SyntaxError as v:
                 collected_errors.append(syntax_error_template.format(
                     lineno=v.lineno,
